@@ -1,0 +1,39 @@
+create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_LATEST(
+	PERSON_ID,
+	CLINICAL_EFFECTIVE_DATE,
+	SYSTOLIC_VALUE,
+	DIASTOLIC_VALUE,
+	IS_HOME_BP_EVENT,
+	IS_ABPM_BP_EVENT,
+	SYSTOLIC_OBSERVATION_ID,
+	DIASTOLIC_OBSERVATION_ID
+) target_lag = '4 hours' refresh_mode = AUTO initialize = ON_CREATE warehouse = NCL_ANALYTICS_XS
+ as
+WITH RankedEvents AS (
+    -- Rank the combined BP events directly from the new BLOOD_PRESSURE_ALL table
+    SELECT
+        PERSON_ID,
+        CLINICAL_EFFECTIVE_DATE,
+        SYSTOLIC_VALUE,
+        DIASTOLIC_VALUE,
+        IS_HOME_BP_EVENT,
+        IS_ABPM_BP_EVENT,
+        SYSTOLIC_OBSERVATION_ID,
+        DIASTOLIC_OBSERVATION_ID,
+        ROW_NUMBER() OVER (PARTITION BY PERSON_ID ORDER BY CLINICAL_EFFECTIVE_DATE DESC) as rn
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_ALL -- Input is the REFACTORED table
+    -- No WHERE clause needed here as source table is already filtered for value presence & range
+)
+-- Select the latest event (rank = 1) for each person
+SELECT
+    PERSON_ID,
+    CLINICAL_EFFECTIVE_DATE,
+    SYSTOLIC_VALUE,
+    DIASTOLIC_VALUE,
+    IS_HOME_BP_EVENT,
+    IS_ABPM_BP_EVENT,
+    SYSTOLIC_OBSERVATION_ID,
+    DIASTOLIC_OBSERVATION_ID
+FROM RankedEvents
+WHERE rn = 1;
+
