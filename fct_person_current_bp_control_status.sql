@@ -29,7 +29,7 @@ TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
-COMMENT = 'Calculates current Blood Pressure (BP) control status by applying patient-specific thresholds based on age, T2DM, CKD, and ACR level. Includes patient HTN diagnosis status. Selects highest priority threshold (< SBP/DBP) from RULESETS.BP_THRESHOLDS. Determines IS_OVERALL_BP_CONTROLLED and assesses timeliness (IS_LATEST_BP_WITHIN_RECOMMENDED_INTERVAL) using risk-group intervals (e.g., 12 months for T2DM, CKD, or diagnosed HTN).'
+COMMENT = 'Calculates current Blood Pressure (BP) control status by applying patient-specific thresholds based on NICE NG136 including age, T2DM, CKD, and ACR level. Includes patient HTN diagnosis status. Selects highest priority threshold (< SBP/DBP) from RULESETS.BP_THRESHOLDS. Determines IS_OVERALL_BP_CONTROLLED and assesses timeliness (IS_LATEST_BP_WITHIN_RECOMMENDED_INTERVAL) using risk-group intervals (e.g., 12 months for T2DM, CKD, or diagnosed HTN). Hypertension confirmed does not mean the person has been clinically diagnosed. Use FCT_PERSON_CURRENT_DX_HYPERTENSION to determine if the person has been clinically diagnosed.'
 AS
 WITH LatestBP AS (
     -- Selects the most recent blood pressure reading (systolic, diastolic, and date) for each person
