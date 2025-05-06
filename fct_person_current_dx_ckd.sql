@@ -1,32 +1,32 @@
 -- Define or replace the dynamic table in the HEI_MIGRATION schema to store ONLY patients currently on the CKD register.
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_CKD (
-    PERSON_ID,
-    SK_PATIENT_ID,
-    AGE,
-    -- IS_ON_CKD_REGISTER, -- Implicitly TRUE due to final filter
-    -- Latest Lab Info from Inference Table
-    LATEST_EGFR_VALUE,
-    LATEST_EGFR_DATE,
-    LATEST_ACR_VALUE,
-    LATEST_ACR_DATE,
-    LATEST_EGFR_STAGE,
-    LATEST_ACR_STAGE,
-    LATEST_CKD_STAGE_INFERRED,
-    LATEST_LABS_MEET_CKD_CRITERIA,
-    -- Confirmation Flags from Inference Table
-    HAS_CONFIRMED_LOW_EGFR,
-    HAS_CONFIRMED_HIGH_ACR,
-    HAS_CONFIRMED_CKD_BY_LABS,
-    -- Dates from Coding
-    EARLIEST_CKD_DIAGNOSIS_DATE,
-    LATEST_CKD_DIAGNOSIS_DATE,
-    LATEST_CKD_RESOLVED_DATE,
-    -- Aggregated details for traceability of codes
-    ALL_CKD_OBSERVATION_IDS,
-    ALL_CKD_CONCEPT_CODES,
-    ALL_CKD_CONCEPT_DISPLAYS,
-    ALL_CKD_SOURCE_CLUSTER_IDS
+    PERSON_ID VARCHAR, -- Unique identifier for a person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    AGE NUMBER, -- Age of the person (>= 18 for this table)
+    -- Latest Lab Info from INTERMEDIATE_CKD_LAB_INFERENCE
+    LATEST_EGFR_VALUE NUMBER, -- Latest eGFR value recorded
+    LATEST_EGFR_DATE DATE, -- Date of the latest eGFR value
+    LATEST_ACR_VALUE NUMBER, -- Latest ACR (Albumin-to-Creatinine Ratio) value recorded
+    LATEST_ACR_DATE DATE, -- Date of the latest ACR value
+    LATEST_EGFR_STAGE VARCHAR, -- CKD stage based on the latest eGFR value
+    LATEST_ACR_STAGE VARCHAR, -- CKD albuminuria stage based on the latest ACR value
+    LATEST_CKD_STAGE_INFERRED VARCHAR, -- Overall CKD stage inferred from latest eGFR and ACR (e.g., G3aA1)
+    LATEST_LABS_MEET_CKD_CRITERIA BOOLEAN, -- Flag: TRUE if latest labs (eGFR/ACR) meet criteria for CKD diagnosis without confirmation over time
+    -- Confirmation Flags from INTERMEDIATE_CKD_LAB_INFERENCE (indicating persistence over >90 days)
+    HAS_CONFIRMED_LOW_EGFR BOOLEAN, -- Flag: TRUE if persistently low eGFR (meeting CKD criteria) is confirmed over >90 days
+    HAS_CONFIRMED_HIGH_ACR BOOLEAN, -- Flag: TRUE if persistently high ACR (meeting CKD criteria) is confirmed over >90 days
+    HAS_CONFIRMED_CKD_BY_LABS BOOLEAN, -- Flag: TRUE if CKD is confirmed by persistent lab results (either low eGFR or high ACR)
+    -- Dates from CKD Coding (CKD_COD, CKDRES_COD)
+    EARLIEST_CKD_DIAGNOSIS_DATE DATE, -- Earliest recorded date of a CKD diagnosis code (CKD_COD)
+    LATEST_CKD_DIAGNOSIS_DATE DATE, -- Latest recorded date of a CKD diagnosis code (CKD_COD)
+    LATEST_CKD_RESOLVED_DATE DATE, -- Latest recorded date of a CKD resolved code (CKDRES_COD)
+    -- Aggregated details for traceability of CKD codes
+    ALL_CKD_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to CKD_COD or CKDRES_COD for the person
+    ALL_CKD_CONCEPT_CODES ARRAY, -- Array of all CKD_COD/CKDRES_COD concept codes recorded for the person
+    ALL_CKD_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the CKD_COD/CKDRES_COD concept codes
+    ALL_CKD_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (CKD_COD, CKDRES_COD)
 )
+COMMENT = 'Fact table identifying individuals aged 18 and over currently on the Chronic Kidney Disease (CKD) register based on coding (latest CKD_COD > latest CKDRES_COD). It enriches these records with the latest CKD-related lab results and inferred CKD stage/confirmation status from INTERMEDIATE_CKD_LAB_INFERENCE.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -35,6 +35,8 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 
 WITH BaseObservationsAndClusters AS (
+    -- Fetches observation records related to CKD diagnosis (CKD_COD) or resolution (CKDRES_COD).
+    -- Includes basic person identifiers and clinical effective dates.
     SELECT
         O."id" AS OBSERVATION_ID,
         PP."person_id" AS PERSON_ID,
@@ -53,7 +55,7 @@ WITH BaseObservationsAndClusters AS (
     WHERE MC.CLUSTER_ID IN ('CKD_COD', 'CKDRES_COD')
 ),
 FilteredByAge AS (
-    -- Join with age dimension and filter for age >= 18
+    -- Filters the base CKD-related observations to include only individuals aged 18 or older.
     SELECT
         boc.*,
         age.AGE
@@ -63,7 +65,10 @@ FilteredByAge AS (
     WHERE age.AGE >= 18
 ),
 PersonLevelCKDCodingAggregation AS (
-    -- Aggregate CKD code information per person
+    -- Aggregates CKD diagnosis and resolution code information for each person aged 18+.
+    -- Calculates earliest/latest CKD_COD dates and latest CKDRES_COD date.
+    -- Determines IS_ON_CKD_REGISTER_CALC: TRUE if there's an active CKD_COD (latest CKD_COD > latest CKDRES_COD, or no CKDRES_COD).
+    -- Collects all associated observation details (IDs, codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
@@ -85,7 +90,8 @@ PersonLevelCKDCodingAggregation AS (
     FROM FilteredByAge
     GROUP BY PERSON_ID
 )
--- Final selection, joining coding status with lab inference and filtering
+-- Final selection: Combines CKD coding status with CKD lab inference data.
+-- Filters to include only individuals currently on the CKD register based on their coding status.
 SELECT
     cod_agg.PERSON_ID,
     cod_agg.SK_PATIENT_ID,
@@ -112,8 +118,9 @@ SELECT
     cod_agg.ALL_CKD_CONCEPT_DISPLAYS,
     cod_agg.ALL_CKD_SOURCE_CLUSTER_IDS
 FROM PersonLevelCKDCodingAggregation cod_agg
--- Left join to lab inference table to get lab status for those on register
+-- Left join to the intermediate lab inference table to bring in lab results and CKD stage/confirmation details.
+-- This join enriches coded CKD patients with their latest lab-based CKD status.
 LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_CKD_LAB_INFERENCE lab_inf
     ON cod_agg.PERSON_ID = lab_inf.PERSON_ID
--- Filter to include only those currently on the CKD register based on coding
+-- Final filter to ensure only individuals currently on the CKD register (based on coding logic) are included in this fact table.
 WHERE cod_agg.IS_ON_CKD_REGISTER_CALC = TRUE;

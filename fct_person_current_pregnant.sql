@@ -1,26 +1,27 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_PREGNANT (
-    PERSON_ID,
-    SK_PATIENT_ID,
-    AGE,
-    SEX,
-    IS_CURRENTLY_PREGNANT,
-    LATEST_PREG_COD_DATE,
-    LATEST_PREGDEL_COD_DATE,
-    ALL_PREG_OBSERVATION_IDS,
-    ALL_PREG_CONCEPT_CODES,
-    ALL_PREG_CONCEPT_DISPLAYS,
-    ALL_PREG_SOURCE_CLUSTER_IDS,
-    IS_CHILD_BEARING_AGE_12_55,
-    IS_CHILD_BEARING_AGE_0_55
+    PERSON_ID VARCHAR, -- Unique identifier for a person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    AGE NUMBER, -- Age of the person
+    SEX VARCHAR, -- Sex of the person (filtered to be non-'Male')
+    IS_CURRENTLY_PREGNANT BOOLEAN, -- Flag indicating if the person is currently deemed pregnant
+    LATEST_PREG_COD_DATE DATE, -- Latest date of a pregnancy code (PREG_COD) within the last 9 months
+    LATEST_PREGDEL_COD_DATE DATE, -- Latest date of a pregnancy ended/delivery code (PREGDEL_COD)
+    ALL_PREG_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to pregnancy for the person
+    ALL_PREG_CONCEPT_CODES ARRAY, -- Array of all pregnancy-related concept codes recorded
+    ALL_PREG_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for pregnancy-related codes
+    ALL_PREG_SOURCE_CLUSTER_IDS ARRAY, -- Array of source cluster IDs (PREG_COD, PREGDEL_COD)
+    IS_CHILD_BEARING_AGE_12_55 BOOLEAN, -- Flag: TRUE if age is 12-55 inclusive
+    IS_CHILD_BEARING_AGE_0_55 BOOLEAN  -- Flag: TRUE if age is 0-55 inclusive
 )
+COMMENT = 'Fact table identifying non-male individuals currently deemed pregnant based on PREG_COD and PREGDEL_COD codes from UKHSA_FLU source within the last 9 months.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseObservationsAndDemographics AS (
-    -- Fetch relevant observations, joining directly to the pre-mapped concepts table
-    -- Also join to person demographics to get AGE and SEX, and filter for non-males
+    -- Fetches observation records for pregnancy (PREG_COD) or pregnancy ended/delivery (PREGDEL_COD) from the UKHSA_FLU source.
+    -- Joins with patient demographics (age and sex) and filters for individuals not recorded as 'Male'.
     SELECT
         O."id" AS OBSERVATION_ID,
         PP."person_id" AS PERSON_ID,
@@ -47,7 +48,9 @@ WITH BaseObservationsAndDemographics AS (
         AND sex_dim.SEX != 'Male'
 ),
 PersonLevelPregnancyAggregation AS (
-    -- Aggregate pregnancy-related codes and dates at the person level
+    -- Aggregates pregnancy-related information for each non-male individual.
+    -- Determines the latest dates for PREG_COD and PREGDEL_COD.
+    -- Collects all associated observation details into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID, 
@@ -62,7 +65,9 @@ PersonLevelPregnancyAggregation AS (
     FROM BaseObservationsAndDemographics
     GROUP BY PERSON_ID
 )
--- Final assembly of pregnancy status
+-- Final assembly of pregnancy status.
+-- Determines IS_CURRENTLY_PREGNANT based on the logic: a recent PREG_COD (last 9 months) that is later than any PREGDEL_COD.
+-- Includes age-based child-bearing flags. Filters to only include those currently deemed pregnant.
 SELECT
     pla.PERSON_ID,
     pla.SK_PATIENT_ID,

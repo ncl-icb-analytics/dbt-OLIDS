@@ -1,41 +1,43 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_EGFR_ALL (
-    person_id,
-    sk_patient_id,
-    clinical_effective_date,
-    result_value,
-    CONCEPT_CODE,
-    CODE_DESCRIPTION,
-    OBSERVATION_ID
+    PERSON_ID VARCHAR, -- Unique identifier for the person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    CLINICAL_EFFECTIVE_DATE DATE, -- Date the eGFR test was performed/recorded
+    RESULT_VALUE NUMBER, -- The numeric result value of the eGFR test
+    CONCEPT_CODE VARCHAR, -- The specific concept code associated with the eGFR test observation
+    CODE_DESCRIPTION VARCHAR, -- The textual description of the concept code
+    OBSERVATION_ID VARCHAR -- The unique identifier for the observation record
 )
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
+COMMENT = 'Intermediate table containing all recorded estimated Glomerular Filtration Rate (eGFR) results for all persons. Filters based on the EGFR_COD cluster ID from MAPPED_CONCEPTS. Excludes records with NULL result values.'
 AS
--- Select distinct rows to avoid duplicates.
+-- Selects distinct eGFR observation records.
+-- Uses DISTINCT as a precaution against potential duplicate source records.
 SELECT DISTINCT
     pp."person_id" as person_id,
     p."sk_patient_id" as sk_patient_id,
-    o."clinical_effective_date" as clinical_effective_date,
+    o."clinical_effective_date"::DATE as clinical_effective_date, -- Cast to DATE
     o."result_value" as result_value,
     c.concept_code,
     c.code_description, -- Using the description from MAPPED_CONCEPTS
     o."id" as observation_id
 -- Source table for observations.
 FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION O
--- Join to the pre-aggregated MAPPED_CONCEPTS table to get cluster info and codes
+-- Join to MAPPED_CONCEPTS to filter based on the cluster ID and get code details.
 JOIN
     DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS C
     ON O."observation_core_concept_id" = C.SOURCE_CODE_ID
--- Join to get person identifier
+-- Join to link observation patient_id to person_id.
 JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
     ON o."patient_id" = pp."patient_id"
--- Join to get patient surrogate key
+-- Join to link observation patient_id to patient surrogate key.
 JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
     ON o."patient_id" = p."id"
--- Filter for the specific eGFR cluster ID.
+-- Filter for observations belonging to the eGFR code cluster.
 WHERE C.CLUSTER_ID = 'EGFR_COD'
--- Filter out records where the result value is missing.
+-- Filter out records where the result value itself is missing.
 AND o."result_value" IS NOT NULL;
 
 

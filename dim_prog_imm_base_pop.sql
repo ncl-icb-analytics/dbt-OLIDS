@@ -1,25 +1,28 @@
 create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_BASE_POP(
-	PERSON_ID,
-	BIRTH_DATE_APPROX,
-	AGE,
-	AGE_MONTHS,
-	AGE_DAYS_APPROX,
-	FIRST_BDAY,
-	SECOND_BDAY,
-	THIRD_BDAY,
-	FIFTH_BDAY,
-	SIXTH_BDAY,
-	IS_PRIMARY_SCHOOL_AGE,
-	IS_SECONDARY_SCHOOL_AGE,
-	ETHNICITY_CATEGORY,
-	ETHNICITY_SUBCATEGORY,
-	ETHNICITY_GRANULAR,
-	LAC_FLAG
-) target_lag = '4 hours' refresh_mode = AUTO
+	PERSON_ID VARCHAR, -- Unique identifier for a person
+	BIRTH_DATE_APPROX DATE, -- Approximate date of birth from DIM_PERSON_AGE
+	AGE NUMBER, -- Age in full years from DIM_PERSON_AGE
+	AGE_MONTHS NUMBER, -- Age in total months from DIM_PERSON_AGE
+	AGE_DAYS_APPROX NUMBER, -- Approximate age in total days from DIM_PERSON_AGE
+	FIRST_BDAY DATE, -- Calculated date of the person's 1st birthday
+	SECOND_BDAY DATE, -- Calculated date of the person's 2nd birthday
+	THIRD_BDAY DATE, -- Calculated date of the person's 3rd birthday
+	FIFTH_BDAY DATE, -- Calculated date of the person's 5th birthday
+	SIXTH_BDAY DATE, -- Calculated date of the person's 6th birthday
+	IS_PRIMARY_SCHOOL_AGE BOOLEAN, -- Flag: TRUE if person is of primary school age (from DIM_PERSON_AGE)
+	IS_SECONDARY_SCHOOL_AGE BOOLEAN, -- Flag: TRUE if person is of secondary school age (from DIM_PERSON_AGE)
+	ETHNICITY_CATEGORY VARCHAR, -- Broad ethnicity category from DIM_PERSON_ETHNICITY
+	ETHNICITY_SUBCATEGORY VARCHAR, -- More specific ethnicity subcategory from DIM_PERSON_ETHNICITY
+	ETHNICITY_GRANULAR VARCHAR, -- Most granular ethnicity detail from DIM_PERSON_ETHNICITY
+	LAC_FLAG VARCHAR -- Flag ('Yes'/'No') indicating if the person is a Looked After Child
+)
+COMMENT = 'Base population dimension for childhood immunisation programs, including individuals aged under 25. Enriches person age details with specific birthday milestones, ethnicity, and a Looked After Child (LAC) flag.'
+target_lag = '4 hours'
+refresh_mode = AUTO
 initialize = ON_CREATE 
- warehouse = NCL_ANALYTICS_XS
- as
---THIS IS THE BASE POPULATION AGED UNDER 25 FOR CHILDHOOD IMMS WITH DEMOGRAPHICS 
+warehouse = NCL_ANALYTICS_XS
+AS
+-- THIS IS THE BASE POPULATION AGED UNDER 25 FOR CHILDHOOD IMMS WITH DEMOGRAPHICS 
 --Find looked after Children using the MAPPEDCONCEPTS view
 WITH lac as (
     SELECT DISTINCT -- Use DISTINCT to avoid duplicates if multiple observations exist for the same person

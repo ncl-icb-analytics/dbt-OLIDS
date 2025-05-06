@@ -1,32 +1,34 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_ALL (
     -- Identifiers
-    PERSON_ID VARCHAR,
-    MEDICATION_ORDER_ID VARCHAR,
-    MEDICATION_STATEMENT_ID VARCHAR,
+    PERSON_ID VARCHAR, -- Unique identifier for the person
+    MEDICATION_ORDER_ID VARCHAR, -- Identifier for the specific medication order
+    MEDICATION_STATEMENT_ID VARCHAR, -- Identifier for the linked medication statement
     -- Order Details
-    ORDER_CLINICAL_EFFECTIVE_DATE TIMESTAMP_NTZ(9),
-    ORDER_MEDICATION_NAME VARCHAR,
-    ORDER_DOSE VARCHAR,
-    ORDER_QUANTITY_VALUE FLOAT,
-    ORDER_QUANTITY_UNIT VARCHAR,
-    ORDER_DURATION_DAYS NUMBER(38,0),
+    ORDER_CLINICAL_EFFECTIVE_DATE TIMESTAMP_NTZ(9), -- Clinical effective date of the medication order
+    ORDER_MEDICATION_NAME VARCHAR, -- Name of the medication as recorded on the order
+    ORDER_DOSE VARCHAR, -- Dose information from the medication order
+    ORDER_QUANTITY_VALUE FLOAT, -- Numeric value of the quantity ordered
+    ORDER_QUANTITY_UNIT VARCHAR, -- Unit for the quantity ordered
+    ORDER_DURATION_DAYS NUMBER(38,0), -- Duration of the prescription in days, from the order
     -- Statement Details (for context)
-    STATEMENT_MEDICATION_NAME VARCHAR,
-    -- Mapped Concept Info (from Statement)
-    MAPPED_CONCEPT_CODE VARCHAR,
-    MAPPED_CONCEPT_DISPLAY VARCHAR,
-    MAPPED_CONCEPT_ID VARCHAR,
-    VALPROATE_PRODUCT_TERM VARCHAR,
-    -- Match Flags
-    MATCHED_ON_NAME BOOLEAN,
-    MATCHED_ON_CONCEPT_ID BOOLEAN
+    STATEMENT_MEDICATION_NAME VARCHAR, -- Name of the medication from the linked statement
+    -- Mapped Concept Info (from Statement Concept ID)
+    MAPPED_CONCEPT_CODE VARCHAR, -- Mapped concept code (e.g., SNOMED) derived from the statement's core concept ID
+    MAPPED_CONCEPT_DISPLAY VARCHAR, -- Display term for the mapped concept code
+    MAPPED_CONCEPT_ID VARCHAR, -- Original Concept ID from MAPPED_CONCEPTS table
+    VALPROATE_PRODUCT_TERM VARCHAR, -- Specific Valproate product term if matched via VALPROATE_CODES; NULL otherwise
+    -- Match Flags indicating how the Valproate record was identified
+    MATCHED_ON_NAME BOOLEAN, -- Flag: TRUE if the order/statement medication name contained 'VALPROATE' or 'VALPROIC ACID' (case-insensitive)
+    MATCHED_ON_CONCEPT_ID BOOLEAN -- Flag: TRUE if the statement's core concept ID matched an entry in the VALPROATE_CODES table
 )
+COMMENT = 'Intermediate table containing all Medication Orders identified as being for Valproate. Identification occurs via either matching medication names (Order or Statement) containing \'VALPROATE\'/\'VALPROIC ACID\' OR by matching the Statement\'s core concept ID to a list of known Valproate concept IDs. Includes details from both the Order and linked Statement.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
-SELECT DISTINCT -- Use DISTINCT just in case of any upstream duplication; possibly not needed but safe
+-- Selects distinct medication orders identified as Valproate based on name or concept ID matching.
+SELECT DISTINCT -- Using DISTINCT as a safeguard against potential upstream duplicates.
     pp."person_id" AS PERSON_ID,
     mo."id" AS MEDICATION_ORDER_ID,
     ms."id" AS MEDICATION_STATEMENT_ID,
@@ -39,37 +41,36 @@ SELECT DISTINCT -- Use DISTINCT just in case of any upstream duplication; possib
     ms."medication_name" AS STATEMENT_MEDICATION_NAME,
     mc.CONCEPT_CODE AS MAPPED_CONCEPT_CODE,
     mc.CONCEPT_DISPLAY AS MAPPED_CONCEPT_DISPLAY,
-    -- Select the original CONCEPT_ID from MAPPED_CONCEPTS
     mc.CONCEPT_ID AS MAPPED_CONCEPT_ID,
-    vp.VALPROATE_PRODUCT_TERM, -- Will be NULL if match was only on name
-    -- Flag indicating if match occurred via name
+    vp.VALPROATE_PRODUCT_TERM,
+    -- Flag indicating if match occurred via medication name in either the Order or Statement (case-insensitive).
     (
         mo."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%') OR
         ms."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%')
     ) AS MATCHED_ON_NAME,
-    -- Flag indicating if match occurred via ConceptID
+    -- Flag indicating if match occurred via a successful join between the statement's concept ID and the VALPROATE_CODES list.
     (vp.CONCEPTID IS NOT NULL) AS MATCHED_ON_CONCEPT_ID
 FROM
-    "Data_Store_OLIDS_Dummy".OLIDS_MASKED.MEDICATION_ORDER mo -- Start with Medication Order table
+    "Data_Store_OLIDS_Dummy".OLIDS_MASKED.MEDICATION_ORDER mo -- Base table is Medication Order.
 INNER JOIN
-    "Data_Store_OLIDS_Dummy".OLIDS_MASKED.MEDICATION_STATEMENT ms ON mo."medication_statement_id" = ms."id" -- Link Order to its Statement
+    "Data_Store_OLIDS_Dummy".OLIDS_MASKED.MEDICATION_STATEMENT ms ON mo."medication_statement_id" = ms."id" -- Each Order must link to a Statement.
 INNER JOIN
-     "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp ON mo."patient_id" = pp."patient_id" -- Get person_id from Order's patient_id
+     "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp ON mo."patient_id" = pp."patient_id" -- Link to Person via the Order's patient_id.
 LEFT JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc ON ms."medication_statement_core_concept_id" = mc.SOURCE_CODE_ID -- Map statement concept ID
+    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc ON ms."medication_statement_core_concept_id" = mc.SOURCE_CODE_ID -- Attempt to map the Statement's concept ID.
 LEFT JOIN
     DATA_LAB_NCL_TRAINING_TEMP.CODESETS.VALPROATE_CODES vp
-    -- CORRECTED JOIN CONDITION: Cast the NUMBER side to VARCHAR for comparison
+    -- Join the mapped concept ID to the known list of Valproate codes. Requires casting VALPROATE_CODES.CONCEPTID (NUMBER) to VARCHAR.
     ON mc.CONCEPT_ID = CAST(vp.CONCEPTID AS VARCHAR)
 WHERE
-    -- Include the row if either the name matches OR the concept ID matches
-    -- Criterion A: Name match (check both order and statement name, case-insensitive)
+    -- The core logic: include the row if EITHER the name contains Valproate OR the concept ID matches the Valproate list.
+    -- Criterion A: Check if medication name (from Order OR Statement) contains 'VALPROATE' or 'VALPROIC ACID' (case-insensitive).
     (
         mo."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%') OR
         ms."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%')
     )
     OR
-    -- Criterion B: Concept ID match (successful join to VALPROATE_CODES via statement's concept)
-    (vp.CONCEPTID IS NOT NULL); -- This check still works as vp.CONCEPTID is only non-null if the join succeeded
+    -- Criterion B: Check if the LEFT JOIN to VALPROATE_CODES was successful (meaning vp.CONCEPTID is not NULL).
+    (vp.CONCEPTID IS NOT NULL);
 
 

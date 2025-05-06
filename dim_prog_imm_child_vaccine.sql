@@ -1,15 +1,20 @@
 --Kate testing new location for tables - new schema
 create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_CHILD_VACCINE(
-	PERSON_ID,
-	AGE,
-	VACCINE_ORDER,
-	VACCINE_ID,
-	VACCINE_NAME,
-	DOSE_NUMBER,
-	EVENT_TYPE,
-	EVENT_DATE,
-	OUT_OF_SCHEDULE
-) target_lag = '4 hours' refresh_mode = AUTO initialize = ON_CREATE warehouse = NCL_ANALYTICS_XS
+	PERSON_ID VARCHAR, -- Unique identifier for a person
+	AGE NUMBER, -- Age of the person at the time of the vaccine event or last refresh
+	VACCINE_ORDER NUMBER, -- Sort order for vaccines as defined in the schedule
+	VACCINE_ID VARCHAR, -- Unique identifier for the specific vaccine and dose (e.g., MMR_1)
+	VACCINE_NAME VARCHAR, -- Common name of the vaccine (e.g., MMR, DTaP/IPV/Hib/HepB)
+	DOSE_NUMBER NUMBER, -- The dose number of the vaccine (e.g., 1, 2, 3)
+	EVENT_TYPE VARCHAR, -- Type of vaccination event (e.g., 'Administration', 'Declined', 'Contraindicated')
+	EVENT_DATE DATE, -- Date the vaccination event occurred
+	OUT_OF_SCHEDULE VARCHAR -- Flag ('Yes'/'No') indicating if an administered vaccine was given outside the recommended schedule
+)
+COMMENT = 'Dimension table detailing individual childhood immunisation events (administrations, declines, contraindications). It links persons to specific vaccine doses, event dates, and determines if administrations were out of schedule. Complex logic is used to match codes to doses and handle duplicates.'
+target_lag = '4 hours'
+refresh_mode = AUTO
+initialize = ON_CREATE
+warehouse = NCL_ANALYTICS_XS
  as
 --This query looks for vaccine events 
 --First ensure that the correct clusters are used for the correct doses 

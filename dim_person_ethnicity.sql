@@ -4,22 +4,24 @@
 -- Ethnicity fields display 'Not Recorded' for persons with no recorded ethnicity.
 -- ==========================================================================
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_ETHNICITY (
-    PERSON_ID VARCHAR,
-    SK_PATIENT_ID NUMBER, -- Assuming NUMBER based on previous examples
-    LATEST_ETHNICITY_DATE DATE, -- Remains NULL if not recorded
-    CONCEPT_ID VARCHAR, -- Display 'Not Recorded' if NULL
-    SNOMED_CODE VARCHAR, -- Display 'Not Recorded' if NULL
-    TERM VARCHAR, -- Display 'Not Recorded' if NULL
-    ETHNICITY_CATEGORY VARCHAR, -- Display 'Not Recorded' if NULL
-    ETHNICITY_SUBCATEGORY VARCHAR, -- Display 'Not Recorded' if NULL
-    ETHNICITY_GRANULAR VARCHAR -- Display 'Not Recorded' if NULL
+    PERSON_ID VARCHAR, -- Unique identifier for a person
+    SK_PATIENT_ID NUMBER, -- Surrogate key for the patient from the PATIENT table
+    LATEST_ETHNICITY_DATE DATE, -- Date of the most recent ethnicity observation for the person; NULL if not recorded
+    CONCEPT_ID VARCHAR, -- Concept ID of the latest ethnicity observation; 'Not Recorded' if NULL
+    SNOMED_CODE VARCHAR, -- SNOMED code of the latest ethnicity observation; 'Not Recorded' if NULL
+    TERM VARCHAR, -- Term/description of the latest ethnicity observation; 'Not Recorded' if NULL
+    ETHNICITY_CATEGORY VARCHAR, -- Broad ethnicity category (e.g., White, Asian); 'Not Recorded' if NULL
+    ETHNICITY_SUBCATEGORY VARCHAR, -- More specific ethnicity subcategory; 'Not Recorded' if NULL
+    ETHNICITY_GRANULAR VARCHAR -- Most granular ethnicity detail available; 'Not Recorded' if NULL
 )
-TARGET_LAG = '4 hours' -- Should be same or longer than PERSON_ETHNICITY_ALL lag
+COMMENT = 'Dimension table providing the latest recorded ethnicity for every person. If no ethnicity is recorded for a person, ethnicity-related fields default to \'Not Recorded\'.'
+TARGET_LAG = '4 hours' -- Should be same or longer than INTERMEDIATE_PERSON_ETHNICITY_ALL lag
 REFRESH_MODE = auto
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH LatestEthnicityPerPerson AS (
-    -- Select the latest ethnicity record for each person who has one
+    -- Identifies the single most recent ethnicity record for each person from the INTERMEDIATE_PERSON_ETHNICITY_ALL table.
+    -- Uses ROW_NUMBER() partitioned by person_id, ordered by clinical_effective_date (desc) and observation_lds_id (desc as tie-breaker).
     SELECT
         pea.person_id,
         pea.sk_patient_id,
@@ -39,7 +41,9 @@ WITH LatestEthnicityPerPerson AS (
             ORDER BY pea.clinical_effective_date DESC, pea.observation_lds_id DESC
         ) = 1 -- Get only the latest record per person
 )
--- Select all persons and join their latest ethnicity data if it exists
+-- Constructs the final dimension by selecting all persons from PATIENT_PERSON and PATIENT tables,
+-- then LEFT JOINing their latest ethnicity information (if available) from the LatestEthnicityPerPerson CTE.
+-- If a person has no ethnicity record, ethnicity-specific fields are populated with 'Not Recorded'.
 SELECT
     pp."person_id",
     p."sk_patient_id", -- Get sk_patient_id from PATIENT table

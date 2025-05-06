@@ -1,21 +1,22 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_DIABETES (
-    PERSON_ID,
-    SK_PATIENT_ID,
-    AGE,
-    IS_ON_DM_REGISTER,
-    DIABETES_TYPE, -- 'Type 1', 'Type 2', 'Unknown', or NULL if not on register
-    EARLIEST_DM_DIAGNOSIS_DATE,
-    EARLIEST_DMTYPE1_DIAGNOSIS_DATE,
-    EARLIEST_DMTYPE2_DIAGNOSIS_DATE,
-    LATEST_DM_DIAGNOSIS_DATE,
-    LATEST_DM_RESOLVED_DATE,
-    LATEST_DMTYPE1_DIAGNOSIS_DATE,
-    LATEST_DMTYPE2_DIAGNOSIS_DATE,
-    ALL_DM_OBSERVATION_IDS,
-    ALL_DM_CONCEPT_CODES,
-    ALL_DM_CONCEPT_DISPLAYS,
-    ALL_DM_SOURCE_CLUSTER_IDS
+    PERSON_ID VARCHAR, -- Unique identifier for a person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    AGE NUMBER, -- Age of the person (>= 17 for this table)
+    IS_ON_DM_REGISTER BOOLEAN, -- Flag indicating if the person is currently on the diabetes register
+    DIABETES_TYPE VARCHAR, -- Determined type of diabetes ('Type 1', 'Type 2', 'Unknown') or NULL if not on register
+    EARLIEST_DM_DIAGNOSIS_DATE DATE, -- Earliest recorded date of any diabetes diagnosis
+    EARLIEST_DMTYPE1_DIAGNOSIS_DATE DATE, -- Earliest recorded date of a Type 1 diabetes diagnosis
+    EARLIEST_DMTYPE2_DIAGNOSIS_DATE DATE, -- Earliest recorded date of a Type 2 diabetes diagnosis
+    LATEST_DM_DIAGNOSIS_DATE DATE, -- Latest recorded date of any diabetes diagnosis
+    LATEST_DM_RESOLVED_DATE DATE, -- Latest recorded date of a diabetes resolved code
+    LATEST_DMTYPE1_DIAGNOSIS_DATE DATE, -- Latest recorded date of a Type 1 diabetes diagnosis
+    LATEST_DMTYPE2_DIAGNOSIS_DATE DATE, -- Latest recorded date of a Type 2 diabetes diagnosis
+    ALL_DM_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to diabetes for the person
+    ALL_DM_CONCEPT_CODES ARRAY, -- Array of all diabetes-related concept codes recorded for the person
+    ALL_DM_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the diabetes-related concept codes
+    ALL_DM_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (DM_COD, DMRES_COD, DMTYPE1_COD, DMTYPE2_COD)
 )
+COMMENT = 'Fact table identifying individuals aged 17 and over currently on the diabetes register, their diabetes type, and relevant diagnosis dates.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -24,7 +25,9 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 
 WITH BaseObservationsAndClusters AS (
-    -- Fetch relevant observations, joining directly to the pre-mapped concepts table
+    -- Fetches all observation records related to diabetes diagnosis (DM_COD, DMTYPE1_COD, DMTYPE2_COD) 
+    -- or diabetes resolution (DMRES_COD) by joining with the MAPPED_CONCEPTS table.
+    -- Includes basic person identifiers and clinical effective dates.
     SELECT
         O."id" AS OBSERVATION_ID,
         PP."person_id" AS PERSON_ID,
@@ -47,7 +50,7 @@ WITH BaseObservationsAndClusters AS (
     WHERE MC.CLUSTER_ID IN ('DM_COD', 'DMRES_COD', 'DMTYPE1_COD', 'DMTYPE2_COD')
 ),
 FilteredByAge AS (
-    -- Join with age dimension and filter for age >= 17
+    -- Filters the base diabetes-related observations to include only individuals aged 17 or older.
     SELECT
         boc.*,
         age.AGE
@@ -57,7 +60,9 @@ FilteredByAge AS (
     WHERE age.AGE >= 17
 ),
 PersonLevelAggregation AS (
-    -- Combine earliest/latest date finding and detail aggregation in one step
+    -- Aggregates diabetes-related information for each person aged 17+.
+    -- Calculates earliest and latest dates for general diabetes, Type 1, Type 2, and resolved codes.
+    -- Collects all associated observation details (IDs, codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
@@ -79,7 +84,10 @@ PersonLevelAggregation AS (
     FROM FilteredByAge
     GROUP BY PERSON_ID
 )
--- Final assembly of status and type using the aggregated data
+-- Final assembly of diabetes status and type for individuals on the register.
+-- Determines IS_ON_DM_REGISTER based on diagnosis and resolution dates.
+-- Derives DIABETES_TYPE based on the latest Type 1 or Type 2 codes for those on the register.
+-- Filters to include only individuals currently on the diabetes register.
 SELECT
     agg.PERSON_ID,
     agg.SK_PATIENT_ID,
