@@ -1,3 +1,4 @@
+--Kate testing new location for tables - new schema
 create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_CHILD_VACCINE(
 	PERSON_ID,
 	AGE,
