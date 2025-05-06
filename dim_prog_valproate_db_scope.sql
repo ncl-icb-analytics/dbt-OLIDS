@@ -17,7 +17,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
     VALPROATE_ORDER_QUANTITY_UNIT VARCHAR, -- Unit for the quantity on the most recent Valproate order
     VALPROATE_ORDER_DURATION_DAYS NUMBER -- Duration in days of the most recent Valproate prescription
 )
-COMMENT = 'Dimension table defining the scope for a Valproate program. Includes non-male individuals aged 0-55 who have a Valproate medication order in the last 6 months.'
+COMMENT = 'Dimension table defining the scope for the Valproate Dashboard. Includes non-male individuals aged 0-55 who have a Valproate medication order in the last 6 months.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
