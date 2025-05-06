@@ -29,7 +29,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_CLI
     VALPROATE_PRODUCT_TERM VARCHAR, -- Specific Valproate product term from the recent order
     VALPROATE_RECENT_ORDER_COUNT NUMBER -- Total count of Valproate orders for this person in the last 6 months
 )
-COMMENT = 'Clinical safety fact table identifying non-male individuals aged 0-55 who are currently pregnant AND have a recent (last 6 months) Valproate medication order. Highlights a high-risk cohort.'
+COMMENT = 'Clinical safety fact table identifying non-male individuals aged 0-55 who are currently pregnant AND have a recent (last 6 months) Valproate medication order. Highlights a high-risk cohort. If this table contains any patients action should be taken to contact the practice to review the patients records.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
