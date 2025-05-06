@@ -11,9 +11,10 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_PREG_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for pregnancy-related codes
     ALL_PREG_SOURCE_CLUSTER_IDS ARRAY, -- Array of source cluster IDs (PREG_COD, PREGDEL_COD)
     IS_CHILD_BEARING_AGE_12_55 BOOLEAN, -- Flag: TRUE if age is 12-55 inclusive
-    IS_CHILD_BEARING_AGE_0_55 BOOLEAN  -- Flag: TRUE if age is 0-55 inclusive
+    IS_CHILD_BEARING_AGE_0_55 BOOLEAN,  -- Flag: TRUE if age is 0-55 inclusive
+    HAS_PERMANENT_ABSENCE_PREG_RISK_FLAG BOOLEAN -- Flag: TRUE if the person has a record in INTERMEDIATE_PERM_ABSENCE_PREG_RISK
 )
-COMMENT = 'Fact table identifying non-male individuals currently deemed pregnant based on PREG_COD and PREGDEL_COD codes from UKHSA_FLU source within the last 9 months.'
+COMMENT = 'Fact table identifying non-male individuals currently deemed pregnant based on PREG_COD and PREGDEL_COD codes from UKHSA_FLU source within the last 9 months. Includes a flag for permanent absence of pregnancy risk.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -67,13 +68,13 @@ PersonLevelPregnancyAggregation AS (
 )
 -- Final assembly of pregnancy status.
 -- Determines IS_CURRENTLY_PREGNANT based on the logic: a recent PREG_COD (last 9 months) that is later than any PREGDEL_COD.
--- Includes age-based child-bearing flags. Filters to only include those currently deemed pregnant.
+-- Includes age-based child-bearing flags and a flag for permanent absence of pregnancy risk.
+-- Filters to only include those currently deemed pregnant.
 SELECT
     pla.PERSON_ID,
     pla.SK_PATIENT_ID,
     pla.AGE,
     pla.SEX,
-    -- Determine if currently pregnant
     CASE
         WHEN pla.LATEST_PREG_COD_DATE IS NOT NULL AND
              pla.LATEST_PREG_COD_DATE >= DATEADD(month, -9, CURRENT_DATE()) AND
@@ -87,8 +88,10 @@ SELECT
     pla.ALL_PREG_CONCEPT_CODES,
     pla.ALL_PREG_CONCEPT_DISPLAYS,
     pla.ALL_PREG_SOURCE_CLUSTER_IDS,
-    -- Recalculate child-bearing age flags based on pla.AGE (SEX is already != 'Male' due to filter in BaseObservationsAndDemographics)
     (pla.AGE >= 12 AND pla.AGE <= 55) AS IS_CHILD_BEARING_AGE_12_55,
-    (pla.AGE <= 55) AS IS_CHILD_BEARING_AGE_0_55 -- Age is non-negative, so pla.AGE >= 0 is implied
+    (pla.AGE <= 55) AS IS_CHILD_BEARING_AGE_0_55,
+    (perm_abs.PERSON_ID IS NOT NULL) AS HAS_PERMANENT_ABSENCE_PREG_RISK_FLAG
 FROM PersonLevelPregnancyAggregation pla
+LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_PERM_ABSENCE_PREG_RISK perm_abs
+    ON pla.PERSON_ID = perm_abs.PERSON_ID
 WHERE IS_CURRENTLY_PREGNANT = TRUE; -- Filter to only include those currently deemed pregnant 
