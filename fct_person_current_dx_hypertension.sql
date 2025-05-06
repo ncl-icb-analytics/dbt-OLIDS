@@ -30,7 +30,7 @@ TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
-COMMENT = 'Identifies patients aged >= 18 currently coded as having Hypertension (latest HYP_COD > latest HYPRES_COD). Joins latest BP reading and its context (Home/ABPM) from INTERMEDIATE_BLOOD_PRESSURE_LATEST. Calculates a simplified HTN stage (Normal, Stage 1, Stage 2, Severe HTN) using context-specific NICE-aligned thresholds applied to the single latest reading.'
+COMMENT = 'Identifies patients aged >= 18 currently coded as having Hypertension (latest HYP_COD > latest HYPRES_COD). Joins latest BP reading and its context (Home/ABPM) from INTERMEDIATE_BLOOD_PRESSURE_LATEST. Calculates a simplified HTN stage (Normal, Stage 1, Stage 2, Severe HTN) using context-specific NICE-aligned thresholds applied to the single latest reading. The calculated does not mean the person has been diagnosed with that stage, only that the latest BP reading is at that stage.'
 AS
 WITH BaseObservationsAndClusters AS (
     -- Fetches observation records related to Hypertension diagnosis (HYP_COD) or resolution (HYPRES_COD).
