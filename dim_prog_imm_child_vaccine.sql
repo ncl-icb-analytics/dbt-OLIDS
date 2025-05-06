@@ -10,7 +10,7 @@ create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
 	EVENT_DATE DATE, -- Date the vaccination event occurred
 	OUT_OF_SCHEDULE VARCHAR -- Flag ('Yes'/'No') indicating if an administered vaccine was given outside the recommended schedule
 )
-COMMENT = 'Dimension table detailing individual childhood immunisation events (administrations, declines, contraindications). It links persons to specific vaccine doses, event dates, and determines if administrations were out of schedule. Complex logic is used to match codes to doses and handle duplicates.'
+COMMENT = 'Dimension table detailing individual childhood immunisation events (administrations, declines, contraindications). It links persons to specific vaccine doses, event dates, and determines if administrations were out of schedule.'
 target_lag = '4 hours'
 refresh_mode = AUTO
 initialize = ON_CREATE
