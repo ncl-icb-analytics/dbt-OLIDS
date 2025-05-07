@@ -13,8 +13,7 @@ This project migrates data models from HealtheIntent (Vertica) to Snowflake. It 
     *   **`intermediate/`**: SQL scripts for intermediate transformation steps.
 *   **`published/`**: Contains SQL scripts that create the final output tables for dashboards or reporting.
 *   **`setup/`**: Scripts for initial database setup (e.g., DDL, schema creation). Contains `setup.sql`.
-*   **`.git/`**: Git version control data.
-*   **`.gitignore`**: Untracked files for Git to ignore.
+*   **`.gitignore`**: Untracked files ignored by Git. Create a `playarea` folder in the project root to create untracked local SQL scripts.
 
 ## Setup & Execution (VS Code & Snowflake Extension)
 
