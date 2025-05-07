@@ -4,8 +4,8 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
     HAS_ARAF_EVENT BOOLEAN COMMENT 'Always TRUE for persons in this table, indicating at least one ARAF-related event meeting criteria',
     EARLIEST_ARAF_EVENT_DATE DATE COMMENT 'Earliest date of any ARAF-related event for the person, after lookback',
     LATEST_ARAF_EVENT_DATE DATE COMMENT 'Latest date of any ARAF-related event for the person, after lookback',
-    LATEST_SPECIFIC_ARAF_FORM_DATE DATE COMMENT 'Latest date of a specific ARAF form (codes 1366401000000107 or 2078951000000106) meeting its lookback',
-    HAS_SPECIFIC_ARAF_FORM_MEETING_LOOKBACK BOOLEAN COMMENT 'TRUE if a specific ARAF form code meeting its lookback is recorded',
+    LATEST_SPECIFIC_ARAF_FORM_DATE DATE COMMENT 'Latest date of an ARAF form event (as defined by CODE_CATEGORY = \'ARAF\' in VALPROATE_PROG_CODES) for the person, after lookback',
+    HAS_SPECIFIC_ARAF_FORM_MEETING_LOOKBACK BOOLEAN COMMENT 'TRUE if an ARAF form event (as defined by CODE_CATEGORY = \'ARAF\' in VALPROATE_PROG_CODES) meeting its lookback is recorded',
     ALL_ARAF_OBSERVATION_IDS ARRAY COMMENT 'Array of unique observation IDs (from OBSERVATION table) related to ARAF events',
     ALL_ARAF_CONCEPT_CODES ARRAY COMMENT 'Array of all distinct ARAF-related medical concept codes found for the person',
     ALL_ARAF_CONCEPT_DISPLAYS ARRAY COMMENT 'Array of display terms for the ARAF concept codes (from MAPPED_CONCEPTS.CODE_DESCRIPTION)',
@@ -27,7 +27,7 @@ WITH BaseARAFObservations AS (
         MC.CONCEPT_CODE AS ARAF_CONCEPT_CODE,
         MC.CODE_DESCRIPTION AS ARAF_CONCEPT_DISPLAY, -- Using CODE_DESCRIPTION from MAPPED_CONCEPTS
         VPC.CODE_CATEGORY AS ARAF_CODE_CATEGORY, -- This will be 'ARAF'
-        (VPC.CODE IN ('1366401000000107', '2078951000000106')) AS IS_SPECIFIC_ARAF_FORM_CODE
+        TRUE AS IS_SPECIFIC_ARAF_FORM_CODE
     FROM
         "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
     JOIN
