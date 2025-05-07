@@ -38,10 +38,6 @@ This project migrates data models from HealtheIntent (Vertica) to Snowflake. It 
 *   Ensure your Snowflake user has the necessary permissions to create schemas, tables, and execute queries.
 *   SQL dialect in the scripts should be compatible with Snowflake.
 
-## Contributing
-
-(Optional: Add guidelines for contributing to the project if applicable.)
-
 ## License
 
-(Optional: Add license information if applicable.) 
+This repository is dual licensed under the Open Government v3 & MIT. All code outputs are subject to Crown Copyright.
