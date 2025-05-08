@@ -1,7 +1,7 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_BP_CONTROL_STATUS (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
-    SK_PATIENT_ID NUMBER(38,0), -- Surrogate key for the patient
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     -- Latest BP Reading Details
     LATEST_BP_DATE DATE, -- Date of the most recent blood pressure reading
     LATEST_SYSTOLIC_VALUE NUMBER, -- Systolic value of the latest BP reading
