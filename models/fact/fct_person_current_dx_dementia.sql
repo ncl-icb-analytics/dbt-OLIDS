@@ -3,7 +3,7 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_DEMENTIA (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
-    SK_PATIENT_ID NUMBER(38,0), -- Surrogate key for the patient
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     -- Dementia Coding Dates & Status
     EARLIEST_DEM_DIAGNOSIS_DATE DATE, -- Earliest recorded date of a dementia diagnosis code (DEM_COD)
     LATEST_DEM_DIAGNOSIS_DATE DATE, -- Latest recorded date of a dementia diagnosis code (DEM_COD)

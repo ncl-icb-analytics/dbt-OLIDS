@@ -5,7 +5,7 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_HYPERTENSION (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
-    SK_PATIENT_ID NUMBER(38,0), -- Surrogate key for the patient
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     -- Demographics
     AGE NUMBER, -- Age of the person (>= 18 for this table)
     -- Hypertension Coding Dates & Status
