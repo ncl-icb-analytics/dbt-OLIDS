@@ -79,7 +79,5 @@ JOIN
     DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_6M_LATEST valp
     ON preg.PERSON_ID = valp.PERSON_ID -- Could also join on wcba.PERSON_ID, as PERSON_ID is the key across these tables for an individual
 WHERE
-    -- Ensures the cohort is restricted to women of child-bearing age (0-55) as defined in the dimension.
-    -- This filter is technically redundant if FCT_PERSON_CURRENT_PREGNANT already sources from a similarly filtered DIM_PERSON_WOMEN_CHILD_BEARING_AGE,
-    -- but kept for explicit clarity of the cohort definition at this table's level.
+    -- Ensures the cohort is restricted to women of child-bearing age (0-55).
     wcba.IS_CHILD_BEARING_AGE_0_55 = TRUE; 
