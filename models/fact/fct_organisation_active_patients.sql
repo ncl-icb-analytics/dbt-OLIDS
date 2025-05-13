@@ -1,7 +1,7 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_ORGANISATION_CURRENT_ACTIVE_PATIENTS(
+create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_ORGANISATION_ACTIVE_PATIENTS(
 	LDS_ORGANISATION_ID VARCHAR, -- Unique identifier for the organisation from the source system
 	ODS_CODE VARCHAR, -- ODS (Organisation Data Service) code for the organisation
-	MEASURE_ID VARCHAR, -- Identifier for the measure being calculated (fixed as 'LDS_ORGANISATION_CURRENT_ACTIVE_LIST_SIZE')
+	MEASURE_ID VARCHAR, -- Identifier for the measure being calculated (fixed as 'LDS_ORGANISATION_ACTIVE_LIST_SIZE')
 	VALUE NUMBER -- The calculated count of currently active patients for the organisation
 ) 
 COMMENT = 'Fact table providing the current active patient list size for each non-obsolete organisation. Active patients are defined based on specific criteria including lds_end_date_time, lds_start_date_time, and death status.'
@@ -15,7 +15,7 @@ as
 SELECT 
     org."id" AS lds_organisation_id, -- Source system identifier for the organisation
     org."organisation_code" AS ods_code, -- ODS code of the organisation
-    'LDS_ORGANISATION_CURRENT_ACTIVE_LIST_SIZE' AS measure_id, -- Static measure ID indicating the metric being calculated
+    'LDS_ORGANISATION_ACTIVE_LIST_SIZE' AS measure_id, -- Static measure ID indicating the metric being calculated
     COUNT(p."id") AS value -- Counts the number of distinct patient IDs meeting the active criteria for the organisation
 FROM 
     "Data_Store_OLIDS_Dummy".OLIDS_MASKED.ORGANISATION org

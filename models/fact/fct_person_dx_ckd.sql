@@ -1,5 +1,5 @@
 -- Define or replace the dynamic table in the HEI_MIGRATION schema to store ONLY patients currently on the CKD register.
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_CKD (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_CKD (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the person (>= 18 for this table)

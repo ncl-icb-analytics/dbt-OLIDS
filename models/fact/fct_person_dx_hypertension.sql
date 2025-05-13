@@ -2,7 +2,7 @@
 -- Includes latest BP reading, its context (Home/ABPM), and an inferred HTN stage
 -- applying NICE-aligned thresholds based on the reading's context.
 -- Inclusion criteria: Patients aged >= 18 with a HYP_COD date later than their latest HYPRES_COD date (or no HYPRES_COD).
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_HYPERTENSION (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_HYPERTENSION (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient

@@ -1,7 +1,7 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_APPOINTMENTS_GP_12M(
+create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_APPOINTMENTS_GP_12M(
 	LDS_PERSON_ID VARCHAR, -- Unique identifier for the person from the source system (linked via APPOINTMENT table)
 	SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient (linked via PATIENT table)
-	MEASURE_ID VARCHAR, -- Identifier for the measure being calculated (fixed as 'LDS_PERSON_CURRENT_GP_APPOINTMENTS_12M')
+	MEASURE_ID VARCHAR, -- Identifier for the measure being calculated (fixed as 'LDS_PERSON_GP_APPOINTMENTS_12M')
 	VALUE VARIANT, -- The calculated count of GP appointments in the last 12 months for the person (stored as VARIANT)
 	ORGANISATION_ID VARCHAR -- Identifier for the organisation associated with the appointment
 )
@@ -15,7 +15,7 @@ warehouse = NCL_ANALYTICS_XS
 SELECT 
     a."person_id" AS LDS_PERSON_ID, -- Person identifier from the APPOINTMENT table
     p."sk_patient_id" AS SK_PATIENT_ID, -- Surrogate key for the patient from the PATIENT table
-    'LDS_PERSON_CURRENT_GP_APPOINTMENTS_12M' AS MEASURE_ID, -- Static measure ID indicating the metric
+    'LDS_PERSON_GP_APPOINTMENTS_12M' AS MEASURE_ID, -- Static measure ID indicating the metric
     TO_VARIANT(COUNT(a."id")) AS VALUE, -- Counts distinct appointments. Stored as VARIANT; might be for future schema flexibility or specific use case.
     a."organisation_id" AS ORGANISATION_ID -- Organisation ID from the APPOINTMENT table
 FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.APPOINTMENT a

@@ -6,7 +6,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_CLI
     SEX VARCHAR, -- Sex of the person (non-'Male')
     IS_CHILD_BEARING_AGE_0_55 BOOLEAN, -- From DIM_PERSON_WOMEN_CHILD_BEARING_AGE, will be TRUE for all rows, indicating age 0-55
 
-    -- Pregnancy Details (from FCT_PERSON_CURRENT_PREGNANT)
+    -- Pregnancy Details (from FCT_PERSON_PREGNANT)
     LATEST_PREG_COD_DATE DATE, -- Latest date of a pregnancy code (PREG_COD)
     LATEST_PREGDEL_COD_DATE DATE, -- Latest date of a pregnancy ended/delivery code (PREGDEL_COD)
     ALL_PREG_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to pregnancy status
@@ -37,12 +37,12 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 -- Selects individuals meeting three key criteria for clinical safety monitoring:
 -- 1. Non-male and aged 0-55 (from DIM_PERSON_WOMEN_CHILD_BEARING_AGE where IS_CHILD_BEARING_AGE_0_55 = TRUE).
--- 2. Currently pregnant (from FCT_PERSON_CURRENT_PREGNANT).
+-- 2. Currently pregnant (from FCT_PERSON_PREGNANT).
 -- 3. Have a recent Valproate order (from INTERMEDIATE_VALPROATE_ORDERS_6M_LATEST).
 SELECT
     -- Core Identifiers from joined tables
     wcba.PERSON_ID,
-    preg.SK_PATIENT_ID, -- SK_PATIENT_ID from FCT_PERSON_CURRENT_PREGNANT
+    preg.SK_PATIENT_ID, -- SK_PATIENT_ID from FCT_PERSON_PREGNANT
     wcba.AGE,
     wcba.SEX,
     wcba.IS_CHILD_BEARING_AGE_0_55,
@@ -73,7 +73,7 @@ SELECT
 FROM
     DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_WOMEN_CHILD_BEARING_AGE wcba
 JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_PREGNANT preg
+    DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_PREGNANT preg
     ON wcba.PERSON_ID = preg.PERSON_ID
 JOIN
     DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_6M_LATEST valp

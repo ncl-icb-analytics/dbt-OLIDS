@@ -1,6 +1,6 @@
 -- Creates a dynamic table identifying patients currently coded as having Dementia (DEM).
 -- Inclusion criteria: Patients with a DEM_COD.
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_CURRENT_DX_DEMENTIA (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_DEMENTIA (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
