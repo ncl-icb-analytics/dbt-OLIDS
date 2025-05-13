@@ -8,7 +8,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     EARLIEST_DIAGNOSIS_DATE DATE, -- Earliest diagnosis date for the condition
     LATEST_DIAGNOSIS_DATE DATE -- Latest diagnosis date for the condition
 )
-COMMENT = 'Summary fact table of all long-term conditions, providing core register status and diagnosis dates for each condition per person.'
+COMMENT = 'Summary fact table of all long-term conditions, providing core register status and diagnosis dates for each condition per person. Condition codes: AF (Atrial Fibrillation), AST (Asthma), CA (Cancer), CHD (Coronary Heart Disease), CKD (Chronic Kidney Disease), COPD (Chronic Obstructive Pulmonary Disease), DEM (Dementia), DEP (Depression), DM (Diabetes), EPIL (Epilepsy), HF (Heart Failure), HTN (Hypertension), LD (Learning Disability), NDH (Non-Diabetic Hyperglycaemia), OB (Obesity), OP (Osteoporosis), PC (Palliative Care), PAD (Peripheral Arterial Disease), RA (Rheumatoid Arthritis), SMI (Serious Mental Illness), STIA (Stroke/TIA).'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
