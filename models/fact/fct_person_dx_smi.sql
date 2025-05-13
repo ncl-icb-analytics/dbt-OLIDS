@@ -16,7 +16,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_LITHIUM_CONCEPT_CODES ARRAY, -- All lithium concept codes for this person
     ALL_LITHIUM_CONCEPT_DISPLAYS ARRAY -- All lithium concept display terms for this person
 )
-COMMENT = 'Fact table for SMI register. Includes both mental health diagnoses and lithium therapy populations.'
+COMMENT = 'Fact table for Serious Mental Illness (SMI) register. Includes patients who meet either: 1) have a mental health diagnosis that is not in remission, or 2) have been issued a prescription for lithium therapy in the last 6 months. Tracks diagnosis dates, remission status, and lithium therapy details including order and stopped dates.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
