@@ -53,7 +53,7 @@ PersonLevelDEMCodingAggregation AS (
             WHEN LATEST_DEM_DIAGNOSIS_DATE IS NOT NULL
             THEN TRUE
             ELSE FALSE
-        END AS IS_ON_DEM_REGISTER_CALC
+        END AS IS_ON_DEM_REGISTER
     FROM BaseObservationsAndClusters
     GROUP BY PERSON_ID
 )
@@ -64,10 +64,10 @@ SELECT
     -- Coding Dates & Status
     dem_agg.EARLIEST_DEM_DIAGNOSIS_DATE,
     dem_agg.LATEST_DEM_DIAGNOSIS_DATE,
-    dem_agg.IS_ON_DEM_REGISTER_CALC,
+    dem_agg.IS_ON_DEM_REGISTER,
     -- Coding Traceability
     dem_agg.ALL_DEM_CONCEPT_CODES,
     dem_agg.ALL_DEM_CONCEPT_DISPLAYS,
     dem_agg.ALL_DEM_SOURCE_CLUSTER_IDS
 FROM PersonLevelDEMCodingAggregation dem_agg
-WHERE dem_agg.IS_ON_DEM_REGISTER_CALC = TRUE; 
+WHERE dem_agg.IS_ON_DEM_REGISTER = TRUE; 

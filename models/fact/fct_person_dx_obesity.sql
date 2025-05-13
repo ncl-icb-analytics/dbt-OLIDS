@@ -6,6 +6,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     IS_BAME BOOLEAN, -- Flag indicating if person is BAME
     HAS_BMI_30_PLUS BOOLEAN, -- Flag indicating if person has BMI >= 30
     HAS_BMI_27_5_PLUS BOOLEAN, -- Flag indicating if person has BMI >= 27.5
+    EARLIEST_BMI_DATE DATE, -- Earliest BMI recording date
     LATEST_BMI_DATE DATE, -- Latest BMI recording date
     LATEST_VALID_BMI_DATE DATE, -- Latest valid BMI recording date
     LATEST_VALID_BMI_VALUE NUMBER, -- Latest valid BMI value
@@ -62,6 +63,7 @@ SELECT
     IS_BAME,
     IS_BMI_30_PLUS,
     IS_BMI_27_5_PLUS,
+    MIN(LATEST_BMI_DATE) OVER (PARTITION BY PERSON_ID) AS EARLIEST_BMI_DATE,
     LATEST_BMI_DATE,
     LATEST_VALID_BMI_DATE,
     LATEST_VALID_BMI_VALUE,
