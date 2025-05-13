@@ -12,7 +12,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     RESULT_UNIT_DISPLAY VARCHAR, -- Display value for the result unit (e.g., 'mmHg'), assumed consistent for the event
     SYSTOLIC_OBSERVATION_ID VARCHAR, -- Observation ID associated with the systolic reading for this event (if identifiable)
     DIASTOLIC_OBSERVATION_ID VARCHAR, -- Observation ID associated with the diastolic reading for this event (if identifiable)
-    ALL_OBSERVATION_IDS ARRAY, -- Array of all unique observation IDs contributing to this person-date event
     ALL_CONCEPT_CODES ARRAY, -- Array of all unique concept codes contributing to this event
     ALL_CONCEPT_DISPLAYS ARRAY, -- Array of all unique concept display terms contributing to this event
     ALL_SOURCE_CLUSTER_IDS ARRAY -- Array of all unique source cluster IDs contributing to this event
@@ -82,7 +81,6 @@ SELECT DISTINCT -- Using DISTINCT primarily because the aggregation itself shoul
     ANY_VALUE(RESULT_UNIT_DISPLAY) AS RESULT_UNIT_DISPLAY,
     MAX(CASE WHEN IS_SYSTOLIC_ROW THEN OBSERVATION_ID ELSE NULL END) AS SYSTOLIC_OBSERVATION_ID,
     MAX(CASE WHEN IS_DIASTOLIC_ROW THEN OBSERVATION_ID ELSE NULL END) AS DIASTOLIC_OBSERVATION_ID,
-    ARRAY_AGG(DISTINCT OBSERVATION_ID) WITHIN GROUP (ORDER BY OBSERVATION_ID) AS ALL_OBSERVATION_IDS,
     ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_CONCEPT_CODES,
     ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_CONCEPT_DISPLAYS,
     ARRAY_AGG(DISTINCT SOURCE_CLUSTER_ID) WITHIN GROUP (ORDER BY SOURCE_CLUSTER_ID) AS ALL_SOURCE_CLUSTER_IDS

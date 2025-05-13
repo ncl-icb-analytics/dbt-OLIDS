@@ -21,7 +21,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     LATEST_BP_IS_ABPM BOOLEAN, -- Flag: TRUE if the latest BP reading was recorded as an ABPM (Ambulatory BP Monitoring) reading
     LATEST_BP_HTN_STAGE VARCHAR, -- Hypertension Stage (e.g., 'Stage 1 HTN', 'Severe HTN') inferred from the latest BP reading, applying context-specific NICE-aligned thresholds
     -- Coding Traceability for Hypertension Diagnosis/Resolution
-    ALL_HTN_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to HYP_COD or HYPRES_COD for the person
     ALL_HTN_CONCEPT_CODES ARRAY, -- Array of all HYP_COD/HYPRES_COD concept codes recorded for the person
     ALL_HTN_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the HYP_COD/HYPRES_COD concept codes
     ALL_HTN_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (HYP_COD, HYPRES_COD)
@@ -62,7 +61,7 @@ PersonLevelHTNCodingAggregation AS (
     -- Aggregates hypertension diagnosis and resolution code information for each person aged 18+.
     -- Calculates earliest/latest HYP_COD dates and latest HYPRES_COD date.
     -- Determines IS_ON_HTN_REGISTER_CALC: TRUE if there's an active HYP_COD (latest HYP_COD > latest HYPRES_COD, or no HYPRES_COD).
-    -- Collects all associated observation details (IDs, codes, displays, cluster IDs) into arrays.
+    -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
@@ -70,7 +69,6 @@ PersonLevelHTNCodingAggregation AS (
         MIN(CASE WHEN SOURCE_CLUSTER_ID = 'HYP_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS EARLIEST_HTN_DIAGNOSIS_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'HYP_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_HTN_DIAGNOSIS_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'HYPRES_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_HTN_RESOLVED_DATE,
-        ARRAY_AGG(DISTINCT OBSERVATION_ID) WITHIN GROUP (ORDER BY OBSERVATION_ID) AS ALL_HTN_OBSERVATION_IDS,
         ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_HTN_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_HTN_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT SOURCE_CLUSTER_ID) WITHIN GROUP (ORDER BY SOURCE_CLUSTER_ID) AS ALL_HTN_SOURCE_CLUSTER_IDS,
@@ -125,7 +123,6 @@ SELECT
             END
     END AS LATEST_BP_HTN_STAGE,
     -- Coding Traceability
-    htn_agg.ALL_HTN_OBSERVATION_IDS,
     htn_agg.ALL_HTN_CONCEPT_CODES,
     htn_agg.ALL_HTN_CONCEPT_DISPLAYS,
     htn_agg.ALL_HTN_SOURCE_CLUSTER_IDS

@@ -4,8 +4,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     CLINICAL_EFFECTIVE_DATE DATE, -- Date the ACR test was performed/recorded
     RESULT_VALUE NUMBER, -- The numeric result value of the Urine ACR test
     CONCEPT_CODE VARCHAR, -- The specific concept code associated with the ACR test observation
-    CODE_DESCRIPTION VARCHAR, -- The textual description of the concept code
-    OBSERVATION_ID VARCHAR -- The unique identifier for the observation record
+    CODE_DESCRIPTION VARCHAR -- The textual description of the concept code
 )
 TARGET_LAG = '4 hours'
 WAREHOUSE = 'NCL_ANALYTICS_XS'
@@ -19,8 +18,7 @@ SELECT DISTINCT
     o."clinical_effective_date"::DATE as clinical_effective_date, -- Cast to DATE
     o."result_value" as result_value,
     c.concept_code,
-    c.code_description,
-    o."id" as observation_id
+    c.code_description
 -- Source table for observations.
 FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION O
 -- Join to MAPPED_CONCEPTS to filter based on concept codes.

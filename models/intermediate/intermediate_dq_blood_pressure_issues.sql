@@ -8,7 +8,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     SYSTOLIC_VALUE_ORIGINAL NUMBER, -- Consolidated systolic BP value before applying plausible range filters (can be out of range)
     DIASTOLIC_VALUE_ORIGINAL NUMBER, -- Consolidated diastolic BP value before applying plausible range filters (can be out of range)
     RESULT_UNIT_DISPLAY VARCHAR, -- Display value for the result unit (e.g., 'mmHg'), assumed consistent for the event
-    ALL_OBSERVATION_IDS ARRAY, -- Array of all unique observation IDs contributing to this raw person-date event
     ALL_CONCEPT_CODES ARRAY, -- Array of all unique concept codes contributing to this raw event
     ALL_CONCEPT_DISPLAYS ARRAY, -- Array of all unique concept display terms contributing to this raw event
     ALL_SOURCE_CLUSTER_IDS ARRAY, -- Array of all unique source cluster IDs contributing to this raw event
@@ -89,7 +88,6 @@ SELECT
     SYSTOLIC_VALUE_ORIGINAL,
     DIASTOLIC_VALUE_ORIGINAL,
     RESULT_UNIT_DISPLAY,
-    ALL_OBSERVATION_IDS,
     ALL_CONCEPT_CODES,
     ALL_CONCEPT_DISPLAYS,
     ALL_SOURCE_CLUSTER_IDS,

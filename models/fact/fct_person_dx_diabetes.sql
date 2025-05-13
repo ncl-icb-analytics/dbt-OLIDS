@@ -11,7 +11,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     LATEST_DM_RESOLVED_DATE DATE, -- Latest recorded date of a diabetes resolved code
     LATEST_DMTYPE1_DIAGNOSIS_DATE DATE, -- Latest recorded date of a Type 1 diabetes diagnosis
     LATEST_DMTYPE2_DIAGNOSIS_DATE DATE, -- Latest recorded date of a Type 2 diabetes diagnosis
-    ALL_DM_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to diabetes for the person
     ALL_DM_CONCEPT_CODES ARRAY, -- Array of all diabetes-related concept codes recorded for the person
     ALL_DM_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the diabetes-related concept codes
     ALL_DM_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (DM_COD, DMRES_COD, DMTYPE1_COD, DMTYPE2_COD)
@@ -62,7 +61,7 @@ FilteredByAge AS (
 PersonLevelAggregation AS (
     -- Aggregates diabetes-related information for each person aged 17+.
     -- Calculates earliest and latest dates for general diabetes, Type 1, Type 2, and resolved codes.
-    -- Collects all associated observation details (IDs, codes, displays, cluster IDs) into arrays.
+    -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
@@ -76,8 +75,7 @@ PersonLevelAggregation AS (
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'DMRES_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_DM_RESOLVED_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'DMTYPE1_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_DMTYPE1_DIAGNOSIS_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'DMTYPE2_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_DMTYPE2_DIAGNOSIS_DATE,
-        -- Aggregate observation details
-        ARRAY_AGG(DISTINCT OBSERVATION_ID) WITHIN GROUP (ORDER BY OBSERVATION_ID) AS ALL_DM_OBSERVATION_IDS,
+        -- Aggregate concept details
         ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_DM_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_DM_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT SOURCE_CLUSTER_ID) WITHIN GROUP (ORDER BY SOURCE_CLUSTER_ID) AS ALL_DM_SOURCE_CLUSTER_IDS
@@ -120,7 +118,6 @@ SELECT
     agg.LATEST_DMTYPE1_DIAGNOSIS_DATE,
     agg.LATEST_DMTYPE2_DIAGNOSIS_DATE,
     -- Include aggregated details
-    agg.ALL_DM_OBSERVATION_IDS,
     agg.ALL_DM_CONCEPT_CODES,
     agg.ALL_DM_CONCEPT_DISPLAYS,
     agg.ALL_DM_SOURCE_CLUSTER_IDS

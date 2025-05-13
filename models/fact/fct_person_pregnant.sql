@@ -6,7 +6,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     IS_CURRENTLY_PREGNANT BOOLEAN, -- Flag indicating if the person is currently deemed pregnant
     LATEST_PREG_COD_DATE DATE, -- Latest date of a pregnancy code (PREG_COD) within the last 9 months
     LATEST_PREGDEL_COD_DATE DATE, -- Latest date of a pregnancy ended/delivery code (PREGDEL_COD)
-    ALL_PREG_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to pregnancy for the person
     ALL_PREG_CONCEPT_CODES ARRAY, -- Array of all pregnancy-related concept codes recorded
     ALL_PREG_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for pregnancy-related codes
     ALL_PREG_SOURCE_CLUSTER_IDS ARRAY, -- Array of source cluster IDs (PREG_COD, PREGDEL_COD)
@@ -51,7 +50,7 @@ WITH BaseObservationsAndDemographics AS (
 PersonLevelPregnancyAggregation AS (
     -- Aggregates pregnancy-related information for each non-male individual.
     -- Determines the latest dates for PREG_COD and PREGDEL_COD.
-    -- Collects all associated observation details into arrays.
+    -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID, 
@@ -59,7 +58,6 @@ PersonLevelPregnancyAggregation AS (
         ANY_VALUE(SEX) as SEX, -- SEX from BaseObservationsAndDemographics
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'PREG_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_PREG_COD_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'PREGDEL_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_PREGDEL_COD_DATE,
-        ARRAY_AGG(DISTINCT OBSERVATION_ID) WITHIN GROUP (ORDER BY OBSERVATION_ID) AS ALL_PREG_OBSERVATION_IDS,
         ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_PREG_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_PREG_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT SOURCE_CLUSTER_ID) WITHIN GROUP (ORDER BY SOURCE_CLUSTER_ID) AS ALL_PREG_SOURCE_CLUSTER_IDS
@@ -84,7 +82,6 @@ SELECT
     END AS IS_CURRENTLY_PREGNANT,
     pla.LATEST_PREG_COD_DATE,
     pla.LATEST_PREGDEL_COD_DATE,
-    pla.ALL_PREG_OBSERVATION_IDS,
     pla.ALL_PREG_CONCEPT_CODES,
     pla.ALL_PREG_CONCEPT_DISPLAYS,
     pla.ALL_PREG_SOURCE_CLUSTER_IDS,

@@ -9,7 +9,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_CLI
     -- Pregnancy Details (from FCT_PERSON_PREGNANT)
     LATEST_PREG_COD_DATE DATE, -- Latest date of a pregnancy code (PREG_COD)
     LATEST_PREGDEL_COD_DATE DATE, -- Latest date of a pregnancy ended/delivery code (PREGDEL_COD)
-    ALL_PREG_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to pregnancy status
     ALL_PREG_CONCEPT_CODES ARRAY, -- Array of all pregnancy-related concept codes
     ALL_PREG_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for pregnancy-related codes
     ALL_PREG_SOURCE_CLUSTER_IDS ARRAY, -- Array of source cluster IDs (PREG_COD, PREGDEL_COD)
@@ -50,7 +49,6 @@ SELECT
     -- Pregnancy Details
     preg.LATEST_PREG_COD_DATE,
     preg.LATEST_PREGDEL_COD_DATE,
-    preg.ALL_PREG_OBSERVATION_IDS,
     preg.ALL_PREG_CONCEPT_CODES,
     preg.ALL_PREG_CONCEPT_DISPLAYS,
     preg.ALL_PREG_SOURCE_CLUSTER_IDS,

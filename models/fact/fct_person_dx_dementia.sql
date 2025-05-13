@@ -9,7 +9,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     LATEST_DEM_DIAGNOSIS_DATE DATE, -- Latest recorded date of a dementia diagnosis code (DEM_COD)
     IS_ON_DEM_REGISTER_CALC BOOLEAN, -- Flag: TRUE if DEM_COD is present
     -- Coding Traceability for Dementia Diagnosis
-    ALL_DEM_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to DEM_COD for the person
     ALL_DEM_CONCEPT_CODES ARRAY, -- Array of all DEM_COD concept codes recorded for the person
     ALL_DEM_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the DEM_COD concept codes
     ALL_DEM_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (DEM_COD)
@@ -41,13 +40,12 @@ PersonLevelDEMCodingAggregation AS (
     -- Aggregates dementia diagnosis code information for each person.
     -- Calculates earliest/latest DEM_COD dates.
     -- Determines IS_ON_DEM_REGISTER_CALC: TRUE if there's any DEM_COD.
-    -- Collects all associated observation details (IDs, codes, displays, cluster IDs) into arrays.
+    -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
         MIN(CASE WHEN SOURCE_CLUSTER_ID = 'DEM_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS EARLIEST_DEM_DIAGNOSIS_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'DEM_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_DEM_DIAGNOSIS_DATE,
-        ARRAY_AGG(DISTINCT OBSERVATION_ID) WITHIN GROUP (ORDER BY OBSERVATION_ID) AS ALL_DEM_OBSERVATION_IDS,
         ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_DEM_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_DEM_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT SOURCE_CLUSTER_ID) WITHIN GROUP (ORDER BY SOURCE_CLUSTER_ID) AS ALL_DEM_SOURCE_CLUSTER_IDS,
@@ -68,7 +66,6 @@ SELECT
     dem_agg.LATEST_DEM_DIAGNOSIS_DATE,
     dem_agg.IS_ON_DEM_REGISTER_CALC,
     -- Coding Traceability
-    dem_agg.ALL_DEM_OBSERVATION_IDS,
     dem_agg.ALL_DEM_CONCEPT_CODES,
     dem_agg.ALL_DEM_CONCEPT_DISPLAYS,
     dem_agg.ALL_DEM_SOURCE_CLUSTER_IDS

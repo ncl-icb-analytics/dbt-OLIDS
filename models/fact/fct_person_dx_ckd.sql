@@ -21,7 +21,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     LATEST_CKD_DIAGNOSIS_DATE DATE, -- Latest recorded date of a CKD diagnosis code (CKD_COD)
     LATEST_CKD_RESOLVED_DATE DATE, -- Latest recorded date of a CKD resolved code (CKDRES_COD)
     -- Aggregated details for traceability of CKD codes
-    ALL_CKD_OBSERVATION_IDS ARRAY, -- Array of all observation IDs related to CKD_COD or CKDRES_COD for the person
     ALL_CKD_CONCEPT_CODES ARRAY, -- Array of all CKD_COD/CKDRES_COD concept codes recorded for the person
     ALL_CKD_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the CKD_COD/CKDRES_COD concept codes
     ALL_CKD_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (CKD_COD, CKDRES_COD)
@@ -68,7 +67,7 @@ PersonLevelCKDCodingAggregation AS (
     -- Aggregates CKD diagnosis and resolution code information for each person aged 18+.
     -- Calculates earliest/latest CKD_COD dates and latest CKDRES_COD date.
     -- Determines IS_ON_CKD_REGISTER_CALC: TRUE if there's an active CKD_COD (latest CKD_COD > latest CKDRES_COD, or no CKDRES_COD).
-    -- Collects all associated observation details (IDs, codes, displays, cluster IDs) into arrays.
+    -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
         ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
@@ -76,11 +75,9 @@ PersonLevelCKDCodingAggregation AS (
         MIN(CASE WHEN SOURCE_CLUSTER_ID = 'CKD_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS EARLIEST_CKD_DIAGNOSIS_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'CKD_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_CKD_DIAGNOSIS_DATE,
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'CKDRES_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_CKD_RESOLVED_DATE,
-        ARRAY_AGG(DISTINCT OBSERVATION_ID) WITHIN GROUP (ORDER BY OBSERVATION_ID) AS ALL_CKD_OBSERVATION_IDS,
         ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_CKD_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_CKD_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT SOURCE_CLUSTER_ID) WITHIN GROUP (ORDER BY SOURCE_CLUSTER_ID) AS ALL_CKD_SOURCE_CLUSTER_IDS,
-        -- Calculate register status based on codes
         CASE
             WHEN LATEST_CKD_DIAGNOSIS_DATE IS NOT NULL AND
                  (LATEST_CKD_RESOLVED_DATE IS NULL OR LATEST_CKD_DIAGNOSIS_DATE > LATEST_CKD_RESOLVED_DATE)
@@ -113,7 +110,6 @@ SELECT
     cod_agg.LATEST_CKD_DIAGNOSIS_DATE,
     cod_agg.LATEST_CKD_RESOLVED_DATE,
     -- Coding Traceability
-    cod_agg.ALL_CKD_OBSERVATION_IDS,
     cod_agg.ALL_CKD_CONCEPT_CODES,
     cod_agg.ALL_CKD_CONCEPT_DISPLAYS,
     cod_agg.ALL_CKD_SOURCE_CLUSTER_IDS
