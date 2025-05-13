@@ -4,6 +4,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     AGE NUMBER, -- Age of the person
     IS_ON_RA_REGISTER BOOLEAN, -- Flag indicating if person is on the RA register (always TRUE for rows in this table)
     EARLIEST_RA_DIAGNOSIS_DATE DATE, -- Earliest RA diagnosis date
+    LATEST_RA_DIAGNOSIS_DATE DATE, -- Latest RA diagnosis date
     ALL_RA_CONCEPT_CODES ARRAY, -- All RA concept codes
     ALL_RA_CONCEPT_DISPLAYS ARRAY -- All RA concept display terms
 )
@@ -42,6 +43,7 @@ PersonLevelAggregation AS (
         SK_PATIENT_ID,
         AGE,
         MIN(CLINICAL_EFFECTIVE_DATE) AS EARLIEST_RA_DIAGNOSIS_DATE,
+        MAX(CLINICAL_EFFECTIVE_DATE) AS LATEST_RA_DIAGNOSIS_DATE,
         ARRAY_AGG(DISTINCT CONCEPT_CODE) AS ALL_RA_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT CODE_DESCRIPTION) AS ALL_RA_CONCEPT_DISPLAYS
     FROM BaseObservations
@@ -53,6 +55,7 @@ SELECT
     AGE,
     TRUE AS IS_ON_RA_REGISTER, -- All patients in this table are on the register
     EARLIEST_RA_DIAGNOSIS_DATE,
+    LATEST_RA_DIAGNOSIS_DATE,
     ALL_RA_CONCEPT_CODES,
     ALL_RA_CONCEPT_DISPLAYS
 FROM PersonLevelAggregation; 
