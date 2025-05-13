@@ -2,7 +2,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the person (will be >= 14)
-    HAS_LD_DIAGNOSIS BOOLEAN, -- Flag indicating an LD diagnosis (always TRUE for rows in this table)
+    IS_ON_LD_REGISTER BOOLEAN, -- Flag indicating an LD diagnosis (always TRUE for rows in this table)
     EARLIEST_LD_DIAGNOSIS_DATE DATE, -- Earliest recorded date of an LD diagnosis for the person
     LATEST_LD_DIAGNOSIS_DATE DATE, -- Latest recorded date of an LD diagnosis for the person
     ALL_LD_CONCEPT_CODES ARRAY, -- Array of all LD concept codes recorded for the person
@@ -19,16 +19,17 @@ AS
 WITH FilteredByAge AS (
     -- Selects individuals from the intermediate LD diagnoses table who are aged 14 or older.
     SELECT
-        PERSON_ID,
-        SK_PATIENT_ID,
-        AGE,
-        OBSERVATION_ID,
-        CLINICAL_EFFECTIVE_DATE,
-        CONCEPT_CODE,
-        CONCEPT_DISPLAY,
-        SOURCE_CLUSTER_ID
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LD_DIAGNOSES_ALL
-    WHERE AGE >= 14
+        ld.PERSON_ID,
+        ld.SK_PATIENT_ID,
+        age.AGE,
+        ld.CLINICAL_EFFECTIVE_DATE,
+        ld.CONCEPT_CODE,
+        ld.CODE_DESCRIPTION as CONCEPT_DISPLAY,
+        'LD_DIAGNOSIS_COD' as SOURCE_CLUSTER_ID
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LD_DIAGNOSES_ALL ld
+    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
+        ON ld.PERSON_ID = age.PERSON_ID
+    WHERE age.AGE >= 14
 ),
 PersonLevelLDAggregation AS (
     -- Aggregates learning disability information for each person aged 14+,
@@ -51,7 +52,7 @@ SELECT
     pla.PERSON_ID,
     pla.SK_PATIENT_ID,
     pla.AGE,
-    TRUE AS HAS_LD_DIAGNOSIS, -- All individuals in this table have an LD diagnosis by definition
+    TRUE AS IS_ON_LD_REGISTER, -- All individuals in this table have an LD diagnosis by definition
     pla.EARLIEST_LD_DIAGNOSIS_DATE,
     pla.LATEST_LD_DIAGNOSIS_DATE,
     pla.ALL_LD_CONCEPT_CODES,

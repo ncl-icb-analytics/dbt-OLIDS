@@ -12,7 +12,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     EARLIEST_HTN_DIAGNOSIS_DATE DATE, -- Earliest recorded date of a hypertension diagnosis code (HYP_COD)
     LATEST_HTN_DIAGNOSIS_DATE DATE, -- Latest recorded date of a hypertension diagnosis code (HYP_COD)
     LATEST_HTN_RESOLVED_DATE DATE, -- Latest recorded date of a hypertension resolved code (HYPRES_COD)
-    IS_ON_HTN_REGISTER_CALC BOOLEAN, -- Flag: TRUE if latest HYP_COD is active (later than any HYPRES_COD, or no HYPRES_COD)
+    IS_ON_HTN_REGISTER BOOLEAN, -- Flag: TRUE if latest HYP_COD is active (later than any HYPRES_COD, or no HYPRES_COD)
     -- Latest Blood Pressure Info & Staging (from INTERMEDIATE_BLOOD_PRESSURE_LATEST)
     LATEST_BP_DATE DATE, -- Date of the most recent blood pressure reading
     LATEST_BP_SYSTOLIC_VALUE NUMBER, -- Systolic value of the latest BP reading

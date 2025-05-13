@@ -7,7 +7,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     -- Dementia Coding Dates & Status
     EARLIEST_DEM_DIAGNOSIS_DATE DATE, -- Earliest recorded date of a dementia diagnosis code (DEM_COD)
     LATEST_DEM_DIAGNOSIS_DATE DATE, -- Latest recorded date of a dementia diagnosis code (DEM_COD)
-    IS_ON_DEM_REGISTER_CALC BOOLEAN, -- Flag: TRUE if DEM_COD is present
+    IS_ON_DEM_REGISTER BOOLEAN, -- Flag: TRUE if DEM_COD is present
     -- Coding Traceability for Dementia Diagnosis
     ALL_DEM_CONCEPT_CODES ARRAY, -- Array of all DEM_COD concept codes recorded for the person
     ALL_DEM_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the DEM_COD concept codes

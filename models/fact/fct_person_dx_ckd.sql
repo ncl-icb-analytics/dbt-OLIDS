@@ -3,6 +3,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the person (>= 18 for this table)
+    IS_ON_CKD_REGISTER BOOLEAN, -- Flag indicating if the person is currently on the CKD register
     -- Latest Lab Info from INTERMEDIATE_CKD_LAB_INFERENCE
     LATEST_EGFR_VALUE NUMBER, -- Latest eGFR value recorded
     LATEST_EGFR_DATE DATE, -- Date of the latest eGFR value
@@ -66,7 +67,7 @@ FilteredByAge AS (
 PersonLevelCKDCodingAggregation AS (
     -- Aggregates CKD diagnosis and resolution code information for each person aged 18+.
     -- Calculates earliest/latest CKD_COD dates and latest CKDRES_COD date.
-    -- Determines IS_ON_CKD_REGISTER_CALC: TRUE if there's an active CKD_COD (latest CKD_COD > latest CKDRES_COD, or no CKDRES_COD).
+    -- Determines IS_ON_CKD_REGISTER: TRUE if there's an active CKD_COD (latest CKD_COD > latest CKDRES_COD, or no CKDRES_COD).
     -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
@@ -83,7 +84,7 @@ PersonLevelCKDCodingAggregation AS (
                  (LATEST_CKD_RESOLVED_DATE IS NULL OR LATEST_CKD_DIAGNOSIS_DATE > LATEST_CKD_RESOLVED_DATE)
             THEN TRUE
             ELSE FALSE
-        END AS IS_ON_CKD_REGISTER_CALC
+        END AS IS_ON_CKD_REGISTER
     FROM FilteredByAge
     GROUP BY PERSON_ID
 )
@@ -93,6 +94,7 @@ SELECT
     cod_agg.PERSON_ID,
     cod_agg.SK_PATIENT_ID,
     cod_agg.AGE,
+    cod_agg.IS_ON_CKD_REGISTER,
     -- Lab Inference Details
     lab_inf.LATEST_EGFR_VALUE,
     lab_inf.LATEST_EGFR_DATE,
@@ -119,4 +121,4 @@ FROM PersonLevelCKDCodingAggregation cod_agg
 LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_CKD_LAB_INFERENCE lab_inf
     ON cod_agg.PERSON_ID = lab_inf.PERSON_ID
 -- Final filter to ensure only individuals currently on the CKD register (based on coding logic) are included in this fact table.
-WHERE cod_agg.IS_ON_CKD_REGISTER_CALC = TRUE;
+WHERE cod_agg.IS_ON_CKD_REGISTER = TRUE;
