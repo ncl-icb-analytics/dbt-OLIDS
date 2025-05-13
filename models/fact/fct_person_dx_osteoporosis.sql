@@ -25,7 +25,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_FRAGILITY_FRACTURE_CONCEPT_DISPLAYS ARRAY, -- All fragility fracture concept display terms
     ALL_FRACTURE_SITES ARRAY -- All fracture sites
 )
-COMMENT = 'Fact table for osteoporosis register. Implements business rules for patient inclusion based on age (50-74), fragility fractures after April 2012, and DXA scan confirmation.'
+COMMENT = 'Fact table for osteoporosis register. Includes patients aged 50-74 who meet all of: 1) have a fragility fracture after April 2012, 2) have an osteoporosis diagnosis, and 3) have either a DXA scan or a DXA T-score <= -2.5. Tracks diagnosis dates, DXA results, and fracture history.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
