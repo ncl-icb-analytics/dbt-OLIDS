@@ -54,7 +54,7 @@ PatientCharacteristics AS (
         (ckd.PERSON_ID IS NOT NULL) AS HAS_CKD,
         ckd.LATEST_ACR_VALUE,
         -- Hypertension Status
-        COALESCE(htn.IS_ON_HTN_REGISTER_CALC, FALSE) AS IS_DIAGNOSED_HTN
+        COALESCE(htn.IS_ON_HTN_REGISTER, FALSE) AS IS_DIAGNOSED_HTN
     FROM LatestBP bp
     -- Essential joins
     JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age ON bp.PERSON_ID = age.PERSON_ID
