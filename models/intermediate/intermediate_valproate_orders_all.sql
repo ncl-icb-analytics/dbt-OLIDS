@@ -16,12 +16,12 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     MAPPED_CONCEPT_CODE VARCHAR, -- Mapped concept code (e.g., SNOMED) derived from the statement's core concept ID
     MAPPED_CONCEPT_DISPLAY VARCHAR, -- Display term for the mapped concept code
     MAPPED_CONCEPT_ID VARCHAR, -- Original Concept ID from MAPPED_CONCEPTS table
-    VALPROATE_PRODUCT_TERM VARCHAR, -- Specific Valproate product term if matched via VALPROATE_CODES; NULL otherwise
+    VALPROATE_PRODUCT_TERM VARCHAR, -- Specific Valproate product term if matched via VALPROATE_PROG_CODES; NULL otherwise
     -- Match Flags indicating how the Valproate record was identified
     MATCHED_ON_NAME BOOLEAN, -- Flag: TRUE if the order/statement medication name contained 'VALPROATE' or 'VALPROIC ACID' (case-insensitive)
-    MATCHED_ON_CONCEPT_ID BOOLEAN -- Flag: TRUE if the statement's core concept ID matched an entry in the VALPROATE_CODES table
+    MATCHED_ON_CONCEPT_ID BOOLEAN -- Flag: TRUE if the statement's core concept ID matched an entry in the VALPROATE_PROG_CODES table with CODE_CATEGORY = 'DRUG'
 )
-COMMENT = 'Intermediate table containing all Medication Orders identified as being for Valproate. Identification occurs via either matching medication names (Order or Statement) containing \'VALPROATE\'/\'VALPROIC ACID\' OR by matching the Statement\'s core concept ID to a list of known Valproate concept IDs. Includes details from both the Order and linked Statement.'
+COMMENT = 'Intermediate table containing all Medication Orders identified as being for Valproate. Identification occurs via either matching medication names (Order or Statement) containing \'VALPROATE\'/\'VALPROIC ACID\' OR by matching the Statement\'s core concept ID to a list of known Valproate concept IDs in VALPROATE_PROG_CODES (CODE_CATEGORY = \'DRUG\'). Includes details from both the Order and linked Statement.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -48,8 +48,8 @@ SELECT DISTINCT -- Using DISTINCT as a safeguard against potential upstream dupl
         mo."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%') OR
         ms."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%')
     ) AS MATCHED_ON_NAME,
-    -- Flag indicating if match occurred via a successful join between the statement's concept ID and the VALPROATE_CODES list.
-    (vp.CONCEPTID IS NOT NULL) AS MATCHED_ON_CONCEPT_ID
+    -- Flag indicating if match occurred via a successful join between the statement's concept ID and the VALPROATE_PROG_CODES list.
+    (vp.CODE IS NOT NULL) AS MATCHED_ON_CONCEPT_ID
 FROM
     "Data_Store_OLIDS_Dummy".OLIDS_MASKED.MEDICATION_ORDER mo -- Base table is Medication Order.
 INNER JOIN
@@ -59,9 +59,10 @@ INNER JOIN
 LEFT JOIN
     DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc ON ms."medication_statement_core_concept_id" = mc.SOURCE_CODE_ID -- Attempt to map the Statement's concept ID.
 LEFT JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.VALPROATE_CODES vp
-    -- Join the mapped concept ID to the known list of Valproate codes. Requires casting VALPROATE_CODES.CONCEPTID (NUMBER) to VARCHAR.
-    ON mc.CONCEPT_ID = CAST(vp.CONCEPTID AS VARCHAR)
+    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.VALPROATE_PROG_CODES vp
+    -- Join the mapped concept ID to the known list of Valproate codes, filtering for drug codes only.
+    ON mc.CONCEPT_ID = vp.CODE
+    AND vp.CODE_CATEGORY = 'DRUG'
 WHERE
     -- The core logic: include the row if EITHER the name contains Valproate OR the concept ID matches the Valproate list.
     -- Criterion A: Check if medication name (from Order OR Statement) contains 'VALPROATE' or 'VALPROIC ACID' (case-insensitive).
@@ -70,7 +71,7 @@ WHERE
         ms."medication_name" ILIKE ANY ('%VALPROATE%', '%VALPROIC ACID%')
     )
     OR
-    -- Criterion B: Check if the LEFT JOIN to VALPROATE_CODES was successful (meaning vp.CONCEPTID is not NULL).
-    (vp.CONCEPTID IS NOT NULL);
+    -- Criterion B: Check if the LEFT JOIN to VALPROATE_PROG_CODES was successful (meaning vp.CODE is not NULL).
+    (vp.CODE IS NOT NULL);
 
 
