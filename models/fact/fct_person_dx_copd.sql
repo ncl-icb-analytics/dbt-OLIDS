@@ -1,0 +1,115 @@
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_COPD (
+    PERSON_ID VARCHAR, -- Unique identifier for the person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    AGE NUMBER, -- Age of the person
+    IS_ON_COPD_REGISTER BOOLEAN, -- Flag indicating if person is on the COPD register
+    EARLIEST_DIAGNOSIS_DATE DATE, -- Earliest COPD diagnosis date
+    LATEST_DIAGNOSIS_DATE DATE, -- Latest COPD diagnosis date
+    LATEST_RESOLUTION_DATE DATE, -- Latest COPD resolution date
+    EARLIEST_UNRESOLVED_DIAGNOSIS_DATE DATE, -- Earliest unresolved diagnosis date (EUNRESCOPD_DAT)
+    HAS_SPIROMETRY_CONFIRMATION BOOLEAN, -- Flag indicating if person has spirometry confirmation
+    LATEST_SPIROMETRY_DATE DATE, -- Date of latest spirometry test
+    LATEST_SPIROMETRY_FEV1_FVC_RATIO NUMBER, -- Latest FEV1/FVC ratio
+    IS_UNABLE_SPIROMETRY BOOLEAN, -- Flag indicating if person is unable to have spirometry
+    LATEST_UNABLE_SPIROMETRY_DATE DATE, -- Latest date when unable to have spirometry was recorded
+    IS_PRE_APRIL_2023_DIAGNOSIS BOOLEAN, -- Flag indicating if diagnosis was before April 2023
+    IS_POST_APRIL_2023_DIAGNOSIS BOOLEAN, -- Flag indicating if diagnosis was after April 2023
+    ALL_COPD_CONCEPT_CODES ARRAY, -- All COPD concept codes for this person
+    ALL_COPD_CONCEPT_DISPLAYS ARRAY -- All COPD concept display terms for this person
+)
+COMMENT = 'Fact table for COPD register. Includes business rules for both pre and post April 2023 diagnoses, with spirometry requirements.'
+TARGET_LAG = '4 hours'
+REFRESH_MODE = AUTO
+INITIALIZE = ON_CREATE
+WAREHOUSE = NCL_ANALYTICS_XS
+AS
+
+WITH FilteredByAge AS (
+    -- Filter for patients aged 35 or older
+    SELECT 
+        d.PERSON_ID,
+        d.SK_PATIENT_ID,
+        age.AGE,
+        d.EARLIEST_DIAGNOSIS_DATE,
+        d.LATEST_DIAGNOSIS_DATE,
+        d.LATEST_RESOLUTION_DATE,
+        d.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_COPD_DIAGNOSES d
+    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
+        ON d.PERSON_ID = age.PERSON_ID
+    WHERE age.AGE >= 35
+    GROUP BY 
+        d.PERSON_ID,
+        d.SK_PATIENT_ID,
+        age.AGE,
+        d.EARLIEST_DIAGNOSIS_DATE,
+        d.LATEST_DIAGNOSIS_DATE,
+        d.LATEST_RESOLUTION_DATE,
+        d.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE
+),
+LatestSpirometry AS (
+    -- Get latest spirometry results for each person
+    SELECT
+        PERSON_ID,
+        MAX(CLINICAL_EFFECTIVE_DATE) AS LATEST_SPIROMETRY_DATE,
+        MAX(CASE WHEN IS_BELOW_0_7 THEN RESULT_VALUE ELSE NULL END) AS LATEST_SPIROMETRY_FEV1_FVC_RATIO,
+        BOOLOR_AGG(IS_BELOW_0_7) AS HAS_SPIROMETRY_CONFIRMATION
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_COPD_SPIROMETRY
+    GROUP BY PERSON_ID
+),
+UnableSpirometry AS (
+    -- Get latest unable-to-have-spirometry status for each person
+    SELECT
+        PERSON_ID,
+        MAX(LATEST_UNABLE_SPIROMETRY_DATE) AS LATEST_UNABLE_SPIROMETRY_DATE,
+        COUNT(*) > 0 AS IS_UNABLE_SPIROMETRY
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_COPD_UNABLE_SPIROMETRY
+    GROUP BY PERSON_ID
+),
+PersonLevelCodingAggregation AS (
+    -- Aggregate all COPD concept codes and displays into arrays
+    SELECT
+        PERSON_ID,
+        ARRAY_AGG(DISTINCT CONCEPT_CODE) AS ALL_COPD_CONCEPT_CODES,
+        ARRAY_AGG(DISTINCT CODE_DESCRIPTION) AS ALL_COPD_CONCEPT_DISPLAYS
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_COPD_DIAGNOSES
+    WHERE SOURCE_CLUSTER_ID = 'COPD_COD'
+    GROUP BY PERSON_ID
+)
+-- Final selection implementing business rules
+SELECT
+    f.PERSON_ID,
+    f.SK_PATIENT_ID,
+    f.AGE,
+    -- Business rules for register inclusion:
+    -- 1. Must have an unresolved diagnosis
+    -- 2. For pre-April 2023: Just need the diagnosis
+    -- 3. For post-April 2023: Need either spirometry confirmation or unable-to-have-spirometry status
+    CASE
+        WHEN f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE IS NULL THEN FALSE
+        WHEN f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE < '2023-04-01' THEN TRUE
+        WHEN f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE >= '2023-04-01' 
+            AND (COALESCE(s.HAS_SPIROMETRY_CONFIRMATION, FALSE) 
+                 OR COALESCE(u.IS_UNABLE_SPIROMETRY, FALSE)) THEN TRUE
+        ELSE FALSE
+    END AS IS_ON_COPD_REGISTER,
+    f.EARLIEST_DIAGNOSIS_DATE,
+    f.LATEST_DIAGNOSIS_DATE,
+    f.LATEST_RESOLUTION_DATE,
+    f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE,
+    COALESCE(s.HAS_SPIROMETRY_CONFIRMATION, FALSE) AS HAS_SPIROMETRY_CONFIRMATION,
+    s.LATEST_SPIROMETRY_DATE,
+    s.LATEST_SPIROMETRY_FEV1_FVC_RATIO,
+    COALESCE(u.IS_UNABLE_SPIROMETRY, FALSE) AS IS_UNABLE_SPIROMETRY,
+    u.LATEST_UNABLE_SPIROMETRY_DATE,
+    CASE WHEN f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE < '2023-04-01' THEN TRUE ELSE FALSE END AS IS_PRE_APRIL_2023_DIAGNOSIS,
+    CASE WHEN f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE >= '2023-04-01' THEN TRUE ELSE FALSE END AS IS_POST_APRIL_2023_DIAGNOSIS,
+    c.ALL_COPD_CONCEPT_CODES,
+    c.ALL_COPD_CONCEPT_DISPLAYS
+FROM FilteredByAge f
+LEFT JOIN LatestSpirometry s
+    ON f.PERSON_ID = s.PERSON_ID
+LEFT JOIN UnableSpirometry u
+    ON f.PERSON_ID = u.PERSON_ID
+LEFT JOIN PersonLevelCodingAggregation c
+    ON f.PERSON_ID = c.PERSON_ID; 
