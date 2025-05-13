@@ -17,7 +17,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_ETHNICITY_CONCEPT_CODES ARRAY, -- All ethnicity concept codes for this person
     ALL_ETHNICITY_CONCEPT_DISPLAYS ARRAY -- All ethnicity concept display terms for this person
 )
-COMMENT = 'Fact table for obesity register implementing business rules for patient inclusion based on BMI and ethnicity.'
+COMMENT = 'Fact table for obesity register. Includes patients aged 18 and over who meet either: 1) BMI >= 30, or 2) BMI >= 27.5 for BAME patients. Tracks BMI values, dates, and ethnicity status.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE

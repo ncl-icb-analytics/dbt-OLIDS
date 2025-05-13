@@ -28,7 +28,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_DIABETES_CONCEPT_CODES ARRAY, -- All diabetes concept codes for this person
     ALL_DIABETES_CONCEPT_DISPLAYS ARRAY -- All diabetes concept display terms for this person
 )
-COMMENT = 'Fact table for NDH register. Implements core business rules for non-diabetic hyperglycaemia register inclusion.'
+COMMENT = 'Fact table for non-diabetic hyperglycaemia (NDH) register. Includes patients aged 18 and over who have either: 1) NDH diagnosis and never had diabetes, or 2) NDH diagnosis and their diabetes is resolved. Tracks NDH, IGT, PRD, and diabetes diagnosis dates and status.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
