@@ -111,4 +111,15 @@ SELECT
     f.ALL_PRD_CONCEPT_DISPLAYS,
     f.ALL_DIABETES_CONCEPT_CODES,
     f.ALL_DIABETES_CONCEPT_DISPLAYS
-FROM FilteredByAge f; 
+FROM FilteredByAge f
+WHERE CASE
+    -- Rule 2: Has NDH diagnosis and never had diabetes
+    WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL 
+        AND f.EARLIEST_DIABETES_DATE IS NULL THEN TRUE
+    -- Rule 3: Has NDH diagnosis and latest diabetes is resolved
+    WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL 
+        AND f.LATEST_DIABETES_DATE IS NOT NULL 
+        AND f.LATEST_DIABETES_RESOLUTION_DATE IS NOT NULL 
+        AND f.IS_DIABETES_RESOLVED THEN TRUE
+    ELSE FALSE
+END = TRUE; -- Only include patients on the NDH register 
