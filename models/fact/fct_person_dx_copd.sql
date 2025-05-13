@@ -17,15 +17,15 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_COPD_CONCEPT_CODES ARRAY, -- All COPD concept codes for this person
     ALL_COPD_CONCEPT_DISPLAYS ARRAY -- All COPD concept display terms for this person
 )
-COMMENT = 'Fact table for COPD register. Includes business rules for both pre and post April 2023 diagnoses, with spirometry requirements.'
+COMMENT = 'Fact table for COPD register. Includes patients with different criteria based on diagnosis date: 1) Pre-April 2023: requires COPD diagnosis only, 2) Post-April 2023: requires either spirometry confirmation (FEV1/FVC < 0.7 within 3 months before or 6 months after diagnosis, or within 6 months of registration for new patients) or documented inability to have spirometry. Tracks diagnosis dates, spirometry results, and resolution status.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 
-WITH FilteredByAge AS (
-    -- Filter for patients aged 35 or older
+WITH BaseDiagnoses AS (
+    -- Get all COPD diagnoses
     SELECT 
         d.PERSON_ID,
         d.SK_PATIENT_ID,
@@ -37,7 +37,6 @@ WITH FilteredByAge AS (
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_COPD_DIAGNOSES d
     JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
         ON d.PERSON_ID = age.PERSON_ID
-    WHERE age.AGE >= 35
     GROUP BY 
         d.PERSON_ID,
         d.SK_PATIENT_ID,
@@ -106,7 +105,7 @@ SELECT
     CASE WHEN f.EARLIEST_UNRESOLVED_DIAGNOSIS_DATE >= '2023-04-01' THEN TRUE ELSE FALSE END AS IS_POST_APRIL_2023_DIAGNOSIS,
     c.ALL_COPD_CONCEPT_CODES,
     c.ALL_COPD_CONCEPT_DISPLAYS
-FROM FilteredByAge f
+FROM BaseDiagnoses f
 LEFT JOIN LatestSpirometry s
     ON f.PERSON_ID = s.PERSON_ID
 LEFT JOIN UnableSpirometry u
