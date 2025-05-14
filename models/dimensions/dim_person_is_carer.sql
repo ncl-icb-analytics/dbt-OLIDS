@@ -83,10 +83,10 @@ WITH LatestCarerStatusPerPerson AS (
                  LOWER(mc.code_description) LIKE '%relative%' THEN 'Caring for family member'
             -- Other relationships
             WHEN LOWER(mc.code_description) LIKE '%neighbour%' OR
-                 LOWER(mc.code_description) LIKE '%friend%' OR
-                 LOWER(mc.code_description) LIKE '%patient themselves providing care%' THEN 'Caring for non-family member'
+                 LOWER(mc.code_description) LIKE '%friend%' THEN 'Caring for non-family member'
             -- Special cases
             WHEN LOWER(mc.code_description) LIKE '%contingency plan%' THEN 'Has carer contingency plan'
+            WHEN LOWER(mc.code_description) LIKE '%patient themselves providing care%' THEN 'Patient is carer'
             WHEN oc.is_carer THEN 'Caring for other'
             ELSE NULL
         END AS carer_details,
