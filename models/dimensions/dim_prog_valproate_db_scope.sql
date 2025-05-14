@@ -56,6 +56,8 @@ INNER JOIN
 INNER JOIN
     "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" pat
     ON pp."patient_id" = pat."id"
+JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_ACTIVE_PATIENTS ap
+    ON wcba.PERSON_ID = ap.PERSON_ID
 WHERE
     -- Ensures the cohort is restricted to the 0-55 age range for non-males as defined in DIM_PERSON_WOMEN_CHILD_BEARING_AGE.
     wcba.IS_CHILD_BEARING_AGE_0_55 = TRUE; 
