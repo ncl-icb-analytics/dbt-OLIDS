@@ -14,7 +14,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     ALL_FRACTURE_CONCEPT_DISPLAYS ARRAY, -- All fragility fracture concept display terms
     ALL_FRACTURE_SITES ARRAY -- All unique fracture sites for the person
 )
-COMMENT = 'Intermediate table containing fragility fractures, including fracture sites and dates. Filters for fractures after April 2012 and categorises fracture sites.'
+COMMENT = 'Intermediate table containing fragility fractures, including fracture sites and dates. Only includes fractures after April 2012.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -69,6 +69,7 @@ PersonLevelCodingAggregation AS (
         ARRAY_AGG(DISTINCT CODE_DESCRIPTION) AS ALL_FRACTURE_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT FRACTURE_SITE) AS ALL_FRACTURE_SITES
     FROM BaseObservations
+    WHERE CLINICAL_EFFECTIVE_DATE >= '2012-04-01'
     GROUP BY PERSON_ID
 )
 -- Final selection with one row per person
@@ -90,4 +91,5 @@ SELECT
 FROM PersonDates pd
 LEFT JOIN PersonLevelCodingAggregation c
     ON pd.PERSON_ID = c.PERSON_ID
+WHERE pd.CLINICAL_EFFECTIVE_DATE >= '2012-04-01'
 QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1; 
