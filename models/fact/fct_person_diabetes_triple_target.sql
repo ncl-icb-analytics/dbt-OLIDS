@@ -4,6 +4,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     DIABETES_TYPE VARCHAR, -- Type of diabetes
     LATEST_HBA1C_DATE DATE, -- Date of latest HbA1c
     LATEST_HBA1C_VALUE NUMBER, -- Latest HbA1c value (mmol/mol or %)
+    HBA1C_TYPE VARCHAR, -- 'IFCC' if mmol/mol, 'DCCT' if %, NULL if unknown
     LATEST_BP_DATE DATE, -- Date of latest BP
     LATEST_SYSTOLIC NUMBER, -- Latest systolic BP
     LATEST_DIASTOLIC NUMBER, -- Latest diastolic BP
@@ -22,7 +23,8 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
 )
 TARGET_LAG = '4 hours'
 WAREHOUSE = 'NCL_ANALYTICS_XS'
-COMMENT = 'Fact table for the diabetes triple target. Includes latest HbA1c, blood pressure, and total cholesterol results for people on the diabetes register. Flags indicate:
+COMMENT = 'Fact table for the diabetes triple target. Includes latest HbA1c (with type), blood pressure, and total cholesterol results for people on the diabetes register. Flags indicate:
+- HBA1C_TYPE: "IFCC" (mmol/mol) or "DCCT" (%)
 - HBA1C_IN_TARGET_RANGE: HbA1c < 58 mmol/mol (IFCC) or < 7.5% (DCCT)
 - BP_IN_TARGET_RANGE: Systolic < 140 mmHg AND Diastolic < 80 mmHg
 - CHOLESTEROL_IN_TARGET_RANGE: Total cholesterol < 5 mmol/L
@@ -36,6 +38,11 @@ SELECT
     d.DIABETES_TYPE,
     hba1c.CLINICAL_EFFECTIVE_DATE AS LATEST_HBA1C_DATE,
     hba1c.RESULT_VALUE AS LATEST_HBA1C_VALUE,
+    CASE
+        WHEN hba1c.IS_IFCC THEN 'IFCC'
+        WHEN hba1c.IS_DCCT THEN 'DCCT'
+        ELSE NULL
+    END AS HBA1C_TYPE,
     bp.CLINICAL_EFFECTIVE_DATE AS LATEST_BP_DATE,
     bp.SYSTOLIC_VALUE AS LATEST_SYSTOLIC,
     bp.DIASTOLIC_VALUE AS LATEST_DIASTOLIC,
