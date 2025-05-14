@@ -5,6 +5,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     BMI_VALUE NUMBER -- The numeric BMI value (filtered to valid range 5-400)
 )
 COMMENT = 'Historic record of all valid numeric BMI values over time. Includes only BMIVAL_COD measurements within valid range (5-400), ordered by patient and date.'
+CLUSTER BY (PERSON_ID, CLINICAL_EFFECTIVE_DATE)
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
