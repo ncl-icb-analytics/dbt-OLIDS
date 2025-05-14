@@ -7,7 +7,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     CODE_DESCRIPTION VARCHAR, -- The display term for the concept code
     FRACTURE_SITE VARCHAR, -- The anatomical site of the fracture (e.g., hip, wrist, spine)
     IS_FRAGILITY_FRACTURE BOOLEAN, -- Flag indicating if this is a fragility fracture
-    IS_POST_APRIL_2012 BOOLEAN, -- Flag indicating if fracture occurred after April 2012
     EARLIEST_FRACTURE_DATE DATE, -- Earliest fragility fracture date after April 2012
     LATEST_FRACTURE_DATE DATE, -- Latest fragility fracture date after April 2012
     ALL_FRACTURE_CONCEPT_CODES ARRAY, -- All fragility fracture concept codes
@@ -51,9 +50,8 @@ WITH BaseObservations AS (
 PersonDates AS (
     SELECT
         bo.*,
-        -- Flag fragility fractures and post-April 2012 fractures
+        -- Flag fragility fractures
         TRUE AS IS_FRAGILITY_FRACTURE,
-        CLINICAL_EFFECTIVE_DATE >= '2012-04-01' AS IS_POST_APRIL_2012,
         -- Get earliest and latest fracture dates (post-April 2012 only)
         MIN(CASE WHEN CLINICAL_EFFECTIVE_DATE >= '2012-04-01' THEN CLINICAL_EFFECTIVE_DATE END) 
             OVER (PARTITION BY PERSON_ID) AS EARLIEST_FRACTURE_DATE,
@@ -82,7 +80,6 @@ SELECT
     pd.CODE_DESCRIPTION,
     pd.FRACTURE_SITE,
     pd.IS_FRAGILITY_FRACTURE,
-    pd.IS_POST_APRIL_2012,
     pd.EARLIEST_FRACTURE_DATE,
     pd.LATEST_FRACTURE_DATE,
     c.ALL_FRACTURE_CONCEPT_CODES,
