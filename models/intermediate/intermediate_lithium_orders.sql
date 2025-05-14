@@ -10,11 +10,11 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     IS_LITHIUM_STOPPED BOOLEAN, -- Flag indicating if this is a lithium stopped code
     LATEST_LITHIUM_ORDER_DATE DATE, -- Latest lithium order date
     LATEST_LITHIUM_STOPPED_DATE DATE, -- Latest lithium stopped date
-    IS_ON_LITHIUM BOOLEAN, -- Flag indicating if person is currently on lithium (order in last 6 months and not stopped)
+    LITHIUM_ISSUED_LAST_6M BOOLEAN, -- TRUE if person has a lithium order in the last 6 months and not stopped (see logic)
     ALL_LITHIUM_CONCEPT_CODES ARRAY, -- All lithium concept codes for this person
     ALL_LITHIUM_CONCEPT_DISPLAYS ARRAY -- All lithium concept display terms for this person
 )
-COMMENT = 'Intermediate table containing lithium orders and stopped status, using LIT_COD and LITSP_COD clusters. Includes logic for 6-month medication window.'
+COMMENT = 'Intermediate table containing all lithium orders and stopped status, using LIT_COD and LITSP_COD clusters. Includes a flag (LITHIUM_ISSUED_LAST_6M) for whether a person has a lithium order in the last 6 months and not stopped, but does not filter on this.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -46,7 +46,7 @@ PersonDates AS (
         bo.*,
         MAX(ORDER_DATE) OVER (PARTITION BY PERSON_ID) AS LATEST_LITHIUM_ORDER_DATE,
         MAX(STOPPED_DATE) OVER (PARTITION BY PERSON_ID) AS LATEST_LITHIUM_STOPPED_DATE,
-        -- Person is on lithium if:
+        -- Person has lithium issued in last 6 months if:
         -- 1. They have a lithium order in the last 6 months
         -- 2. AND either no stopped date OR stopped date is before the latest order
         CASE 
@@ -56,7 +56,7 @@ PersonDates AS (
                     OR MAX(STOPPED_DATE) OVER (PARTITION BY PERSON_ID) < MAX(ORDER_DATE) OVER (PARTITION BY PERSON_ID)
                 ) THEN TRUE
             ELSE FALSE
-        END AS IS_ON_LITHIUM
+        END AS LITHIUM_ISSUED_LAST_6M
     FROM BaseObservations bo
 ),
 PersonLevelCodingAggregation AS (
@@ -82,7 +82,7 @@ SELECT
     CASE WHEN pd.SOURCE_CLUSTER_ID = 'LITSP_COD' THEN TRUE ELSE FALSE END AS IS_LITHIUM_STOPPED,
     pd.LATEST_LITHIUM_ORDER_DATE,
     pd.LATEST_LITHIUM_STOPPED_DATE,
-    pd.IS_ON_LITHIUM,
+    pd.LITHIUM_ISSUED_LAST_6M,
     c.ALL_LITHIUM_CONCEPT_CODES,
     c.ALL_LITHIUM_CONCEPT_DISPLAYS
 FROM PersonDates pd

@@ -3,7 +3,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the person
     IS_ON_SMI_REGISTER BOOLEAN, -- Flag indicating if person is on the SMI register
-    IS_ON_LITHIUM BOOLEAN, -- Flag indicating if person is on lithium therapy
+    IS_ON_LITHIUM BOOLEAN, -- Flag indicating if person has a lithium order in the last 6 months and not stopped
     HAS_MH_DIAGNOSIS BOOLEAN, -- Flag indicating if person has a mental health diagnosis
     IS_IN_REMISSION BOOLEAN, -- Flag indicating if person is in remission
     EARLIEST_MH_DIAGNOSIS_DATE DATE, -- Earliest mental health diagnosis date
@@ -16,7 +16,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_LITHIUM_CONCEPT_CODES ARRAY, -- All lithium concept codes for this person
     ALL_LITHIUM_CONCEPT_DISPLAYS ARRAY -- All lithium concept display terms for this person
 )
-COMMENT = 'Fact table for Serious Mental Illness (SMI) register. Includes patients who meet either: 1) have a mental health diagnosis that is not in remission, or 2) have been issued a prescription for lithium therapy in the last 6 months. Tracks diagnosis dates, remission status, and lithium therapy details including order and stopped dates.'
+COMMENT = 'Fact table for Serious Mental Illness (SMI) register. Includes patients who meet either: 1) have a mental health diagnosis that is not in remission, or 2) have been issued a prescription for lithium therapy in the last 6 months (LITHIUM_ISSUED_LAST_6M). Tracks diagnosis dates, remission status, and lithium therapy details including order and stopped dates.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -37,7 +37,7 @@ WITH FilteredByAge AS (
         mh.ALL_MH_CONCEPT_DISPLAYS,
         li.LATEST_LITHIUM_ORDER_DATE,
         li.LATEST_LITHIUM_STOPPED_DATE,
-        li.IS_ON_LITHIUM,
+        li.LITHIUM_ISSUED_LAST_6M,
         li.ALL_LITHIUM_CONCEPT_CODES,
         li.ALL_LITHIUM_CONCEPT_DISPLAYS
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_MH_DIAGNOSES mh
@@ -53,13 +53,13 @@ SELECT
     f.AGE,
     -- Person is on SMI register if they either:
     -- 1. Have a mental health diagnosis (not in remission)
-    -- 2. OR are on lithium therapy
+    -- 2. OR have a lithium order in the last 6 months and not stopped
     CASE
         WHEN (f.EARLIEST_MH_DIAGNOSIS_DATE IS NOT NULL AND NOT f.IS_IN_REMISSION)
-            OR f.IS_ON_LITHIUM THEN TRUE
+            OR f.LITHIUM_ISSUED_LAST_6M THEN TRUE
         ELSE FALSE
     END AS IS_ON_SMI_REGISTER,
-    COALESCE(f.IS_ON_LITHIUM, FALSE) AS IS_ON_LITHIUM,
+    COALESCE(f.LITHIUM_ISSUED_LAST_6M, FALSE) AS IS_ON_LITHIUM,
     f.EARLIEST_MH_DIAGNOSIS_DATE IS NOT NULL AS HAS_MH_DIAGNOSIS,
     COALESCE(f.IS_IN_REMISSION, FALSE) AS IS_IN_REMISSION,
     f.EARLIEST_MH_DIAGNOSIS_DATE,
