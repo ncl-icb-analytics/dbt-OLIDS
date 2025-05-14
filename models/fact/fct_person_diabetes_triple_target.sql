@@ -3,7 +3,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     DIABETES_TYPE VARCHAR, -- Type of diabetes
     LATEST_HBA1C_DATE DATE, -- Date of latest HbA1c
-    LATEST_HBA1C_VALUE NUMBER, -- Latest HbA1c value (mmol/mol or %)
+    LATEST_HBA1C_VALUE NUMBER(6,1), -- Latest HbA1c value (mmol/mol or %)
     HBA1C_TYPE VARCHAR, -- 'IFCC' if mmol/mol, 'DCCT' if %, NULL if unknown
     LATEST_BP_DATE DATE, -- Date of latest BP
     LATEST_SYSTOLIC NUMBER, -- Latest systolic BP
