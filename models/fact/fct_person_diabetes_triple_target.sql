@@ -9,7 +9,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     LATEST_SYSTOLIC NUMBER, -- Latest systolic BP
     LATEST_DIASTOLIC NUMBER, -- Latest diastolic BP
     LATEST_CHOL_DATE DATE, -- Date of latest total cholesterol
-    LATEST_CHOL_VALUE NUMBER, -- Latest total cholesterol (mmol/L)
+    LATEST_CHOL_VALUE NUMBER(6,1), -- Latest total cholesterol (mmol/L)
     HBA1C_IN_TARGET_RANGE BOOLEAN, -- Latest HbA1c is in target range (<58 mmol/mol if IFCC, <7.5% if DCCT)
     BP_IN_TARGET_RANGE BOOLEAN, -- Latest BP is in target range (Systolic < 140 and Diastolic < 80)
     CHOLESTEROL_IN_TARGET_RANGE BOOLEAN, -- Latest cholesterol is in target range (< 5 mmol/L)
