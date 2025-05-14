@@ -1,6 +1,7 @@
 -- ==========================================================================
 -- Dimension Dynamic Table holding inactive patient status at person level.
--- Includes deceased patients (using death_year), dummy patients, and deregistered patients (using registration_end_date).
+-- Includes only deceased patients (using death_year) and deregistered patients (using registration_end_date).
+-- Excludes dummy patients as they are not considered real inactive patients.
 -- Links PATIENT_PERSON, PATIENT, PERSON, and PATIENT_REGISTERED_PRACTITIONER_IN_ROLE tables.
 -- ==========================================================================
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_INACTIVE_PATIENTS (
@@ -10,7 +11,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     PATIENT_IDS ARRAY COMMENT 'Array of all patient IDs associated with this person',
     IS_ACTIVE BOOLEAN COMMENT 'Whether the person is currently an active patient (will be FALSE)',
     IS_DECEASED BOOLEAN COMMENT 'Whether the person is recorded as deceased',
-    IS_DUMMY_PATIENT BOOLEAN COMMENT 'Whether the person is a dummy patient record',
+    IS_DUMMY_PATIENT BOOLEAN COMMENT 'Whether the person is a dummy patient record (will be FALSE)',
     IS_CONFIDENTIAL BOOLEAN COMMENT 'Whether the person has confidential status',
     IS_SPINE_SENSITIVE BOOLEAN COMMENT 'Whether the person has spine sensitive status',
     BIRTH_YEAR NUMBER COMMENT 'Year of birth',
@@ -21,9 +22,9 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     RECORD_OWNER_ORG_CODE VARCHAR COMMENT 'Organisation code of the record owner',
     REGISTRATION_END_DATE TIMESTAMP_NTZ COMMENT 'End date of the last practice registration',
     LATEST_RECORD_DATE TIMESTAMP_NTZ COMMENT 'Date of the most recent patient record update',
-    INACTIVE_REASON VARCHAR COMMENT 'Reason for inactivity (Deceased, Dummy Patient, or Deregistered)'
+    INACTIVE_REASON VARCHAR COMMENT 'Reason for inactivity (Deceased or Deregistered)'
 )
-COMMENT = 'Dimension table providing inactive patient status at person level. Includes deceased patients (using death_year), dummy patients, and deregistered patients (using registration_end_date). Links PATIENT_PERSON, PATIENT, PERSON, and PATIENT_REGISTERED_PRACTITIONER_IN_ROLE tables.'
+COMMENT = 'Dimension table providing inactive patient status at person level. Includes only deceased patients (using death_year) and deregistered patients (using registration_end_date). Excludes dummy patients as they are not considered real inactive patients.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = auto
 WAREHOUSE = NCL_ANALYTICS_XS
@@ -64,10 +65,9 @@ LatestPatientRecordPerPerson AS (
         p."record_owner_organisation_code" AS RECORD_OWNER_ORG_CODE,
         prp."end_date" AS REGISTRATION_END_DATE,
         p."lds_datetime_data_acquired" AS LATEST_RECORD_DATE,
-        -- Determine reason for inactivity
+        -- Determine reason for inactivity (only for real inactive patients)
         CASE
             WHEN p."death_year" IS NOT NULL THEN 'Deceased'
-            WHEN p."is_dummy_patient" THEN 'Dummy Patient'
             WHEN prp."end_date" IS NOT NULL THEN 'Deregistered'
             ELSE NULL
         END AS INACTIVE_REASON,
@@ -119,4 +119,6 @@ FROM
     LatestPatientRecordPerPerson
 WHERE
     record_rank = 1
-    AND IS_ACTIVE = FALSE; -- Only include inactive patients 
+    AND IS_ACTIVE = FALSE
+    AND IS_DUMMY_PATIENT = FALSE -- Exclude dummy patients
+    AND INACTIVE_REASON IS NOT NULL; -- Only include patients with a valid inactive reason 
