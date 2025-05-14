@@ -2,7 +2,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     CLINICAL_EFFECTIVE_DATE DATE, -- Date of the latest HbA1c test
-    RESULT_VALUE NUMBER(6,1), -- The numeric result value of the HbA1c test (float, up to 2 decimal places)
+    RESULT_VALUE NUMBER(6,1), -- The numeric result value of the HbA1c test (float, 1 decimal place)
     CONCEPT_CODE VARCHAR, -- The specific concept code associated with the HbA1c test observation
     CODE_DESCRIPTION VARCHAR, -- The textual description of the concept code
     IS_IFCC BOOLEAN, -- Flag indicating if this is an IFCC measurement
@@ -21,9 +21,5 @@ SELECT
     CODE_DESCRIPTION,
     IS_IFCC,
     IS_DCCT
-FROM (
-    SELECT *,
-        ROW_NUMBER() OVER (PARTITION BY PERSON_ID ORDER BY CLINICAL_EFFECTIVE_DATE DESC, RESULT_VALUE DESC) AS RN
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_HBA1C_ALL
-)
-WHERE RN = 1; 
+FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_HBA1C_ALL
+QUALIFY ROW_NUMBER() OVER (PARTITION BY PERSON_ID ORDER BY CLINICAL_EFFECTIVE_DATE DESC, RESULT_VALUE DESC) = 1; 
