@@ -1,7 +1,6 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_LTC_SUMMARY (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
-    AGE NUMBER, -- Current age
     CONDITION_CODE VARCHAR, -- Code identifying the condition (e.g., 'AF', 'ASTHMA', 'CANCER')
     CONDITION_NAME VARCHAR, -- Display name of the condition
     IS_ON_REGISTER BOOLEAN, -- Flag indicating if person is on the condition register
@@ -290,13 +289,10 @@ WITH ConditionUnion AS (
 SELECT 
     cu.PERSON_ID,
     cu.SK_PATIENT_ID,
-    dpa.AGE,
     cu.CONDITION_CODE,
     cu.CONDITION_NAME,
     cu.IS_ON_REGISTER,
     cu.EARLIEST_DIAGNOSIS_DATE,
     cu.LATEST_DIAGNOSIS_DATE
 FROM ConditionUnion cu
-LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE dpa
-    ON cu.PERSON_ID = dpa.PERSON_ID
 WHERE cu.IS_ON_REGISTER = TRUE; 
