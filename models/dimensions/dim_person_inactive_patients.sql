@@ -1,8 +1,8 @@
 -- ==========================================================================
 -- Dimension Dynamic Table holding inactive patient status at person level.
--- Includes only deceased patients (using death_year) and deregistered patients (using registration_end_date).
+-- Includes only deceased patients (using death_year) and patients from closed/obsolete practices.
 -- Excludes dummy patients as they are not considered real inactive patients.
--- Links PATIENT_PERSON, PATIENT, PERSON, and PATIENT_REGISTERED_PRACTITIONER_IN_ROLE tables.
+-- Links PATIENT_PERSON, PATIENT, PERSON, and ORGANISATION tables.
 -- ==========================================================================
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_INACTIVE_PATIENTS (
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
@@ -18,13 +18,22 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     BIRTH_MONTH NUMBER COMMENT 'Month of birth',
     DEATH_YEAR NUMBER COMMENT 'Year of death (NULL if alive)',
     DEATH_MONTH NUMBER COMMENT 'Month of death (NULL if alive)',
+    -- Practice details from ORGANISATION
     REGISTERED_PRACTICE_ID VARCHAR COMMENT 'ID of the practice where the person was last registered',
+    PRACTICE_CODE VARCHAR COMMENT 'Organisation code of the last practice',
+    PRACTICE_NAME VARCHAR COMMENT 'Name of the last practice',
+    PRACTICE_TYPE_CODE VARCHAR COMMENT 'Type code of the last practice',
+    PRACTICE_TYPE_DESC VARCHAR COMMENT 'Type description of the last practice',
+    PRACTICE_POSTCODE VARCHAR COMMENT 'Postcode of the last practice',
+    PRACTICE_PARENT_ORG_ID VARCHAR COMMENT 'Parent organisation ID of the last practice',
+    PRACTICE_OPEN_DATE DATE COMMENT 'Date when the last practice opened',
+    PRACTICE_CLOSE_DATE DATE COMMENT 'Date when the last practice closed/will close (if applicable)',
+    PRACTICE_IS_OBSOLETE BOOLEAN COMMENT 'Flag indicating if the last practice is marked as obsolete',
     RECORD_OWNER_ORG_CODE VARCHAR COMMENT 'Organisation code of the record owner',
-    REGISTRATION_END_DATE TIMESTAMP_NTZ COMMENT 'End date of the last practice registration',
     LATEST_RECORD_DATE TIMESTAMP_NTZ COMMENT 'Date of the most recent patient record update',
-    INACTIVE_REASON VARCHAR COMMENT 'Reason for inactivity (Deceased or Deregistered)'
+    INACTIVE_REASON VARCHAR COMMENT 'Reason for inactivity (Deceased, Practice Closed, or Practice Obsolete)'
 )
-COMMENT = 'Dimension table providing inactive patient status at person level. Includes only deceased patients (using death_year) and deregistered patients (using registration_end_date). Excludes dummy patients as they are not considered real inactive patients.'
+COMMENT = 'Dimension table providing inactive patient status at person level. Includes only deceased patients (using death_year) and patients from closed/obsolete practices. Excludes dummy patients as they are not considered real inactive patients.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = auto
 WAREHOUSE = NCL_ANALYTICS_XS
@@ -50,7 +59,8 @@ LatestPatientRecordPerPerson AS (
         CASE
             WHEN p."death_year" IS NOT NULL THEN FALSE -- Deceased
             WHEN p."is_dummy_patient" THEN FALSE -- Dummy patient
-            WHEN prp."end_date" IS NOT NULL THEN FALSE -- Deregistered
+            WHEN o."close_date" IS NOT NULL THEN FALSE -- Practice closed
+            WHEN o."is_obsolete" THEN FALSE -- Practice obsolete
             ELSE TRUE
         END AS IS_ACTIVE,
         p."death_year" IS NOT NULL AS IS_DECEASED,
@@ -61,14 +71,24 @@ LatestPatientRecordPerPerson AS (
         p."birth_month" AS BIRTH_MONTH,
         p."death_year" AS DEATH_YEAR,
         p."death_month" AS DEATH_MONTH,
+        -- Practice details from ORGANISATION
         p."registered_practice_id" AS REGISTERED_PRACTICE_ID,
+        o."organisation_code" AS PRACTICE_CODE,
+        o."name" AS PRACTICE_NAME,
+        o."type_code" AS PRACTICE_TYPE_CODE,
+        o."type_desc" AS PRACTICE_TYPE_DESC,
+        o."postcode" AS PRACTICE_POSTCODE,
+        o."parent_organisation_id" AS PRACTICE_PARENT_ORG_ID,
+        o."open_date" AS PRACTICE_OPEN_DATE,
+        o."close_date" AS PRACTICE_CLOSE_DATE,
+        o."is_obsolete" AS PRACTICE_IS_OBSOLETE,
         p."record_owner_organisation_code" AS RECORD_OWNER_ORG_CODE,
-        prp."end_date" AS REGISTRATION_END_DATE,
         p."lds_datetime_data_acquired" AS LATEST_RECORD_DATE,
-        -- Determine reason for inactivity (only for real inactive patients)
+        -- Determine reason for inactivity
         CASE
             WHEN p."death_year" IS NOT NULL THEN 'Deceased'
-            WHEN prp."end_date" IS NOT NULL THEN 'Deregistered'
+            WHEN o."close_date" IS NOT NULL THEN 'Practice Closed'
+            WHEN o."is_obsolete" THEN 'Practice Obsolete'
             ELSE NULL
         END AS INACTIVE_REASON,
         -- Rank to get the latest record
@@ -90,10 +110,8 @@ LatestPatientRecordPerPerson AS (
         PatientIdsPerPerson pip
         ON pp."person_id" = pip."person_id"
     LEFT JOIN
-        "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_REGISTERED_PRACTITIONER_IN_ROLE prp
-        ON pp."person_id" = prp."person_id"
-        AND prp."organisation_id" = p."registered_practice_id"
-        AND prp."end_date" IS NULL -- Get current registration
+        "Data_Store_OLIDS_Dummy".OLIDS_MASKED.ORGANISATION o
+        ON p."registered_practice_id" = o."id"
 )
 -- Select only the latest record per person
 SELECT
@@ -111,8 +129,16 @@ SELECT
     DEATH_YEAR,
     DEATH_MONTH,
     REGISTERED_PRACTICE_ID,
+    PRACTICE_CODE,
+    PRACTICE_NAME,
+    PRACTICE_TYPE_CODE,
+    PRACTICE_TYPE_DESC,
+    PRACTICE_POSTCODE,
+    PRACTICE_PARENT_ORG_ID,
+    PRACTICE_OPEN_DATE,
+    PRACTICE_CLOSE_DATE,
+    PRACTICE_IS_OBSOLETE,
     RECORD_OWNER_ORG_CODE,
-    REGISTRATION_END_DATE,
     LATEST_RECORD_DATE,
     INACTIVE_REASON
 FROM
