@@ -10,7 +10,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_NAFLD_CONCEPT_CODES ARRAY, -- Array of all NAFLD concept codes recorded for the person
     ALL_NAFLD_CONCEPT_DISPLAYS ARRAY -- Array of display terms for the NAFLD concept codes
 )
-COMMENT = 'Fact table identifying individuals with a diagnosis of Non-Alcoholic Fatty Liver Disease (NAFLD). Currently uses hardcoded concept codes (1197739005, 1231824009, 442685003, 722866000) as no NAFLD cluster is defined in the terminology mapping. This should be reviewed and updated once an appropriate cluster is available.'
+COMMENT = 'Fact table identifying individuals with a diagnosis of Non-Alcoholic Fatty Liver Disease (NAFLD). Currently uses hardcoded concept codes as no NAFLD cluster is defined in the terminology mapping. This should be reviewed and updated once an appropriate cluster is available.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -35,10 +35,12 @@ WITH BaseObservations AS (
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" AS P
         ON O."patient_id" = P."id"
     WHERE MC.CONCEPT_CODE IN (
+        '197315008',
         '1197739005',
         '1231824009',
         '442685003',
-        '722866000'
+        '722866000',
+        '503681000000108'
     )
 ),
 PersonLevelNAFLDAggregation AS (
