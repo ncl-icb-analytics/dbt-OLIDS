@@ -3,12 +3,13 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     CLINICAL_EFFECTIVE_DATE DATE, -- Date of the latest ACR test
     RESULT_VALUE NUMBER(6,2), -- The numeric result value of the latest Urine ACR test (6,2 format)
+    RESULT_UNIT_DISPLAY VARCHAR, -- Display value for the result unit (e.g., 'mg/mmol')
     CONCEPT_CODE VARCHAR, -- The concept code associated with the latest ACR test
     CODE_DESCRIPTION VARCHAR -- The description of the concept code for the latest ACR test
 )
 TARGET_LAG = '4 hours'
 WAREHOUSE = 'NCL_ANALYTICS_XS'
-COMMENT = 'Intermediate table containing only the single most recent Urine ACR result for each person, derived from INTERMEDIATE_URINE_ACR_ALL.'
+COMMENT = 'Intermediate table containing only the single most recent Urine ACR result for each person, derived from INTERMEDIATE_URINE_ACR_ALL. Includes the display value for the result unit.'
 AS
 -- Selects all columns from the INTERMEDIATE_URINE_ACR_ALL table.
 SELECT
@@ -16,6 +17,7 @@ SELECT
     sk_patient_id,
     clinical_effective_date,
     result_value,
+    result_unit_display,
     concept_code,
     code_description
 FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_ALL
