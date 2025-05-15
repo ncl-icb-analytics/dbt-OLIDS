@@ -9,7 +9,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     IS_OSTEOPOROSIS_DIAGNOSIS BOOLEAN, -- Flag indicating if this is an osteoporosis diagnosis
     IS_DXA_SCAN BOOLEAN, -- Flag indicating if this is a DXA scan result
     IS_DXA_T_SCORE BOOLEAN, -- Flag indicating if this is a DXA T-score result
-    DXA_T_SCORE NUMBER, -- The T-score value for DXA2_COD observations
+    DXA_T_SCORE NUMBER(10,1), -- The T-score value for DXA2_COD observations (1 decimal place)
     EARLIEST_OSTEOPOROSIS_DATE DATE, -- Earliest osteoporosis diagnosis date
     EARLIEST_DXA_DATE DATE, -- Earliest DXA scan date
     EARLIEST_DXA_T_SCORE_DATE DATE, -- Earliest DXA T-score date
@@ -39,7 +39,7 @@ WITH BaseObservations AS (
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID,
         -- Extract T-score value for DXA2_COD observations
         CASE 
-            WHEN MC.CLUSTER_ID = 'DXA2_COD' THEN CAST(O."result_value"::FLOAT AS NUMBER(10,2))
+            WHEN MC.CLUSTER_ID = 'DXA2_COD' THEN CAST(O."result_value"::FLOAT AS NUMBER(10,1))
             ELSE NULL
         END AS DXA_T_SCORE,
         -- Flag different types of observations
