@@ -15,7 +15,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     ETHNICITY_GRANULAR VARCHAR -- Most granular ethnicity detail available; 'Not Recorded' if NULL
 )
 COMMENT = 'Dimension table providing the latest recorded ethnicity for every person. If no ethnicity is recorded for a person, ethnicity-related fields default to \'Not Recorded\'.'
-TARGET_LAG = '4 hours' -- Should be same or longer than INTERMEDIATE_PERSON_ETHNICITY_ALL lag
+TARGET_LAG = '4 hours' -- Should be same or longer than INTERMEDIATE_ETHNICITY_ALL lag
 REFRESH_MODE = auto
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
