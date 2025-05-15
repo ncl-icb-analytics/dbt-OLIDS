@@ -34,7 +34,7 @@ WITH LatestEthnicityPerPerson AS (
         pea.ethnicity_granular,
         pea.observation_lds_id -- Include for potential tie-breaking
     FROM
-        DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_PERSON_ETHNICITY_ALL pea -- Read from the intermediate table
+        DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_ETHNICITY_ALL pea -- Read from the intermediate table
     QUALIFY ROW_NUMBER() OVER (
             PARTITION BY pea.person_id
             -- Order by date first, then by observation ID as a tie-breaker
