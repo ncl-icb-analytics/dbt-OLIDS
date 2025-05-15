@@ -2,7 +2,7 @@
 -- Includes checks for out-of-range values, ambiguous coding (e.g., BP_COD without specific SBP/DBP),
 -- orphaned readings (SBP without DBP or vice-versa for the same event), and missing dates.
 
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_DQ_BLOOD_PRESSURE_ISSUES (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DQ_BLOOD_PRESSURE_ISSUES (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     CLINICAL_EFFECTIVE_DATE DATE, -- Date of the blood pressure event (can be NULL if missing in source)
     SYSTOLIC_VALUE_ORIGINAL NUMBER, -- Consolidated systolic BP value before applying plausible range filters (can be out of range)

@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_DQ_PATIENT_REGISTERED_AT_MULTIPLE_PRACTICES(
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DQ_PATIENT_REGISTERED_AT_MULTIPLE_PRACTICES(
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
     SK_PATIENT_ID VARCHAR COMMENT 'Surrogate key for the patient',
     TOTAL_REGISTRATIONS NUMBER COMMENT 'Total number of practice registrations for this person',
@@ -11,7 +11,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     LONGEST_GAP_DAYS NUMBER COMMENT 'Longest gap in days between consecutive practice registrations',
     DQ_ISSUES ARRAY COMMENT 'Array of specific data quality issues identified'
 )
-COMMENT = 'Intermediate table identifying potential data quality issues in practice registration data, focusing on multiple registrations, overlaps, and gaps.'
+COMMENT = 'Data quality table identifying potential data quality issues in practice registration data, focusing on multiple registrations, overlaps, and gaps.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
