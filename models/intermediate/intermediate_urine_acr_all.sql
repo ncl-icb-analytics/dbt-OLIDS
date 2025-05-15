@@ -2,7 +2,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     CLINICAL_EFFECTIVE_DATE DATE, -- Date the ACR test was performed/recorded
-    RESULT_VALUE NUMBER, -- The numeric result value of the Urine ACR test
+    RESULT_VALUE NUMBER(6,2), -- The numeric result value of the Urine ACR test (6,2 format)
     CONCEPT_CODE VARCHAR, -- The specific concept code associated with the ACR test observation
     CODE_DESCRIPTION VARCHAR -- The textual description of the concept code
 )
