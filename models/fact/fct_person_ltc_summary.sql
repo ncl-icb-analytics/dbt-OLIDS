@@ -7,7 +7,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     EARLIEST_DIAGNOSIS_DATE DATE, -- Earliest diagnosis date for the condition
     LATEST_DIAGNOSIS_DATE DATE -- Latest diagnosis date for the condition
 )
-COMMENT = 'Summary fact table of all long-term conditions, providing core register status and diagnosis dates for each condition per person. Condition codes: AF (Atrial Fibrillation), AST (Asthma), CA (Cancer), CHD (Coronary Heart Disease), CKD (Chronic Kidney Disease), COPD (Chronic Obstructive Pulmonary Disease), DEM (Dementia), DEP (Depression), DM (Diabetes), EPIL (Epilepsy), HF (Heart Failure), HTN (Hypertension), LD (Learning Disability), NAF (Non-Alcoholic Fatty Liver Disease), NDH (Non-Diabetic Hyperglycaemia), OB (Obesity), OP (Osteoporosis), PC (Palliative Care), PAD (Peripheral Arterial Disease), RA (Rheumatoid Arthritis), SMI (Serious Mental Illness), STIA (Stroke/TIA).'
+COMMENT = 'Summary fact table of all long-term conditions, providing core register status and diagnosis dates for each condition per person. Condition codes: AF (Atrial Fibrillation), AST (Asthma), CA (Cancer), CHD (Coronary Heart Disease), CKD (Chronic Kidney Disease), COPD (Chronic Obstructive Pulmonary Disease), DEM (Dementia), DEP (Depression), DM (Diabetes), EPIL (Epilepsy), HF (Heart Failure), HTN (Hypertension), LD (Learning Disability), NAF (Non-Alcoholic Fatty Liver Disease), NDH (Non-Diabetic Hyperglycaemia), OB (Obesity), OP (Osteoporosis), PC (Palliative Care), PAD (Peripheral Arterial Disease), RA (Rheumatoid Arthritis), SMI (Serious Mental Illness), STIA (Stroke/TIA), FHYP (Familial Hypercholesterolaemia).'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -298,6 +298,19 @@ WITH ConditionUnion AS (
         EARLIEST_STIA_DATE AS EARLIEST_DIAGNOSIS_DATE,
         GREATEST(COALESCE(LATEST_STROKE_DATE, LATEST_TIA_DATE), COALESCE(LATEST_TIA_DATE, LATEST_STROKE_DATE)) AS LATEST_DIAGNOSIS_DATE
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_STIA
+
+    UNION ALL
+
+    -- Familial Hypercholesterolaemia
+    SELECT 
+        PERSON_ID,
+        SK_PATIENT_ID,
+        'FHYP' AS CONDITION_CODE,
+        'Familial Hypercholesterolaemia' AS CONDITION_NAME,
+        IS_ON_FHYP_REGISTER AS IS_ON_REGISTER,
+        EARLIEST_FHYP_DIAGNOSIS_DATE AS EARLIEST_DIAGNOSIS_DATE,
+        LATEST_FHYP_DIAGNOSIS_DATE AS LATEST_DIAGNOSIS_DATE
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_FHYP
 )
 SELECT 
     cu.PERSON_ID,
