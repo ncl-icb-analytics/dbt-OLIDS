@@ -20,7 +20,7 @@ REFRESH_MODE = auto
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH LatestEthnicityPerPerson AS (
-    -- Identifies the single most recent ethnicity record for each person from the INTERMEDIATE_PERSON_ETHNICITY_ALL table.
+    -- Identifies the single most recent ethnicity record for each person from the INTERMEDIATE_ETHNICITY_ALL table.
     -- Uses ROW_NUMBER() partitioned by person_id, ordered by clinical_effective_date (desc) and observation_lds_id (desc as tie-breaker).
     SELECT
         pea.person_id,
