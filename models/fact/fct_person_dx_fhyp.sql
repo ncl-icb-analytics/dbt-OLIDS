@@ -7,7 +7,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_FHYP_CONCEPT_CODES ARRAY, -- Array of all FHYP_COD concept codes recorded for the person
     ALL_FHYP_CONCEPT_DISPLAYS ARRAY -- Array of display terms for the FHYP_COD concept codes
 )
-COMMENT = 'Fact table identifying individuals with a diagnosis of familial hypercholesterolaemia (FH), using FHYP_COD cluster. No resolved codes are used.'
+COMMENT = 'Fact table identifying individuals with a diagnosis of familial hypercholesterolaemia (FHYP), using FHYP_COD cluster. No resolved codes are used.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
