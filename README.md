@@ -31,7 +31,7 @@ This project migrates data models from HealtheIntent (Vertica) to Snowflake. It 
 
 4.  **Run Models**:
     *   Execute the SQL scripts within the `models/` subdirectories and then the `published/` directory.
-    *   Run scripts in a logical order if dependencies exist (e.g., intermediate models before facts/dimensions, and those before published models). You can execute them individually or as a batch if your setup allows, directly through the VS Code extension.
+    *   Run scripts in a logical order if dependencies exist (e.g., intermediate models before facts/dimensions, and those before published models). You can execute them individually or as a batch through the VS Code extension.
 
 ## Notes
 *   Ensure your Snowflake user has the necessary permissions to create schemas, tables, and execute queries.
