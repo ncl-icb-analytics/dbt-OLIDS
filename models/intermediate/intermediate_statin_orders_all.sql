@@ -16,16 +16,15 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     BNF_NAME VARCHAR, -- The BNF name from BNF_LATEST
     RECENT_ORDER_COUNT NUMBER -- Count of orders in the last 6 months
 )
-COMMENT = 'Intermediate table containing all statin medication orders. Filters based on BNF code 2.12.1 (HMG CoA reductase inhibitors) from BNF_LATEST table.'
+COMMENT = 'Intermediate table containing all statin medication orders. Includes orders for Atorvastatin, Cerivastatin, Fluvastatin, Pravastatin, Rosuvastatin, Simvastatin, and Simvastatin/Ezetimibe combination.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseStatinOrders AS (
-    -- Fetches medication orders for statins (BNF 2.12.1)
-    -- Includes basic person identifiers and order details
-    SELECT
+    -- Get all medication orders for statins
+    SELECT 
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -52,9 +51,15 @@ WITH BaseStatinOrders AS (
         ON mo."patient_id" = PP."patient_id"
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" P
         ON mo."patient_id" = P."id"
-    WHERE 
-        bnf.BNF_CODE LIKE '021201%' -- Filter for statins only (BNF 2.12.1 in our data format)
-        AND mo."clinical_effective_date"::DATE >= DATEADD(MONTH, -6, CURRENT_DATE())
+    WHERE bnf.BNF_CODE LIKE ANY (
+        '0212000B0%', -- Atorvastatin
+        '0212000C0%', -- Cerivastatin
+        '0212000M0%', -- Fluvastatin sodium
+        '0212000X0%', -- Pravastatin sodium
+        '0212000AA%', -- Rosuvastatin calcium
+        '0212000Y0%', -- Simvastatin
+        '0212000AC%'  -- Simvastatin and ezetimibe
+    )
 ),
 OrderCounts AS (
     -- Counts the number of orders per person in the last 6 months
