@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_COPD_SPIROMETRY (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_SPIROMETRY (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     OBSERVATION_ID VARCHAR, -- Unique identifier for the observation
@@ -9,7 +9,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     SOURCE_CLUSTER_ID VARCHAR, -- Either FEV1FVC_COD or FEV1FVCL70_COD
     IS_BELOW_0_7 BOOLEAN -- Flag indicating if the ratio is below 0.7
 )
-COMMENT = 'Intermediate table containing COPD spirometry results (FEV1/FVC ratios). Includes both raw FEV1/FVC values and pre-coded "less than 0.7" observations.'
+COMMENT = 'Intermediate table containing spirometry results used for diagnosing COPD (FEV1/FVC ratios). Includes both raw FEV1/FVC values and pre-coded "less than 0.7" observations.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
