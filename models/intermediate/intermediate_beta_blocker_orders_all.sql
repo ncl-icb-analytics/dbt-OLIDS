@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_CARDIAC_GLYCOSIDE_ORDERS_ALL (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BETA_BLOCKER_ORDERS_ALL (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     MEDICATION_ORDER_ID VARCHAR, -- Unique identifier for the medication order
@@ -16,14 +16,14 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     BNF_NAME VARCHAR, -- The BNF name from BNF_LATEST
     RECENT_ORDER_COUNT NUMBER -- Count of orders in the last 6 months
 )
-COMMENT = 'Intermediate table containing all cardiac glycoside medication orders (BNF chapter 2.1.1). Includes orders for Digoxin and Digitoxin.'
+COMMENT = 'Intermediate table containing all beta blocker medication orders (BNF section 2.4). Includes orders for Acebutolol, Atenolol, Bisoprolol, Carvedilol, Celiprolol, Esmolol, Labetalol, Metoprolol, Nadolol, Nebivolol, Oxprenolol, Pindolol, Propranolol, Sotalol, and Timolol.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
-WITH BaseCardiacGlycosideOrders AS (
-    -- Get all medication orders for cardiac glycosides
+WITH BaseBetaBlockerOrders AS (
+    -- Get all medication orders for beta blockers
     SELECT 
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
@@ -51,14 +51,14 @@ WITH BaseCardiacGlycosideOrders AS (
         ON mo."patient_id" = PP."patient_id"
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" P
         ON mo."patient_id" = P."id"
-    WHERE bnf.BNF_CODE LIKE '020101%' -- Cardiac glycosides (Digoxin, Digitoxin)
+    WHERE bnf.BNF_CODE LIKE '0204%' -- Beta blockers
 ),
 OrderCounts AS (
     -- Counts the number of orders per person in the last 6 months
     SELECT
         PERSON_ID,
         COUNT(*) as RECENT_ORDER_COUNT
-    FROM BaseCardiacGlycosideOrders
+    FROM BaseBetaBlockerOrders
     WHERE ORDER_DATE >= DATEADD(month, -6, CURRENT_DATE())
     GROUP BY PERSON_ID
 )
@@ -66,6 +66,6 @@ OrderCounts AS (
 SELECT
     bso.*,
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
-FROM BaseCardiacGlycosideOrders bso
+FROM BaseBetaBlockerOrders bso
 LEFT JOIN OrderCounts oc
     ON bso.PERSON_ID = oc.PERSON_ID; 
