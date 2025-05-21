@@ -7,7 +7,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     EARLIEST_DIAGNOSIS_DATE DATE, -- Earliest diagnosis date for the condition
     LATEST_DIAGNOSIS_DATE DATE -- Latest diagnosis date for the condition
 )
-COMMENT = 'Summary fact table of all long-term conditions, providing core register status and diagnosis dates for each condition per person. Condition codes: AF (Atrial Fibrillation), AST (Asthma), CA (Cancer), CHD (Coronary Heart Disease), CKD (Chronic Kidney Disease), COPD (Chronic Obstructive Pulmonary Disease), DEM (Dementia), DEP (Depression), DM (Diabetes), EPIL (Epilepsy), FHYP (Familial Hypercholesterolaemia), GESTDIAB (Gestational Diabetes), HF (Heart Failure), HTN (Hypertension), LD (Learning Disability), NAF (Non-Alcoholic Fatty Liver Disease), NDH (Non-Diabetic Hyperglycaemia), OB (Obesity), OP (Osteoporosis), PAD (Peripheral Arterial Disease), PC (Palliative Care), RA (Rheumatoid Arthritis), SMI (Serious Mental Illness), STIA (Stroke/TIA).'
+COMMENT = 'Summary fact table of all long-term conditions, providing core register status and diagnosis dates for each condition per person. Condition codes: AF (Atrial Fibrillation), AST (Asthma), CA (Cancer), CHD (Coronary Heart Disease), CKD (Chronic Kidney Disease), COPD (Chronic Obstructive Pulmonary Disease), CYP_AST (Children and Young People Asthma), DEM (Dementia), DEP (Depression), DM (Diabetes), EPIL (Epilepsy), FHYP (Familial Hypercholesterolaemia), GESTDIAB (Gestational Diabetes), HF (Heart Failure), HTN (Hypertension), LD (Learning Disability), NAF (Non-Alcoholic Fatty Liver Disease), NDH (Non-Diabetic Hyperglycaemia), OB (Obesity), OP (Osteoporosis), PAD (Peripheral Arterial Disease), PC (Palliative Care), RA (Rheumatoid Arthritis), SMI (Serious Mental Illness), STIA (Stroke/TIA).'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -38,6 +38,19 @@ WITH ConditionUnion AS (
         EARLIEST_ASTHMA_DIAGNOSIS_DATE AS EARLIEST_DIAGNOSIS_DATE,
         LATEST_ASTHMA_DIAGNOSIS_DATE AS LATEST_DIAGNOSIS_DATE
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_ASTHMA
+
+    UNION ALL
+
+    -- CYP Asthma
+    SELECT 
+        PERSON_ID,
+        SK_PATIENT_ID,
+        'CYP_AST' AS CONDITION_CODE,
+        'Children and Young People Asthma' AS CONDITION_NAME,
+        IS_ON_ASTHMA_REGISTER AS IS_ON_REGISTER,
+        EARLIEST_ASTHMA_DIAGNOSIS_DATE AS EARLIEST_DIAGNOSIS_DATE,
+        LATEST_ASTHMA_DIAGNOSIS_DATE AS LATEST_DIAGNOSIS_DATE
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_CYP_ASTHMA
 
     UNION ALL
 
