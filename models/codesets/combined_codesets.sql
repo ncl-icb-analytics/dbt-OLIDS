@@ -1,34 +1,47 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.CODESETS.COMBINED_CODESETS(
-	CLUSTER_ID,
-	CLUSTER_DESCRIPTION,
-	CODE,
-	CODE_DESCRIPTION,
-	SOURCE
-) target_lag = 'DOWNSTREAM' refresh_mode = AUTO initialize = ON_CREATE warehouse = NCL_ANALYTICS_XS
- as
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.CODESETS.COMBINED_CODESETS (
+    CLUSTER_ID,
+    CLUSTER_DESCRIPTION,
+    CODE,
+    CODE_DESCRIPTION,
+    SOURCE
+)
+TARGET_LAG = 'DOWNSTREAM'
+REFRESH_MODE = AUTO
+INITIALIZE = ON_CREATE
+WAREHOUSE = NCL_ANALYTICS_XS
+AS
 -- PCD data
-SELECT 
+SELECT
     cluster_id,
     cluster_description,
-    CAST(SNOMED_Code AS VARCHAR) as code,
-    SNOMED_Code_Description as code_description,
-    'PCD' as source
+    CAST(SNOMED_Code AS VARCHAR) AS code,
+    SNOMED_Code_Description AS code_description,
+    'PCD' AS source
 FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.pcd_refset_latest
 UNION ALL
 -- UKHSA COVID data
-SELECT 
-    CLUSTER_ID as cluster_id,
-    CLUSTER_DESCRIPTION as cluster_description,
-    CAST(SNOMED_Code AS VARCHAR) as code,
-    SNOMED_DESCRIPTION as code_description,
-    'UKHSA_COVID' as source
+SELECT
+    CLUSTER_ID AS cluster_id,
+    CLUSTER_DESCRIPTION AS cluster_description,
+    CAST(SNOMED_Code AS VARCHAR) AS code,
+    SNOMED_DESCRIPTION AS code_description,
+    'UKHSA_COVID' AS source
 FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.UKHSA_COVID_LATEST
 UNION ALL
 -- UKHSA FLU data
-SELECT 
-    CODE_GROUP as cluster_id,
-    CODE_GROUP_DESCRIPTION as cluster_description,
-    CAST(SNOMED_Code AS VARCHAR) as code,
-    SNOMED_DESCRIPTION as code_description,
-    'UKHSA_FLU' as source
-FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.UKHSA_FLU_LATEST;
+SELECT
+    CODE_GROUP AS cluster_id,
+    CODE_GROUP_DESCRIPTION AS cluster_description,
+    CAST(SNOMED_Code AS VARCHAR) AS code,
+    SNOMED_DESCRIPTION AS code_description,
+    'UKHSA_FLU' AS source
+FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.UKHSA_FLU_LATEST
+UNION ALL
+-- LTC LCS CODES data
+SELECT
+    CLUSTER_ID AS cluster_id,
+    CLUSTER_DESCRIPTION AS cluster_description,
+    CAST(SNOMED_CODE AS VARCHAR) AS code,
+    SNOMED_DESCRIPTION AS code_description,
+    'LTC_LCS' AS source                     
+FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.LTC_LCS_CODES;
