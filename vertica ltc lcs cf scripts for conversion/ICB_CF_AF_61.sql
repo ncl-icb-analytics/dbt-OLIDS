@@ -1,0 +1,249 @@
+--ICB_CF_AF_61 Patients on dignoxin, flecainide, propafenone or anticoag
+--7.9.23 small adjustments in syntax
+
+with EMIS AS (
+
+SELECT empi_id,
+1 AS 'EMIS'
+
+FROM (
+
+-- Base table: Patients with current COURSES of ORAL ANTICOAGULANTS or CARDIAC GLYCOSIDES
+
+WITH Rule1 AS (
+SELECT DISTINCT EMPI_ID
+FROM LTC_LCS_BASE
+EXCEPT 
+SELECT EMPI_ID
+FROM ICS_LTC_01
+EXCEPT
+SELECT empi_id 
+from POPHEALTH_LTCS_LIST
+where LTC_NAME in ('Atrial Fibrillation', 'Heart Failure')
+EXCEPT 
+SELECT EMPI_ID
+FROM HEALTH_CHECK_COMP_IN_24
+), 
+
+INCLUSION AS (
+SELECT 
+R.empi_id 
+FROM Rule1 r
+JOIN CERNER_MEDICATION_JOINED_TABLE m on r.EMPI_ID = m.EMPI_ID
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = m.DRUG_CODE
+WHERE m.status_display = 'Active' and (m.stop_date is null or m.stop_date >= CURRENT_DATE())
+AND m.start_dt_tm > ADD_MONTHS(CURRENT_DATE(),-3)
+--AND t.CLUSTER_ID = 'ORANTICOAG_2.8.2' --REMOVE IN FINAL
+AND t.cluster_id IN ('DRUGS_USED_IN_AF', 'DIGOXIN', 'ORANTICOAG_2.8.2')
+AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION
+
+-- CARDIAC GLYCOSIDES SEPARATELY TO MATCH SEARCH 'AND ANTICOAG' CRITERION
+
+SELECT 
+r.empi_id 
+from Rule1 r
+JOIN CERNER_MEDICATION_JOINED_TABLE m on r.EMPI_ID = m.EMPI_ID
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = m.DRUG_CODE
+WHERE m.status_display = 'Active' and (m.stop_date is null or m.stop_date >= CURRENT_DATE())
+AND m.start_dt_tm > ADD_MONTHS(CURRENT_DATE(),-3)
+AND t.cluster_id = 'CARDIAC GLYCOSIDES'
+AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION
+
+-- Patients with current courses of ANTICOAGUALANTS AND PROTAMINE (excluding.....)
+
+SELECT 
+r.empi_id
+from Rule1 r
+JOIN CERNER_MEDICATION_JOINED_TABLE m on r.EMPI_ID = m.EMPI_ID
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = m.DRUG_CODE
+WHERE 
+m.start_dt_tm > ADD_MONTHS(CURRENT_DATE(),-6) 
+AND	t.CLUSTER_ID in ('ORANTICOAG_2.8.2', 'PROTAMINE_DRUGS')
+AND SOURCE_DESCRIPTION = 'EMIS GP') 
+
+-------------------------------------------------------------------------------------------------
+
+,EXCLUSION AS  
+
+(
+
+SELECT --DISTINCT
+EMPI_ID
+from PH_F_RESULT r
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = r.RESULT_CODE
+where
+(
+--Long-haul COVID-19 + Hypoplastic left heart syndrome (disorder) + DVT
+RESULT_CODE in ('1119304009', '62067003', '132221000119109') OR
+t.CLUSTER_ID in ('DVT', 'AF_FLUTTER') )
+AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION 
+
+SELECT --DISTINCT
+EMPI_ID
+from PH_F_CONDITION r
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = r.CONDITION_CODE
+where
+(
+--Long-haul COVID-19 + Hypoplastic left heart syndrome (disorder) + DVT
+CONDITION_CODE IN ('1119304009', '62067003', '132221000119109') OR
+t.CLUSTER_ID IN ('DVT', 'AF_FLUTTER') )
+AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION 
+
+SELECT --DISTINCT
+EMPI_ID
+from PH_F_PROCEDURE r
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = r.PROCEDURE_CODE
+WHERE
+(
+--Long-haul COVID-19 + Hypoplastic left heart syndrome (disorder) + DVT
+PROCEDURE_CODE IN ('1119304009', '62067003', '132221000119109') OR 
+t.CLUSTER_ID IN ('DVT', 'AF_FLUTTER') )
+AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+)
+
+--Exclude all patients with selected clusters (Rules 1-4)
+
+SELECT DISTINCT EMPI_ID FROM  INCLUSION
+
+EXCEPT
+
+SELECT DISTINCT EMPI_ID FROM  EXCLUSION
+
+) AS A
+),
+
+OTHER AS (
+
+SELECT empi_id,
+1 as 'OTHER'
+
+FROM (
+
+-- Base table: Patients with current COURSES of ORAL ANTICOAGULANTS or CARDIAC GLYCOSIDES
+with Rule1 as (
+SELECT DISTINCT EMPI_ID
+FROM LTC_LCS_BASE
+EXCEPT 
+SELECT EMPI_ID
+FROM ICS_LTC_01
+EXCEPT
+SELECT empi_id 
+from POPHEALTH_LTCS_LIST
+where LTC_NAME in ('Atrial Fibrillation', 'Heart Failure')
+EXCEPT 
+SELECT EMPI_ID
+FROM HEALTH_CHECK_COMP_IN_24
+), 
+
+INCLUSION AS (
+SELECT 
+r.empi_id 
+from Rule1 r
+JOIN CERNER_MEDICATION_JOINED_TABLE m on r.EMPI_ID = m.EMPI_ID
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = m.DRUG_CODE
+WHERE m.status_display = 'Active' and (m.stop_date is null or m.stop_date >= CURRENT_DATE())
+and m.start_dt_tm > ADD_MONTHS(CURRENT_DATE(),-3)
+--and t.CLUSTER_ID = 'ORANTICOAG_2.8.2' --REMOVE IN FINAL
+and t.cluster_id IN ('DRUGS_USED_IN_AF', 'DIGOXIN','ORANTICOAG_2.8.2')
+--AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION
+
+-- CARDIAC GLYCOSIDES SEPARATELY TO MATCH SEARCH 'AND ANTICOAG' CRITERION
+
+SELECT 
+r.empi_id 
+from Rule1 r
+JOIN CERNER_MEDICATION_JOINED_TABLE m on r.EMPI_ID = m.EMPI_ID
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = m.DRUG_CODE
+WHERE m.status_display = 'Active' and (m.stop_date is null or m.stop_date >= CURRENT_DATE())
+and m.start_dt_tm > ADD_MONTHS(CURRENT_DATE(),-3)
+and t.cluster_id = 'CARDIAC GLYCOSIDES'
+--AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION
+
+-- Patients with current courses of ANTICOAGUALANTS AND PROTAMINE (excluding.....)
+
+SELECT 
+r.empi_id
+from Rule1 r
+JOIN CERNER_MEDICATION_JOINED_TABLE m on r.EMPI_ID = m.EMPI_ID
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = m.DRUG_CODE
+WHERE 
+ m.start_dt_tm > ADD_MONTHS(CURRENT_DATE(),-6) 
+ AND	t.CLUSTER_ID in ('ORANTICOAG_2.8.2', 'PROTAMINE_DRUGS')
+--AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+) 
+
+-------------------------------------------------------------------------------------------------
+
+,EXCLUSION AS  
+
+(
+
+SELECT --DISTINCT
+EMPI_ID
+from PH_F_RESULT r
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = r.RESULT_CODE
+where
+(
+--Long-haul COVID-19 + Hypoplastic left heart syndrome (disorder) + DVT
+RESULT_CODE in ('1119304009', '62067003', '132221000119109') OR
+t.CLUSTER_ID in ('DVT', 'AF_FLUTTER') )
+--AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION 
+
+SELECT --DISTINCT
+EMPI_ID
+from PH_F_CONDITION r
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = r.CONDITION_CODE
+where
+(
+--Long-haul COVID-19 + Hypoplastic left heart syndrome (disorder) + DVT
+CONDITION_CODE IN ('1119304009', '62067003', '132221000119109') OR
+t.CLUSTER_ID IN ('DVT', 'AF_FLUTTER') )
+--AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+UNION 
+
+SELECT --DISTINCT
+EMPI_ID
+from PH_F_PROCEDURE r
+JOIN JOINED_LTC_LOOKUP t ON t.SNOMED_CODE = r.PROCEDURE_CODE
+WHERE
+(
+--Long-haul COVID-19 + Hypoplastic left heart syndrome (disorder) + DVT
+PROCEDURE_CODE IN ('1119304009', '62067003', '132221000119109') OR 
+t.CLUSTER_ID IN ('DVT', 'AF_FLUTTER') )
+--AND SOURCE_DESCRIPTION = 'EMIS GP'
+
+)
+
+--Exclude all patients with selected clusters (Rules 1-4)
+
+SELECT DISTINCT EMPI_ID FROM  INCLUSION
+
+EXCEPT
+
+SELECT DISTINCT EMPI_ID FROM  EXCLUSION
+
+) AS B
+)
+-- USING 'EMIS' TABLE TO GET WHOLE COHORT AND LEFT JOINING TO SEE IF OTHER AS WELL
+SELECT 
+COALESCE(e.empi_id, o.empi_id) as empi_id,
+CASE WHEN e.EMIS = 1 THEN 'EMIS' ELSE 'Other' END AS Source
+FROM EMIS e
+FULL OUTER JOIN OTHER o USING (empi_id)
