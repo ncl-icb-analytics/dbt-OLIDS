@@ -3,59 +3,55 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
     SK_PATIENT_ID VARCHAR,
     AGE NUMBER,
     NEEDS_MODERATE_DOSE_STATIN BOOLEAN,
-    LATEST_STATIN_DATE DATE,
-    ALL_STATIN_CODES ARRAY,
-    ALL_STATIN_DISPLAYS ARRAY
+    LATEST_QRISK2_DATE DATE,
+    LATEST_QRISK2_VALUE NUMBER,
+    ALL_QRISK2_CODES ARRAY,
+    ALL_QRISK2_DISPLAYS ARRAY
 )
-COMMENT = 'Dimension table for LTC LCS case finding indicator CVD_65: Patients who need moderate-dose statins. Identifies patients from the base population who are not on statins and have no recent statin decisions. Only includes patients who meet all criteria.'
+COMMENT = 'Dimension table for CVD 65 case finding indicator. Identifies patients with QRISK2 ≥ 10 who need moderate-dose statins (not on moderate-dose statins, no allergies, no decisions).'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
-WITH StatinMedications AS (
-    -- Get all moderate-dose statin medications
+WITH QRISK2Readings AS (
+    -- Get all QRISK2 readings for patients in base
+    SELECT
+        r.PERSON_ID,
+        r.SK_PATIENT_ID,
+        r.CLINICAL_EFFECTIVE_DATE,
+        r.RESULT_VALUE,
+        r.CONCEPT_CODE,
+        r.CONCEPT_DISPLAY,
+        ROW_NUMBER() OVER (PARTITION BY r.PERSON_ID ORDER BY r.CLINICAL_EFFECTIVE_DATE DESC) AS rn
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA r
+    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_CF_CVD_65_BASE b
+        ON r.PERSON_ID = b.PERSON_ID
+    WHERE r.CLUSTER_ID = 'QRISK2_10YEAR'
+        AND r.RESULT_VALUE >= 10
+),
+QRISK2Aggregated AS (
+    -- Aggregate all QRISK2 codes and displays
     SELECT
         PERSON_ID,
-        SK_PATIENT_ID,
-        CLINICAL_EFFECTIVE_DATE,
-        CONCEPT_CODE,
-        CONCEPT_DISPLAY
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
-    WHERE CLUSTER_ID = 'STATIN_CVD_65_MEDICATIONS'
-),
-StatinRanked AS (
-    -- Rank statin medications by date for each person
-    SELECT
-        *,
-        ROW_NUMBER() OVER (PARTITION BY PERSON_ID ORDER BY CLINICAL_EFFECTIVE_DATE DESC) AS MEDICATION_RANK
-    FROM StatinMedications
-    QUALIFY MEDICATION_RANK = 1
-),
-StatinCodes AS (
-    -- Get all codes and displays for each person
-    SELECT
-        PERSON_ID,
-        ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_STATIN_CODES,
-        ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_STATIN_DISPLAYS
-    FROM StatinMedications
+        ARRAY_AGG(CONCEPT_CODE) AS ALL_QRISK2_CODES,
+        ARRAY_AGG(CONCEPT_DISPLAY) AS ALL_QRISK2_DISPLAYS
+    FROM QRISK2Readings
     GROUP BY PERSON_ID
 )
 -- Final selection
 SELECT
-    bp.PERSON_ID,
-    bp.SK_PATIENT_ID,
-    bp.AGE,
-    CASE 
-        WHEN NOT bp.HAS_STATIN 
-            AND NOT bp.HAS_STATIN_DECISION THEN TRUE
-        ELSE FALSE
-    END AS NEEDS_MODERATE_DOSE_STATIN,
-    bp.LATEST_STATIN_DATE,
-    codes.ALL_STATIN_CODES,
-    codes.ALL_STATIN_DISPLAYS
-FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_CF_CVD_BASE bp
-LEFT JOIN StatinCodes codes
-    USING (PERSON_ID)
-WHERE NOT bp.HAS_STATIN 
-    AND NOT bp.HAS_STATIN_DECISION; 
+    b.PERSON_ID,
+    b.SK_PATIENT_ID,
+    b.AGE,
+    TRUE AS NEEDS_MODERATE_DOSE_STATIN,  -- All patients in base need moderate dose statins
+    qr.CLINICAL_EFFECTIVE_DATE AS LATEST_QRISK2_DATE,
+    qr.RESULT_VALUE AS LATEST_QRISK2_VALUE,
+    qa.ALL_QRISK2_CODES,
+    qa.ALL_QRISK2_DISPLAYS
+FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_CF_CVD_65_BASE b
+JOIN QRISK2Readings qr
+    ON b.PERSON_ID = qr.PERSON_ID
+    AND qr.rn = 1  -- Get most recent reading
+LEFT JOIN QRISK2Aggregated qa
+    ON b.PERSON_ID = qa.PERSON_ID; 
