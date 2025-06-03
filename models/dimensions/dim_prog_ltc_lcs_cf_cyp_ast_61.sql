@@ -1,21 +1,21 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_CYP_AST_61 (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
-    AGE NUMBER, -- Age of the patient (18 months to 17 years 364 days)
+    AGE NUMBER, -- Age of the patient (18 months to under 18 years)
     HAS_HAD_REVIEW BOOLEAN, -- Flag indicating if person has had an asthma review in last 12 months
     LATEST_REVIEW_DATE DATE, -- Date of most recent asthma review
     -- Metadata
     LAST_REFRESH_DATE TIMESTAMP,
     INDICATOR_VERSION VARCHAR
 )
-COMMENT = 'Dimension table for LTC LCS case finding indicator CYP_AST_61: Children and young people (18 months to 17 years) with asthma who have had an asthma review in the last 12 months.'
+COMMENT = 'Dimension table for LTC LCS case finding indicator CYP_AST_61: Children and young people (18 months to under 18 years) with asthma who have had an asthma review in the last 12 months.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BasePopulation AS (
-    -- Get base population of patients aged 18 months to 17 years 364 days
+    -- Get base population of patients aged 18 months to under 18 years
     SELECT DISTINCT
         bp.PERSON_ID,
         bp.SK_PATIENT_ID,
@@ -24,7 +24,8 @@ WITH BasePopulation AS (
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION bp
     JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
         USING (PERSON_ID)
-    WHERE age.AGE_DAYS_APPROX BETWEEN 547 AND 6574  -- 18 months to 17 years 364 days
+    WHERE age.AGE_DAYS_APPROX >= 547  -- 18 months
+        AND age.AGE < 18  -- under 18 years
 ),
 Exclusions AS (
     -- Get patients to exclude

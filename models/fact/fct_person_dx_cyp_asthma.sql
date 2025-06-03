@@ -1,7 +1,7 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_CYP_ASTHMA (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
-    AGE NUMBER, -- Age of the person (<= 17 for this table)
+    AGE NUMBER, -- Age of the person (0 to under 18 years)
     IS_ON_ASTHMA_REGISTER BOOLEAN, -- Flag indicating if the person is currently on the asthma register
     -- Dates from Asthma Coding (AST_COD, ASTRES_COD)
     EARLIEST_ASTHMA_DIAGNOSIS_DATE DATE, -- Earliest recorded date of an asthma diagnosis code (AST_COD)
@@ -19,7 +19,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PER
     ALL_ASTHMA_CONCEPT_DISPLAYS ARRAY, -- Array of display terms for the AST_COD/ASTRES_COD concept codes
     ALL_ASTHMA_SOURCE_CLUSTER_IDS ARRAY -- Array of source cluster IDs (AST_COD, ASTRES_COD)
 )
-COMMENT = 'Fact table identifying individuals aged 17 and under currently on the Asthma register. Requires both an active asthma diagnosis (latest AST_COD > latest ASTRES_COD) and a recent asthma medication order (within last 12 months).'
+COMMENT = 'Fact table identifying individuals aged 0 to under 18 years (not including 18) currently on the Asthma register. Requires both an active asthma diagnosis (latest AST_COD > latest ASTRES_COD) and a recent asthma medication order (within last 12 months). This table is designed for general analysis of asthma patterns in children and young people, while the LTC LCS indicator (CYP_AST_61) applies additional age restrictions (18 months to under 18 years) for case-finding purposes.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -47,17 +47,18 @@ WITH BaseObservationsAndClusters AS (
     WHERE MC.CLUSTER_ID IN ('AST_COD', 'ASTRES_COD')
 ),
 FilteredByAge AS (
-    -- Filters the base asthma-related observations to include only individuals aged 17 or younger
+    -- Filters the base asthma-related observations to include only individuals aged 0 to under 18 years
+    -- Note: This is more inclusive than the LTC LCS indicator to allow for broader analysis
     SELECT
         boc.*,
         age.AGE
     FROM BaseObservationsAndClusters boc
     JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
         ON boc.PERSON_ID = age.PERSON_ID
-    WHERE age.AGE <= 17
+    WHERE age.AGE < 18  -- Include all ages 0 to under 18 for general analysis
 ),
 PersonLevelAsthmaCodingAggregation AS (
-    -- Aggregates asthma diagnosis and resolution code information for each person aged 17 or younger
+    -- Aggregates asthma diagnosis and resolution code information for each person aged 0 to under 18 years
     -- Calculates earliest/latest AST_COD dates and latest ASTRES_COD date
     -- Determines IS_ON_ASTHMA_REGISTER: TRUE if there's an active AST_COD (latest AST_COD > latest ASTRES_COD, or no ASTRES_COD)
     -- Collects all associated concept details (codes, displays, cluster IDs) into arrays
