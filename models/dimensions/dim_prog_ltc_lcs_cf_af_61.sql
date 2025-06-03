@@ -1,0 +1,95 @@
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_AF_61 (
+    PERSON_ID VARCHAR, -- Unique identifier for the person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    IS_POTENTIAL_AF BOOLEAN, -- Flag indicating if person meets criteria for potential AF
+    HAS_ACTIVE_AF_MEDICATION BOOLEAN, -- Flag indicating if person has active AF-related medication
+    HAS_ACTIVE_ANTICOAGULANT BOOLEAN, -- Flag indicating if person has active anticoagulant
+    HAS_ACTIVE_DIGOXIN BOOLEAN, -- Flag indicating if person has active digoxin
+    HAS_ACTIVE_CARDIAC_GLYCOSIDE BOOLEAN, -- Flag indicating if person has active cardiac glycoside
+    LATEST_AF_MEDICATION_DATE DATE, -- Latest date of AF-related medication
+    LATEST_HEALTH_CHECK_DATE DATE, -- Latest health check date
+    HAS_EXCLUSION_CONDITION BOOLEAN, -- Flag indicating if person has any exclusion conditions
+    EXCLUSION_REASON VARCHAR, -- Reason for exclusion if applicable
+    ALL_AF_MEDICATION_CODES ARRAY, -- Array of all AF-related medication codes
+    ALL_AF_MEDICATION_DISPLAYS ARRAY -- Array of all AF-related medication display terms
+)
+COMMENT = 'Dimension table for LTC LCS case finding indicator AF_61: Patients on digoxin, flecainide, propafenone or anticoagulants who might have undiagnosed AF. Excludes patients already in LTC programmes, those with AF/HF on register, and those with recent health checks.'
+TARGET_LAG = '4 hours'
+REFRESH_MODE = AUTO
+INITIALIZE = ON_CREATE
+WAREHOUSE = NCL_ANALYTICS_XS
+AS
+WITH AFMedications AS (
+    -- Get AF-related medications
+    SELECT
+        PERSON_ID,
+        SK_PATIENT_ID,
+        CLINICAL_EFFECTIVE_DATE,
+        CONCEPT_CODE,
+        CONCEPT_DISPLAY,
+        CLUSTER_ID,
+        -- Flag different types of medications
+        CASE WHEN CLUSTER_ID IN ('ORANTICOAG_2.8.2', 'DRUGS_USED_IN_AF') THEN TRUE ELSE FALSE END AS IS_ANTICOAGULANT,
+        CASE WHEN CLUSTER_ID = 'DIGOXIN' THEN TRUE ELSE FALSE END AS IS_DIGOXIN,
+        CASE WHEN CLUSTER_ID = 'CARDIAC GLYCOSIDES' THEN TRUE ELSE FALSE END AS IS_CARDIAC_GLYCOSIDE
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
+    WHERE SOURCE_TABLE = 'MEDICATION_ORDER'
+        AND CLUSTER_ID IN ('ORANTICOAG_2.8.2', 'DRUGS_USED_IN_AF', 'DIGOXIN', 'CARDIAC GLYCOSIDES')
+        AND CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -3, CURRENT_DATE()) -- Active in last 3 months
+),
+AF61ExclusionConditions AS (
+    -- Get patients with AF_61 specific exclusion conditions
+    SELECT
+        PERSON_ID,
+        TRUE AS HAS_EXCLUSION_CONDITION,
+        LISTAGG(DISTINCT CLUSTER_ID, ', ') AS EXCLUSION_REASON
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
+    WHERE CLUSTER_ID IN ('DVT', 'AF_FLUTTER', 'AF61_EXCLUSIONS')
+    GROUP BY PERSON_ID
+),
+MedicationSummary AS (
+    -- Summarise medication status per person
+    SELECT
+        PERSON_ID,
+        SK_PATIENT_ID,
+        MAX(CLINICAL_EFFECTIVE_DATE) AS LATEST_AF_MEDICATION_DATE,
+        BOOLOR_AGG(IS_ANTICOAGULANT) AS HAS_ACTIVE_ANTICOAGULANT,
+        BOOLOR_AGG(IS_DIGOXIN) AS HAS_ACTIVE_DIGOXIN,
+        BOOLOR_AGG(IS_CARDIAC_GLYCOSIDE) AS HAS_ACTIVE_CARDIAC_GLYCOSIDE,
+        ARRAY_AGG(DISTINCT CONCEPT_CODE) WITHIN GROUP (ORDER BY CONCEPT_CODE) AS ALL_AF_MEDICATION_CODES,
+        ARRAY_AGG(DISTINCT CONCEPT_DISPLAY) WITHIN GROUP (ORDER BY CONCEPT_DISPLAY) AS ALL_AF_MEDICATION_DISPLAYS
+    FROM AFMedications
+    GROUP BY PERSON_ID, SK_PATIENT_ID
+)
+-- Final selection combining all criteria
+SELECT
+    bp.PERSON_ID,
+    bp.SK_PATIENT_ID,
+    -- Person meets criteria for potential AF if:
+    -- 1. Has active AF-related medication
+    -- 2. No health check in last 24 months
+    -- 3. No exclusion conditions
+    CASE 
+        WHEN (ms.HAS_ACTIVE_ANTICOAGULANT OR ms.HAS_ACTIVE_DIGOXIN OR ms.HAS_ACTIVE_CARDIAC_GLYCOSIDE)
+            AND NOT COALESCE(hc.HAS_RECENT_HEALTH_CHECK_24M, FALSE)
+            AND (ec.HAS_EXCLUSION_CONDITION IS NULL OR ec.HAS_EXCLUSION_CONDITION = FALSE)
+        THEN TRUE
+        ELSE FALSE
+    END AS IS_POTENTIAL_AF,
+    COALESCE(ms.HAS_ACTIVE_ANTICOAGULANT OR ms.HAS_ACTIVE_DIGOXIN OR ms.HAS_ACTIVE_CARDIAC_GLYCOSIDE, FALSE) AS HAS_ACTIVE_AF_MEDICATION,
+    COALESCE(ms.HAS_ACTIVE_ANTICOAGULANT, FALSE) AS HAS_ACTIVE_ANTICOAGULANT,
+    COALESCE(ms.HAS_ACTIVE_DIGOXIN, FALSE) AS HAS_ACTIVE_DIGOXIN,
+    COALESCE(ms.HAS_ACTIVE_CARDIAC_GLYCOSIDE, FALSE) AS HAS_ACTIVE_CARDIAC_GLYCOSIDE,
+    ms.LATEST_AF_MEDICATION_DATE,
+    hc.LATEST_HEALTH_CHECK_DATE,
+    COALESCE(ec.HAS_EXCLUSION_CONDITION, FALSE) AS HAS_EXCLUSION_CONDITION,
+    ec.EXCLUSION_REASON,
+    ms.ALL_AF_MEDICATION_CODES,
+    ms.ALL_AF_MEDICATION_DISPLAYS
+FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION bp
+LEFT JOIN MedicationSummary ms
+    ON bp.PERSON_ID = ms.PERSON_ID
+LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_CF_HEALTH_CHECKS hc
+    ON bp.PERSON_ID = hc.PERSON_ID
+LEFT JOIN AF61ExclusionConditions ec
+    ON bp.PERSON_ID = ec.PERSON_ID; 
