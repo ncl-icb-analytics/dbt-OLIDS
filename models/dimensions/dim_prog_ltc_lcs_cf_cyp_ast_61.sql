@@ -16,6 +16,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BasePopulation AS (
     -- Get base population of patients aged 18 months to under 18 years
+    -- Note: Base population already excludes those on LTC registers and with diabetes
     SELECT DISTINCT
         bp.PERSON_ID,
         bp.SK_PATIENT_ID,
@@ -26,13 +27,6 @@ WITH BasePopulation AS (
         USING (PERSON_ID)
     WHERE age.AGE_DAYS_APPROX >= 547  -- 18 months
         AND age.AGE < 18  -- under 18 years
-),
-Exclusions AS (
-    -- Get patients to exclude
-    SELECT DISTINCT PERSON_ID
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_EXCLUSIONS
-    WHERE HAS_EXCLUDING_CONDITION = TRUE
-        OR HAS_TYPE2_DIABETES = TRUE
 ),
 ResolvedAsthma AS (
     -- Get patients with resolved asthma using ASTRES_COD from mapped concepts
@@ -91,10 +85,6 @@ JOIN InclusionCriteria ic
 LEFT JOIN AsthmaReviews ar
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM Exclusions e 
-    WHERE e.PERSON_ID = bp.PERSON_ID
-)
-AND NOT EXISTS (
     SELECT 1 FROM ResolvedAsthma ra 
     WHERE ra.PERSON_ID = bp.PERSON_ID
 ); 
