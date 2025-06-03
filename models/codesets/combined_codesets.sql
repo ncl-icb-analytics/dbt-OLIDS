@@ -12,7 +12,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 -- PCD data
 SELECT
-    cluster_id,
+    UPPER(cluster_id) AS cluster_id,
     cluster_description,
     CAST(SNOMED_Code AS VARCHAR) AS code,
     SNOMED_Code_Description AS code_description,
@@ -21,7 +21,7 @@ FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.pcd_refset_latest
 UNION ALL
 -- UKHSA COVID data
 SELECT
-    CLUSTER_ID AS cluster_id,
+    UPPER(CLUSTER_ID) AS cluster_id,
     CLUSTER_DESCRIPTION AS cluster_description,
     CAST(SNOMED_Code AS VARCHAR) AS code,
     SNOMED_DESCRIPTION AS code_description,
@@ -30,7 +30,7 @@ FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.UKHSA_COVID_LATEST
 UNION ALL
 -- UKHSA FLU data
 SELECT
-    CODE_GROUP AS cluster_id,
+    UPPER(CODE_GROUP) AS cluster_id,
     CODE_GROUP_DESCRIPTION AS cluster_description,
     CAST(SNOMED_Code AS VARCHAR) AS code,
     SNOMED_DESCRIPTION AS code_description,
@@ -39,7 +39,7 @@ FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.UKHSA_FLU_LATEST
 UNION ALL
 -- LTC LCS CODES data
 SELECT
-    CLUSTER_ID AS cluster_id,
+    UPPER(CLUSTER_ID) AS cluster_id,
     CLUSTER_DESCRIPTION AS cluster_description,
     CAST(SNOMED_CODE AS VARCHAR) AS code,
     SNOMED_DESCRIPTION AS code_description,
