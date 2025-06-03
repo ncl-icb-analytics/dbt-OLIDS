@@ -1,0 +1,27 @@
+-- Insert pulse rhythm codes for AF_62 into LTC_LCS_CODES table
+-- Only insert if they don't already exist in the LCS_PULSE_RATE cluster
+INSERT INTO DATA_LAB_NCL_TRAINING_TEMP.CODESETS.LTC_LCS_CODES 
+(CLUSTER_ID, CLUSTER_DESCRIPTION, SNOMED_CODE, SNOMED_DESCRIPTION)
+SELECT 
+    'LCS_PULSE_RATE' AS CLUSTER_ID,
+    'Pulse Rate Observations' AS CLUSTER_DESCRIPTION,
+    SNOMED_CODE,
+    SNOMED_DESCRIPTION
+FROM (
+    SELECT 
+        '78564009' AS SNOMED_CODE,
+        'Pulse rate finding' AS SNOMED_DESCRIPTION
+    UNION ALL SELECT '422119006', 'Pulse rate finding'
+    UNION ALL SELECT '429525003', 'Pulse rate finding'
+    UNION ALL SELECT '852341000000107', 'Pulse rate finding'
+    UNION ALL SELECT '852351000000105', 'Pulse rate finding'
+    UNION ALL SELECT '429614003', 'Pulse rate finding'
+    UNION ALL SELECT '843941000000100', 'Pulse rate finding'
+    UNION ALL SELECT '852331000000103', 'Pulse rate finding'
+) new_codes
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.LTC_LCS_CODES existing
+    WHERE existing.CLUSTER_ID = 'LCS_PULSE_RATE'
+    AND existing.SNOMED_CODE = new_codes.SNOMED_CODE
+); 
