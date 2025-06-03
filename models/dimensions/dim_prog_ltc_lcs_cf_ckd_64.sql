@@ -46,7 +46,7 @@ ClinicalEvents AS (
         -- Flag each type of event
         CASE 
             WHEN CLUSTER_ID = 'CKD_ACUTE_KIDNEY_INJURY' 
-                AND CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -36, CURRENT_DATE()) THEN TRUE
+                AND CLINICAL_EFFECTIVE_DATE >= ADD_MONTHS(CURRENT_DATE(), -36) THEN TRUE
             ELSE FALSE
         END AS IS_AKI,
         CASE 
@@ -55,7 +55,7 @@ ClinicalEvents AS (
         END AS IS_BPH_GOUT,
         CASE 
             WHEN CLUSTER_ID IN ('LITHIUM_MEDICATIONS', 'SULFASALAZINE_MEDICATIONS', 'TACROLIMUS_MEDICATIONS')
-                AND CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -6, CURRENT_DATE()) THEN TRUE
+                AND CLINICAL_EFFECTIVE_DATE >= ADD_MONTHS(CURRENT_DATE(), -6) THEN TRUE
             ELSE FALSE
         END AS IS_LITHIUM,
         CASE 
@@ -117,7 +117,7 @@ EGFRInLastYear AS (
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
     WHERE CLUSTER_ID = 'EGFR_TESTING'
         AND RESULT_VALUE > 0
-        AND CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -12, CURRENT_DATE())
+        AND CLINICAL_EFFECTIVE_DATE >= ADD_MONTHS(CURRENT_DATE(), -12)
 ),
 MicrohaematuriaWithConditions AS (
     -- Get patients with microhaematuria and specific conditions
