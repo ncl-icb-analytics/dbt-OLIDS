@@ -33,7 +33,6 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
     IN_HTN_65 BOOLEAN, -- Patients with stage 1 hypertension with risk factors (Clinic: ≥140/90, Home: ≥135/85)
     IN_HTN_66 BOOLEAN, -- Patients with stage 1 hypertension without risk factors (Clinic: ≥140/90, Home: ≥135/85)
     -- Metadata
-    LAST_REFRESH_DATE TIMESTAMP,
     INDICATOR_VERSION VARCHAR
 )
 COMMENT = 'Summary table for all LTC LCS case finding indicators. Provides a single view of which indicators each person is included in. Note that this table focuses on indicator flags rather than detailed dimension data. For detailed information about each indicator, refer to the individual dimension tables.'
@@ -88,7 +87,6 @@ SELECT
     htn65.PERSON_ID IS NOT NULL AND htn65.HAS_STAGE_1_HYPERTENSION_RISK AS IN_HTN_65,
     htn66.PERSON_ID IS NOT NULL AND htn66.HAS_STAGE_1_HYPERTENSION AS IN_HTN_66,
     -- Metadata
-    CURRENT_TIMESTAMP() AS LAST_REFRESH_DATE,
     '1.0' AS INDICATOR_VERSION
 FROM BasePopulation bp
 -- AF indicators
