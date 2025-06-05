@@ -2,13 +2,13 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the patient (18 months to under 18 years)
-    HAS_HAD_REVIEW BOOLEAN, -- Flag indicating if person has had an asthma review in last 12 months
-    LATEST_REVIEW_DATE DATE, -- Date of most recent asthma review
+    HAS_ASTHMA_SYMPTOMS BOOLEAN, -- Flag indicating if person has asthma symptoms (medications or suspected asthma)
+    LATEST_SYMPTOM_DATE DATE, -- Date of most recent asthma symptom (medication or suspected asthma)
     -- Metadata
     LAST_REFRESH_DATE TIMESTAMP,
     INDICATOR_VERSION VARCHAR
 )
-COMMENT = 'Dimension table for LTC LCS case finding indicator CYP_AST_61: Children and young people (18 months to under 18 years) with asthma who have had an asthma review in the last 12 months.'
+COMMENT = 'Dimension table for LTC LCS case finding indicator CYP_AST_61: Children and young people (18 months to under 18 years) with asthma symptoms (medications or suspected asthma) who do not have a formal asthma diagnosis. This indicator aims to identify children who may need formal asthma diagnosis and care.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
@@ -28,22 +28,20 @@ WITH BasePopulation AS (
     WHERE age.AGE_DAYS_APPROX >= 547  -- 18 months
         AND age.AGE < 18  -- under 18 years
 ),
-ResolvedAsthma AS (
-    -- Get patients with resolved asthma using ASTRES_COD from mapped concepts
+AsthmaDiagnosis AS (
+    -- Get patients with asthma diagnosis (excluding resolved asthma)
     SELECT DISTINCT
-        PP."person_id" AS PERSON_ID,
-        MAX(O."clinical_effective_date") AS LATEST_RESOLVED_DATE
-    FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS AS MC
-        ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
-    JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP
-        ON O."patient_id" = PP."patient_id"
-    WHERE MC.CLUSTER_ID = 'ASTRES_COD'
-    GROUP BY PP."person_id"
+        PERSON_ID
+    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
+    WHERE CLUSTER_ID IN ('ASTHMA_DIAGNOSIS', 'ASTHMA_RESOLVED')
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY PERSON_ID ORDER BY CLINICAL_EFFECTIVE_DATE DESC) = 1
+    AND CLUSTER_ID != 'ASTHMA_RESOLVED'  -- Exclude resolved asthma
 ),
-InclusionCriteria AS (
-    -- Get patients meeting any of the inclusion criteria
-    SELECT DISTINCT PERSON_ID
+AsthmaSymptoms AS (
+    -- Get patients with asthma symptoms in last 12 months
+    SELECT
+        PERSON_ID,
+        MAX(CLINICAL_EFFECTIVE_DATE) AS LATEST_SYMPTOM_DATE
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
     WHERE (
         -- Asthma medications in last 12 months
@@ -55,15 +53,6 @@ InclusionCriteria AS (
         -- Suspected asthma or viral wheeze in last 12 months
         (CLUSTER_ID IN ('SUSPECTED_ASTHMA', 'VIRAL_WHEEZE') AND CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -12, CURRENT_DATE()))
     )
-),
-AsthmaReviews AS (
-    -- Get asthma reviews from last 12 months
-    SELECT
-        PERSON_ID,
-        MAX(CLINICAL_EFFECTIVE_DATE) AS LATEST_REVIEW_DATE
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LTC_LCS_RAW_DATA
-    WHERE CLUSTER_ID = 'ASTHMA_REVIEW'
-        AND CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -12, CURRENT_DATE())
     GROUP BY PERSON_ID
 )
 -- Final selection
@@ -72,19 +61,17 @@ SELECT
     bp.SK_PATIENT_ID,
     bp.AGE,
     CASE 
-        WHEN ar.LATEST_REVIEW_DATE IS NOT NULL THEN TRUE
+        WHEN symptoms.LATEST_SYMPTOM_DATE IS NOT NULL THEN TRUE
         ELSE FALSE
-    END AS HAS_HAD_REVIEW,
-    ar.LATEST_REVIEW_DATE,
+    END AS HAS_ASTHMA_SYMPTOMS,
+    symptoms.LATEST_SYMPTOM_DATE,
     -- Metadata
     CURRENT_TIMESTAMP() AS LAST_REFRESH_DATE,
     '1.0' AS INDICATOR_VERSION
 FROM BasePopulation bp
-JOIN InclusionCriteria ic
-    USING (PERSON_ID)
-LEFT JOIN AsthmaReviews ar
+JOIN AsthmaSymptoms symptoms
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM ResolvedAsthma ra 
-    WHERE ra.PERSON_ID = bp.PERSON_ID
+    SELECT 1 FROM AsthmaDiagnosis ad 
+    WHERE ad.PERSON_ID = bp.PERSON_ID
 ); 
