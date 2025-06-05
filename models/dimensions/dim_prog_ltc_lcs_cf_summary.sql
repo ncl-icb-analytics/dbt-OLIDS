@@ -18,7 +18,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
     IN_CVD_65 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 10% and no statin (excluding high dose)
     IN_CVD_66 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 20% and no statin (excluding high dose)
     -- CYP Asthma indicator
-    IN_CYP_AST_61 BOOLEAN, -- Children (18 months to under 18 years) with asthma symptoms who need formal diagnosis
+    IN_CYP_AST_61 BOOLEAN, -- Children (18 months to under 18 years) with asthma symptoms who might need formal diagnosis
     -- Diabetes indicators
     IN_DM_61 BOOLEAN, -- Patients with HbA1c 42-46 mmol/mol and no HbA1c in last year
     IN_DM_62 BOOLEAN, -- Patients with gestational diabetes or pregnancy risk
