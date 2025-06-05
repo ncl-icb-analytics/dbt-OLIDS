@@ -1,42 +1,42 @@
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_SUMMARY (
-    PERSON_ID VARCHAR,
-    SK_PATIENT_ID VARCHAR,
-    AGE NUMBER,
+    PERSON_ID VARCHAR, -- Unique identifier for the person
+    SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
+    AGE NUMBER, -- Age of the patient
     -- AF indicators
-    IN_AF_61 BOOLEAN, -- On AF-related medications (digoxin, anticoagulants, etc.)
-    IN_AF_62 BOOLEAN, -- Missing pulse check
+    IN_AF_61 BOOLEAN, -- Patients on digoxin, flecainide, propafenone or anticoagulants
+    IN_AF_62 BOOLEAN, -- Patients over 65 missing pulse check in last 36 months
     -- CKD indicators
-    IN_CKD_61 BOOLEAN, -- Two consecutive eGFR readings below 60
-    IN_CKD_62 BOOLEAN, -- Two consecutive UACR readings above 4
-    IN_CKD_63 BOOLEAN, -- Latest UACR reading above 70
-    IN_CKD_64 BOOLEAN, -- Specific conditions (AKI, BPH/Gout, Lithium, Microhaematuria)
+    IN_CKD_61 BOOLEAN, -- Patients with two consecutive eGFR readings < 60
+    IN_CKD_62 BOOLEAN, -- Patients with gestational diabetes or pregnancy risk
+    IN_CKD_63 BOOLEAN, -- Patients with HbA1c 46-48 mmol/mol and no HbA1c in last year
+    IN_CKD_64 BOOLEAN, -- Patients with HbA1c 48-50 mmol/mol and no HbA1c in last year
     -- CVD indicators
-    IN_CVD_61 BOOLEAN, -- High QRISK2 (≥20%)
-    IN_CVD_62 BOOLEAN, -- Moderate QRISK2 (15-19.99%)
-    IN_CVD_63 BOOLEAN, -- Needs statin review
-    IN_CVD_64 BOOLEAN, -- Needs high-dose statins
-    IN_CVD_65 BOOLEAN, -- Needs moderate-dose statins
-    IN_CVD_66 BOOLEAN, -- Needs statin review (75-83 years)
+    IN_CVD_61 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 10%
+    IN_CVD_62 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 20%
+    IN_CVD_63 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 10% and no statin
+    IN_CVD_64 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 20% and no statin
+    IN_CVD_65 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 10% and no statin (excluding high dose)
+    IN_CVD_66 BOOLEAN, -- Patients aged 40-83 with QRISK2 ≥ 20% and no statin (excluding high dose)
     -- CYP Asthma indicator
-    IN_CYP_AST_61 BOOLEAN, -- CYP asthma review needed
+    IN_CYP_AST_61 BOOLEAN, -- Children (18 months to under 18 years) with asthma symptoms who need formal diagnosis
     -- Diabetes indicators
-    IN_DM_61 BOOLEAN, -- At risk of diabetes (HbA1c, QDiabetes, QRisk, or gestational diabetes history)
-    IN_DM_62 BOOLEAN, -- Gestational diabetes and pregnancy risk, no recent HbA1c
-    IN_DM_63 BOOLEAN, -- HbA1c between 46-48, no recent HbA1c
-    IN_DM_64 BOOLEAN, -- High BMI (≥32.5 BAME, ≥35 non-BAME), no recent HbA1c
-    IN_DM_65 BOOLEAN, -- Moderate-high BMI (27.5-32.5 BAME, 30-35 non-BAME), no recent HbA1c
-    IN_DM_66 BOOLEAN, -- HbA1c between 42-46 in last 12 months
+    IN_DM_61 BOOLEAN, -- Patients with HbA1c 42-46 mmol/mol and no HbA1c in last year
+    IN_DM_62 BOOLEAN, -- Patients with gestational diabetes or pregnancy risk
+    IN_DM_63 BOOLEAN, -- Patients with HbA1c 46-48 mmol/mol and no HbA1c in last year
+    IN_DM_64 BOOLEAN, -- Patients with HbA1c 48-50 mmol/mol and no HbA1c in last year
+    IN_DM_65 BOOLEAN, -- Patients with HbA1c 50-58 mmol/mol and no HbA1c in last year
+    IN_DM_66 BOOLEAN, -- Patients with HbA1c 58-64 mmol/mol and no HbA1c in last year
     -- Hypertension indicators
-    IN_HTN_61 BOOLEAN, -- Severe hypertension (Clinic: ≥180/120, Home: ≥170/115)
-    IN_HTN_62 BOOLEAN, -- Stage 2 hypertension (Clinic: ≥160/100, Home: ≥150/95)
-    IN_HTN_63 BOOLEAN, -- Stage 2 hypertension in BSA with risk factors
-    IN_HTN_65 BOOLEAN, -- Stage 1 hypertension with risk factors (Clinic: ≥140/90, Home: ≥135/85)
-    IN_HTN_66 BOOLEAN, -- Stage 1 hypertension without risk factors (Clinic: ≥140/90, Home: ≥135/85)
+    IN_HTN_61 BOOLEAN, -- Patients with severe hypertension (Clinic: ≥180/120, Home: ≥170/115)
+    IN_HTN_62 BOOLEAN, -- Patients with stage 2 hypertension (Clinic: ≥160/100, Home: ≥150/95)
+    IN_HTN_63 BOOLEAN, -- Patients with stage 2 hypertension who are BSA with risk factors
+    IN_HTN_65 BOOLEAN, -- Patients with stage 1 hypertension with risk factors (Clinic: ≥140/90, Home: ≥135/85)
+    IN_HTN_66 BOOLEAN, -- Patients with stage 1 hypertension without risk factors (Clinic: ≥140/90, Home: ≥135/85)
     -- Metadata
     LAST_REFRESH_DATE TIMESTAMP,
     INDICATOR_VERSION VARCHAR
 )
-COMMENT = 'Summary table for LTC LCS case finding indicators. Shows which indicators each person is included in, focusing on indicator flags rather than detailed dimension data.'
+COMMENT = 'Summary table for all LTC LCS case finding indicators. Provides a single view of which indicators each person is included in. Note that this table focuses on indicator flags rather than detailed dimension data. For detailed information about each indicator, refer to the individual dimension tables.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
