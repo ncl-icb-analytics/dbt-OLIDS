@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: int_blood_pressure_all
+    description: >
+      Consolidates blood pressure readings from multiple sources into a single comprehensive view per person per date.
+      Combines systolic and diastolic readings, identifies home/ABPM readings, and validates against clinical ranges.
+    
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: SYSBP_COD,DIABP_COD,BP_COD,HOMEBP_COD,HOMEAMBBP_COD,ABPM_COD
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+      
+      - name: sk_patient_id
+        description: Surrogate key for the patient
+        tests:
+          - not_null
+        tags:
+          - skip_on_dummy_data
+
+      - name: bp_date
+        description: Date of the blood pressure reading
+        tests:
+          - not_null
+
+      - name: systolic_value
+        description: Systolic blood pressure value in mmHg
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 40
+              max_value: 350
+              where: "systolic_value is not null"
+
+      - name: diastolic_value
+        description: Diastolic blood pressure value in mmHg
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 20
+              max_value: 200
+              where: "diastolic_value is not null"
+
+      - name: is_home_bp_event
+        description: Flag indicating if reading was taken at home
+        tests:
+          - not_null
+
+      - name: is_abpm_bp_event
+        description: Flag indicating if reading was from ambulatory blood pressure monitoring
+        tests:
+          - not_null
+
+      - name: systolic_observation_id
+        description: Reference to source observation for systolic reading
+
+      - name: diastolic_observation_id
+        description: Reference to source observation for diastolic reading
+
+      - name: all_concept_codes
+        description: Array of all related concept codes for the readings
+        tests:
+          - not_null
+
+      - name: all_concept_displays
+        description: Array of all related concept display texts
+        tests:
+          - not_null
+
+      - name: all_cluster_ids
+        description: Array of all related cluster IDs
+        tests:
+          - not_null 

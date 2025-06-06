@@ -1,0 +1,34 @@
+-- Staging model for OLIDS_MASKED.APPOINTMENT
+-- Source: "Data_Store_OLIDS_Dummy".OLIDS_MASKED
+
+select
+    "lds_id" as lds_id,
+    "id" as id,
+    "lds_business_key" as lds_business_key,
+    "lds_dataset_id" as lds_dataset_id,
+    "record_owner_organisation_code" as record_owner_organisation_code,
+    "lds_datetime_data_acquired" as lds_datetime_data_acquired,
+    "lds_initial_data_received_date" as lds_initial_data_received_date,
+    "lds_start_date_time" as lds_start_date_time,
+    "organisation_id" as organisation_id,
+    "person_id" as person_id,
+    "patient_id" as patient_id,
+    "practitioner_in_role_id" as practitioner_in_role_id,
+    "schedule_id" as schedule_id,
+    "start_date" as start_date,
+    "planned_duration" as planned_duration,
+    "actual_duration" as actual_duration,
+    "appointment_status_concept_id" as appointment_status_concept_id,
+    "patient_wait" as patient_wait,
+    "patient_delay" as patient_delay,
+    "date_time_booked" as date_time_booked,
+    "date_time_sent_in" as date_time_sent_in,
+    "date_time_left" as date_time_left,
+    "cancelled_date" as cancelled_date,
+    "type" as type,
+    "age_at_event" as age_at_event,
+    "age_at_event_baby" as age_at_event_baby,
+    "age_at_event_neonate" as age_at_event_neonate,
+    "booking_method_concept_id" as booking_method_concept_id,
+    "contact_mode_concept_id" as contact_mode_concept_id
+from {{ source('OLIDS_MASKED', 'APPOINTMENT') }}

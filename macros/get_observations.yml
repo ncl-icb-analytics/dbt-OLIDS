@@ -1,0 +1,14 @@
+version: 2
+
+macros:
+  - name: get_observations
+    description: >
+      Retrieves standardised observation data filtered by specified cluster IDs.
+      Joins to patient and concept mapping tables to provide a complete view of observations.
+    arguments:
+      - name: cluster_ids
+        type: string
+        description: Comma-separated list of cluster IDs to filter observations by
+    meta:
+      tests:
+        - test_get_observations 

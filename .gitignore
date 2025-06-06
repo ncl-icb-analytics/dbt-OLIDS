@@ -1,6 +1,18 @@
 playarea/*
 playground/*
 
+# env
+.env
+
+# dbt
+target/
+dbt_packages/
+logs/
+.user.yml
+profiles.yml
+.dbt/
+
+
 # Python
 __pycache__/
 *.py[cod]

@@ -1,0 +1,18 @@
+version: 2
+
+macros:
+  - name: get_medication_orders
+    description: >
+      Retrieves standardised medication order data filtered by either BNF code or cluster ID.
+      Joins to medication statements and concept mapping tables to provide a complete view of prescriptions.
+    arguments:
+      - name: bnf_code
+        type: string
+        description: BNF code prefix to filter medications by (e.g. '0205' for beta blockers)
+      
+      - name: cluster_id
+        type: string
+        description: Cluster ID to filter medications by (e.g. 'AF_MEDICATIONS' for atrial fibrillation drugs)
+    meta:
+      tests:
+        - test_get_medication_orders 

@@ -1,7 +1,7 @@
 version: 2
 sources:
-- name: codesets
-  database: DATA_LAB_NCL_TRAINING_TEMP
+- name: CODESETS
+  database: '"DATA_LAB_NCL_TRAINING_TEMP"'
   schema: CODESETS
   tables:
   - name: BNF_LATEST
@@ -254,8 +254,8 @@ sources:
       data_type: NUMBER
     - name: VALPROATE_PRODUCT_TERM
       data_type: TEXT
-- name: rulesets
-  database: DATA_LAB_NCL_TRAINING_TEMP
+- name: RULESETS
+  database: '"DATA_LAB_NCL_TRAINING_TEMP"'
   schema: RULESETS
   tables:
   - name: BP_THRESHOLDS
@@ -422,8 +422,8 @@ sources:
       data_type: NUMBER
     - name: INCOMPATIBLE_EXPLANATION
       data_type: TEXT
-- name: olids_masked
-  database: Data_Store_OLIDS_Dummy
+- name: OLIDS_MASKED
+  database: '"Data_Store_OLIDS_Dummy"'
   schema: OLIDS_MASKED
   tables:
   - name: ALLERGY_INTOLERANCE
@@ -1452,8 +1452,8 @@ sources:
       data_type: TEXT
     - name: practitioner_id
       data_type: TEXT
-- name: olids_terminology
-  database: Data_Store_OLIDS_Dummy
+- name: OLIDS_TERMINOLOGY
+  database: '"Data_Store_OLIDS_Dummy"'
   schema: OLIDS_TERMINOLOGY
   tables:
   - name: CONCEPT

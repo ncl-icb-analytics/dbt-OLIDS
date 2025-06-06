@@ -1,0 +1,25 @@
+name: 'snowflake_hei_migration'
+version: '1.0'
+config-version: 2
+
+profile: 'snowflake_hei_migration'
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_modules"
+
+model-paths: ["models"]
+
+models:
+  snowflake_hei_migration:
+    +materialized: table
+    +database: DATA_LAB_NCL_TRAINING_TEMP
+    staging:
+      +materialized: view
+      # Models reading from Data_Store_OLIDS_Dummy
+      olids:
+        +database: DATA_LAB_NCL_TRAINING_TEMP  # Where to create the views
+        +schema: DBT
+        +grants:
+          reference_usage: ["Data_Store_OLIDS_Dummy"]  # Database we need to read from

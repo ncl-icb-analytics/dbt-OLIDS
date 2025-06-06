@@ -21,34 +21,38 @@ def main():
         df.columns = df.columns.str.strip()
         print("Columns found in file (tab):", df.columns.tolist())
 
-    dbt_sources = {
+    # Group by database and schema to create sources
+    sources = []
+    for (database, schema), group in df.groupby(['DATABASE_NAME', 'SCHEMA_NAME']):
+        tables = []
+        for table_name, table_group in group.groupby('TABLE_NAME'):
+            # Sort columns by ordinal position
+            sorted_columns = table_group.sort_values('ORDINAL_POSITION')
+            table = {
+                'name': table_name,
+                'columns': [{'name': col, 'data_type': dtype} for col, dtype in zip(sorted_columns['COLUMN_NAME'], sorted_columns['DATA_TYPE'])]
+            }
+            tables.append(table)
+
+        source = {
+            'name': schema,  # Use schema name as source name
+            'database': f'"{database}"',  # Quote database name for case sensitivity
+            'schema': schema,
+            'tables': tables
+        }
+        sources.append(source)
+
+    # Create sources.yml content
+    sources_yml = {
         'version': 2,
-        'sources': []
+        'sources': sources
     }
 
-    # Group by database and schema for dbt sources
-    for (db, schema), tables in df.groupby(['DATABASE_NAME', 'SCHEMA_NAME']):
-        dbt_sources['sources'].append({
-            'name': schema.lower(),
-            'database': db,
-            'schema': schema,
-            'tables': [
-                {
-                    'name': table,
-                    'columns': [
-                        {'name': col['COLUMN_NAME'], 'data_type': col['DATA_TYPE']}
-                        for _, col in table_df.iterrows()
-                    ]
-                }
-                for table, table_df in tables.groupby('TABLE_NAME')
-            ]
-        })
-
-    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
+    # Write to file
     with open(OUTPUT_FILE, 'w') as f:
-        yaml.dump(dbt_sources, f, sort_keys=False, default_flow_style=False)
+        yaml.dump(sources_yml, f, sort_keys=False, default_flow_style=False)
+        print(f"Generated {OUTPUT_FILE}")
 
-    print(f"YAML written to {OUTPUT_FILE}")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main() 

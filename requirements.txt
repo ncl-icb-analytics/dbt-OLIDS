@@ -1,3 +1,5 @@
-networkx==3.2.1 
+networkx
 pandas
 pyyaml
+dbt-core
+dbt-snowflake
