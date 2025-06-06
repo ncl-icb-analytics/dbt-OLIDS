@@ -23,11 +23,11 @@ models:
         tags:
           - skip_on_dummy_data
 
-      - name: bp_date
-        description: Date of the blood pressure reading
+      - name: clinical_effective_date
+        description: Timestamp of when the blood pressure reading is clinically effective (TIMESTAMP_NTZ)
         tests:
           - not_null
-          - test_no_future_dates
+          - test_no_future_dates 
 
       - name: systolic_value
         description: Systolic blood pressure value in mmHg
@@ -75,9 +75,3 @@ models:
         description: Array of all related cluster IDs
         tests:
           - not_null
-
-      - name: clinical_effective_date
-        description: Timestamp of when the blood pressure reading is clinically effective (TIMESTAMP_NTZ)
-        tests:
-          - not_null
-          - test_no_future_dates 
