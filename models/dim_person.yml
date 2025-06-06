@@ -5,15 +5,11 @@ models:
     description: >
       Person dimension consolidating all person and patient identifiers for simplified joins and conformed dimensions.
     columns:
-      - name: person_sk
-        description: Surrogate key for the person (generated)
+      - name: person_id
+        description: Unique person identifier
         tests:
           - not_null
           - unique
-      - name: person_id
-        description: Natural person identifier
-        tests:
-          - not_null
       - name: patient_id
         description: Patient identifier
         tests:

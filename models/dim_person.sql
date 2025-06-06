@@ -7,7 +7,6 @@
 ) }}
 
 SELECT
-  {{ dbt_utils.generate_surrogate_key(['pp.person_id']) }} AS person_sk,
   pp.person_id,
   pp.patient_id,
   p.sk_patient_id
