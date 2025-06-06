@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: dim_person
+    description: >
+      Person dimension consolidating all person and patient identifiers for simplified joins and conformed dimensions.
+    columns:
+      - name: person_sk
+        description: Surrogate key for the person (generated)
+        tests:
+          - not_null
+          - unique
+      - name: person_id
+        description: Natural person identifier
+        tests:
+          - not_null
+      - name: patient_id
+        description: Patient identifier
+        tests:
+          - not_null
+      - name: sk_patient_id
+        description: Surrogate key for the patient from source
+        tests:
+          - not_null 

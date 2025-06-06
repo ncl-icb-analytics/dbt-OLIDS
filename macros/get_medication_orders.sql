@@ -10,6 +10,10 @@
             mo.id AS medication_order_id,
             ms.id AS medication_statement_id,
             mo.patient_id,
+            dp.person_id,
+            dp.sk_patient_id,
+            dp.patient_id AS dim_patient_id,
+            dp.person_sk,
             mo.clinical_effective_date::DATE AS order_date,
             mo.medication_name AS order_medication_name,
             mo.dose AS order_dose,
@@ -26,6 +30,8 @@
             ON mo.medication_statement_id = ms.id
         JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
             ON ms.medication_statement_core_concept_id = mc.source_code_id
+        JOIN {{ ref('dim_person') }} dp
+            ON mo.patient_id = dp.patient_id
         {% if bnf_code is not none %}
             JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
                 ON mc.concept_code = bnf.snomed_code
@@ -37,7 +43,6 @@
         {% endif %}
     )
     
-    -- Add person_id and sk_patient_id through patient mapping
-    {{ get_person_ids('base_orders') }}
+    SELECT * FROM base_orders
 
 {% endmacro %} 

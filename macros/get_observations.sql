@@ -7,8 +7,10 @@
     SELECT
         o.id AS observation_id,
         o.patient_id,
-        pp.person_id,
-        p.sk_patient_id,
+        dp.person_id,
+        dp.sk_patient_id,
+        dp.patient_id AS dim_patient_id,
+        dp.person_sk,
         o.clinical_effective_date,
         o.result_value,
         o.result_value_unit_concept_id,
@@ -23,10 +25,8 @@
         cc.cluster_id,
         cc.cluster_description
     FROM {{ ref('stg_olids_observation') }} o
-    JOIN {{ ref('stg_olids_patient') }} p
-        ON o.patient_id = p.id
-    JOIN {{ ref('stg_olids_patient_person') }} pp 
-        ON p.id = pp.patient_id
+    JOIN {{ ref('dim_person') }} dp
+        ON o.patient_id = dp.patient_id
     JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
         ON o.observation_core_concept_id = mc.source_code_id
     JOIN {{ ref('stg_codesets_combined_codesets') }} cc
