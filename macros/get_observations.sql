@@ -1,4 +1,7 @@
 {% macro get_observations(cluster_ids) %}
+    {%- if cluster_ids is none or cluster_ids|trim == '' -%}
+        {{ exceptions.raise_compiler_error("Must provide a non-empty cluster_ids parameter to get_observations macro") }}
+    {%- endif -%}
     -- Get observations filtered by cluster ID
     -- Returns standardised fields for observations
     SELECT
