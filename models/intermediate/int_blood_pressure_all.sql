@@ -48,7 +48,7 @@ consolidated_readings AS (
     SELECT
         person_id,
         sk_patient_id,
-        clinical_effective_date::DATE AS bp_date,
+        clinical_effective_date AS clinical_effective_date,
         -- Get systolic/diastolic values
         MAX(CASE WHEN is_systolic_reading THEN result_value END) AS systolic_value,
         MAX(CASE WHEN is_diastolic_reading THEN result_value END) AS diastolic_value,
@@ -66,7 +66,7 @@ consolidated_readings AS (
     GROUP BY 
         person_id,
         sk_patient_id,
-        clinical_effective_date::DATE
+        clinical_effective_date
 )
 
 SELECT *

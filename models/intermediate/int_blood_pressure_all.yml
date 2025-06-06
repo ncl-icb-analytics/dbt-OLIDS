@@ -74,4 +74,10 @@ models:
       - name: all_cluster_ids
         description: Array of all related cluster IDs
         tests:
-          - not_null 
+          - not_null
+
+      - name: clinical_effective_date
+        description: Timestamp of when the blood pressure reading is clinically effective (TIMESTAMP_NTZ)
+        tests:
+          - not_null
+          - test_no_future_dates 
