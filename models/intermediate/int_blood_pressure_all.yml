@@ -27,6 +27,7 @@ models:
         description: Date of the blood pressure reading
         tests:
           - not_null
+          - test_no_future_dates
 
       - name: systolic_value
         description: Systolic blood pressure value in mmHg
