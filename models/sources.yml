@@ -1,0 +1,1502 @@
+version: 2
+sources:
+- name: codesets
+  database: DATA_LAB_NCL_TRAINING_TEMP
+  schema: CODESETS
+  tables:
+  - name: BNF_LATEST
+    columns:
+    - name: PRESENTATION_PACK_LEVEL
+      data_type: TEXT
+    - name: VMP_VMPP_AMP_AMPP
+      data_type: TEXT
+    - name: BNF_CODE
+      data_type: TEXT
+    - name: BNF_NAME
+      data_type: TEXT
+    - name: SNOMED_CODE
+      data_type: TEXT
+    - name: DM_D_PRODUCT_DESCRIPTION
+      data_type: TEXT
+    - name: STRENGTH
+      data_type: TEXT
+    - name: UNIT_OF_MEASURE
+      data_type: TEXT
+    - name: DM_D_PRODUCT_PACK_DESCRIPTION
+      data_type: TEXT
+    - name: PACK
+      data_type: TEXT
+    - name: SUB_PACK
+      data_type: TEXT
+    - name: VTM
+      data_type: TEXT
+    - name: VTM_NAME
+      data_type: TEXT
+  - name: CHILDHOOD_IMMS_CODES
+    columns:
+    - name: VACCINE
+      data_type: TEXT
+    - name: DOSE
+      data_type: TEXT
+    - name: PROPOSEDCLUSTER
+      data_type: TEXT
+    - name: SOURCECLUSTERID
+      data_type: TEXT
+    - name: SOURCECLUSTERDESCRIPTION
+      data_type: TEXT
+    - name: SNOMEDCONCEPTID
+      data_type: NUMBER
+    - name: CODEDESCRIPTION
+      data_type: TEXT
+    - name: SOURCE
+      data_type: TEXT
+  - name: CODESET_HISTORY
+    columns:
+    - name: HISTORY_ID
+      data_type: NUMBER
+    - name: FILE_TYPE
+      data_type: TEXT
+    - name: FILENAME
+      data_type: TEXT
+    - name: PROCESSED_DATE
+      data_type: TIMESTAMP_NTZ
+    - name: FILE_DATE
+      data_type: TEXT
+    - name: ROW_COUNT
+      data_type: NUMBER
+    - name: EFFECTIVE_FROM
+      data_type: DATE
+    - name: EFFECTIVE_TO
+      data_type: DATE
+    - name: IS_CURRENT
+      data_type: BOOLEAN
+    - name: ARCHIVE_PATH
+      data_type: TEXT
+    - name: HASH_VALUE
+      data_type: TEXT
+  - name: CODESET_METADATA
+    columns:
+    - name: FILE_TYPE
+      data_type: TEXT
+    - name: LATEST_FILE_NAME
+      data_type: TEXT
+    - name: PROCESSED_DATE
+      data_type: TIMESTAMP_NTZ
+    - name: FILE_DATE
+      data_type: TEXT
+    - name: ROW_COUNT
+      data_type: NUMBER
+  - name: COMBINED_CODESETS
+    columns:
+    - name: CLUSTER_ID
+      data_type: TEXT
+    - name: CLUSTER_DESCRIPTION
+      data_type: TEXT
+    - name: CODE
+      data_type: TEXT
+    - name: CODE_DESCRIPTION
+      data_type: TEXT
+    - name: SOURCE
+      data_type: TEXT
+  - name: DYNAMIC_TABLE_REFRESH_HISTORY
+    columns:
+    - name: TABLE_NAME
+      data_type: TEXT
+    - name: REFRESH_START_TIME
+      data_type: TIMESTAMP_LTZ
+    - name: REFRESH_END_TIME
+      data_type: TIMESTAMP_LTZ
+    - name: REFRESH_DURATION_MS
+      data_type: NUMBER
+    - name: CREDITS_USED
+      data_type: FLOAT
+    - name: ROWS_PROCESSED
+      data_type: NUMBER
+    - name: NEW_DATA_DETECTED
+      data_type: BOOLEAN
+    - name: REFRESH_STATUS
+      data_type: TEXT
+    - name: REFRESH_ACTION
+      data_type: TEXT
+    - name: REFRESH_TRIGGER
+      data_type: TEXT
+    - name: STATISTICS
+      data_type: OBJECT
+  - name: EFI2_SNOMED
+    columns:
+    - name: DEFICIT
+      data_type: TEXT
+    - name: SNOMEDCT_CONCEPTID
+      data_type: TEXT
+    - name: CTV3
+      data_type: TEXT
+    - name: PROVENANCE
+      data_type: TEXT
+    - name: CODEDESCRIPTION
+      data_type: TEXT
+    - name: TIMECONSTRAINTYEARS
+      data_type: NUMBER
+    - name: AGELIMIT
+      data_type: NUMBER
+    - name: OTHERINSTRUCTIONS
+      data_type: TEXT
+  - name: ETHNICITY_CODES
+    columns:
+    - name: CODE
+      data_type: TEXT
+    - name: TERM
+      data_type: TEXT
+    - name: CATEGORY
+      data_type: TEXT
+    - name: SUBCATEGORY
+      data_type: TEXT
+    - name: GRANULAR
+      data_type: TEXT
+  - name: LTC_LCS_CODES
+    columns:
+    - name: CLUSTER_ID
+      data_type: TEXT
+    - name: CLUSTER_DESCRIPTION
+      data_type: TEXT
+    - name: SNOMED_CODE
+      data_type: TEXT
+    - name: SNOMED_DESCRIPTION
+      data_type: TEXT
+  - name: MAPPED_CONCEPTS
+    columns:
+    - name: SOURCE_CODE_ID
+      data_type: TEXT
+    - name: ORIGINATING_SOURCE_TABLE
+      data_type: TEXT
+    - name: CONCEPT_ID
+      data_type: TEXT
+    - name: CONCEPT_SYSTEM
+      data_type: TEXT
+    - name: CONCEPT_CODE
+      data_type: TEXT
+    - name: CONCEPT_DISPLAY
+      data_type: TEXT
+    - name: CLUSTER_ID
+      data_type: TEXT
+    - name: CLUSTER_DESCRIPTION
+      data_type: TEXT
+    - name: CODE_DESCRIPTION
+      data_type: TEXT
+    - name: SOURCE
+      data_type: TEXT
+  - name: PCD_REFSET_LATEST
+    columns:
+    - name: CLUSTER_ID
+      data_type: TEXT
+    - name: CLUSTER_DESCRIPTION
+      data_type: TEXT
+    - name: SNOMED_CODE
+      data_type: NUMBER
+    - name: SNOMED_CODE_DESCRIPTION
+      data_type: TEXT
+    - name: PCD_REFSET_ID
+      data_type: TEXT
+    - name: SERVICE_AND_RULESET
+      data_type: TEXT
+  - name: SOURCE_CONCEPT_ORIGINS
+    columns:
+    - name: SOURCE_CODE_ID_VALUE
+      data_type: TEXT
+    - name: ORIGINATING_SOURCE_TABLE
+      data_type: TEXT
+  - name: UKHSA_COVID_LATEST
+    columns:
+    - name: CODING_SCHEME
+      data_type: TEXT
+    - name: LIBRARY
+      data_type: TEXT
+    - name: CLUSTER_ID
+      data_type: TEXT
+    - name: CLUSTER_DESCRIPTION
+      data_type: TEXT
+    - name: SNOMED_CODE
+      data_type: TEXT
+    - name: SNOMED_DESCRIPTION
+      data_type: TEXT
+    - name: CODE_VALIDATED
+      data_type: TEXT
+  - name: UKHSA_FLU_LATEST
+    columns:
+    - name: CODING_SCHEME
+      data_type: TEXT
+    - name: CODE_LIBRARY
+      data_type: TEXT
+    - name: CODE_GROUP
+      data_type: TEXT
+    - name: CODE_GROUP_DESCRIPTION
+      data_type: TEXT
+    - name: SNOMED_CODE
+      data_type: TEXT
+    - name: SNOMED_DESCRIPTION
+      data_type: TEXT
+    - name: DATE_CREATED
+      data_type: TEXT
+    - name: VALIDATED_SCTID
+      data_type: TEXT
+    - name: EMIS_ASTRX
+      data_type: TEXT
+    - name: UNNAMED_9
+      data_type: TEXT
+    - name: TPP_ASTRX
+      data_type: TEXT
+  - name: VALPROATE_PROG_CODES
+    columns:
+    - name: CODE
+      data_type: TEXT
+    - name: CODE_CATEGORY
+      data_type: TEXT
+    - name: LOOKBACK_YEARS_OFFSET
+      data_type: NUMBER
+    - name: VALPROATE_PRODUCT_TERM
+      data_type: TEXT
+- name: rulesets
+  database: DATA_LAB_NCL_TRAINING_TEMP
+  schema: RULESETS
+  tables:
+  - name: BP_THRESHOLDS
+    columns:
+    - name: THRESHOLD_RULE_ID
+      data_type: TEXT
+    - name: PROGRAMME_OR_GUIDELINE
+      data_type: TEXT
+    - name: DESCRIPTION
+      data_type: TEXT
+    - name: PATIENT_GROUP
+      data_type: TEXT
+    - name: THRESHOLD_TYPE
+      data_type: TEXT
+    - name: SYSTOLIC_THRESHOLD
+      data_type: NUMBER
+    - name: DIASTOLIC_THRESHOLD
+      data_type: NUMBER
+    - name: OPERATOR
+      data_type: TEXT
+    - name: NOTES
+      data_type: TEXT
+  - name: EFI2_COEFFICIENTS
+    columns:
+    - name: MODEL_NAME
+      data_type: TEXT
+    - name: VARIABLE_NAME
+      data_type: TEXT
+    - name: VARIABLE_CATEGORY
+      data_type: TEXT
+    - name: COEFFICIENT
+      data_type: NUMBER
+    - name: TRANSFORMED_COEFFICIENT
+      data_type: NUMBER
+    - name: DESCRIPTION
+      data_type: TEXT
+    - name: VARIABLE_TYPE
+      data_type: TEXT
+    - name: MODEL_DESCRIPTION
+      data_type: TEXT
+  - name: EFI2_RULES
+    columns:
+    - name: CODE
+      data_type: TEXT
+    - name: DEFICIT
+      data_type: TEXT
+    - name: DEFICIT_TYPE
+      data_type: TEXT
+    - name: TIME_CONSTRAINT_DAYS
+      data_type: NUMBER
+    - name: TIME_CONSTRAINT_TYPE
+      data_type: TEXT
+    - name: TIME_CONSTRAINT_DESCRIPTION
+      data_type: TEXT
+    - name: MIN_AGE
+      data_type: NUMBER
+    - name: AGE_RESTRICTION_DESCRIPTION
+      data_type: TEXT
+    - name: CATEGORY_NAME
+      data_type: TEXT
+    - name: CATEGORY_ORDER
+      data_type: NUMBER
+    - name: CATEGORY_RANGE_START
+      data_type: NUMBER
+    - name: CATEGORY_RANGE_END
+      data_type: NUMBER
+    - name: CATEGORY_DESCRIPTION
+      data_type: TEXT
+    - name: THRESHOLD_VALUE
+      data_type: FLOAT
+    - name: THRESHOLD_COMPARATOR
+      data_type: TEXT
+    - name: THRESHOLD_DESCRIPTION
+      data_type: TEXT
+    - name: THRESHOLD_UNIT
+      data_type: TEXT
+    - name: THRESHOLD_TYPE
+      data_type: TEXT
+    - name: READINGS_REQUIRED
+      data_type: NUMBER
+    - name: READINGS_TIMEFRAME
+      data_type: TEXT
+    - name: SUPERSEDES
+      data_type: TEXT
+    - name: SUPERSEDED_BY
+      data_type: TEXT
+    - name: HIERARCHY_LEVEL
+      data_type: NUMBER
+    - name: RESOLUTION_TEST
+      data_type: TEXT
+    - name: RESOLUTION_THRESHOLD
+      data_type: NUMBER
+    - name: RESOLUTION_UNIT
+      data_type: TEXT
+    - name: RESOLUTION_GENDER_SPECIFIC
+      data_type: BOOLEAN
+    - name: RESOLUTION_MALE_THRESHOLD
+      data_type: NUMBER
+    - name: RESOLUTION_FEMALE_THRESHOLD
+      data_type: NUMBER
+    - name: VALIDATION_RULE
+      data_type: TEXT
+    - name: VALIDATION_DESCRIPTION
+      data_type: TEXT
+    - name: EFI2_COEFFICIENT
+      data_type: NUMBER
+    - name: EFI2_TRANSFORMED_COEFFICIENT
+      data_type: NUMBER
+    - name: EFI_PLUS_FALLS_COEFFICIENT
+      data_type: NUMBER
+    - name: EFI_PLUS_CARE_HOME_COEFFICIENT
+      data_type: NUMBER
+    - name: EFI_PLUS_MORTALITY_COEFFICIENT
+      data_type: NUMBER
+    - name: EFI_PLUS_HOME_CARE_COEFFICIENT
+      data_type: NUMBER
+    - name: SOURCE_INSTRUCTION
+      data_type: TEXT
+    - name: RULE_PRIORITY
+      data_type: NUMBER
+  - name: IMMS_SCHEDULE_LATEST
+    columns:
+    - name: VACCINE_ORDER
+      data_type: NUMBER
+    - name: VACCINE_ID
+      data_type: TEXT
+    - name: VACCINE_NAME
+      data_type: TEXT
+    - name: DOSE_NUMBER
+      data_type: TEXT
+    - name: DISEASES_PROTECTED_AGAINST
+      data_type: TEXT
+    - name: VACCINE_CODE
+      data_type: TEXT
+    - name: TRADE_NAME
+      data_type: TEXT
+    - name: ADMINISTRATION_ROUTE
+      data_type: TEXT
+    - name: SCHEDULE_AGE
+      data_type: TEXT
+    - name: MINIMUM_AGE_DAYS
+      data_type: NUMBER
+    - name: MAXIMUM_AGE_DAYS
+      data_type: NUMBER
+    - name: MINIMUM_INTERVAL_DAYS
+      data_type: NUMBER
+    - name: NEXT_DOSE_VACCINE_ID
+      data_type: TEXT
+    - name: ELIGIBLE_AGE_FROM_DAYS
+      data_type: NUMBER
+    - name: ELIGIBLE_AGE_TO_DAYS
+      data_type: NUMBER
+    - name: ADMINISTERED_CLUSTER_ID
+      data_type: TEXT
+    - name: DRUG_CLUSTER_ID
+      data_type: TEXT
+    - name: DECLINED_CLUSTER_ID
+      data_type: TEXT
+    - name: CONTRAINDICATED_CLUSTER_ID
+      data_type: TEXT
+    - name: INCOMPATIBLE_CLUSTER_IDS
+      data_type: TEXT
+    - name: INELIGIBILITY_PERIOD_MONTHS
+      data_type: NUMBER
+    - name: INCOMPATIBLE_EXPLANATION
+      data_type: TEXT
+- name: olids_masked
+  database: Data_Store_OLIDS_Dummy
+  schema: OLIDS_MASKED
+  tables:
+  - name: ALLERGY_INTOLERANCE
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: clinical_status
+      data_type: TEXT
+    - name: verification_status
+      data_type: TEXT
+    - name: category
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: is_review
+      data_type: BOOLEAN
+    - name: medication_name
+      data_type: TEXT
+    - name: multi_lex_action
+      data_type: TEXT
+    - name: allergy_intolerance_core_concept_id
+      data_type: TEXT
+    - name: allergy_intolerance_raw_concept_id
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+    - name: is_confidential
+      data_type: BOOLEAN
+  - name: APPOINTMENT
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: organisation_id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: practitioner_in_role_id
+      data_type: TEXT
+    - name: schedule_id
+      data_type: TEXT
+    - name: start_date
+      data_type: TIMESTAMP_NTZ
+    - name: planned_duration
+      data_type: NUMBER
+    - name: actual_duration
+      data_type: NUMBER
+    - name: appointment_status_concept_id
+      data_type: TEXT
+    - name: patient_wait
+      data_type: NUMBER
+    - name: patient_delay
+      data_type: NUMBER
+    - name: date_time_booked
+      data_type: TIMESTAMP_NTZ
+    - name: date_time_sent_in
+      data_type: TIMESTAMP_NTZ
+    - name: date_time_left
+      data_type: TIMESTAMP_NTZ
+    - name: cancelled_date
+      data_type: TIMESTAMP_NTZ
+    - name: type
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: booking_method_concept_id
+      data_type: TEXT
+    - name: contact_mode_concept_id
+      data_type: TEXT
+  - name: APPOINTMENT_PRACTITIONER
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_record_id_user
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: appointment_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: DIAGNOSTIC_ORDER
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: parent_observation_id
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: result_value
+      data_type: FLOAT
+    - name: result_value_units
+      data_type: TEXT
+    - name: result_date
+      data_type: DATE
+    - name: result_text
+      data_type: TEXT
+    - name: is_problem
+      data_type: BOOLEAN
+    - name: is_review
+      data_type: BOOLEAN
+    - name: problem_end_date
+      data_type: TIMESTAMP_NTZ
+    - name: diagnostic_order_core_concept_id
+      data_type: TEXT
+    - name: diagnostic_order_raw_concept_id
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: episodicity_concept_id
+      data_type: TEXT
+    - name: is_primary
+      data_type: BOOLEAN
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+  - name: ENCOUNTER
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: appointment_id
+      data_type: TEXT
+    - name: episode_of_care_id
+      data_type: TEXT
+    - name: service_provider_organisation_id
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: location
+      data_type: TEXT
+    - name: encounter_core_concept_id
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: type
+      data_type: TEXT
+    - name: sub_type
+      data_type: TEXT
+    - name: admission_method
+      data_type: TEXT
+    - name: end_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: EPISODE_OF_CARE
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: organisation_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: episode_type_raw_concept_id
+      data_type: TEXT
+    - name: episode_status_raw_concept_id
+      data_type: TEXT
+    - name: episode_of_care_start_date
+      data_type: TIMESTAMP_NTZ
+    - name: episode_of_care_end_date
+      data_type: TIMESTAMP_NTZ
+    - name: care_manager_practitioner_id
+      data_type: TEXT
+  - name: FLAG
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: expired_date
+      data_type: TIMESTAMP_NTZ
+    - name: is_active
+      data_type: BOOLEAN
+    - name: flag_text
+      data_type: TEXT
+  - name: LOCATION
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: name
+      data_type: TEXT
+    - name: type_code
+      data_type: TEXT
+    - name: type_desc
+      data_type: TEXT
+    - name: is_primary_location
+      data_type: BOOLEAN
+    - name: house_name
+      data_type: TEXT
+    - name: house_number
+      data_type: TEXT
+    - name: house_name_flat_number
+      data_type: TEXT
+    - name: street
+      data_type: TEXT
+    - name: address_line_1
+      data_type: TEXT
+    - name: address_line_2
+      data_type: TEXT
+    - name: address_line_3
+      data_type: TEXT
+    - name: address_line_4
+      data_type: TEXT
+    - name: postcode
+      data_type: TEXT
+    - name: managing_organisation_id
+      data_type: TEXT
+    - name: open_date
+      data_type: DATE
+    - name: close_date
+      data_type: DATE
+    - name: is_obsolete
+      data_type: BOOLEAN
+  - name: LOCATION_CONTACT
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: location_id
+      data_type: TEXT
+    - name: is_primary_contact
+      data_type: BOOLEAN
+    - name: ldsbusinessid_contacttype
+      data_type: TEXT
+    - name: contact_type_concept_id
+      data_type: TEXT
+    - name: value
+      data_type: TEXT
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: MEDICATION_ORDER
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: organisation_id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: medication_statement_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: observation_id
+      data_type: TEXT
+    - name: allergy_intolerance_id
+      data_type: TEXT
+    - name: diagnostic_order_id
+      data_type: TEXT
+    - name: referral_request_id
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: dose
+      data_type: TEXT
+    - name: quantity_value
+      data_type: FLOAT
+    - name: quantity_unit
+      data_type: TEXT
+    - name: duration_days
+      data_type: NUMBER
+    - name: estimated_cost
+      data_type: FLOAT
+    - name: medication_name
+      data_type: TEXT
+    - name: medication_order_core_concept_id
+      data_type: TEXT
+    - name: bnf_reference
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: issue_method
+      data_type: TEXT
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+    - name: is_confidential
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: MEDICATION_STATEMENT
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: organisation_id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: observation_id
+      data_type: TEXT
+    - name: allergy_intolerance_id
+      data_type: TEXT
+    - name: diagnostic_order_id
+      data_type: TEXT
+    - name: referral_request_id
+      data_type: TEXT
+    - name: ldsconceptid_authorisationtype
+      data_type: TEXT
+    - name: ldsconceptid_dateprecision
+      data_type: TEXT
+    - name: medication_statement_core_concept_id
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: cancellation_date
+      data_type: TIMESTAMP_NTZ
+    - name: dose
+      data_type: TEXT
+    - name: quantity_value_description
+      data_type: TEXT
+    - name: quantity_value
+      data_type: FLOAT
+    - name: quantity_unit
+      data_type: TEXT
+    - name: medication_name
+      data_type: TEXT
+    - name: bnf_reference
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: issue_method
+      data_type: TEXT
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+    - name: is_active
+      data_type: BOOLEAN
+    - name: is_confidential
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: OBSERVATION
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: ldsbusinessid_practioner
+      data_type: TEXT
+    - name: parent_obervation_id
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: result_value
+      data_type: FLOAT
+    - name: result_value_unit_concept_id
+      data_type: TEXT
+    - name: result_date
+      data_type: DATE
+    - name: result_text
+      data_type: TEXT
+    - name: is_problem
+      data_type: BOOLEAN
+    - name: is_review
+      data_type: BOOLEAN
+    - name: problem_end_date
+      data_type: TIMESTAMP_NTZ
+    - name: observation_raw_concept_id
+      data_type: TEXT
+    - name: observation_core_concept_id
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: episodicity_concept_id
+      data_type: TEXT
+    - name: is_primary
+      data_type: BOOLEAN
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+    - name: is_problem_deleted
+      data_type: BOOLEAN
+    - name: is_confidential
+      data_type: BOOLEAN
+  - name: ORGANISATION
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: organisation_code
+      data_type: TEXT
+    - name: assigning_authority_code
+      data_type: TEXT
+    - name: name
+      data_type: TEXT
+    - name: type_code
+      data_type: TEXT
+    - name: type_desc
+      data_type: TEXT
+    - name: postcode
+      data_type: TEXT
+    - name: parent_organisation_id
+      data_type: TEXT
+    - name: open_date
+      data_type: DATE
+    - name: close_date
+      data_type: DATE
+    - name: is_obsolete
+      data_type: BOOLEAN
+  - name: PATIENT
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: nhs_number_hash
+      data_type: BINARY
+    - name: sk_patient_id
+      data_type: NUMBER
+    - name: title
+      data_type: TEXT
+    - name: gender_concept_id
+      data_type: TEXT
+    - name: registered_practice_id
+      data_type: TEXT
+    - name: birth_year
+      data_type: NUMBER
+    - name: birth_month
+      data_type: NUMBER
+    - name: death_year
+      data_type: NUMBER
+    - name: death_month
+      data_type: NUMBER
+    - name: is_confidential
+      data_type: BOOLEAN
+    - name: is_dummy_patient
+      data_type: BOOLEAN
+    - name: is_spine_sensitive
+      data_type: BOOLEAN
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: PATIENT_ADDRESS
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: address_type_concept_id
+      data_type: TEXT
+    - name: post_code_hash
+      data_type: BINARY
+    - name: start_date
+      data_type: TIMESTAMP_NTZ
+    - name: end_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: PATIENT_CONTACT
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: description
+      data_type: TEXT
+    - name: contact_type_concept_id
+      data_type: TEXT
+    - name: start_date
+      data_type: DATE
+    - name: end_date
+      data_type: DATE
+  - name: PATIENT_PERSON
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+  - name: PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: organisation_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: episode_of_care_id
+      data_type: TEXT
+    - name: start_date
+      data_type: TIMESTAMP_NTZ
+    - name: end_date
+      data_type: TIMESTAMP_NTZ
+  - name: PERSON
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: primary_patient_id
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: PRACTITIONER
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: gmc_code
+      data_type: TEXT
+    - name: title
+      data_type: TEXT
+    - name: first_name
+      data_type: TEXT
+    - name: last_name
+      data_type: TEXT
+    - name: name
+      data_type: TEXT
+    - name: is_obsolete
+      data_type: BOOLEAN
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: PRACTITIONER_IN_ROLE
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: organisation_id
+      data_type: TEXT
+    - name: role_code
+      data_type: TEXT
+    - name: role
+      data_type: TEXT
+    - name: date_employment_start
+      data_type: TIMESTAMP_NTZ
+    - name: date_employment_end
+      data_type: TIMESTAMP_NTZ
+  - name: PROCEDURE_REQUEST
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+    - name: description
+      data_type: TEXT
+    - name: procedure_core_concept_id
+      data_type: TEXT
+    - name: status_concept_id
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: is_confidential
+      data_type: BOOLEAN
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: REFERRAL_REQUEST
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_data_initial_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: organisation_id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: encounter_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: unique_booking_reference_number
+      data_type: TEXT
+    - name: clinical_effective_date
+      data_type: TIMESTAMP_NTZ
+    - name: date_precision_concept_id
+      data_type: TEXT
+    - name: requester_organisation_id
+      data_type: TEXT
+    - name: recipient_organisation_id
+      data_type: TEXT
+    - name: referral_request_priority_concept_id
+      data_type: TEXT
+    - name: referal_request_type_concept_id
+      data_type: TEXT
+    - name: mode
+      data_type: TEXT
+    - name: is_outgoing_referral
+      data_type: BOOLEAN
+    - name: is_review
+      data_type: BOOLEAN
+    - name: referral_request_core_concept_id
+      data_type: TEXT
+    - name: referral_request_raw_concept_id
+      data_type: TEXT
+    - name: age_at_event
+      data_type: NUMBER
+    - name: age_at_event_baby
+      data_type: NUMBER
+    - name: age_at_event_neonate
+      data_type: NUMBER
+    - name: date_recorded
+      data_type: TIMESTAMP_NTZ
+  - name: SCHEDULE
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: location_id
+      data_type: TEXT
+    - name: location
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: start_date
+      data_type: TIMESTAMP_NTZ
+    - name: end_date
+      data_type: TIMESTAMP_NTZ
+    - name: type
+      data_type: TEXT
+    - name: name
+      data_type: TEXT
+    - name: is_private
+      data_type: BOOLEAN
+  - name: SCHEDULE_PRACTITIONER
+    columns:
+    - name: lds_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: schedule_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+- name: olids_terminology
+  database: Data_Store_OLIDS_Dummy
+  schema: OLIDS_TERMINOLOGY
+  tables:
+  - name: CONCEPT
+    columns:
+    - name: id
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: system
+      data_type: TEXT
+    - name: code
+      data_type: TEXT
+    - name: display
+      data_type: TEXT
+    - name: is_mapped
+      data_type: BOOLEAN
+    - name: use_count
+      data_type: NUMBER
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+  - name: CONCEPT_MAP
+    columns:
+    - name: id
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: concept_map_id
+      data_type: TEXT
+    - name: source_code_id
+      data_type: TEXT
+    - name: target_code_id
+      data_type: TEXT
+    - name: is_primary
+      data_type: BOOLEAN
+    - name: equivalence
+      data_type: TEXT
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
