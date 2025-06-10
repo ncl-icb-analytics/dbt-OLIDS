@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: stg_codesets_bnf_latest
+    description: Staging model for BNF codes and mappings
+    tests:
+      - all_source_columns_in_staging
+
+  - name: stg_olids_patient
+    description: Staging model for patient data
+    tests:
+      - all_source_columns_in_staging
+
+  # Add more staging models as needed...
+
+# This test will be applied to each staging model individually
+# The test will check that all columns from the corresponding source table
+# are present in the staging model 
