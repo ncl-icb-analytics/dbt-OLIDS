@@ -42,8 +42,3 @@ snowflake_hei_migration:
 # For password authentication (less secure):
 #   password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
 #   authenticator: password  # Remove the externalbrowser line
-#
-# For key-pair authentication:
-#   private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
-#   private_key_passphrase: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE') }}"
-#   authenticator: password  # Remove the externalbrowser line 
