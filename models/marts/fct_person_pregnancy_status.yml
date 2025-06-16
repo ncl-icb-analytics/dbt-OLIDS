@@ -1,0 +1,108 @@
+version: 2
+
+models:
+  - name: fct_person_pregnancy_status
+    description: |
+      Pregnancy status fact table identifying individuals currently deemed pregnant.
+      
+      **Business Logic:**
+      - Recent pregnancy code (PREG_COD) within last 9 months
+      - Latest pregnancy code must be after any delivery code (PREGDEL_COD)
+      - Non-male individuals only
+      - Includes child-bearing age classification and permanent absence flags
+      
+      **Data Sources:**
+      - int_pregnancy_status_all for pregnancy/delivery observations
+      - int_pregnancy_absence_risk_all for permanent absence indicators
+      
+      **Population Coverage:**
+      Currently pregnant individuals only. Includes ALL status (active, inactive, deceased)
+      for comprehensive pregnancy monitoring across the healthcare system.
+      
+      **Clinical Context:**
+      Critical for clinical safety monitoring, especially for teratogenic medications like valproate.
+      Supports maternal health programmes, contraceptive counselling, and medication safety alerts.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier linking to dim_person"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: age
+        description: "Person's current age in years"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 55
+              severity: warn
+              
+      - name: sex
+        description: "Person's sex (non-male only in this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Female', 'Unknown', 'Other']
+              
+      - name: is_currently_pregnant
+        description: "Flag indicating current pregnancy status (always TRUE in this filtered table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: latest_preg_cod_date
+        description: "Date of most recent pregnancy code (PREG_COD)"
+        tests:
+          - not_null
+          
+      - name: latest_pregdel_cod_date
+        description: "Date of most recent delivery/pregnancy ended code (PREGDEL_COD)"
+        
+      - name: is_child_bearing_age_12_55
+        description: "Flag: TRUE if age 12-55 inclusive (standard child-bearing age)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_child_bearing_age_0_55
+        description: "Flag: TRUE if age 0-55 inclusive (extended age range)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_permanent_absence_preg_risk_flag
+        description: "Flag: TRUE if person has permanent absence of pregnancy risk (e.g., hysterectomy)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: all_preg_concept_codes
+        description: "Array of all pregnancy-related concept codes for traceability"
+        tests:
+          - not_null
+          
+      - name: all_preg_concept_displays
+        description: "Array of all pregnancy-related concept displays for traceability"
+        tests:
+          - not_null
+          
+      - name: all_preg_source_cluster_ids
+        description: "Array of all pregnancy-related cluster IDs (PREG_COD, PREGDEL_COD)"
+        tests:
+          - not_null 

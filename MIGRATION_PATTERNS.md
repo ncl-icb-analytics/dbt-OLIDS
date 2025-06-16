@@ -691,12 +691,12 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [x] `fct_person_diabetes_foot_check.sql` → `fct_person_diabetes_foot_check.sql` ✅ **COMPLETE**
 
 #### 5.2 Patient Status & Demographics ✅ **Priority: HIGH**
-- [ ] `fct_person_smoking_status.sql` → `fct_person_smoking_status.sql` (requires new int_smoking_status_all.sql)
-- [ ] `fct_person_pregnant.sql` → `fct_person_pregnancy_status.sql` (requires new int_pregnancy_status_all.sql)
-- [ ] `fct_person_nhs_health_check_status.sql` → `fct_person_nhs_health_check_status.sql`
+- [x] `fct_person_smoking_status.sql` → `fct_person_smoking_status.sql` ✅ **COMPLETE** (using existing int_smoking_status_all/latest)
+- [x] `fct_person_pregnant.sql` → `fct_person_pregnancy_status.sql` ✅ **COMPLETE** (created int_pregnancy_status_all + int_pregnancy_absence_risk_all)
+- [x] `fct_person_nhs_health_check_status.sql` → `fct_person_nhs_health_check_status.sql` ✅ **COMPLETE**
 
 #### 5.3 Clinical Safety ✅ **Priority: HIGH**
-- [ ] `fct_clinical_safety_on_valproate_and_pregnant.sql` → `fct_clinical_safety_valproate_pregnancy.sql`
+- [x] `fct_clinical_safety_on_valproate_and_pregnant.sql` → `fct_clinical_safety_valproate_pregnancy.sql` ✅ **COMPLETE** (created int_valproate_medications_6m_latest)
 
 #### 5.4 Service Usage ✅ **Priority: MEDIUM**
 - [ ] `fct_person_appointments_gp_12m.sql` → `fct_person_gp_appointments_12m.sql`

@@ -1,0 +1,118 @@
+version: 2
+
+models:
+  - name: fct_clinical_safety_valproate_pregnancy
+    description: |
+      **🚨 CRITICAL CLINICAL SAFETY ALERT 🚨**
+      
+      Identifies pregnant individuals with recent valproate prescriptions - a HIGH RISK combination.
+      
+      **Clinical Urgency:**
+      - Valproate has significant teratogenic effects (neural tube defects, developmental delays)
+      - Any patients in this table require IMMEDIATE clinical review
+      - Practice contact should be made to review patient records urgently
+      
+      **Business Logic:**
+      - Currently pregnant (from fct_person_pregnancy_status)
+      - Recent valproate prescription (last 6 months)
+      - Child-bearing age (0-55 years)
+      
+      **Clinical Context:**
+      This table should trigger automated alerts for:
+      - Clinical pharmacists for medication review
+      - GP practices for urgent patient contact
+      - Safety reporting systems
+      - Prescriber education programmes
+      
+      **Monitoring Frequency:**
+      Should be monitored daily or in real-time for new entries.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+    
+    columns:
+      - name: person_id
+        description: "🚨 PERSON REQUIRING URGENT CLINICAL REVIEW - Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: age
+        description: "Person's current age (all will be 0-55 for this safety cohort)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 55
+              
+      - name: sex
+        description: "Person's sex (non-male individuals only)"
+        tests:
+          - not_null
+          
+      - name: is_child_bearing_age_0_55
+        description: "Flag confirming child-bearing age range (always TRUE in this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: latest_preg_cod_date
+        description: "🚨 Date of most recent pregnancy code - indicates current pregnancy"
+        tests:
+          - not_null
+          
+      - name: latest_pregdel_cod_date
+        description: "Date of most recent delivery code (NULL or before pregnancy code)"
+        
+      - name: all_preg_concept_codes
+        description: "All pregnancy-related concept codes for clinical context"
+        tests:
+          - not_null
+          
+      - name: all_preg_concept_displays
+        description: "All pregnancy-related concept displays for clinical review"
+        tests:
+          - not_null
+          
+      - name: all_preg_source_cluster_ids
+        description: "All pregnancy-related cluster IDs for traceability"
+        tests:
+          - not_null
+          
+      - name: most_recent_valproate_order_date
+        description: "🚨 Date of most recent valproate prescription (within last 6 months)"
+        tests:
+          - not_null
+          
+      - name: valproate_medication_order_id
+        description: "Unique identifier for the valproate order requiring review"
+        tests:
+          - not_null
+          
+      - name: valproate_order_medication_name
+        description: "🚨 Name of valproate medication prescribed - for clinical review"
+        tests:
+          - not_null
+          
+      - name: valproate_order_dose
+        description: "Dosage of valproate - important for risk assessment"
+        
+      - name: valproate_product_term
+        description: "Specific valproate product type (EPILIM, CONVULEX, etc.)"
+        tests:
+          - not_null
+          
+      - name: valproate_recent_order_count
+        description: "Number of valproate orders in last 6 months - indicates continuation"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1 

@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: fct_organisation_active_patients
+    description: |
+      Organisation active patients fact table providing list size metrics per organisation.
+      
+      **Business Logic:**
+      - Current active patient count per non-obsolete organisation
+      - Active defined as: lds_end_date_time < lds_start_date_time (legacy rule)
+      - Excludes patients with recorded death year or month
+      
+      **Population Coverage:**
+      Active patients only, linked to their record owner organisation.
+      Provides current snapshot for capacity and funding calculations.
+      
+      **Operational Context:**
+      Critical for NHS funding calculations based on registered patient lists.
+      Supports practice management, commissioning, and resource allocation.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - organisation_id
+    
+    columns:
+      - name: organisation_id
+        description: "Unique organisation identifier"
+        tests:
+          - not_null
+          
+      - name: ods_code
+        description: "ODS (Organisation Data Service) code for the organisation"
+        tests:
+          - not_null
+          
+      - name: measure_id
+        description: "Metric identifier (always 'ORGANISATION_ACTIVE_LIST_SIZE')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ORGANISATION_ACTIVE_LIST_SIZE']
+              
+      - name: active_patient_count
+        description: "Current number of active patients registered with this organisation"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0 

@@ -1,0 +1,63 @@
+{{
+    config(
+        materialized='table',
+        cluster_by=['person_id']
+    )
+}}
+
+-- Smoking Status Fact Table
+-- Business Logic: Current smoking status based on most recent smoking observation
+
+WITH smoking_history AS (
+    SELECT
+        person_id,
+        MIN(clinical_effective_date) AS earliest_smoking_date,
+        ARRAY_AGG(DISTINCT concept_code) AS all_smoking_concept_codes,
+        ARRAY_AGG(DISTINCT concept_display) AS all_smoking_concept_displays
+    FROM {{ ref('int_smoking_status_all') }}
+    GROUP BY person_id
+),
+
+current_smoking_status AS (
+    SELECT
+        p.person_id,
+        latest.clinical_effective_date AS latest_smoking_date,
+        latest.concept_code AS latest_concept_code,
+        latest.concept_display AS latest_code_description,
+        latest.source_cluster_id AS latest_cluster_id,
+        
+        -- Determine smoking status based on latest record
+        CASE
+            WHEN latest.is_current_smoker_code = TRUE THEN 'Current Smoker'
+            WHEN latest.is_ex_smoker_code = TRUE THEN 'Ex Smoker'
+            WHEN latest.is_never_smoked_code = TRUE THEN 'Never Smoked'
+            ELSE 'Unknown'
+        END AS smoking_status,
+        
+        -- Include history
+        hist.earliest_smoking_date,
+        hist.all_smoking_concept_codes,
+        hist.all_smoking_concept_displays,
+        
+        -- Person demographics
+        age.age
+    FROM {{ ref('dim_person') }} p
+    INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
+    LEFT JOIN {{ ref('int_smoking_status_latest') }} latest ON p.person_id = latest.person_id
+    LEFT JOIN smoking_history hist ON p.person_id = hist.person_id
+)
+
+SELECT
+    person_id,
+    age,
+    smoking_status,
+    latest_smoking_date,
+    earliest_smoking_date,
+    latest_concept_code,
+    latest_code_description,
+    latest_cluster_id,
+    all_smoking_concept_codes,
+    all_smoking_concept_displays,
+    CURRENT_TIMESTAMP() AS last_refresh_date
+FROM current_smoking_status
+WHERE latest_smoking_date IS NOT NULL -- Only include people with smoking data 

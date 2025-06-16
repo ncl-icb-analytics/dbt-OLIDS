@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: int_pregnancy_absence_risk_all
+    description: |
+      Pregnancy absence risk intermediate model collecting observations indicating permanent absence of pregnancy risk.
+      
+      **Single Responsibility Principle:**
+      - Data collection only - NO business logic
+      - Collects PREGRISK category codes from valproate programme
+      - Includes lookback period filtering based on code configuration
+      
+      **Clinical Context:**
+      Used for valproate safety monitoring in women of childbearing potential.
+      Identifies individuals with conditions/procedures indicating permanent absence of pregnancy risk
+      (e.g., hysterectomy, bilateral oophorectomy, etc.).
+      
+      **Data Sources:**
+      - OLIDS observations linked through mapped concepts
+      - Valproate programme codes (PREGRISK category)
+      
+      **Usage:**
+      Input for fct_person_pregnancy_status.sql and clinical safety models.
+
+    config:
+      materialized: table
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: clinical_effective_date
+        description: "Date when observation was clinically effective"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for pregnancy risk absence observation"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Human-readable display term for concept code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "Source cluster ID from mapped concepts"
+        tests:
+          - not_null
+          
+      - name: code_category
+        description: "Code category from valproate programme (always 'PREGRISK')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PREGRISK']
+              
+      - name: lookback_years_offset
+        description: "Lookback period in years for code validity (NULL = all historical)"
+        
+      - name: date_recorded
+        description: "Date when observation was recorded in system"
+        
+      - name: lds_datetime_data_acquired
+        description: "LDS processing timestamp" 

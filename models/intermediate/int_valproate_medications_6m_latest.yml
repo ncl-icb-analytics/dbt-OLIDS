@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: int_valproate_medications_6m_latest
+    description: |
+      Latest valproate medication order per person within the last 6 months.
+      
+      **Single Responsibility Principle:**
+      - Data aggregation only - one row per person with recent valproate
+      - Latest order selection based on order date
+      - 6-month lookback window for clinical safety monitoring
+      
+      **Clinical Context:**
+      Critical for clinical safety monitoring, especially for women of childbearing potential.
+      Valproate has significant teratogenic risks requiring careful monitoring during pregnancy.
+      Used for valproate safety programmes and medication review alerts.
+      
+      **Data Sources:**
+      - int_valproate_medications_all with 6-month date filtering
+      - Product classification for brand awareness
+      
+      **Usage:**
+      Input for fct_clinical_safety_valproate_pregnancy.sql and valproate safety programmes.
+
+    config:
+      materialized: table
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: most_recent_order_date
+        description: "Date of most recent valproate order within last 6 months"
+        tests:
+          - not_null
+          
+      - name: medication_order_id
+        description: "Unique identifier for the medication order"
+        tests:
+          - not_null
+          
+      - name: medication_statement_id
+        description: "Linked medication statement identifier"
+        
+      - name: order_medication_name
+        description: "Medication name from the order"
+        tests:
+          - not_null
+          
+      - name: order_dose
+        description: "Dosage information from the order"
+        
+      - name: order_quantity_value
+        description: "Numeric quantity from the order"
+        
+      - name: order_quantity_unit
+        description: "Unit for the quantity"
+        
+      - name: order_duration_days
+        description: "Duration of prescription in days"
+        
+      - name: statement_medication_name
+        description: "Medication name from the linked statement"
+        
+      - name: mapped_concept_code
+        description: "SNOMED concept code for the valproate product"
+        tests:
+          - not_null
+          
+      - name: mapped_concept_display
+        description: "Display term for the mapped concept"
+        tests:
+          - not_null
+          
+      - name: valproate_product_term
+        description: "Classified valproate product type (EPILIM, CONVULEX, etc.)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['EPILIM', 'CONVULEX', 'DEPAKOTE', 'EPISENTA', 'VALPROATE_GENERIC', 'OTHER_VALPROATE']
+              
+      - name: recent_order_count
+        description: "Total count of valproate orders for this person in last 6 months"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1 

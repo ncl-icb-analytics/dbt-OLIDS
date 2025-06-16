@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: fct_person_nhs_health_check_status
+    description: |
+      NHS Health Check status fact table providing eligibility and due status for all persons.
+      
+      **Business Logic:**
+      - Eligibility: Age 40-74 without excluding chronic conditions
+      - Due status: Eligible AND (never had one OR last check > 5 years ago)
+      - Excluding conditions: CHD, diabetes, stroke/TIA, CKD, AF, heart failure, FH
+      
+      **Population Coverage:**
+      ALL persons with age and condition status. Includes active, inactive, and deceased
+      for comprehensive programme planning and historical analysis.
+      
+      **Clinical Context:**
+      Supports NHS Health Check programme delivery, identifies eligible populations,
+      tracks programme performance, and enables proactive invitation systems.
+      Critical for cardiovascular disease prevention and early detection.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier linking to dim_person"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: age
+        description: "Person's current age in years"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+              
+      - name: has_any_excluding_condition
+        description: "Flag: TRUE if person has any condition excluding them from NHS Health Checks"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_eligible_for_nhs_health_check
+        description: "Flag: TRUE if person is eligible (age 40-74 without excluding conditions)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: latest_health_check_date
+        description: "Date of most recent NHS Health Check (NULL if never had one)"
+        
+      - name: days_since_last_health_check
+        description: "Number of days since last health check (NULL if never had one)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 50000
+              severity: warn
+              
+      - name: due_nhs_health_check
+        description: "Flag: TRUE if person is due an NHS Health Check (eligible + >5 years or never)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 
