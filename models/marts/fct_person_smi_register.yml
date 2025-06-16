@@ -1,0 +1,109 @@
+version: 2
+
+models:
+  - name: fct_person_smi_register
+    description: |
+      **Serious Mental Illness (SMI) Register - QOF Mental Health Quality Measures**
+      
+      Pattern 2: Standard QOF Register with diagnosis + resolution + medication integration.
+      
+      QOF Business Logic:
+      - Mental health diagnosis (MH_COD) NOT in remission (latest_diagnosis > latest_remission OR no remission)
+      - OR lithium therapy in last 6 months
+      - No age restrictions for SMI register
+      - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
+      
+      QOF Context:
+      Used for serious mental illness quality measures including:
+      - Mental health care monitoring and review
+      - Lithium therapy monitoring and safety
+      - Specialist mental health service coordination
+      - Recovery and rehabilitation planning
+      
+      Matches legacy fct_person_dx_smi business logic and field structure.
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (from EMIS system)"
+        tests:
+          - not_null
+
+      - name: age
+        description: "Current age of person in years"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: is_on_smi_register
+        description: "Register flag: meets QOF SMI criteria (always TRUE for this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: is_on_lithium
+        description: "Flag indicating person has lithium therapy in last 6 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_mh_diagnosis
+        description: "Flag indicating person has a mental health diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_in_remission
+        description: "Flag indicating mental health condition is currently in remission"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: earliest_mh_diagnosis_date
+        description: "Date of first recorded mental health diagnosis"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_mh_diagnosis_date"
+
+      - name: latest_mh_diagnosis_date
+        description: "Date of most recent mental health diagnosis"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_mh_diagnosis_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: latest_remission_date
+        description: "Date of most recent mental health remission code (NULL if never in remission)"
+
+      - name: latest_lithium_order_date
+        description: "Date of most recent lithium medication order (NULL if no lithium therapy)"
+
+      - name: all_mh_concept_codes
+        description: "Array of all distinct mental health diagnosis concept codes for this person"
+
+      - name: all_mh_concept_displays
+        description: "Array of all distinct mental health diagnosis concept display terms for this person"
+
+      - name: all_lithium_concept_codes
+        description: "Array of all distinct lithium medication concept codes for this person"
+
+      - name: all_lithium_concept_displays
+        description: "Array of all distinct lithium medication concept display terms for this person" 

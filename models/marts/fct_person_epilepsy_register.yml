@@ -1,0 +1,135 @@
+models:
+  - name: fct_person_epilepsy_register
+    description: |
+      QOF Epilepsy Register - Complex QOF register requiring external medication validation.
+      
+      **Business Logic (Pattern 3):**
+      - Age ≥18 years (adult epilepsy monitoring)
+      - Active epilepsy diagnosis: latest EPIL_COD > latest EPILRES_COD OR no resolution recorded
+      - Recent medication validation: epilepsy medication prescribed within last 6 months
+      - ALL three criteria must be met for register inclusion
+      
+      **Clinical Context:**
+      This register identifies adults actively managed for epilepsy, validated through both
+      diagnostic coding and anti-epileptic drug prescribing. The 6-month medication requirement
+      ensures patients are receiving active treatment and regular monitoring.
+      
+      **QOF Requirements:**
+      - EP001: Practice can produce a register of patients with epilepsy (aged 18+)
+      - Medication validation confirms active seizure control management
+      - Supports QOF indicators for annual review and seizure control monitoring
+      
+      **Data Sources:**
+      - Diagnosis codes: int_epilepsy_diagnoses_all (EPIL_COD, EPILRES_COD cluster IDs)
+      - Medication validation: int_epilepsy_medications_6m (6-month lookback)
+      - Age filtering: dim_person_age (≥18 years requirement)
+      
+      Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
+
+    config:
+      materialized: table
+      
+    tests:
+      - not_null: [person_id]
+      - unique: [person_id]
+      - dbt_utils.accepted_range:
+          column_name: age
+          min_value: 18
+          severity: warn
+      - accepted_values:
+          column_name: is_on_epilepsy_register
+          values: [true]
+      - not_null: 
+          column_name: latest_epilepsy_diagnosis_date
+      - not_null:
+          column_name: latest_epilepsy_medication_date
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier across the HEI system"
+        tests:
+          - not_null
+          - unique
+
+      - name: age
+        description: "Current age of person (≥18 years for epilepsy register eligibility)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 18
+              max_value: 120
+
+      - name: is_on_epilepsy_register
+        description: "QOF register inclusion flag - TRUE for all persons in this table"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_epilepsy_diagnosis_date
+        description: "Date of first recorded epilepsy diagnosis code (EPIL_COD)"
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: ['1900-01-01']
+
+      - name: latest_epilepsy_diagnosis_date
+        description: "Date of most recent epilepsy diagnosis code (EPIL_COD)"
+        tests:
+          - not_null
+
+      - name: latest_epilepsy_resolved_date
+        description: "Date of most recent epilepsy resolved code (EPILRES_COD) - NULL if never resolved"
+
+      - name: latest_epilepsy_medication_date
+        description: "Date of most recent epilepsy medication prescription - required for register inclusion"
+        tests:
+          - not_null
+
+      - name: latest_epilepsy_medication_name
+        description: "Name of most recent epilepsy medication prescribed"
+
+      - name: latest_epilepsy_medication_dose
+        description: "Dosage of most recent epilepsy medication prescribed"
+
+      - name: latest_epilepsy_medication_concept_code
+        description: "Standardised concept code for most recent epilepsy medication"
+
+      - name: latest_epilepsy_medication_concept_display
+        description: "Display term for most recent epilepsy medication concept"
+
+      - name: recent_epilepsy_medication_count
+        description: "Count of epilepsy medication prescriptions in last 6 months"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              severity: warn
+
+      - name: all_diagnosis_concept_codes
+        description: "Array of all epilepsy diagnosis and resolution concept codes recorded for this person"
+
+      - name: all_diagnosis_concept_displays
+        description: "Array of all epilepsy diagnosis and resolution concept display terms"
+
+      - name: all_source_cluster_ids
+        description: "Array of source cluster IDs (EPIL_COD, EPILRES_COD) for traceability"
+
+      - name: meets_age_criteria
+        description: "Boolean flag: TRUE if person meets age ≥18 requirement"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: has_active_diagnosis
+        description: "Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: has_recent_medication
+        description: "Boolean flag: TRUE if epilepsy medication prescribed within last 6 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true] 

@@ -626,23 +626,32 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [x] `fct_person_dx_stia.sql` → `fct_person_stroke_tia_register.sql` ✅ **COMPLETE**
 - [x] `fct_person_dx_fhyp.sql` → `fct_person_familial_hypercholesterolaemia_register.sql` ✅ **COMPLETE**
 - [x] `fct_person_dx_gestational_diabetes.sql` → `fct_person_gestational_diabetes_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_dementia.sql` → `fct_person_dementia_register.sql` ✅ **COMPLETE** (moved from Pattern 2)
+- [x] `fct_person_dx_ld.sql` → `fct_person_learning_disability_register.sql` ✅ **COMPLETE** (age ≥14 filter)
 
 #### 4.2 Pattern 2: Standard QOF Register (Diagnosis + Resolution) ✅ **Priority: HIGH**
-*Logic: latest_diagnosis > latest_resolution OR no_resolution. Age restrictions, episode timing.*
+*Logic: latest_diagnosis > latest_resolution OR no_resolution. Age restrictions, date thresholds, exclusion logic.*
 
-- [ ] `fct_person_dx_depression.sql` → `fct_person_depression_register.sql`
-- [ ] `fct_person_dx_dementia.sql` → `fct_person_dementia_register.sql`
-- [ ] `fct_person_dx_epilepsy.sql` → `fct_person_epilepsy_register.sql`
-- [ ] `fct_person_dx_smi.sql` → `fct_person_smi_register.sql`
-- [ ] `fct_person_dx_ld.sql` → `fct_person_learning_disability_register.sql`
-- [ ] `fct_person_dx_palliative_care.sql` → `fct_person_palliative_care_register.sql`
+- [x] `fct_person_dx_depression.sql` → `fct_person_depression_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_smi.sql` → `fct_person_smi_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_palliative_care.sql` → `fct_person_palliative_care_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_af.sql` → `fct_person_atrial_fibrillation_register.sql` ✅ **COMPLETE** (moved from Pattern 3)
+
+**Pattern Reclassifications:**
+- `fct_person_dx_dementia.sql` → **Pattern 1** (simple diagnosis only, no resolution codes)
+- `fct_person_dx_epilepsy.sql` → **Pattern 3** (external medication validation required)
+- `fct_person_dx_ld.sql` → **Pattern 1 with age filter** (simple diagnosis + age ≥14, no resolution codes)
+- `fct_person_dx_af.sql` → **Pattern 2** (simple diagnosis + resolution, no external validation)
 
 #### 4.3 Pattern 3: Complex QOF Register (External Validation) ✅ **Priority: MEDIUM**
 *Logic: Diagnosis + additional validation requirements (medication, confirmation).*
 
-- [ ] `fct_person_dx_asthma.sql` → `fct_person_asthma_register.sql`
-- [ ] `fct_person_dx_cyp_asthma.sql` → `fct_person_cyp_asthma_register.sql`
-- [ ] `fct_person_dx_af.sql` → `fct_person_atrial_fibrillation_register.sql`
+- [x] `fct_person_dx_asthma.sql` → `fct_person_asthma_register.sql` ✅ **COMPLETE** (age ≥6 + active diagnosis + 12m medication)
+- [x] `fct_person_dx_cyp_asthma.sql` → `fct_person_cyp_asthma_register.sql` ✅ **COMPLETE** (age <18 + active diagnosis + 12m medication)
+- [x] `fct_person_dx_epilepsy.sql` → `fct_person_epilepsy_register.sql` ✅ **COMPLETE** (age ≥18 + active diagnosis + 6m medication)
+
+**Pattern Reclassifications:**
+- `fct_person_dx_af.sql` → **Pattern 2** → `fct_person_atrial_fibrillation_register.sql` ✅ **COMPLETE** (simple diagnosis + resolution, no medication validation)
 
 #### 4.4 Pattern 4: Type Classification Register ✅ **Priority: MEDIUM**
 *Logic: Multiple cluster types with hierarchy/precedence rules for type determination.*
@@ -762,14 +771,16 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - ✅ **Phase 1 Intermediate**: **100% COMPLETE!** All core clinical observations, laboratory results, risk assessments, clinical examinations, and health checks migrated
 - ✅ **Phase 2.1-2.5**: **100% COMPLETE!** All medication intermediate tables migrated (diabetes, cardiovascular, respiratory, gastrointestinal, mental health, cardiac therapy, specialist medications)
 - ✅ **Phase 3.1**: **100% COMPLETE!** All major chronic conditions diagnosis intermediate models (diabetes, COPD, heart failure, hypertension, CKD, depression, asthma, dementia, epilepsy, SMI, learning disability)
-- ✅ **Phase 4.1-4.5**: **100% COMPLETE!** All QOF diagnosis register intermediate models (major QOF diseases, mental health & neurological, cardiovascular, cancer & chronic disease, metabolic & specialist)
-- 🎯 **MAJOR MILESTONE**: **Phases 1-4 FULLY COMPLETE** - comprehensive foundation covering ALL clinical observations, medications, AND QOF diagnosis registers
+- ✅ **Phase 4.1**: **100% COMPLETE!** Pattern 1 registers (9/9 simple diagnosis-only registers)
+- ✅ **Phase 4.2**: **100% COMPLETE!** Pattern 2 registers (4/4 diagnosis + resolution registers including reclassified AF)
+- ✅ **Phase 4.3**: **100% COMPLETE!** Pattern 3 registers (3/3 complex registers with external medication validation)
+- 🎯 **MAJOR MILESTONE**: **Phases 1-4.3 FULLY COMPLETE** - comprehensive foundation covering ALL clinical observations, medications, AND complete QOF register patterns 1-3
 
 #### Next Priority Actions
-1. **✅ Phase 1-4 COMPLETE**: All intermediate models (clinical observations, medications, QOF diagnosis registers)
-2. **🎯 Next Priority**: **Phase 5 - Clinical Quality & Status Fact Tables** (diabetes care processes, BP control, clinical safety measures)
-3. **Then**: Phase 6 - Programme Dimensions (NHS Health Checks, LTC/LCS programmes)
-4. **Finally**: Remaining complex models and any fact table migrations
+1. **✅ Phases 1-4.3 COMPLETE**: All intermediate models + QOF register patterns 1-3 (16 registers total)
+2. **🎯 Next Priority**: **Phase 4.4-4.6** - Remaining complex register patterns (diabetes type classification, CKD lab-enhanced, hypertension complex logic)
+3. **Then**: Phase 5 - Clinical Quality & Status Fact Tables (diabetes care processes, BP control, clinical safety measures)
+4. **Finally**: Phase 6 - Programme Dimensions (NHS Health Checks, LTC/LCS programmes)
 
 ## Contact & Questions
 

@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: fct_person_depression_register
+    description: |
+      **Depression Register - QOF Mental Health Quality Measures**
+      
+      Pattern 2: Standard QOF Register with diagnosis + resolution logic.
+      
+      QOF Business Logic:
+      - Age ≥18 years (QOF requirement)
+      - Latest depression episode on/after 1 April 2006 (QOF date threshold)
+      - Unresolved: latest_depression_date > latest_resolved_date OR no resolved code
+      - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
+      
+      QOF Context:
+      Used for depression quality measures including:
+      - Depression care pathways and treatment monitoring
+      - Recovery planning and review scheduling
+      - Psychological therapy access monitoring
+      - Medication management and compliance
+      
+      Matches legacy fct_person_dx_depression business logic and field structure.
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (from EMIS system)"
+        tests:
+          - not_null
+
+      - name: age
+        description: "Current age of person in years"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 18
+              max_value: 120
+
+      - name: is_on_depression_register
+        description: "Register flag: meets QOF depression criteria (always TRUE for this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_depression_diagnosis_date
+        description: "Date of first recorded depression diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_depression_diagnosis_date"
+
+      - name: latest_depression_diagnosis_date
+        description: "Date of most recent depression diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_depression_diagnosis_date"
+          - dbt_utils.expression_is_true:
+              expression: ">= '2006-04-01'"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: latest_depression_resolved_date
+        description: "Date of most recent depression resolved code (NULL if never resolved)"
+
+      - name: all_depression_concept_codes
+        description: "Array of all distinct depression diagnosis concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_depression_concept_displays
+        description: "Array of all distinct depression diagnosis concept display terms for this person"
+        tests:
+          - not_null
+
+      - name: all_depression_resolved_concept_codes
+        description: "Array of all distinct depression resolved concept codes for this person"
+
+      - name: all_depression_resolved_concept_displays
+        description: "Array of all distinct depression resolved concept display terms for this person" 

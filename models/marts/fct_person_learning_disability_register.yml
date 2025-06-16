@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: fct_person_learning_disability_register
+    description: |
+      **Learning Disability Register - QOF Quality Measures**
+      
+      Pattern 1: Simple Register with age filter.
+      
+      QOF Business Logic:
+      - Learning disability diagnosis (LD_DIAGNOSIS_COD) for age ≥14 years
+      - No resolution codes (LD is permanent condition)
+      - Age restriction: patients must be 14+ years
+      - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
+      
+      QOF Context:
+      Used for learning disability quality measures including:
+      - Learning disability care pathway monitoring
+      - Health equity assessment and improvement
+      - Special needs service coordination
+      - Annual health checks
+      
+      Matches legacy fct_person_dx_ld business logic and field structure.
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (from EMIS system)"
+        tests:
+          - not_null
+
+      - name: age
+        description: "Current age of person in years"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 14
+              max_value: 120
+
+      - name: is_on_ld_register
+        description: "Register flag: has LD diagnosis aged 14+ (always TRUE for this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_ld_diagnosis_date
+        description: "Date of first recorded learning disability diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_ld_diagnosis_date"
+
+      - name: latest_ld_diagnosis_date
+        description: "Date of most recent learning disability diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_ld_diagnosis_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: all_ld_concept_codes
+        description: "Array of all distinct learning disability concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_ld_concept_displays
+        description: "Array of all distinct learning disability concept display terms for this person"
+        tests:
+          - not_null 
