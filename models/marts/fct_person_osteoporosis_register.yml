@@ -1,0 +1,177 @@
+version: 2
+
+models:
+  - name: fct_person_osteoporosis_register
+    description: |
+      Osteoporosis register fact table identifying individuals aged 50-74 meeting all required clinical criteria.
+      
+      **QOF Business Logic (Pattern 6: Complex Clinical Logic):**
+      - Age 50-74 years (QOF requirement)
+      - **ALL of the following components required**:
+        1. **Fragility fracture** after April 2012
+        2. **Osteoporosis diagnosis** (coded)
+        3. **DXA confirmation** (DXA scan OR T-score ≤ -2.5)
+      
+      **Complex Clinical Logic:**
+      Multi-component register requiring evidence from three different clinical domains:
+      - Trauma/injury data (fragility fractures)
+      - Diagnostic coding (osteoporosis diagnosis)
+      - Imaging/laboratory data (DXA scans and T-scores)
+      
+      **Clinical Rationale:**
+      Ensures patients on register have comprehensive clinical evidence including:
+      - Clinical event (fracture indicating bone fragility)
+      - Clinical recognition (coded diagnosis)
+      - Objective confirmation (imaging or measurement evidence)
+      
+      **Population Coverage:**
+      Includes ALL persons (active, inactive, deceased) for comprehensive reporting and research.
+      
+      **Clinical Context:**
+      Supports QOF osteoporosis monitoring with robust multi-domain clinical validation
+      ensuring appropriate identification of patients requiring bone health management.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier linking to dim_person"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: age
+        description: "Person's age at register assessment (must be 50-74 for osteoporosis register)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 50
+              max_value: 74
+              
+      - name: is_on_osteoporosis_register
+        description: "Register inclusion flag (always TRUE in this table as filtered view)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: meets_age_criteria
+        description: "Flag indicating if person meets age 50-74 requirement"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_fragility_fracture
+        description: "Flag indicating presence of fragility fracture after April 2012"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_osteoporosis_diagnosis
+        description: "Flag indicating presence of coded osteoporosis diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_valid_dxa_confirmation
+        description: "Flag indicating DXA confirmation (scan OR T-score ≤ -2.5)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_dxa_scan
+        description: "Flag indicating presence of DXA scan record"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_dxa_t_score
+        description: "Flag indicating presence of DXA T-score measurement"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_osteoporosis_date
+        description: "Date of first recorded osteoporosis diagnosis"
+        tests:
+          - not_null
+          
+      - name: latest_osteoporosis_date
+        description: "Date of most recent osteoporosis diagnosis"
+        tests:
+          - not_null
+          
+      - name: earliest_dxa_date
+        description: "Date of first recorded DXA scan"
+        
+      - name: latest_dxa_date
+        description: "Date of most recent DXA scan"
+        
+      - name: earliest_dxa_t_score_date
+        description: "Date of first recorded DXA T-score"
+        
+      - name: latest_dxa_t_score_date
+        description: "Date of most recent DXA T-score"
+        
+      - name: latest_dxa_t_score
+        description: "Most recent DXA T-score value (standard deviations from young adult mean)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -10
+              max_value: 5
+              severity: warn
+              
+      - name: earliest_fragility_fracture_date
+        description: "Date of first recorded fragility fracture after April 2012"
+        tests:
+          - not_null
+          
+      - name: latest_fragility_fracture_date
+        description: "Date of most recent fragility fracture"
+        tests:
+          - not_null
+          
+      - name: all_osteoporosis_concept_codes
+        description: "Array of all osteoporosis-related concept codes for traceability"
+        tests:
+          - not_null
+          
+      - name: all_osteoporosis_concept_displays
+        description: "Array of human-readable terms for osteoporosis concept codes"
+        tests:
+          - not_null
+          
+      - name: all_dxa_concept_codes
+        description: "Array of all DXA-related concept codes for traceability"
+        
+      - name: all_dxa_concept_displays
+        description: "Array of human-readable terms for DXA concept codes"
+        
+      - name: all_fragility_fracture_concept_codes
+        description: "Array of all fragility fracture concept codes for traceability"
+        tests:
+          - not_null
+          
+      - name: all_fragility_fracture_concept_displays
+        description: "Array of human-readable terms for fragility fracture concept codes"
+        tests:
+          - not_null
+          
+      - name: all_fracture_sites
+        description: "Array of all documented fracture anatomical sites"
+        tests:
+          - not_null 

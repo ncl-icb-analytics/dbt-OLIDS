@@ -1,0 +1,151 @@
+version: 2
+
+models:
+  - name: fct_person_hypertension_register
+    description: |
+      Hypertension register fact table identifying individuals aged 18 and over currently on the hypertension register.
+      
+      **QOF Business Logic (Pattern 6: Complex Clinical Logic):**
+      - Age ≥18 years (QOF requirement)
+      - Active HTN diagnosis: latest HYP_COD > latest HYPRES_COD OR no resolution recorded
+      - Uses cluster IDs: HYP_COD (diagnosis), HYPRES_COD (resolution)
+      
+      **Complex Clinical Staging Logic:**
+      Applies NICE-aligned hypertension staging based on latest BP reading with context-specific thresholds:
+      - **Severe HTN**: ≥180/120 mmHg (any context)
+      - **Home/ABPM readings**: Stage 2 ≥150/95, Stage 1 ≥135/85 mmHg
+      - **Clinic readings**: Stage 2 ≥160/100, Stage 1 ≥140/90 mmHg
+      
+      **Clinical Integration:**
+      Links diagnosis codes with latest BP measurements to provide clinical staging context.
+      Staging reflects latest reading only and does not constitute clinical diagnosis of that stage.
+      
+      **Population Coverage:**
+      Includes ALL persons (active, inactive, deceased) for comprehensive reporting and research.
+      
+      **Clinical Context:**
+      Enables QOF monitoring with integrated BP staging for clinical decision support.
+      Separate BP monitoring available in int_blood_pressure_* tables for detailed analysis.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier linking to dim_person"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: age
+        description: "Person's age at register assessment (must be ≥18 for HTN register)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 18
+              max_value: 120
+              
+      - name: is_on_htn_register
+        description: "Register inclusion flag (always TRUE in this table as filtered view)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: earliest_htn_diagnosis_date
+        description: "Date of first recorded hypertension diagnosis code"
+        tests:
+          - not_null
+          
+      - name: latest_htn_diagnosis_date
+        description: "Date of most recent hypertension diagnosis code"
+        tests:
+          - not_null
+          
+      - name: latest_htn_resolved_date
+        description: "Date of most recent hypertension resolution code (null if never resolved)"
+        
+      - name: latest_bp_date
+        description: "Date of most recent blood pressure reading"
+        
+      - name: latest_bp_systolic_value
+        description: "Systolic value of latest BP reading (mmHg)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 40
+              max_value: 350
+              severity: warn
+              
+      - name: latest_bp_diastolic_value
+        description: "Diastolic value of latest BP reading (mmHg)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 20
+              max_value: 200
+              severity: warn
+              
+      - name: latest_bp_is_home
+        description: "Flag indicating if latest BP reading was recorded as home measurement"
+        tests:
+          - accepted_values:
+              values: [true, false]
+              
+      - name: latest_bp_is_abpm
+        description: "Flag indicating if latest BP reading was recorded as ABPM measurement"
+        tests:
+          - accepted_values:
+              values: [true, false]
+              
+      - name: latest_bp_htn_stage
+        description: |
+          Clinical staging of latest BP reading using context-specific NICE thresholds:
+          - Severe HTN (≥180/120)
+          - Stage 2/1 HTN with Home/ABPM or Clinic threshold context
+          - Normal with context indication
+        tests:
+          - accepted_values:
+              values: 
+                - 'Severe HTN'
+                - 'Stage 2 HTN (Home/ABPM Threshold)'
+                - 'Stage 1 HTN (Home/ABPM Threshold)'
+                - 'Normal (Home/ABPM Threshold)'
+                - 'Stage 2 HTN (Clinic Threshold)'
+                - 'Stage 1 HTN (Clinic Threshold)'
+                - 'Normal / High Normal (Clinic Threshold)'
+              severity: warn
+          
+      - name: all_diagnosis_concept_codes
+        description: "Array of all HTN-related concept codes recorded for traceability"
+        tests:
+          - not_null
+          
+      - name: all_diagnosis_concept_displays
+        description: "Array of human-readable terms for HTN concept codes"
+        tests:
+          - not_null
+          
+      - name: all_source_cluster_ids
+        description: "Array of source cluster IDs (HYP_COD, HYPRES_COD) for audit trail"
+        tests:
+          - not_null
+          
+      - name: meets_age_criteria
+        description: "Flag indicating if person meets age ≥18 requirement"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_active_diagnosis
+        description: "Flag indicating if latest diagnosis is more recent than resolution"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true] 

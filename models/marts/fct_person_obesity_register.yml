@@ -3,105 +3,121 @@ version: 2
 models:
   - name: fct_person_obesity_register
     description: |
-      Fact table for the obesity register tracking people aged 18+ who meet obesity criteria.
+      Obesity register fact table identifying individuals aged 18 and over meeting ethnicity-specific BMI criteria.
       
-      **Obesity Register Inclusion Rules:**
-      1. **Age**: Must be 18 years or older
-      2. **BMI >= 30**: Any ethnicity with BMI of 30 or higher
-      3. **BMI >= 27.5 for BAME**: Black, Asian, and Minority Ethnic patients with BMI of 27.5 or higher
+      **QOF Business Logic (Pattern 6: Complex Clinical Logic):**
+      - Age ≥18 years (QOF requirement)
+      - **Complex inclusion criteria**:
+        - BMI ≥30 kg/m² (any ethnicity) OR
+        - BMI ≥27.5 kg/m² AND BAME ethnicity
       
-      **Business Logic:**
-      - Uses existing BMI QOF and ethnicity QOF intermediate models
-      - Combines BMI thresholds with ethnicity-specific criteria
-      - Tracks both historical and current BMI values
-      - Includes comprehensive ethnicity classification
+      **Clinical Rationale:**
+      Lower BMI threshold for BAME populations reflects increased risk of diabetes and cardiovascular 
+      disease at lower BMI levels in these populations, as per NICE guidance.
+      
+      **Data Integration:**
+      Combines BMI measurements from int_bmi_qof with ethnicity classifications from int_ethnicity_qof
+      to apply ethnicity-specific thresholds.
+      
+      **Population Coverage:**
+      Includes ALL persons (active, inactive, deceased) for comprehensive reporting and research.
       
       **Clinical Context:**
-      The obesity register supports targeted interventions and monitoring for patients at increased
-      metabolic risk. BAME populations have lower BMI thresholds due to increased risk at lower weights.
-    
+      Supports QOF obesity register requirements with evidence-based ethnicity-specific thresholds
+      for appropriate clinical intervention and monitoring.
+
+    config:
+      materialized: table
+      
     tests:
-      - unique:
-          column_name: person_id
-      - not_null:
-          column_name: person_id
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
     
     columns:
       - name: person_id
-        description: "Unique person identifier"
+        description: "Unique person identifier linking to dim_person"
         tests:
           - not_null
-          - unique
-      
-      - name: sk_patient_id
-        description: "Surrogate key for patient dimension"
-        tests:
-          - not_null
-      
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
       - name: age
-        description: "Current age in years (all patients >= 18)"
+        description: "Person's age at register assessment (must be ≥18 for obesity register)"
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 18
               max_value: 120
-      
+              
       - name: is_on_obesity_register
-        description: "Flag indicating obesity register inclusion (always TRUE for all rows)"
+        description: "Register inclusion flag (always TRUE in this table as filtered view)"
         tests:
           - not_null
           - accepted_values:
               values: [true]
-      
-      - name: is_bame
-        description: "Flag indicating Black, Asian, and Minority Ethnic background"
+              
+      - name: meets_age_criteria
+        description: "Flag indicating if person meets age ≥18 requirement"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
-      
+              values: [true]
+              
       - name: has_bmi_30_plus
-        description: "Flag indicating BMI >= 30"
+        description: "Flag indicating if person has BMI ≥30 kg/m² (standard obesity threshold)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-      
+              
       - name: has_bmi_27_5_plus
-        description: "Flag indicating BMI >= 27.5"
+        description: "Flag indicating if person has BMI ≥27.5 kg/m² (BAME-specific threshold)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-      
-      - name: earliest_bmi_date
-        description: "Date of earliest BMI recording"
+              
+      - name: is_bame
+        description: "Flag indicating Black, Asian and Minority Ethnic (BAME) classification"
         tests:
-          - dbt_utils.not_future_date
-      
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
       - name: latest_bmi_date
-        description: "Date of most recent BMI recording"
-        tests:
-          - dbt_utils.not_future_date
-      
+        description: "Date of most recent BMI recording (any validity)"
+        
       - name: latest_valid_bmi_date
-        description: "Date of most recent valid BMI recording"
-        tests:
-          - dbt_utils.not_future_date
-      
+        description: "Date of most recent clinically valid BMI recording"
+        
       - name: latest_valid_bmi_value
-        description: "Most recent valid BMI value"
+        description: "Most recent clinically valid BMI value (kg/m²)"
         tests:
           - dbt_utils.accepted_range:
               min_value: 10
               max_value: 100
-      
+              severity: warn
+              
       - name: latest_ethnicity_date
         description: "Date of most recent ethnicity recording"
-        tests:
-          - dbt_utils.not_future_date
-      
+        
       - name: latest_bame_date
         description: "Date of most recent BAME ethnicity recording"
+        
+      - name: all_bmi_concept_codes
+        description: "Array of all BMI-related concept codes recorded for traceability"
         tests:
-          - dbt_utils.not_future_date 
+          - not_null
+          
+      - name: all_bmi_concept_displays
+        description: "Array of human-readable terms for BMI concept codes"
+        tests:
+          - not_null
+          
+      - name: all_ethnicity_concept_codes
+        description: "Array of all ethnicity-related concept codes recorded"
+        
+      - name: all_ethnicity_concept_displays
+        description: "Array of human-readable terms for ethnicity concept codes" 

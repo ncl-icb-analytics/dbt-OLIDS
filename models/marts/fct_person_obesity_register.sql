@@ -1,79 +1,106 @@
 {{
     config(
         materialized='table',
-        indexes=[
-            {'columns': ['person_id'], 'unique': false},
-            {'columns': ['person_id', 'is_on_obesity_register'], 'unique': false}
-        ]
+        cluster_by=['person_id']
     )
 }}
 
-WITH base_population AS (
-    -- Get all people aged 18+ with BMI or ethnicity data
+-- Obesity Register (QOF Pattern 6: Complex Clinical Logic)
+-- Business Logic: Age ≥18 + BMI ≥30 OR (BAME + BMI ≥27.5)
+-- Complex Logic: Ethnicity-specific BMI thresholds for register inclusion
+
+WITH bmi_data AS (
     SELECT
-        COALESCE(b.person_id, e.person_id) AS person_id,
-        COALESCE(b.sk_patient_id, e.sk_patient_id) AS sk_patient_id,
-        age.age,
+        person_id,
+        is_bmi_30_plus,
+        is_bmi_27_5_plus,
+        latest_bmi_date,
+        latest_valid_bmi_date,
+        latest_valid_bmi_value,
+        all_bmi_concept_codes,
+        all_bmi_concept_displays
+    FROM {{ ref('int_bmi_qof') }}
+),
+
+ethnicity_data AS (
+    SELECT
+        person_id,
+        is_bame,
+        latest_ethnicity_date,
+        latest_bame_date,
+        all_ethnicity_concept_codes,
+        all_ethnicity_concept_displays
+    FROM {{ ref('int_ethnicity_qof') }}
+),
+
+register_logic AS (
+    SELECT
+        p.person_id,
+        
+        -- Age restriction: ≥18 years for obesity register
+        CASE WHEN age.age >= 18 THEN TRUE ELSE FALSE END AS meets_age_criteria,
+        
+        -- BMI and ethnicity components
+        COALESCE(bmi.is_bmi_30_plus, FALSE) AS has_bmi_30_plus,
+        COALESCE(bmi.is_bmi_27_5_plus, FALSE) AS has_bmi_27_5_plus,
+        COALESCE(eth.is_bame, FALSE) AS is_bame,
+        
+        -- Complex inclusion logic: BMI ≥30 OR (BAME + BMI ≥27.5)
+        CASE
+            WHEN age.age >= 18 AND (
+                bmi.is_bmi_30_plus = TRUE OR 
+                (eth.is_bame = TRUE AND bmi.is_bmi_27_5_plus = TRUE)
+            )
+            THEN TRUE
+            ELSE FALSE
+        END AS is_on_obesity_register,
         
         -- BMI data
-        b.is_bmi_30_plus,
-        b.is_bmi_27_5_plus,
-        b.earliest_bmi_date,
-        b.latest_bmi_date,
-        b.latest_valid_bmi_date,
-        b.latest_valid_bmi_value,
-        b.all_bmi_concept_codes,
-        b.all_bmi_concept_displays,
+        bmi.latest_bmi_date,
+        bmi.latest_valid_bmi_date,
+        bmi.latest_valid_bmi_value,
+        bmi.all_bmi_concept_codes,
+        bmi.all_bmi_concept_displays,
         
         -- Ethnicity data
-        e.is_bame,
-        e.latest_ethnicity_date,
-        e.latest_bame_date,
-        e.all_ethnicity_concept_codes,
-        e.all_ethnicity_concept_displays
+        eth.latest_ethnicity_date,
+        eth.latest_bame_date,
+        eth.all_ethnicity_concept_codes,
+        eth.all_ethnicity_concept_displays,
         
-    FROM {{ ref('int_bmi_qof') }} b
-    FULL OUTER JOIN {{ ref('int_ethnicity_qof') }} e
-        ON b.person_id = e.person_id
-    JOIN {{ ref('dim_person_age') }} age
-        ON COALESCE(b.person_id, e.person_id) = age.person_id
-    WHERE age.age >= 18 -- Rule 1: Age filter
+        -- Person demographics
+        age.age
+    FROM {{ ref('dim_person') }} p
+    INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
+    LEFT JOIN bmi_data bmi ON p.person_id = bmi.person_id
+    LEFT JOIN ethnicity_data eth ON p.person_id = eth.person_id
 )
 
+-- Final selection: Only individuals meeting obesity register criteria
 SELECT
     person_id,
-    sk_patient_id,
     age,
+    is_on_obesity_register,
     
-    -- Obesity register inclusion rules
-    CASE
-        WHEN is_bmi_30_plus THEN TRUE -- Rule 2: BMI >= 30 (any ethnicity)
-        WHEN is_bame AND is_bmi_27_5_plus THEN TRUE -- Rule 3: BAME with BMI >= 27.5
-        ELSE FALSE
-    END AS is_on_obesity_register,
+    -- Clinical criteria flags
+    meets_age_criteria,
+    has_bmi_30_plus,
+    has_bmi_27_5_plus,
+    is_bame,
     
-    -- Individual flags
-    COALESCE(is_bame, FALSE) AS is_bame,
-    COALESCE(is_bmi_30_plus, FALSE) AS has_bmi_30_plus,
-    COALESCE(is_bmi_27_5_plus, FALSE) AS has_bmi_27_5_plus,
-    
-    -- BMI dates and values
-    earliest_bmi_date,
+    -- BMI measurements
     latest_bmi_date,
     latest_valid_bmi_date,
     latest_valid_bmi_value,
     
-    -- Ethnicity dates
+    -- Ethnicity information
     latest_ethnicity_date,
     latest_bame_date,
     
-    -- Concept arrays
+    -- Traceability for audit
     all_bmi_concept_codes,
     all_bmi_concept_displays,
     all_ethnicity_concept_codes,
     all_ethnicity_concept_displays
-
-FROM base_population
-WHERE (is_bmi_30_plus OR (is_bame AND is_bmi_27_5_plus)) -- Only include patients on the obesity register
-
-ORDER BY person_id 
+FROM register_logic
+WHERE is_on_obesity_register = TRUE 

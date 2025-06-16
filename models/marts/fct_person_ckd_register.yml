@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: fct_person_ckd_register
+    description: |
+      Chronic Kidney Disease (CKD) register fact table identifying individuals aged 18 and over currently on the CKD register.
+      
+      **QOF Business Logic (Pattern 2):**
+      - Age ≥18 years (QOF requirement)
+      - Active CKD diagnosis: latest CKD_COD > latest CKDRES_COD OR no resolution recorded
+      - Uses cluster IDs: CKD_COD (diagnosis), CKDRES_COD (resolution)
+      
+      **Lab Data Separation:**
+      Lab results (eGFR, creatinine, ACR) available separately in intermediate tables:
+      - int_egfr_all/int_egfr_latest for eGFR monitoring
+      - int_creatinine_all/int_creatinine_latest for creatinine levels
+      - int_urine_acr_all/int_urine_acr_latest for ACR monitoring
+      
+      **Population Coverage:**
+      Includes ALL persons (active, inactive, deceased) for comprehensive reporting and research.
+      
+      **Clinical Context:**
+      CKD register forms the basis for QOF monitoring and clinical care pathways. Lab data monitoring
+      provides separate clinical decision support without complicating register logic.
+
+    config:
+      materialized: table
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier linking to dim_person"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+              
+      - name: age
+        description: "Person's age at register assessment (must be ≥18 for CKD register)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 18
+              max_value: 120
+              
+      - name: is_on_ckd_register
+        description: "Register inclusion flag (always TRUE in this table as filtered view)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: earliest_ckd_diagnosis_date
+        description: "Date of first recorded CKD diagnosis code"
+        tests:
+          - not_null
+          
+      - name: latest_ckd_diagnosis_date
+        description: "Date of most recent CKD diagnosis code"
+        tests:
+          - not_null
+          
+      - name: latest_ckd_resolved_date
+        description: "Date of most recent CKD resolution code (null if never resolved)"
+        
+      - name: all_diagnosis_concept_codes
+        description: "Array of all CKD-related concept codes recorded for traceability"
+        tests:
+          - not_null
+          
+      - name: all_diagnosis_concept_displays
+        description: "Array of human-readable terms for CKD concept codes"
+        tests:
+          - not_null
+          
+      - name: all_source_cluster_ids
+        description: "Array of source cluster IDs (CKD_COD, CKDRES_COD) for audit trail"
+        tests:
+          - not_null
+          
+      - name: meets_age_criteria
+        description: "Flag indicating if person meets age ≥18 requirement"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_active_diagnosis
+        description: "Flag indicating if latest diagnosis is more recent than resolution"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true] 

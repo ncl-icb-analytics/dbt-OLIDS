@@ -1,0 +1,135 @@
+models:
+  - name: fct_person_heart_failure_register
+    description: |
+      QOF Heart Failure Register - Type classification register with HF subtype determination.
+      
+      **Business Logic (Pattern 4):**
+      - Active heart failure diagnosis: latest HF_COD > latest HFRES_COD OR no resolution recorded
+      - No age restrictions
+      - Subtype classification: General HF vs HF with LVSD/Reduced EF
+      - Multiple register flags: General HF register + LVSD/Reduced EF specialist register
+      
+      **Clinical Context:**
+      This register identifies patients with active heart failure and classifies them by HF subtype
+      for appropriate clinical management. LVSD/Reduced EF classification supports specialist
+      cardiology referral and evidence-based medication management.
+      
+      **QOF Requirements:**
+      - HF001: Practice can produce a register of patients with heart failure
+      - HF002: Percentage of patients with a diagnosis of heart failure due to left ventricular
+        systolic dysfunction who are currently treated with ACE inhibitors or ARBs
+      - Supports heart failure monitoring indicators and medication optimisation
+      
+      **Subtype Classification Logic:**
+      - General HF: Any active heart failure diagnosis (HF_COD cluster)
+      - HF with LVSD/Reduced EF: General HF + (HFLVSD_COD OR REDEJCFRAC_COD)
+      
+      **Data Sources:**
+      - Diagnosis codes: int_heart_failure_diagnoses_all (HF_COD, HFRES_COD, HFLVSD_COD, REDEJCFRAC_COD cluster IDs)
+      - No age filtering required
+      
+      Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
+
+    config:
+      materialized: table
+      
+    tests:
+      - not_null: [person_id]
+      - unique: [person_id]
+      - accepted_values:
+          column_name: is_on_hf_register
+          values: [true]
+      - not_null: 
+          column_name: latest_hf_diagnosis_date
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier across the HEI system"
+        tests:
+          - not_null
+          - unique
+
+      - name: age
+        description: "Current age of person (no age restrictions for HF register)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: is_on_hf_register
+        description: "General HF register inclusion flag - TRUE for all persons in this table"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: is_on_hf_lvsd_reduced_ef_register
+        description: "LVSD/Reduced EF specialist register flag - subset of general HF register"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: earliest_hf_diagnosis_date
+        description: "Date of first recorded heart failure diagnosis code (HF_COD)"
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: ['1900-01-01']
+
+      - name: latest_hf_diagnosis_date
+        description: "Date of most recent heart failure diagnosis code (HF_COD)"
+        tests:
+          - not_null
+
+      - name: latest_hf_resolved_date
+        description: "Date of most recent HF resolved code (HFRES_COD) - NULL if never resolved"
+
+      - name: earliest_hf_lvsd_diagnosis_date
+        description: "Date of first recorded HF due to LVSD diagnosis code (HFLVSD_COD)"
+
+      - name: latest_hf_lvsd_diagnosis_date
+        description: "Date of most recent HF due to LVSD diagnosis code (HFLVSD_COD)"
+
+      - name: earliest_reduced_ef_diagnosis_date
+        description: "Date of first recorded HF due to reduced ejection fraction code (REDEJCFRAC_COD)"
+
+      - name: latest_reduced_ef_diagnosis_date
+        description: "Date of most recent HF due to reduced ejection fraction code (REDEJCFRAC_COD)"
+
+      - name: has_lvsd_diagnosis
+        description: "Boolean flag: TRUE if person has ever had HF due to LVSD diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_reduced_ef_diagnosis
+        description: "Boolean flag: TRUE if person has ever had HF due to reduced ejection fraction diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: all_diagnosis_concept_codes
+        description: "Array of all heart failure diagnosis and resolution concept codes recorded for this person"
+
+      - name: all_diagnosis_concept_displays
+        description: "Array of all heart failure diagnosis and resolution concept display terms"
+
+      - name: all_source_cluster_ids
+        description: "Array of source cluster IDs (HF_COD, HFRES_COD, HFLVSD_COD, REDEJCFRAC_COD) for traceability"
+
+      - name: meets_age_criteria
+        description: "Boolean flag: TRUE (no age restrictions for HF register)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: has_active_diagnosis
+        description: "Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true] 
