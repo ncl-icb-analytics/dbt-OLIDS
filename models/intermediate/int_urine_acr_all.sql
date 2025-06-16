@@ -26,8 +26,6 @@ WITH base_observations AS (
     FROM {{ get_observations("'ACR_COD'") }} obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
-      -- Alternative filter if ACR_COD cluster doesn't exist:
-      -- AND obs.concept_code IN ('5801000237100', '1027791000000103', '1023491000000104')
 )
 
 SELECT

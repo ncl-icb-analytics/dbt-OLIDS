@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: int_nafld_diagnoses_all
+    description: |
+      Intermediate model collecting all Non-Alcoholic Fatty Liver Disease (NAFLD) diagnosis observations.
+      
+      **Important Note**: This model currently uses hardcoded SNOMED concept codes as no 
+      NAFLD cluster is available in the codesets mapping. This should be updated to use 
+      a proper cluster ID (e.g., 'NAFLD_COD') once available.
+      
+      **Hardcoded SNOMED Codes Used:**
+      - 197315008: Non-alcoholic fatty liver disease
+      - 1197739005: NAFLD related code
+      - 1231824009: NAFLD related code  
+      - 442685003: NAFLD related code
+      - 722866000: NAFLD related code
+      - 503681000000108: NAFLD related code
+      
+      **Clinical Context:**
+      NAFLD is a common liver condition associated with metabolic syndrome, diabetes, and obesity.
+      Important for liver health monitoring and cardiovascular risk assessment.
+      
+      **Data Collection Pattern:**
+      - One row per NAFLD diagnosis observation
+      - All observations flagged as NAFLD diagnoses (is_nafld_diagnosis = TRUE)
+      - No resolved or exclusion codes (none available for NAFLD)
+      - Simplified pattern for incremental refresh efficiency
+    
+    tests:
+      - not_null:
+          column_name: person_id
+      - not_null:
+          column_name: observation_id
+      - not_null:
+          column_name: clinical_effective_date
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+      
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          - unique
+      
+      - name: clinical_effective_date
+        description: "Date when the NAFLD diagnosis was clinically effective"
+        tests:
+          - not_null
+          - dbt_utils.not_future_date
+      
+      - name: concept_code
+        description: "SNOMED concept code for the NAFLD diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['197315008', '1197739005', '1231824009', '442685003', '722866000', '503681000000108']
+      
+      - name: concept_display
+        description: "Human-readable description of the NAFLD diagnosis concept"
+        tests:
+          - not_null
+      
+      - name: source_cluster_id
+        description: "Source cluster identifier (currently hardcoded as 'HARDCODED_NAFLD')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HARDCODED_NAFLD']
+      
+      - name: is_nafld_diagnosis
+        description: "Flag indicating this is a NAFLD diagnosis (always TRUE for all rows)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true] 

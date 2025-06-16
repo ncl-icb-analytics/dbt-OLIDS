@@ -632,27 +632,27 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [x] `fct_person_dx_pad.sql` → `int_pad_diagnoses_all.sql` ✅ + `fct_person_pad_register.sql`
 - [x] `fct_person_dx_stia.sql` → `int_stroke_tia_diagnoses_all.sql` ✅ + `fct_person_stroke_tia_register.sql`
 
-#### 4.4 Cancer & Chronic Disease QOF Registers ✅ **Priority: MEDIUM**
-- [ ] `fct_person_dx_cancer.sql` → `int_cancer_diagnoses_all.sql` + `fct_person_cancer_register.sql`
-- [ ] `fct_person_dx_osteoporosis.sql` → `int_osteoporosis_diagnoses_all.sql` + `fct_person_osteoporosis_register.sql`
-- [ ] `fct_person_dx_palliative_care.sql` → `int_palliative_care_diagnoses_all.sql` + `fct_person_palliative_care_register.sql`
-- [ ] `fct_person_dx_ra.sql` → `int_rheumatoid_arthritis_diagnoses_all.sql` + `fct_person_rheumatoid_arthritis_register.sql`
+#### 4.4 Cancer & Chronic Disease QOF Registers ✅ **Priority: MEDIUM** ✅ **COMPLETE**
+- [x] `fct_person_dx_cancer.sql` → `int_cancer_diagnoses_all.sql` ✅ + `fct_person_cancer_register.sql`
+- [x] `fct_person_dx_osteoporosis.sql` → `int_osteoporosis_diagnoses_all.sql` ✅ + `fct_person_osteoporosis_register.sql`
+- [x] `fct_person_dx_palliative_care.sql` → `int_palliative_care_diagnoses_all.sql` ✅ + `fct_person_palliative_care_register.sql`
+- [x] `fct_person_dx_ra.sql` → `int_rheumatoid_arthritis_diagnoses_all.sql` ✅ + `fct_person_rheumatoid_arthritis_register.sql`
 
-#### 4.5 Metabolic & Specialist QOF Registers ✅ **Priority: MEDIUM**
-- [ ] `fct_person_dx_obesity.sql` → `int_obesity_diagnoses_all.sql` + `fct_person_obesity_register.sql`
-- [ ] `fct_person_dx_nafld.sql` → `int_nafld_diagnoses_all.sql` + `fct_person_nafld_register.sql`
-- [ ] `fct_person_dx_fhyp.sql` → `int_familial_hypercholesterolaemia_diagnoses_all.sql` + `fct_person_familial_hypercholesterolaemia_register.sql`
-- [ ] `fct_person_dx_ndh.sql` → `int_diabetic_retinopathy_diagnoses_all.sql` + `fct_person_diabetic_retinopathy_register.sql`
-- [ ] `fct_person_dx_gestational_diabetes.sql` → `int_gestational_diabetes_diagnoses_all.sql` + `fct_person_gestational_diabetes_register.sql`
+#### 4.5 Metabolic & Specialist QOF Registers ✅ **Priority: MEDIUM** ✅ **COMPLETE**
+- [x] `fct_person_dx_fhyp.sql` → `int_familial_hypercholesterolaemia_diagnoses_all.sql` ✅ + `fct_person_familial_hypercholesterolaemia_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_ndh.sql` → `int_ndh_diagnoses_all.sql` ✅ + `fct_person_ndh_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_gestational_diabetes.sql` → `int_gestational_diabetes_diagnoses_all.sql` ✅ + `fct_person_gestational_diabetes_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_obesity.sql` → Uses existing `int_bmi_qof.sql` + `int_ethnicity_qof.sql` → `fct_person_obesity_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_nafld.sql` → `int_nafld_diagnoses_all.sql` ✅ + `fct_person_nafld_register.sql` ✅ **COMPLETE**
 
 ### Phase 5: Clinical Quality & Status Fact Tables
 
-#### 5.1 Clinical Control & Quality Measures ✅ **Priority: HIGH**
-- [ ] `fct_person_bp_control_status.sql` → `fct_person_bp_control.sql`
-- [ ] `fct_person_diabetes_8_care_processes.sql` → `fct_person_diabetes_care_processes.sql`
-- [ ] `fct_person_diabetes_9_care_processes.sql` → `fct_person_diabetes_9_care_processes.sql`
-- [ ] `fct_person_diabetes_triple_target.sql` → `fct_person_diabetes_triple_target.sql`
-- [ ] `fct_person_diabetes_foot_check.sql` → `fct_person_diabetes_foot_check.sql`
+#### 5.1 Clinical Control & Quality Measures ✅ **Priority: HIGH** ✅ **COMPLETE**
+- [x] `fct_person_bp_control_status.sql` → `fct_person_bp_control.sql` ✅ **COMPLETE**
+- [x] `fct_person_diabetes_8_care_processes.sql` → `fct_person_diabetes_8_care_processes.sql` ✅ **COMPLETE**
+- [x] `fct_person_diabetes_9_care_processes.sql` → `fct_person_diabetes_9_care_processes.sql` ✅ **COMPLETE**
+- [x] `fct_person_diabetes_triple_target.sql` → `fct_person_diabetes_triple_target.sql` ✅ **COMPLETE**
+- [x] `fct_person_diabetes_foot_check.sql` → `fct_person_diabetes_foot_check.sql` ✅ **COMPLETE**
 
 #### 5.2 Patient Status & Demographics ✅ **Priority: MEDIUM**
 - [ ] `fct_person_smoking_status.sql` → `fct_person_smoking_status.sql`
@@ -741,15 +741,15 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - ✅ **Core Dimensions**: Complete for person/patient/practice relationships
 - ✅ **Phase 1 Intermediate**: **100% COMPLETE!** All core clinical observations, laboratory results, risk assessments, clinical examinations, and health checks migrated
 - ✅ **Phase 2.1-2.5**: **100% COMPLETE!** All medication intermediate tables migrated (diabetes, cardiovascular, respiratory, gastrointestinal, mental health, cardiac therapy, specialist medications)
-- 🎯 **MAJOR MILESTONE**: **Phase 1 + Phase 2 FULLY COMPLETE** - comprehensive foundation covering all clinical observations AND all medication classes for complete medication therapy management
+- ✅ **Phase 3.1**: **100% COMPLETE!** All major chronic conditions diagnosis intermediate models (diabetes, COPD, heart failure, hypertension, CKD, depression, asthma, dementia, epilepsy, SMI, learning disability)
+- ✅ **Phase 4.1-4.5**: **100% COMPLETE!** All QOF diagnosis register intermediate models (major QOF diseases, mental health & neurological, cardiovascular, cancer & chronic disease, metabolic & specialist)
+- 🎯 **MAJOR MILESTONE**: **Phases 1-4 FULLY COMPLETE** - comprehensive foundation covering ALL clinical observations, medications, AND QOF diagnosis registers
 
 #### Next Priority Actions
-1. **✅ Phase 1 COMPLETE**: All core clinical observations and measurements
-2. **✅ Phase 2 COMPLETE**: All medication intermediate tables (diabetes, cardiovascular, respiratory, gastrointestinal, mental health, cardiac therapy, specialist medications)
-3. **🎯 Phase 3.1 - Major Chronic Conditions**: **100% COMPLETE** (diabetes, COPD, heart failure, hypertension, CKD, depression, asthma, dementia, epilepsy, SMI, learning disability all complete)
-4. **✅ Phase 4.3 COMPLETE**: Cardiovascular QOF Registers (CHD, AF, PAD, Stroke/TIA) ✅ **COMPLETE**
-5. **Next Priority**: Phase 4.4-4.5 Cancer, Chronic Disease, and Metabolic QOF Registers
-6. **Finally**: Phase 4 Disease register fact tables (leverages Phase 1-3 foundation with improved SRP architecture)
+1. **✅ Phase 1-4 COMPLETE**: All intermediate models (clinical observations, medications, QOF diagnosis registers)
+2. **🎯 Next Priority**: **Phase 5 - Clinical Quality & Status Fact Tables** (diabetes care processes, BP control, clinical safety measures)
+3. **Then**: Phase 6 - Programme Dimensions (NHS Health Checks, LTC/LCS programmes)
+4. **Finally**: Remaining complex models and any fact table migrations
 
 ## Contact & Questions
 

@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: fct_person_nafld_register
+    description: |
+      Fact table for the Non-Alcoholic Fatty Liver Disease (NAFLD) register.
+      
+      **Register Inclusion:**
+      - Any person with at least one NAFLD diagnosis recorded
+      - Uses hardcoded SNOMED codes (to be updated with cluster when available)
+      
+      **Business Logic:**
+      - Aggregates all NAFLD diagnoses per person
+      - Tracks timing of first and most recent diagnoses
+      - Calculates time intervals for monitoring purposes
+      - Includes all relevant SNOMED concept codes
+      
+      **Clinical Context:**
+      NAFLD is increasingly common and associated with metabolic syndrome, diabetes, and obesity.
+      Important for liver health monitoring and cardiovascular risk assessment.
+      
+      **Data Source:**
+      Uses int_nafld_diagnoses_all which currently uses hardcoded SNOMED codes.
+      Should be updated when proper NAFLD cluster becomes available.
+    
+    tests:
+      - unique:
+          column_name: person_id
+      - not_null:
+          column_name: person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      
+      - name: sk_patient_id
+        description: "Surrogate key for patient dimension"
+        tests:
+          - not_null
+      
+      - name: age
+        description: "Current age in years"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+      
+      - name: practice_code
+        description: "GP practice code where patient is registered"
+      
+      - name: has_nafld_diagnosis
+        description: "Flag indicating NAFLD diagnosis present (always TRUE for all rows)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      
+      - name: earliest_nafld_date
+        description: "Date of first NAFLD diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.not_future_date
+      
+      - name: latest_nafld_date
+        description: "Date of most recent NAFLD diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.not_future_date
+      
+      - name: total_nafld_diagnoses
+        description: "Total number of NAFLD diagnosis records"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 1000
+      
+      - name: years_since_first_nafld_diagnosis
+        description: "Years since first NAFLD diagnosis"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      
+      - name: days_since_latest_nafld_diagnosis
+        description: "Days since most recent NAFLD diagnosis"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 36500
+      
+      - name: all_nafld_concept_codes
+        description: "Array of all SNOMED concept codes for NAFLD diagnoses"
+        tests:
+          - not_null
+      
+      - name: all_nafld_concept_displays
+        description: "Array of all concept display terms for NAFLD diagnoses"
+        tests:
+          - not_null 

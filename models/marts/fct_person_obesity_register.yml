@@ -1,0 +1,107 @@
+version: 2
+
+models:
+  - name: fct_person_obesity_register
+    description: |
+      Fact table for the obesity register tracking people aged 18+ who meet obesity criteria.
+      
+      **Obesity Register Inclusion Rules:**
+      1. **Age**: Must be 18 years or older
+      2. **BMI >= 30**: Any ethnicity with BMI of 30 or higher
+      3. **BMI >= 27.5 for BAME**: Black, Asian, and Minority Ethnic patients with BMI of 27.5 or higher
+      
+      **Business Logic:**
+      - Uses existing BMI QOF and ethnicity QOF intermediate models
+      - Combines BMI thresholds with ethnicity-specific criteria
+      - Tracks both historical and current BMI values
+      - Includes comprehensive ethnicity classification
+      
+      **Clinical Context:**
+      The obesity register supports targeted interventions and monitoring for patients at increased
+      metabolic risk. BAME populations have lower BMI thresholds due to increased risk at lower weights.
+    
+    tests:
+      - unique:
+          column_name: person_id
+      - not_null:
+          column_name: person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      
+      - name: sk_patient_id
+        description: "Surrogate key for patient dimension"
+        tests:
+          - not_null
+      
+      - name: age
+        description: "Current age in years (all patients >= 18)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 18
+              max_value: 120
+      
+      - name: is_on_obesity_register
+        description: "Flag indicating obesity register inclusion (always TRUE for all rows)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      
+      - name: is_bame
+        description: "Flag indicating Black, Asian, and Minority Ethnic background"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_bmi_30_plus
+        description: "Flag indicating BMI >= 30"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_bmi_27_5_plus
+        description: "Flag indicating BMI >= 27.5"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      - name: earliest_bmi_date
+        description: "Date of earliest BMI recording"
+        tests:
+          - dbt_utils.not_future_date
+      
+      - name: latest_bmi_date
+        description: "Date of most recent BMI recording"
+        tests:
+          - dbt_utils.not_future_date
+      
+      - name: latest_valid_bmi_date
+        description: "Date of most recent valid BMI recording"
+        tests:
+          - dbt_utils.not_future_date
+      
+      - name: latest_valid_bmi_value
+        description: "Most recent valid BMI value"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 10
+              max_value: 100
+      
+      - name: latest_ethnicity_date
+        description: "Date of most recent ethnicity recording"
+        tests:
+          - dbt_utils.not_future_date
+      
+      - name: latest_bame_date
+        description: "Date of most recent BAME ethnicity recording"
+        tests:
+          - dbt_utils.not_future_date 

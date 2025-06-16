@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: fct_person_diabetes_foot_check
+    description: |
+      Fact table for diabetes foot check completion and status tracking for people on the diabetes register.
+      
+      **Foot Check Completion Logic:**
+      - Check completed in last 12 months if:
+        1. Check date within 12 months AND
+        2. Either both feet checked OR unchecked foot is absent/amputated AND
+        3. Check not declined or unsuitable
+      
+      **Permanent Exemption:**
+      - Patient permanently exempt only if both feet are absent/amputated
+      
+      **Risk Assessment:**
+      - Tracks individual foot risk levels (Low, Moderate, High)
+      - Records foot absence (congenital) vs amputation
+      - Includes Townson scale levels when applicable
+      
+      **Clinical Context:**
+      Part of diabetes 8/9 care processes. Critical for preventing diabetic foot complications
+      and ulcerations through regular screening and risk stratification.
+      
+      **Business Rules:**
+      - Base population: People on diabetes register
+      - Uses latest foot examination data
+      - Comprehensive status tracking including partial checks
+      - Supports clinical decision-making for foot care pathways
+    
+    tests:
+      - unique:
+          column_name: person_id
+      - not_null:
+          column_name: person_id
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      
+      - name: sk_patient_id
+        description: "Surrogate key for patient dimension"
+        tests:
+          - not_null
+      
+      - name: diabetes_type
+        description: "Type of diabetes diagnosis (Type 1, Type 2, Other)"
+        tests:
+          - accepted_values:
+              values: ['Type 1', 'Type 2', 'Other', 'Unspecified']
+      
+      - name: latest_foot_check_date
+        description: "Date of most recent foot examination"
+        tests:
+          - dbt_utils.not_future_date
+      
+      - name: foot_check_completed_in_last_12m
+        description: "Flag indicating valid foot check completed within last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      - name: is_permanently_exempt
+        description: "Flag indicating permanent exemption (both feet absent/amputated)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      
+      - name: latest_check_status
+        description: "Status of most recent foot check attempt"
+        tests:
+          - accepted_values:
+              values: ['Not Done', 'Declined', 'Unsuitable', 'Complete - Both Feet', 'Complete - Left Only (Right Missing)', 'Complete - Right Only (Left Missing)', 'Partial - Left Only', 'Partial - Right Only']
+      
+      - name: foot_check_status
+        description: "Detailed foot check status including exemptions"
+        tests:
+          - accepted_values:
+              values: ['Permanently Exempt - Both Feet Missing', 'Not Appropriate - Unsuitable', 'Not Appropriate - Declined', 'Complete - Both Feet', 'Complete - Left Only (Right Missing)', 'Complete - Right Only (Left Missing)', 'Partial - Left Only', 'Partial - Right Only', 'Not Done']
+      
+      - name: left_foot_status
+        description: "Status and risk level of left foot"
+        tests:
+          - accepted_values:
+              values: ['Absent (Congenital)', 'Amputated', 'Low Risk', 'Moderate Risk', 'High Risk', 'Ulcerated Risk', 'Risk Level Not Recorded', 'Not Assessed']
+      
+      - name: right_foot_status
+        description: "Status and risk level of right foot"
+        tests:
+          - accepted_values:
+              values: ['Absent (Congenital)', 'Amputated', 'Low Risk', 'Moderate Risk', 'High Risk', 'Ulcerated Risk', 'Risk Level Not Recorded', 'Not Assessed']
+      
+      - name: townson_scale_level
+        description: "Young Townson footskin scale level if applicable"
+        tests:
+          - accepted_values:
+              values: ['Level 1', 'Level 2', 'Level 3', 'Level 4']
+      
+      - name: all_concept_codes
+        description: "Array of all SNOMED concept codes from latest foot check"
+      
+      - name: all_concept_displays
+        description: "Array of all concept display terms from latest foot check"
+      
+      - name: all_source_cluster_ids
+        description: "Array of all source cluster IDs from latest foot check" 
