@@ -3,206 +3,91 @@ version: 2
 models:
   - name: int_stroke_tia_diagnoses_all
     description: |
-      All stroke and transient ischaemic attack (TIA) diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for stroke/TIA register and cerebrovascular disease management.
-      
-      QOF Cluster IDs Used:
-      - STRK_COD: Stroke diagnoses
-      - TIA_COD: Transient ischaemic attack diagnoses
+      All stroke and transient ischaemic attack (TIA) diagnoses from clinical records.
+      Uses QOF cluster ID STIA_COD for stroke and TIA diagnosis codes.
       
       Clinical Purpose:
-      - QOF stroke/TIA register data collection
-      - Cerebrovascular disease monitoring
-      - Secondary stroke prevention planning
-      - Neurological outcome tracking
+      - Stroke/TIA register inclusion for QOF quality measures
+      - Stroke secondary prevention monitoring
+      - Cardiovascular risk management post-stroke
       
-      Key QOF Requirements:
-      - Register inclusion: Presence of stroke (STRK_COD) OR TIA (TIA_COD) diagnosis codes
-      - No age restrictions for stroke/TIA register
-      - No resolution codes - stroke/TIA are considered permanent conditions
+      QOF Context:
+      Stroke/TIA register follows simple diagnosis-only pattern - any stroke or TIA diagnosis 
+      qualifies for register inclusion. No resolution codes or complex criteria.
+      This is a lifelong condition register for stroke secondary prevention.
+      
+      Key Clinical Notes:
+      - Stroke/TIA are considered permanent conditions (no resolution codes)
+      - Register inclusion based purely on presence of diagnostic codes
       - Critical for secondary prevention and anticoagulation decisions
+      - No age restrictions for stroke/TIA register
       
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_stroke_tia_register.sql which applies QOF business rules.
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      Use this model as input for stroke/TIA register.
       
     tests:
       - cluster_ids_exist:
-          cluster_ids: "STRK_COD,TIA_COD"
-          
+          cluster_ids: "STIA_COD"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the stroke/TIA diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for stroke/TIA diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the stroke/TIA diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (STRK_COD, TIA_COD)"
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: has_stroke_tia_diagnosis
+        description: "Flag indicating person has at least one stroke/TIA diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: ['STRK_COD', 'TIA_COD']
-              
-      - name: is_stroke_diagnosis_code
-        description: "Flag indicating stroke diagnosis (STRK_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_tia_diagnosis_code
-        description: "Flag indicating TIA diagnosis (TIA_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_stroke_diagnosis_date
-        description: "Earliest stroke diagnosis date for this person"
-        
-      - name: latest_stroke_diagnosis_date
-        description: "Latest stroke diagnosis date for this person"
-        
-      - name: total_stroke_diagnoses
-        description: "Total number of stroke diagnosis codes for this person"
-        
-      - name: earliest_tia_diagnosis_date
-        description: "Earliest TIA diagnosis date for this person"
-        
-      - name: latest_tia_diagnosis_date
-        description: "Latest TIA diagnosis date for this person"
-        
-      - name: total_tia_diagnoses
-        description: "Total number of TIA diagnosis codes for this person"
-        
+              values: [true]
+
       - name: earliest_stroke_tia_date
-        description: "Earliest of stroke or TIA diagnosis date for this person"
-        
+        description: "Date of first recorded stroke/TIA diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_stroke_tia_date"
+
       - name: latest_stroke_tia_date
-        description: "Latest of stroke or TIA diagnosis date for this person"
-        
-      - name: stroke_tia_observation_type
-        description: "Classification of this observation"
+        description: "Date of most recent stroke/TIA diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: ['Stroke Diagnosis', 'TIA Diagnosis', 'Unknown']
-              
-      - name: has_stroke_diagnosis
-        description: "Flag indicating presence of stroke diagnosis"
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_stroke_tia_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: total_stroke_tia_episodes
+        description: "Total number of distinct stroke/TIA diagnosis dates"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_tia_diagnosis
-        description: "Flag indicating presence of TIA diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_stroke_or_tia_diagnosis
-        description: "Flag indicating presence of stroke OR TIA diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: cerebrovascular_event_type
-        description: "Type of cerebrovascular events for this person"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Both Stroke and TIA', 'Stroke Only', 'TIA Only', 'No Events']
-              
-      - name: has_recent_stroke_tia_diagnosis
-        description: "Flag indicating stroke/TIA diagnosis in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_stroke_tia_diagnosis_last_24m
-        description: "Flag indicating stroke/TIA diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_single_cerebrovascular_event
-        description: "Flag indicating only one cerebrovascular event code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_multiple_cerebrovascular_events
-        description: "Flag indicating multiple cerebrovascular event codes"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: days_since_first_stroke_tia
-        description: "Number of days since first stroke/TIA diagnosis"
-        
-      - name: is_newly_diagnosed_stroke_tia
-        description: "Flag indicating stroke/TIA diagnosed within last year"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_established_stroke_tia
-        description: "Flag indicating stroke/TIA diagnosed over a year ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_long_term_stroke_tia
-        description: "Flag indicating stroke/TIA diagnosed over 5 years ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_recurrent_cerebrovascular_events
-        description: "Flag indicating multiple cerebrovascular events over time"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_tia_to_stroke_progression
-        description: "Flag indicating TIA occurred before stroke (progression)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 50
+
       - name: all_stroke_tia_concept_codes
-        description: "Array of all stroke/TIA concept codes for this person"
-        
+        description: "Array of all distinct stroke/TIA concept codes for this person"
+        tests:
+          - not_null
+
       - name: all_stroke_tia_concept_displays
-        description: "Array of all stroke/TIA concept displays for this person" 
+        description: "Array of all distinct stroke/TIA concept descriptions for this person"
+        tests:
+          - not_null
+
+      - name: latest_stroke_tia_concept_code
+        description: "Concept code from most recent stroke/TIA diagnosis"
+        tests:
+          - not_null
+
+      - name: latest_stroke_tia_concept_description
+        description: "Concept description from most recent stroke/TIA diagnosis"
+        tests:
+          - not_null 

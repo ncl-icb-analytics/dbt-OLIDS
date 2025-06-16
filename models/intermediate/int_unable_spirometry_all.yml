@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: int_unable_spirometry_all
+    description: |
+      All unable-to-have-spirometry observations from clinical records.
+      Uses QOF cluster ID UNABLESPI_COD for patients unable to perform spirometry tests.
+      
+      Clinical Purpose:
+      - COPD register spirometry confirmation requirements (post-April 2023)
+      - Alternative pathway for COPD register inclusion when spirometry cannot be performed
+      - Documentation of contraindications or patient inability
+      
+      QOF Context:
+      For COPD patients diagnosed after April 2023, spirometry confirmation is required for register inclusion.
+      When spirometry cannot be performed due to patient contraindications or inability, this documentation
+      serves as an alternative pathway for COPD register inclusion.
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for COPD register spirometry validation.
+      
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "UNABLESPI_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the unable-to-have-spirometry observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for unable spirometry"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the unable spirometry code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "Source cluster ID (UNABLESPI_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['UNABLESPI_COD']
+              
+      - name: earliest_unable_spirometry_date
+        description: "Earliest unable spirometry date for this person"
+        
+      - name: latest_unable_spirometry_date
+        description: "Latest unable spirometry date for this person"
+        
+      - name: total_unable_spirometry_records
+        description: "Total count of unable spirometry records for this person"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 100
+              
+      - name: is_unable_spirometry_record
+        description: "Flag indicating this is an unable spirometry record (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: has_recent_unable_spirometry
+        description: "Flag indicating recent (within 12 months) unable spirometry record"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: spirometry_observation_type
+        description: "Classification of this spirometry observation"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Unable to Perform Spirometry']
+              
+      - name: all_unable_spirometry_concept_codes
+        description: "Array of all unable spirometry concept codes for this person"
+        
+      - name: all_unable_spirometry_concept_displays
+        description: "Array of all unable spirometry concept displays for this person" 

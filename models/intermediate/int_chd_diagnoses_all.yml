@@ -3,160 +3,105 @@ version: 2
 models:
   - name: int_chd_diagnoses_all
     description: |
-      All coronary heart disease (CHD) diagnosis observations from clinical records using QOF cluster ID.
-      Provides comprehensive data collection for CHD register and cardiovascular risk management.
-      
-      QOF Cluster IDs Used:
-      - CHD_COD: Coronary heart disease diagnoses
+      All coronary heart disease (CHD) diagnoses from clinical records.
+      Uses QOF cluster ID CHD_COD for all forms of CHD diagnosis.
       
       Clinical Purpose:
-      - QOF CHD register data collection
-      - Cardiovascular risk assessment
-      - Coronary disease management monitoring
-      - Secondary prevention planning
+      - CHD register inclusion for QOF cardiovascular disease management
+      - Cardiovascular risk stratification and monitoring  
+      - Secondary prevention pathway identification
       
-      Key QOF Requirements:
-      - Register inclusion: Presence of CHD diagnosis code (CHD_COD)
+      QOF Context:
+      CHD register follows simple diagnosis-only pattern - any CHD diagnosis code qualifies 
+      for register inclusion. No resolution codes or complex criteria. This is a lifelong 
+      condition register for cardiovascular secondary prevention.
+      
+      Key Clinical Notes:
+      - CHD is considered a permanent condition (no resolution codes)
+      - Register inclusion based purely on presence of diagnostic codes
+      - Important for secondary prevention medication monitoring
       - No age restrictions for CHD register
-      - No resolution codes - CHD is considered permanent condition
-      - Important for cardiovascular disease secondary prevention
       
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_chd_register.sql which applies QOF business rules.
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      Use this model as input for CHD register and cardiovascular risk models.
       
     tests:
       - cluster_ids_exist:
           cluster_ids: "CHD_COD"
-          
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the CHD diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for CHD diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the CHD diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (CHD_COD)"
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: has_chd_diagnosis
+        description: "Flag indicating person has at least one CHD diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: ['CHD_COD']
-              
-      - name: is_chd_diagnosis_code
-        description: "Flag indicating CHD diagnosis (CHD_COD)"
+              values: [true]
+
+      - name: earliest_chd_date
+        description: "Date of first recorded CHD diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_chd_diagnosis_date
-        description: "Earliest CHD diagnosis date for this person"
-        
-      - name: latest_chd_diagnosis_date
-        description: "Latest CHD diagnosis date for this person"
-        
-      - name: total_chd_diagnoses
-        description: "Total number of CHD diagnosis codes for this person"
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_chd_date"
+
+      - name: latest_chd_date
+        description: "Date of most recent CHD diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_chd_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: total_chd_episodes
+        description: "Total number of distinct CHD diagnosis dates"
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 100
-              
-      - name: chd_observation_type
-        description: "Classification of this observation"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CHD Diagnosis', 'Unknown']
-              
-      - name: has_chd_diagnosis
-        description: "Flag indicating presence of CHD diagnosis"
+
+      - name: has_episode_last_12m
+        description: "Boolean flag: has CHD diagnosis in last 12 months"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
-      - name: has_recent_chd_diagnosis
-        description: "Flag indicating CHD diagnosis in last 12 months"
+
+      - name: has_episode_last_24m
+        description: "Boolean flag: has CHD diagnosis in last 24 months"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
-      - name: has_chd_diagnosis_last_24m
-        description: "Flag indicating CHD diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_single_chd_diagnosis
-        description: "Flag indicating only one CHD diagnosis code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_multiple_chd_diagnoses
-        description: "Flag indicating multiple CHD diagnosis codes"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: days_since_first_chd_diagnosis
-        description: "Number of days since first CHD diagnosis"
-        
-      - name: is_newly_diagnosed_chd
-        description: "Flag indicating CHD diagnosed within last year"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_established_chd
-        description: "Flag indicating CHD diagnosed over a year ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_long_term_chd
-        description: "Flag indicating CHD diagnosed over 5 years ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_chd_progression_codes
-        description: "Flag indicating multiple CHD codes over time suggesting progression"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
+
       - name: all_chd_concept_codes
-        description: "Array of all CHD concept codes for this person"
-        
+        description: "Array of all distinct CHD concept codes for this person"
+        tests:
+          - not_null
+
       - name: all_chd_concept_displays
-        description: "Array of all CHD concept displays for this person" 
+        description: "Array of all distinct CHD concept descriptions for this person"
+        tests:
+          - not_null
+
+      - name: latest_chd_concept_code
+        description: "Concept code from most recent CHD diagnosis"
+        tests:
+          - not_null
+
+      - name: latest_chd_concept_description
+        description: "Concept description from most recent CHD diagnosis"
+        tests:
+          - not_null 

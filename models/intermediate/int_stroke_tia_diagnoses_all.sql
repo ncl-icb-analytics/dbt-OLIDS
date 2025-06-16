@@ -6,192 +6,89 @@
 }}
 
 /*
-All stroke and transient ischaemic attack (TIA) diagnosis observations from clinical records.
-Uses QOF stroke/TIA cluster IDs:
-- STRK_COD: Stroke diagnoses
-- TIA_COD: Transient ischaemic attack diagnoses
+All stroke and transient ischaemic attack (TIA) diagnoses from clinical records.
+Uses QOF cluster ID STIA_COD for stroke and TIA diagnosis codes.
 
 Clinical Purpose:
-- QOF stroke/TIA register data collection
-- Cerebrovascular disease monitoring
-- Secondary stroke prevention planning
-- Neurological outcome tracking
+- Stroke/TIA register inclusion for QOF quality measures
+- Stroke secondary prevention monitoring
+- Cardiovascular risk management post-stroke
 
-Key QOF Requirements:
-- Register inclusion: Presence of stroke (STRK_COD) OR TIA (TIA_COD) diagnosis codes
-- No age restrictions for stroke/TIA register
-- No resolution codes - stroke/TIA are considered permanent conditions
-- Critical for secondary prevention and anticoagulation decisions
+QOF Context:
+Stroke/TIA register follows simple diagnosis-only pattern - any stroke or TIA diagnosis 
+qualifies for register inclusion. No resolution codes or complex criteria.
+This is a lifelong condition register for stroke secondary prevention.
 
-Note: Stroke and TIA do not have resolved codes as they are considered permanent conditions.
-The register is based purely on the presence of diagnostic codes.
-
-Includes ALL persons following intermediate layer principles.
-Use as input for fct_person_stroke_tia_register.sql which applies QOF business rules.
+Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+Use this model as input for stroke/TIA register.
 */
 
 WITH base_observations AS (
-    
     SELECT
-        obs.observation_id,
-        obs.person_id,
-        obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
-        
-        -- Flag different types of stroke/TIA codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'STRK_COD' THEN TRUE ELSE FALSE END AS is_stroke_diagnosis_code,
-        CASE WHEN obs.source_cluster_id = 'TIA_COD' THEN TRUE ELSE FALSE END AS is_tia_diagnosis_code
-        
-    FROM {{ get_observations("'STRK_COD', 'TIA_COD'") }} obs
-    WHERE obs.clinical_effective_date IS NOT NULL
+        person_id,
+        clinical_effective_date,
+        source_cluster_id,
+        concept_code,
+        concept_description,
+        observation_value_text,
+        observation_value_numeric,
+        observation_units,
+        date_recorded
+    FROM {{ get_observations("'STIA_COD'") }}
 ),
 
-person_diagnosis_aggregates AS (
-    
+-- Add person demographics for context
+observations_with_person AS (
+    SELECT
+        obs.*,
+        p.age_years,
+        p.gender,
+        p.is_active
+    FROM base_observations obs
+    LEFT JOIN {{ ref('dim_person') }} p
+        ON obs.person_id = p.person_id
+),
+
+-- Person-level aggregation for efficient downstream use
+person_level_aggregates AS (
     SELECT
         person_id,
         
-        -- Stroke diagnosis dates (STRK_COD)
-        MIN(CASE WHEN is_stroke_diagnosis_code THEN clinical_effective_date END) AS earliest_stroke_diagnosis_date,
-        MAX(CASE WHEN is_stroke_diagnosis_code THEN clinical_effective_date END) AS latest_stroke_diagnosis_date,
-        COUNT(CASE WHEN is_stroke_diagnosis_code THEN 1 END) AS total_stroke_diagnoses,
+        -- Diagnosis flags
+        TRUE AS has_stroke_tia_diagnosis,
         
-        -- TIA diagnosis dates (TIA_COD)
-        MIN(CASE WHEN is_tia_diagnosis_code THEN clinical_effective_date END) AS earliest_tia_diagnosis_date,
-        MAX(CASE WHEN is_tia_diagnosis_code THEN clinical_effective_date END) AS latest_tia_diagnosis_date,
-        COUNT(CASE WHEN is_tia_diagnosis_code THEN 1 END) AS total_tia_diagnoses,
+        -- Date aggregates
+        MIN(clinical_effective_date) AS earliest_stroke_tia_date,
+        MAX(clinical_effective_date) AS latest_stroke_tia_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_stroke_tia_episodes,
         
-        -- Combined stroke/TIA dates for QOF register logic
-        LEAST(
-            COALESCE(MIN(CASE WHEN is_stroke_diagnosis_code THEN clinical_effective_date END), '9999-12-31'),
-            COALESCE(MIN(CASE WHEN is_tia_diagnosis_code THEN clinical_effective_date END), '9999-12-31')
-        ) AS earliest_stroke_tia_date,
-        GREATEST(
-            COALESCE(MAX(CASE WHEN is_stroke_diagnosis_code THEN clinical_effective_date END), '1900-01-01'),
-            COALESCE(MAX(CASE WHEN is_tia_diagnosis_code THEN clinical_effective_date END), '1900-01-01')
-        ) AS latest_stroke_tia_date,
+        -- Code arrays for detailed analysis
+        ARRAY_AGG(DISTINCT concept_code) AS all_stroke_tia_concept_codes,
+        ARRAY_AGG(DISTINCT concept_description) AS all_stroke_tia_concept_displays,
         
-        -- Arrays for traceability
-        ARRAY_AGG(DISTINCT concept_code) 
-            WITHIN GROUP (ORDER BY concept_code) 
-            AS all_stroke_tia_concept_codes,
-        ARRAY_AGG(DISTINCT concept_display) 
-            WITHIN GROUP (ORDER BY concept_display) 
-            AS all_stroke_tia_concept_displays
-            
-    FROM base_observations
-    GROUP BY person_id
-),
+        -- Latest values for reference
+        FIRST_VALUE(concept_code) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_stroke_tia_concept_code,
+        
+        FIRST_VALUE(concept_description) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_stroke_tia_concept_description
 
-final_with_derived_fields AS (
-    
-    SELECT
-        bo.person_id,
-        bo.observation_id,
-        bo.clinical_effective_date,
-        bo.concept_code,
-        bo.concept_display,
-        bo.source_cluster_id,
-        bo.is_stroke_diagnosis_code,
-        bo.is_tia_diagnosis_code,
-        
-        -- Person-level aggregates
-        pda.earliest_stroke_diagnosis_date,
-        pda.latest_stroke_diagnosis_date,
-        pda.total_stroke_diagnoses,
-        pda.earliest_tia_diagnosis_date,
-        pda.latest_tia_diagnosis_date,
-        pda.total_tia_diagnoses,
-        CASE 
-            WHEN pda.earliest_stroke_tia_date != '9999-12-31' THEN pda.earliest_stroke_tia_date
-            ELSE NULL
-        END AS earliest_stroke_tia_date,
-        CASE 
-            WHEN pda.latest_stroke_tia_date != '1900-01-01' THEN pda.latest_stroke_tia_date
-            ELSE NULL
-        END AS latest_stroke_tia_date,
-        
-        -- Classification of this specific observation
-        CASE 
-            WHEN bo.is_stroke_diagnosis_code THEN 'Stroke Diagnosis'
-            WHEN bo.is_tia_diagnosis_code THEN 'TIA Diagnosis'
-            ELSE 'Unknown'
-        END AS stroke_tia_observation_type,
-        
-        -- QOF context fields for register inclusion
-        CASE WHEN pda.total_stroke_diagnoses > 0 THEN TRUE ELSE FALSE END AS has_stroke_diagnosis,
-        CASE WHEN pda.total_tia_diagnoses > 0 THEN TRUE ELSE FALSE END AS has_tia_diagnosis,
-        CASE WHEN pda.total_stroke_diagnoses > 0 OR pda.total_tia_diagnoses > 0 THEN TRUE ELSE FALSE END AS has_stroke_or_tia_diagnosis,
-        
-        -- Cerebrovascular event categorisation
-        CASE 
-            WHEN pda.total_stroke_diagnoses > 0 AND pda.total_tia_diagnoses > 0 THEN 'Both Stroke and TIA'
-            WHEN pda.total_stroke_diagnoses > 0 THEN 'Stroke Only'
-            WHEN pda.total_tia_diagnoses > 0 THEN 'TIA Only'
-            ELSE 'No Events'
-        END AS cerebrovascular_event_type,
-        
-        -- Clinical flags for care planning
-        CASE 
-            WHEN pda.latest_stroke_tia_date >= CURRENT_DATE - INTERVAL '12 months' THEN TRUE
-            ELSE FALSE
-        END AS has_recent_stroke_tia_diagnosis,
-        CASE 
-            WHEN pda.latest_stroke_tia_date >= CURRENT_DATE - INTERVAL '24 months' THEN TRUE
-            ELSE FALSE
-        END AS has_stroke_tia_diagnosis_last_24m,
-        
-        -- Disease management indicators
-        CASE WHEN (pda.total_stroke_diagnoses + pda.total_tia_diagnoses) = 1 THEN TRUE ELSE FALSE END AS is_single_cerebrovascular_event,
-        CASE WHEN (pda.total_stroke_diagnoses + pda.total_tia_diagnoses) > 1 THEN TRUE ELSE FALSE END AS has_multiple_cerebrovascular_events,
-        
-        -- Secondary prevention planning fields
-        CASE 
-            WHEN pda.earliest_stroke_tia_date IS NOT NULL 
-            THEN CURRENT_DATE - pda.earliest_stroke_tia_date
-            ELSE NULL
-        END AS days_since_first_stroke_tia,
-        
-        CASE 
-            WHEN pda.earliest_stroke_tia_date >= CURRENT_DATE - INTERVAL '1 year' THEN TRUE
-            ELSE FALSE
-        END AS is_newly_diagnosed_stroke_tia,
-        CASE 
-            WHEN pda.earliest_stroke_tia_date < CURRENT_DATE - INTERVAL '1 year' THEN TRUE
-            ELSE FALSE
-        END AS is_established_stroke_tia,
-        CASE 
-            WHEN pda.earliest_stroke_tia_date < CURRENT_DATE - INTERVAL '5 years' THEN TRUE
-            ELSE FALSE
-        END AS is_long_term_stroke_tia,
-        
-        -- Recurrence risk indicators
-        CASE 
-            WHEN (pda.total_stroke_diagnoses + pda.total_tia_diagnoses) > 1 
-                AND (pda.latest_stroke_tia_date - pda.earliest_stroke_tia_date) > INTERVAL '6 months'
-            THEN TRUE
-            ELSE FALSE
-        END AS has_recurrent_cerebrovascular_events,
-        
-        -- Stroke progression indicators (TIA → Stroke)
-        CASE 
-            WHEN pda.total_stroke_diagnoses > 0 
-                AND pda.total_tia_diagnoses > 0
-                AND pda.earliest_tia_diagnosis_date < pda.earliest_stroke_diagnosis_date
-            THEN TRUE
-            ELSE FALSE
-        END AS has_tia_to_stroke_progression,
-        
-        -- Arrays for complete traceability
-        pda.all_stroke_tia_concept_codes,
-        pda.all_stroke_tia_concept_displays
-        
-    FROM base_observations bo
-    LEFT JOIN person_diagnosis_aggregates pda
-        ON bo.person_id = pda.person_id
+    FROM observations_with_person
+    GROUP BY person_id
 )
 
-SELECT * FROM final_with_derived_fields
-ORDER BY person_id, clinical_effective_date 
+SELECT
+    person_id,
+    has_stroke_tia_diagnosis,
+    earliest_stroke_tia_date,
+    latest_stroke_tia_date,
+    total_stroke_tia_episodes,
+    all_stroke_tia_concept_codes,
+    all_stroke_tia_concept_displays,
+    latest_stroke_tia_concept_code,
+    latest_stroke_tia_concept_description
+FROM person_level_aggregates 

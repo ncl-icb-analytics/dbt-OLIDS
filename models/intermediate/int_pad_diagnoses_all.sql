@@ -6,143 +6,95 @@
 }}
 
 /*
-All peripheral arterial disease (PAD) diagnosis observations from clinical records.
-Uses QOF PAD cluster ID:
-- PAD_COD: Peripheral arterial disease diagnoses
+All peripheral arterial disease (PAD) diagnoses from clinical records.
+Uses QOF cluster ID PAD_COD for all forms of PAD diagnosis.
 
 Clinical Purpose:
-- QOF PAD register data collection
-- Peripheral vascular disease monitoring
-- Cardiovascular risk assessment
-- Limb preservation planning
+- PAD register inclusion for QOF cardiovascular disease management
+- Cardiovascular risk stratification and monitoring
+- Secondary prevention pathway identification
 
-Key QOF Requirements:
-- Register inclusion: Presence of PAD diagnosis code (PAD_COD)
-- No age restrictions for PAD register
-- No resolution codes - PAD is considered permanent condition
-- Important for cardiovascular disease management
+QOF Context:
+PAD register follows simple diagnosis-only pattern - any PAD diagnosis code 
+qualifies for register inclusion. No resolution codes or complex criteria.
+This is a lifelong condition register for cardiovascular secondary prevention.
 
-Note: PAD does not have resolved codes as it is considered a permanent condition.
-The register is based purely on the presence of diagnostic codes.
-
-Includes ALL persons following intermediate layer principles.
-Use as input for fct_person_pad_register.sql which applies QOF business rules.
+Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+Use this model as input for PAD register and cardiovascular risk models.
 */
 
 WITH base_observations AS (
-    
     SELECT
-        obs.observation_id,
-        obs.person_id,
-        obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
-        
-        -- Flag PAD diagnosis codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'PAD_COD' THEN TRUE ELSE FALSE END AS is_pad_diagnosis_code
-        
-    FROM {{ get_observations("'PAD_COD'") }} obs
-    WHERE obs.clinical_effective_date IS NOT NULL
+        person_id,
+        clinical_effective_date,
+        source_cluster_id,
+        concept_code,
+        concept_description,
+        observation_value_text,
+        observation_value_numeric,
+        observation_units,
+        date_recorded
+    FROM {{ get_observations("'PAD_COD'") }}
 ),
 
-person_diagnosis_aggregates AS (
-    
+-- Add person demographics for context
+observations_with_person AS (
+    SELECT
+        obs.*,
+        p.age_years,
+        p.gender,
+        p.is_active
+    FROM base_observations obs
+    LEFT JOIN {{ ref('dim_person') }} p
+        ON obs.person_id = p.person_id
+),
+
+-- Person-level aggregation for efficient downstream use
+person_level_aggregates AS (
     SELECT
         person_id,
         
-        -- PAD diagnosis dates (PAD_COD)
-        MIN(clinical_effective_date) AS earliest_pad_diagnosis_date,
-        MAX(clinical_effective_date) AS latest_pad_diagnosis_date,
-        COUNT(*) AS total_pad_diagnoses,
-        
-        -- Arrays for traceability
-        ARRAY_AGG(DISTINCT concept_code) 
-            WITHIN GROUP (ORDER BY concept_code) 
-            AS all_pad_concept_codes,
-        ARRAY_AGG(DISTINCT concept_display) 
-            WITHIN GROUP (ORDER BY concept_display) 
-            AS all_pad_concept_displays
-            
-    FROM base_observations
-    GROUP BY person_id
-),
-
-final_with_derived_fields AS (
-    
-    SELECT
-        bo.person_id,
-        bo.observation_id,
-        bo.clinical_effective_date,
-        bo.concept_code,
-        bo.concept_display,
-        bo.source_cluster_id,
-        bo.is_pad_diagnosis_code,
-        
-        -- Person-level aggregates
-        pda.earliest_pad_diagnosis_date,
-        pda.latest_pad_diagnosis_date,
-        pda.total_pad_diagnoses,
-        
-        -- Classification of this specific observation
-        CASE 
-            WHEN bo.is_pad_diagnosis_code THEN 'PAD Diagnosis'
-            ELSE 'Unknown'
-        END AS pad_observation_type,
-        
-        -- QOF context fields (always true since we only have diagnosis codes)
+        -- Diagnosis flags
         TRUE AS has_pad_diagnosis,
         
-        -- Clinical flags for care planning
-        CASE 
-            WHEN pda.latest_pad_diagnosis_date >= CURRENT_DATE - INTERVAL '12 months' THEN TRUE
-            ELSE FALSE
-        END AS has_recent_pad_diagnosis,
-        CASE 
-            WHEN pda.latest_pad_diagnosis_date >= CURRENT_DATE - INTERVAL '24 months' THEN TRUE
-            ELSE FALSE
-        END AS has_pad_diagnosis_last_24m,
+        -- Date aggregates
+        MIN(clinical_effective_date) AS earliest_pad_date,
+        MAX(clinical_effective_date) AS latest_pad_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_pad_episodes,
         
-        -- Disease management indicators
-        CASE WHEN pda.total_pad_diagnoses = 1 THEN TRUE ELSE FALSE END AS is_single_pad_diagnosis,
-        CASE WHEN pda.total_pad_diagnoses > 1 THEN TRUE ELSE FALSE END AS has_multiple_pad_diagnoses,
+        -- Recent episode indicators
+        MAX(CASE WHEN clinical_effective_date >= DATEADD(month, -12, CURRENT_DATE()) THEN 1 ELSE 0 END) = 1 AS has_episode_last_12m,
+        MAX(CASE WHEN clinical_effective_date >= DATEADD(month, -24, CURRENT_DATE()) THEN 1 ELSE 0 END) = 1 AS has_episode_last_24m,
         
-        -- Vascular care planning fields
-        CASE 
-            WHEN pda.earliest_pad_diagnosis_date IS NOT NULL 
-            THEN CURRENT_DATE - pda.earliest_pad_diagnosis_date
-            ELSE NULL
-        END AS days_since_first_pad_diagnosis,
+        -- Code arrays for detailed analysis
+        ARRAY_AGG(DISTINCT concept_code) AS all_pad_concept_codes,
+        ARRAY_AGG(DISTINCT concept_description) AS all_pad_concept_displays,
         
-        CASE 
-            WHEN pda.earliest_pad_diagnosis_date >= CURRENT_DATE - INTERVAL '1 year' THEN TRUE
-            ELSE FALSE
-        END AS is_newly_diagnosed_pad,
-        CASE 
-            WHEN pda.earliest_pad_diagnosis_date < CURRENT_DATE - INTERVAL '1 year' THEN TRUE
-            ELSE FALSE
-        END AS is_established_pad,
-        CASE 
-            WHEN pda.earliest_pad_diagnosis_date < CURRENT_DATE - INTERVAL '5 years' THEN TRUE
-            ELSE FALSE
-        END AS is_long_term_pad,
+        -- Latest values for reference
+        FIRST_VALUE(concept_code) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_pad_concept_code,
         
-        -- Cardiovascular risk indicators
-        CASE 
-            WHEN pda.total_pad_diagnoses > 1 
-                AND (pda.latest_pad_diagnosis_date - pda.earliest_pad_diagnosis_date) > INTERVAL '6 months'
-            THEN TRUE
-            ELSE FALSE
-        END AS has_pad_progression_codes,
-        
-        -- Arrays for complete traceability
-        pda.all_pad_concept_codes,
-        pda.all_pad_concept_displays
-        
-    FROM base_observations bo
-    LEFT JOIN person_diagnosis_aggregates pda
-        ON bo.person_id = pda.person_id
+        FIRST_VALUE(concept_description) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_pad_concept_description
+
+    FROM observations_with_person
+    GROUP BY person_id
 )
 
-SELECT * FROM final_with_derived_fields
-ORDER BY person_id, clinical_effective_date 
+SELECT
+    person_id,
+    has_pad_diagnosis,
+    earliest_pad_date,
+    latest_pad_date,
+    total_pad_episodes,
+    has_episode_last_12m,
+    has_episode_last_24m,
+    all_pad_concept_codes,
+    all_pad_concept_displays,
+    latest_pad_concept_code,
+    latest_pad_concept_description
+FROM person_level_aggregates 

@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: fct_person_rheumatoid_arthritis_register
+    description: |
+      **Rheumatoid Arthritis Register - QOF Quality Measures**
+      
+      Fact table for RA register with age filter. All patients aged 16+ with RA diagnosis 
+      are included on the register.
+      
+      Simple Register Business Logic with Age Filter:
+      - RA diagnosis for age ≥16 = on register
+      - No resolution codes (RA is permanent)
+      - Age restriction: patients must be 16+ years
+      - Important for DMARDs monitoring
+      
+      QOF Context:
+      Used for rheumatoid arthritis quality measures including:
+      - DMARDs therapy monitoring and joint health assessment
+      - Disease progression monitoring
+      - Specialist rheumatology care coordination
+      - Treatment response evaluation
+      
+      Matches legacy fct_person_dx_ra business logic and field structure.
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (from EMIS system)"
+        tests:
+          - not_null
+
+      - name: age
+        description: "Current age of person in years"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 16
+              max_value: 120
+
+      - name: is_on_ra_register
+        description: "Register flag: has RA diagnosis aged 16+ (always TRUE for this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_ra_diagnosis_date
+        description: "Date of first recorded RA diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_ra_diagnosis_date"
+
+      - name: latest_ra_diagnosis_date
+        description: "Date of most recent RA diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_ra_diagnosis_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: all_ra_concept_codes
+        description: "Array of all distinct RA concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_ra_concept_displays
+        description: "Array of all distinct RA concept display terms for this person"
+        tests:
+          - not_null 

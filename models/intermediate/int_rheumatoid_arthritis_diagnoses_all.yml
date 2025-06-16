@@ -3,56 +3,91 @@ version: 2
 models:
   - name: int_rheumatoid_arthritis_diagnoses_all
     description: |
-      All rheumatoid arthritis diagnosis observations from clinical records.
-      Simple diagnostic pattern with no resolved codes as RA is considered permanent.
+      All rheumatoid arthritis (RA) diagnoses from clinical records.
+      Uses QOF cluster ID RARTH_COD for rheumatoid arthritis diagnosis codes.
       
-      QOF Register Logic:
-      - Rheumatoid arthritis diagnosis (RARTH_COD) for patients aged 16+
-      - No resolution codes - RA is permanent condition
-      - Age restrictions applied in fact layer
+      Clinical Purpose:
+      - RA register inclusion for QOF quality measures
+      - Rheumatoid arthritis disease management monitoring
+      - DMARDs (Disease-Modifying Anti-Rheumatic Drugs) prescribing support
       
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_rheumatoid_arthritis_register.sql which applies QOF business rules.
+      QOF Context:
+      RA register follows simple diagnosis-only pattern with age restriction - any RA diagnosis 
+      for patients aged 16+ qualifies for register inclusion. No resolution codes.
+      This supports RA quality measures and specialist care monitoring.
+      
+      Key Clinical Notes:
+      - RA is considered a permanent condition (no resolution codes)
+      - Register inclusion requires age ≥16 years at diagnosis
+      - Important for DMARDs therapy monitoring
+      - Supports rheumatology care pathways
+      
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      Use this model as input for RA register (with age filtering applied in fact layer).
+      
     tests:
       - cluster_ids_exist:
           cluster_ids: "RARTH_COD"
-          
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the rheumatoid arthritis diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for rheumatoid arthritis diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the rheumatoid arthritis diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (RARTH_COD)"
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: has_ra_diagnosis
+        description: "Flag indicating person has at least one RA diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: ['RARTH_COD']
-              
-      - name: is_rheumatoid_arthritis_diagnosis_code
-        description: "Flag indicating rheumatoid arthritis diagnosis (RARTH_COD)"
+              values: [true]
+
+      - name: earliest_ra_date
+        description: "Date of first recorded RA diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false] 
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_ra_date"
+
+      - name: latest_ra_date
+        description: "Date of most recent RA diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_ra_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: total_ra_episodes
+        description: "Total number of distinct RA diagnosis dates"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 50
+
+      - name: all_ra_concept_codes
+        description: "Array of all distinct RA concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_ra_concept_displays
+        description: "Array of all distinct RA concept descriptions for this person"
+        tests:
+          - not_null
+
+      - name: latest_ra_concept_code
+        description: "Concept code from most recent RA diagnosis"
+        tests:
+          - not_null
+
+      - name: latest_ra_concept_description
+        description: "Concept description from most recent RA diagnosis"
+        tests:
+          - not_null 

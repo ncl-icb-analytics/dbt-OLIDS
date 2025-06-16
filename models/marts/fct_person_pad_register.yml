@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: fct_person_pad_register
+    description: |
+      **PAD Register - QOF Cardiovascular Disease Quality Measures**
+      
+      Fact table for PAD register following simple register pattern. All patients with any PAD 
+      diagnosis are included on the register as PAD is considered a permanent condition.
+      
+      Simple Register Business Logic:
+      - Presence of PAD diagnosis = on register (lifelong condition)
+      - No resolution codes (PAD is permanent)
+      - No age restrictions
+      - Important for secondary prevention monitoring
+      
+      QOF Context:
+      Used for cardiovascular disease secondary prevention quality measures including:
+      - Medication monitoring (statins, antiplatelets, ACE inhibitors)
+      - Blood pressure management targets
+      - Cholesterol management
+      - Limb preservation and vascular health monitoring
+      
+      Matches legacy fct_person_dx_pad business logic and field structure.
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (from EMIS system)"
+        tests:
+          - not_null
+
+      - name: age
+        description: "Current age of person in years"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: is_on_pad_register
+        description: "Register flag: has PAD diagnosis (always TRUE for this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_pad_date
+        description: "Date of first recorded PAD diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_pad_date"
+
+      - name: latest_pad_date
+        description: "Date of most recent PAD diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_pad_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: all_pad_concept_codes
+        description: "Array of all distinct PAD concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_pad_concept_displays
+        description: "Array of all distinct PAD concept display terms for this person"
+        tests:
+          - not_null 

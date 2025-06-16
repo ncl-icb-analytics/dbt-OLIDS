@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: fct_person_stroke_tia_register
+    description: |
+      **Stroke/TIA Register - QOF Cardiovascular Disease Quality Measures**
+      
+      Fact table for stroke/TIA register following simple register pattern. All patients with 
+      any stroke or TIA diagnosis are included on the register.
+      
+      Simple Register Business Logic:
+      - Presence of stroke or TIA diagnosis = on register (lifelong condition)
+      - No resolution codes (stroke/TIA are permanent)
+      - No age restrictions
+      - Important for secondary prevention monitoring
+      
+      QOF Context:
+      Used for cerebrovascular disease secondary prevention quality measures including:
+      - Secondary prevention medication monitoring
+      - Cardiovascular risk management and anticoagulation decisions
+      - Blood pressure management targets
+      - Neurological follow-up coordination
+      
+      Matches legacy fct_person_dx_stia business logic and field structure.
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (from EMIS system)"
+        tests:
+          - not_null
+
+      - name: age
+        description: "Current age of person in years"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: is_on_stia_register
+        description: "Register flag: has stroke or TIA diagnosis (always TRUE for this table)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_stroke_tia_date
+        description: "Date of first recorded stroke/TIA diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_stroke_tia_date"
+
+      - name: latest_stroke_tia_date
+        description: "Date of most recent stroke/TIA diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_stroke_tia_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: all_stroke_tia_concept_codes
+        description: "Array of all distinct stroke/TIA concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_stroke_tia_concept_displays
+        description: "Array of all distinct stroke/TIA concept display terms for this person"
+        tests:
+          - not_null 

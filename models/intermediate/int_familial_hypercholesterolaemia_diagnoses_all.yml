@@ -3,57 +3,91 @@ version: 2
 models:
   - name: int_familial_hypercholesterolaemia_diagnoses_all
     description: |
-      All familial hypercholesterolaemia diagnosis observations from clinical records.
-      Simple diagnostic pattern with no resolved codes as FHYP is a permanent genetic condition.
+      All familial hypercholesterolaemia (FH) diagnoses from clinical records.
+      Uses QOF cluster ID FHYP_COD for familial hypercholesterolaemia diagnosis codes.
       
-      QOF Register Logic:
-      - Familial hypercholesterolaemia diagnosis (FHYP_COD)
-      - No resolution codes - FHYP is permanent genetic condition
-      - No age restrictions for FHYP register
-      - Important for high-intensity statin therapy and family screening
+      Clinical Purpose:
+      - FH register inclusion for QOF quality measures
+      - Familial hypercholesterolaemia cascade screening
+      - High-intensity statin therapy monitoring
       
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_familial_hypercholesterolaemia_register.sql which applies QOF business rules.
+      QOF Context:
+      FH register follows simple diagnosis-only pattern - any FH diagnosis qualifies for 
+      register inclusion. No resolution codes or complex criteria.
+      This supports FH quality measures and cascade family screening programmes.
+      
+      Key Clinical Notes:
+      - FH is considered a permanent genetic condition (no resolution codes)
+      - Register inclusion based purely on presence of diagnostic codes
+      - Important for cascade family screening programmes
+      - Critical for high-intensity statin therapy decisions
+      
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      Use this model as input for FH register.
+      
     tests:
       - cluster_ids_exist:
           cluster_ids: "FHYP_COD"
-          
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the familial hypercholesterolaemia diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for familial hypercholesterolaemia diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the familial hypercholesterolaemia diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (FHYP_COD)"
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: has_fh_diagnosis
+        description: "Flag indicating person has at least one FH diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: ['FHYP_COD']
-              
-      - name: is_fhyp_diagnosis_code
-        description: "Flag indicating familial hypercholesterolaemia diagnosis (FHYP_COD)"
+              values: [true]
+
+      - name: earliest_fh_date
+        description: "Date of first recorded FH diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false] 
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_fh_date"
+
+      - name: latest_fh_date
+        description: "Date of most recent FH diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_fh_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: total_fh_episodes
+        description: "Total number of distinct FH diagnosis dates"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 20
+
+      - name: all_fh_concept_codes
+        description: "Array of all distinct FH concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_fh_concept_displays
+        description: "Array of all distinct FH concept descriptions for this person"
+        tests:
+          - not_null
+
+      - name: latest_fh_concept_code
+        description: "Concept code from most recent FH diagnosis"
+        tests:
+          - not_null
+
+      - name: latest_fh_concept_description
+        description: "Concept description from most recent FH diagnosis"
+        tests:
+          - not_null 

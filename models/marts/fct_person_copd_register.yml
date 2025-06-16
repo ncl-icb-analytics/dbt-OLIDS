@@ -1,0 +1,120 @@
+version: 2
+
+models:
+  - name: fct_person_copd_register
+    description: >
+      **COPD Register - QOF Respiratory Quality Measures**
+      
+      Fact table for COPD register. Includes patients with different criteria based on diagnosis date:
+      1) Pre-April 2023: requires COPD diagnosis only
+      2) Post-April 2023: requires either spirometry confirmation (FEV1/FVC < 0.7 within 3 months before 
+         or 6 months after diagnosis, or within 6 months of registration for new patients) or documented 
+         inability to have spirometry. 
+      
+      Tracks diagnosis dates, spirometry results, and resolution status.
+      
+      Matches legacy fct_person_dx_copd business logic and field structure exactly.
+      
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        data_type: string
+        tests:
+          - not_null
+          - unique
+
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
+        data_type: string
+        tests:
+          - not_null
+
+      - name: age
+        description: "Age of the person"
+        data_type: number
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: is_on_copd_register
+        description: "Flag indicating if person is on the COPD register"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: earliest_diagnosis_date
+        description: "Earliest COPD diagnosis date"
+        data_type: date
+        tests:
+          - not_null
+
+      - name: latest_diagnosis_date
+        description: "Latest COPD diagnosis date"
+        data_type: date
+        tests:
+          - not_null
+
+      - name: latest_resolution_date
+        description: "Latest COPD resolution date"
+        data_type: date
+
+      - name: earliest_unresolved_diagnosis_date
+        description: "Earliest unresolved diagnosis date (EUNRESCOPD_DAT)"
+        data_type: date
+
+      - name: has_spirometry_confirmation
+        description: "Flag indicating if person has spirometry confirmation"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: latest_spirometry_date
+        description: "Date of latest spirometry test"
+        data_type: date
+
+      - name: latest_spirometry_fev1_fvc_ratio
+        description: "Latest FEV1/FVC ratio"
+        data_type: number
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0.1
+              max_value: 2.0
+              severity: warn
+              config:
+                where: "latest_spirometry_fev1_fvc_ratio IS NOT NULL"
+
+      - name: is_unable_spirometry
+        description: "Flag indicating if person is unable to have spirometry"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: latest_unable_spirometry_date
+        description: "Latest date when unable to have spirometry was recorded"
+        data_type: date
+
+      - name: is_pre_april_2023_diagnosis
+        description: "Flag indicating if diagnosis was before April 2023"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: is_post_april_2023_diagnosis
+        description: "Flag indicating if diagnosis was after April 2023"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: all_copd_concept_codes
+        description: "All COPD concept codes for this person"
+        data_type: array
+        tests:
+          - not_null
+
+      - name: all_copd_concept_displays
+        description: "All COPD concept display terms for this person"
+        data_type: array
+        tests:
+          - not_null 

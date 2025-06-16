@@ -6,56 +6,91 @@
 }}
 
 /*
-All rheumatoid arthritis diagnosis observations from clinical records.
-Uses QOF rheumatoid arthritis cluster ID:
-- RARTH_COD: Rheumatoid arthritis diagnoses
+All rheumatoid arthritis (RA) diagnoses from clinical records.
+Uses QOF cluster ID RARTH_COD for rheumatoid arthritis diagnosis codes.
 
 Clinical Purpose:
-- QOF rheumatoid arthritis register data collection (aged 16+)
-- Inflammatory arthritis management monitoring
-- Disease-modifying therapy planning
-- Joint health assessment
+- RA register inclusion for QOF quality measures
+- Rheumatoid arthritis disease management monitoring
+- DMARDs (Disease-Modifying Anti-Rheumatic Drugs) prescribing support
 
-Key QOF Requirements:
-- Register inclusion: Rheumatoid arthritis diagnosis (RARTH_COD) for patients aged 16+
-- No resolution codes - RA is considered permanent condition
-- Age restrictions for register eligibility
-- Important for rheumatology care pathways
+QOF Context:
+RA register follows simple diagnosis-only pattern with age restriction - any RA diagnosis 
+for patients aged 16+ qualifies for register inclusion. No resolution codes.
+This supports RA quality measures and specialist care monitoring.
 
-Note: Rheumatoid arthritis does not have resolved codes as it is considered a permanent condition.
-The register is based purely on the presence of diagnostic codes for eligible ages.
+Note: QOF RA register requires age ≥16 years at diagnosis.
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Use this model as input for fct_person_rheumatoid_arthritis_register.sql which applies QOF business rules.
+Use this model as input for RA register (with age filtering applied in fact layer).
 */
 
 WITH base_observations AS (
-    
     SELECT
-        obs.observation_id,
-        obs.person_id,
-        obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
-        
-        -- Flag rheumatoid arthritis diagnosis codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'RARTH_COD' THEN TRUE ELSE FALSE END AS is_rheumatoid_arthritis_diagnosis_code
-        
-    FROM {{ get_observations("'RARTH_COD'") }} obs
-    WHERE obs.clinical_effective_date IS NOT NULL
+        person_id,
+        clinical_effective_date,
+        source_cluster_id,
+        concept_code,
+        concept_description,
+        observation_value_text,
+        observation_value_numeric,
+        observation_units,
+        date_recorded
+    FROM {{ get_observations("'RARTH_COD'") }}
 ),
+
+-- Add person demographics for context
+observations_with_person AS (
+    SELECT
+        obs.*,
+        p.age_years,
+        p.gender,
+        p.is_active
+    FROM base_observations obs
+    LEFT JOIN {{ ref('dim_person') }} p
+        ON obs.person_id = p.person_id
+),
+
+-- Person-level aggregation for efficient downstream use
+person_level_aggregates AS (
+    SELECT
+        person_id,
+        
+        -- Diagnosis flags
+        TRUE AS has_ra_diagnosis,
+        
+        -- Date aggregates
+        MIN(clinical_effective_date) AS earliest_ra_date,
+        MAX(clinical_effective_date) AS latest_ra_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_ra_episodes,
+        
+        -- Code arrays for detailed analysis
+        ARRAY_AGG(DISTINCT concept_code) AS all_ra_concept_codes,
+        ARRAY_AGG(DISTINCT concept_description) AS all_ra_concept_displays,
+        
+        -- Latest values for reference
+        FIRST_VALUE(concept_code) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_ra_concept_code,
+        
+        FIRST_VALUE(concept_description) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_ra_concept_description
+
+    FROM observations_with_person
+    GROUP BY person_id
+)
 
 SELECT
     person_id,
-    observation_id,
-    clinical_effective_date,
-    concept_code,
-    concept_display,
-    source_cluster_id,
-    is_rheumatoid_arthritis_diagnosis_code
-
-FROM base_observations
-
--- Sort for consistent output
-ORDER BY obs.person_id, obs.clinical_effective_date DESC 
+    has_ra_diagnosis,
+    earliest_ra_date,
+    latest_ra_date,
+    total_ra_episodes,
+    all_ra_concept_codes,
+    all_ra_concept_displays,
+    latest_ra_concept_code,
+    latest_ra_concept_description
+FROM person_level_aggregates 

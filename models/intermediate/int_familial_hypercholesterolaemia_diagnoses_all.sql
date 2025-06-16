@@ -6,56 +6,89 @@
 }}
 
 /*
-All familial hypercholesterolaemia diagnosis observations from clinical records.
-Uses QOF familial hypercholesterolaemia cluster ID:
-- FHYP_COD: Familial hypercholesterolaemia diagnoses
+All familial hypercholesterolaemia (FH) diagnoses from clinical records.
+Uses QOF cluster ID FHYP_COD for familial hypercholesterolaemia diagnosis codes.
 
 Clinical Purpose:
-- QOF familial hypercholesterolaemia register data collection
-- Genetic lipid disorder management monitoring
-- Cardiovascular risk stratification
-- Family screening cascade planning
+- FH register inclusion for QOF quality measures
+- Familial hypercholesterolaemia cascade screening
+- High-intensity statin therapy monitoring
 
-Key QOF Requirements:
-- Register inclusion: Familial hypercholesterolaemia diagnosis (FHYP_COD)
-- No resolution codes - FHYP is considered permanent genetic condition
-- No age restrictions for FHYP register
-- Important for high-intensity statin therapy and family screening
-
-Note: Familial hypercholesterolaemia does not have resolved codes as it is a permanent genetic condition.
-The register is based purely on the presence of diagnostic codes.
+QOF Context:
+FH register follows simple diagnosis-only pattern - any FH diagnosis qualifies for 
+register inclusion. No resolution codes or complex criteria.
+This supports FH quality measures and cascade family screening programmes.
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Use this model as input for fct_person_familial_hypercholesterolaemia_register.sql which applies QOF business rules.
+Use this model as input for FH register.
 */
 
 WITH base_observations AS (
-    
     SELECT
-        obs.observation_id,
-        obs.person_id,
-        obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
-        
-        -- Flag familial hypercholesterolaemia diagnosis codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'FHYP_COD' THEN TRUE ELSE FALSE END AS is_fhyp_diagnosis_code
-        
-    FROM {{ get_observations("'FHYP_COD'") }} obs
-    WHERE obs.clinical_effective_date IS NOT NULL
+        person_id,
+        clinical_effective_date,
+        source_cluster_id,
+        concept_code,
+        concept_description,
+        observation_value_text,
+        observation_value_numeric,
+        observation_units,
+        date_recorded
+    FROM {{ get_observations("'FHYP_COD'") }}
 ),
+
+-- Add person demographics for context
+observations_with_person AS (
+    SELECT
+        obs.*,
+        p.age_years,
+        p.gender,
+        p.is_active
+    FROM base_observations obs
+    LEFT JOIN {{ ref('dim_person') }} p
+        ON obs.person_id = p.person_id
+),
+
+-- Person-level aggregation for efficient downstream use
+person_level_aggregates AS (
+    SELECT
+        person_id,
+        
+        -- Diagnosis flags
+        TRUE AS has_fh_diagnosis,
+        
+        -- Date aggregates
+        MIN(clinical_effective_date) AS earliest_fh_date,
+        MAX(clinical_effective_date) AS latest_fh_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_fh_episodes,
+        
+        -- Code arrays for detailed analysis
+        ARRAY_AGG(DISTINCT concept_code) AS all_fh_concept_codes,
+        ARRAY_AGG(DISTINCT concept_description) AS all_fh_concept_displays,
+        
+        -- Latest values for reference
+        FIRST_VALUE(concept_code) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_fh_concept_code,
+        
+        FIRST_VALUE(concept_description) OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, date_recorded DESC
+        ) AS latest_fh_concept_description
+
+    FROM observations_with_person
+    GROUP BY person_id
+)
 
 SELECT
     person_id,
-    observation_id,
-    clinical_effective_date,
-    concept_code,
-    concept_display,
-    source_cluster_id,
-    is_fhyp_diagnosis_code
-
-FROM base_observations
-
--- Sort for consistent output
-ORDER BY obs.person_id, obs.clinical_effective_date DESC 
+    has_fh_diagnosis,
+    earliest_fh_date,
+    latest_fh_date,
+    total_fh_episodes,
+    all_fh_concept_codes,
+    all_fh_concept_displays,
+    latest_fh_concept_code,
+    latest_fh_concept_description
+FROM person_level_aggregates 

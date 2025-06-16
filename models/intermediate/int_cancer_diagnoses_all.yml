@@ -3,144 +3,91 @@ version: 2
 models:
   - name: int_cancer_diagnoses_all
     description: |
-      All cancer diagnosis and care pathway observations from clinical records.
-      Complex cancer care pathway with multiple observation types including diagnoses,
-      reviews, invitations, and patient care adjustments.
+      All cancer diagnoses from clinical records.
+      Uses QOF cluster ID CAN_COD for cancer diagnosis codes (excluding non-melanotic skin cancers).
       
-      QOF Register Logic:
-      - Cancer diagnosis (CAN_COD) on/after 1 April 2003
-      - Excludes non-melanotic skin cancers (handled in cluster definitions)
-      - Comprehensive care pathway tracking
+      Clinical Purpose:
+      - Cancer register inclusion for QOF quality measures
+      - Cancer care pathway tracking
+      - Survivorship care planning
       
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_cancer_register.sql which applies QOF business rules.
+      QOF Context:
+      Cancer register follows simple diagnosis-only pattern with date restriction - any cancer 
+      diagnosis on/after April 1, 2003 qualifies for register inclusion. No resolution codes.
+      This supports cancer care quality measures and survivorship monitoring.
+      
+      Key Clinical Notes:
+      - Excludes non-melanotic skin cancers as per QOF guidelines
+      - Register eligibility requires diagnosis on/after 1 April 2003
+      - Cancer is considered a permanent condition (no resolution codes)
+      - Important for survivorship care and follow-up monitoring
+      
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      Use this model as input for cancer register.
+      
     tests:
       - cluster_ids_exist:
-          cluster_ids: "CAN_COD,MDRV_COD,CANINVITE_COD,CANPCADEC_COD,CANPCAPU_COD,CANPCSUPP_COD"
-          
+          cluster_ids: "CAN_COD"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the cancer-related observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for cancer-related observation"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the cancer-related code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID for cancer care pathway"
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: has_cancer_diagnosis
+        description: "Flag indicating person has at least one cancer diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: ['CAN_COD', 'MDRV_COD', 'CANINVITE_COD', 'CANPCADEC_COD', 'CANPCAPU_COD', 'CANPCSUPP_COD']
-              
-      - name: is_cancer_diagnosis_code
-        description: "Flag indicating cancer diagnosis (CAN_COD)"
+              values: [true]
+
+      - name: earliest_cancer_date
+        description: "Date of first recorded cancer diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_cancer_review_code
-        description: "Flag indicating cancer care review (MDRV_COD)"
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_cancer_date"
+
+      - name: latest_cancer_date
+        description: "Date of most recent cancer diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_cancer_invite_code
-        description: "Flag indicating cancer care review invitation (CANINVITE_COD)"
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_cancer_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: total_cancer_episodes
+        description: "Total number of distinct cancer diagnosis dates"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_cancer_pca_decline_code
-        description: "Flag indicating patient care adjustment declined (CANPCADEC_COD)"
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 50
+
+      - name: all_cancer_concept_codes
+        description: "Array of all distinct cancer concept codes for this person"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_cancer_pca_unsuitable_code
-        description: "Flag indicating patient care adjustment unsuitable (CANPCAPU_COD)"
+
+      - name: all_cancer_concept_displays
+        description: "Array of all distinct cancer concept descriptions for this person"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_cancer_pca_support_code
-        description: "Flag indicating patient care support information provided (CANPCSUPP_COD)"
+
+      - name: latest_cancer_concept_code
+        description: "Concept code from most recent cancer diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_cancer_diagnosis_date
-        description: "Earliest cancer diagnosis date for this person"
-        
-      - name: latest_cancer_diagnosis_date
-        description: "Latest cancer diagnosis date for this person"
-        
-      - name: earliest_cancer_review_date
-        description: "Earliest cancer care review date for this person"
-        
-      - name: latest_cancer_review_date
-        description: "Latest cancer care review date for this person"
-        
-      - name: earliest_cancer_invite_date
-        description: "Earliest cancer care invitation date for this person"
-        
-      - name: latest_cancer_invite_date
-        description: "Latest cancer care invitation date for this person"
-        
-      - name: latest_pca_decline_date
-        description: "Latest patient care adjustment decline date for this person"
-        
-      - name: latest_pca_unsuitable_date
-        description: "Latest patient care adjustment unsuitable date for this person"
-        
-      - name: latest_pca_support_date
-        description: "Latest patient care support information date for this person"
-        
-      - name: is_eligible_for_cancer_register
-        description: "QOF register eligibility (cancer diagnosis on/after 1 April 2003)"
+
+      - name: latest_cancer_concept_description
+        description: "Concept description from most recent cancer diagnosis"
         tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: all_cancer_diagnosis_codes
-        description: "Array of all cancer diagnosis concept codes for this person"
-        
-      - name: all_cancer_diagnosis_displays
-        description: "Array of all cancer diagnosis concept displays for this person"
-        
-      - name: all_cancer_review_codes
-        description: "Array of all cancer review concept codes for this person"
-        
-      - name: all_cancer_review_displays
-        description: "Array of all cancer review concept displays for this person"
-        
-      - name: all_cancer_invite_codes
-        description: "Array of all cancer invitation concept codes for this person"
-        
-      - name: all_cancer_invite_displays
-        description: "Array of all cancer invitation concept displays for this person" 
+          - not_null 

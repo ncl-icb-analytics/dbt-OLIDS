@@ -3,57 +3,91 @@ version: 2
 models:
   - name: int_gestational_diabetes_diagnoses_all
     description: |
-      All gestational diabetes diagnosis observations from clinical records.
-      Pregnancy-specific diabetes condition tracking for postpartum risk assessment.
+      All gestational diabetes diagnoses from clinical records.
+      Uses QOF cluster ID GESTDM_COD for gestational diabetes diagnosis codes.
       
-      QOF Register Logic:
-      - Gestational diabetes diagnosis (GESTDIAB_COD)
-      - No resolution codes - condition specific to pregnancy episodes
-      - Important for postpartum diabetes screening
-      - Usually applies to women of childbearing age
+      Clinical Purpose:
+      - Gestational diabetes register inclusion for QOF quality measures
+      - Pregnancy diabetes management monitoring
+      - Future diabetes risk assessment
       
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_gestational_diabetes_register.sql which applies QOF business rules.
+      QOF Context:
+      Gestational diabetes register follows simple diagnosis-only pattern - any gestational 
+      diabetes diagnosis qualifies for register inclusion. No resolution codes.
+      This supports pregnancy care quality measures and future diabetes risk monitoring.
+      
+      Key Clinical Notes:
+      - Gestational diabetes records are permanent for future risk assessment
+      - Register inclusion based purely on presence of diagnostic codes
+      - Important for pregnancy care quality measures
+      - Critical for future diabetes risk monitoring and prevention
+      
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      Use this model as input for gestational diabetes register.
+      
     tests:
       - cluster_ids_exist:
-          cluster_ids: "GESTDIAB_COD"
-          
+          cluster_ids: "GESTDM_COD"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the gestational diabetes diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for gestational diabetes diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the gestational diabetes diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (GESTDIAB_COD)"
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: has_gestational_diabetes_diagnosis
+        description: "Flag indicating person has at least one gestational diabetes diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: ['GESTDIAB_COD']
-              
-      - name: is_gestational_diabetes_diagnosis_code
-        description: "Flag indicating gestational diabetes diagnosis (GESTDIAB_COD)"
+              values: [true]
+
+      - name: earliest_gestational_diabetes_date
+        description: "Date of first recorded gestational diabetes diagnosis"
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false] 
+          - dbt_utils.expression_is_true:
+              expression: "<= latest_gestational_diabetes_date"
+
+      - name: latest_gestational_diabetes_date
+        description: "Date of most recent gestational diabetes diagnosis"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= earliest_gestational_diabetes_date"
+          - dbt_utils.expression_is_true:
+              expression: "<= current_date()"
+
+      - name: total_gestational_diabetes_episodes
+        description: "Total number of distinct gestational diabetes diagnosis dates"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 10
+
+      - name: all_gestational_diabetes_concept_codes
+        description: "Array of all distinct gestational diabetes concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_gestational_diabetes_concept_displays
+        description: "Array of all distinct gestational diabetes concept descriptions for this person"
+        tests:
+          - not_null
+
+      - name: latest_gestational_diabetes_concept_code
+        description: "Concept code from most recent gestational diabetes diagnosis"
+        tests:
+          - not_null
+
+      - name: latest_gestational_diabetes_concept_description
+        description: "Concept description from most recent gestational diabetes diagnosis"
+        tests:
+          - not_null 

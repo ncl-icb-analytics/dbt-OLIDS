@@ -606,44 +606,64 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [ ] `intermediate_copd_unable_spirometry.sql` → `int_copd_unable_spirometry_all.sql`
 - [ ] `intermediate_perm_absence_preg_risk.sql` → `int_pregnancy_absence_risk_all.sql`
 
-### Phase 4: Complete QOF Diagnosis Fact Table Migration Checklist
+### Phase 4: Fact Table Migration by Clinical Pattern
 
-**New Pattern**: Each `fct_person_dx_*` needs corresponding `int_*_diagnoses_all` (data collection) + updated `fct_person_*_register` (QOF business rules)
+**Migration Strategy**: Migrate fact tables in logical order based on complexity patterns, from simple to complex.
 
-#### 4.1 Major QOF Disease Registers ✅ **Priority: HIGH**
-- [x] `fct_person_dx_diabetes.sql` → `int_diabetes_diagnoses_all.sql` ✅ + `fct_person_diabetes_register.sql`
-- [x] `fct_person_dx_hypertension.sql` → `int_hypertension_diagnoses_all.sql` ✅ + `fct_person_hypertension_register.sql` 
-- [x] `fct_person_dx_copd.sql` → `int_copd_diagnoses_all.sql` ✅ + `fct_person_copd_register.sql`
-- [x] `fct_person_dx_hf.sql` → `int_heart_failure_diagnoses_all.sql` ✅ + `fct_person_heart_failure_register.sql`
-- [x] `fct_person_dx_ckd.sql` → `int_ckd_diagnoses_all.sql` ✅ + `fct_person_ckd_register.sql`
-- [x] `fct_person_dx_asthma.sql` → `int_asthma_diagnoses_all.sql` ✅ + `fct_person_asthma_register.sql`
-- [x] `fct_person_dx_cyp_asthma.sql` → `int_asthma_diagnoses_all.sql` ✅ + `fct_person_cyp_asthma_register.sql` (uses same intermediate, different age filters)
+#### 4.1 Pattern 1: Simple Register (Diagnosis Only) ✅ **Priority: HIGH**
+*Logic: Simple presence of diagnosis code = on register. No resolution codes or ignored.*
 
-#### 4.2 Mental Health & Neurological QOF Registers ✅ **Priority: HIGH**
-- [x] `fct_person_dx_depression.sql` → `int_depression_diagnoses_all.sql` ✅ + `fct_person_depression_register.sql`
-- [x] `fct_person_dx_dementia.sql` → `int_dementia_diagnoses_all.sql` ✅ + `fct_person_dementia_register.sql`
-- [x] `fct_person_dx_epilepsy.sql` → `int_epilepsy_diagnoses_all.sql` ✅ + `fct_person_epilepsy_register.sql`
-- [x] `fct_person_dx_smi.sql` → `int_smi_diagnoses_all.sql` ✅ + `fct_person_smi_register.sql`
-- [x] `fct_person_dx_ld.sql` → `int_learning_disability_diagnoses_all.sql` ✅ + `fct_person_learning_disability_register.sql`
+**Simplicity Guidelines:**
+- ❌ **No episode timing flags** (has_episode_last_12m, has_episode_last_24m) - keep models focused
+- ❌ **No indexes** in config - let Snowflake handle optimization
+- ✅ **Clean, minimal field set** - only essential register fields
+- ✅ **Episode analysis** can be done separately if needed
 
-#### 4.3 Cardiovascular QOF Registers ✅ **Priority: HIGH**
-- [x] `fct_person_dx_chd.sql` → `int_chd_diagnoses_all.sql` ✅ + `fct_person_chd_register.sql`
-- [x] `fct_person_dx_af.sql` → `int_atrial_fibrillation_diagnoses_all.sql` ✅ + `fct_person_atrial_fibrillation_register.sql`
-- [x] `fct_person_dx_pad.sql` → `int_pad_diagnoses_all.sql` ✅ + `fct_person_pad_register.sql`
-- [x] `fct_person_dx_stia.sql` → `int_stroke_tia_diagnoses_all.sql` ✅ + `fct_person_stroke_tia_register.sql`
+- [x] `fct_person_dx_chd.sql` → `fct_person_chd_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_pad.sql` → `fct_person_pad_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_cancer.sql` → `fct_person_cancer_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_ra.sql` → `fct_person_rheumatoid_arthritis_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_stia.sql` → `fct_person_stroke_tia_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_fhyp.sql` → `fct_person_familial_hypercholesterolaemia_register.sql` ✅ **COMPLETE**
+- [x] `fct_person_dx_gestational_diabetes.sql` → `fct_person_gestational_diabetes_register.sql` ✅ **COMPLETE**
 
-#### 4.4 Cancer & Chronic Disease QOF Registers ✅ **Priority: MEDIUM** ✅ **COMPLETE**
-- [x] `fct_person_dx_cancer.sql` → `int_cancer_diagnoses_all.sql` ✅ + `fct_person_cancer_register.sql`
-- [x] `fct_person_dx_osteoporosis.sql` → `int_osteoporosis_diagnoses_all.sql` ✅ + `fct_person_osteoporosis_register.sql`
-- [x] `fct_person_dx_palliative_care.sql` → `int_palliative_care_diagnoses_all.sql` ✅ + `fct_person_palliative_care_register.sql`
-- [x] `fct_person_dx_ra.sql` → `int_rheumatoid_arthritis_diagnoses_all.sql` ✅ + `fct_person_rheumatoid_arthritis_register.sql`
+#### 4.2 Pattern 2: Standard QOF Register (Diagnosis + Resolution) ✅ **Priority: HIGH**
+*Logic: latest_diagnosis > latest_resolution OR no_resolution. Age restrictions, episode timing.*
 
-#### 4.5 Metabolic & Specialist QOF Registers ✅ **Priority: MEDIUM** ✅ **COMPLETE**
-- [x] `fct_person_dx_fhyp.sql` → `int_familial_hypercholesterolaemia_diagnoses_all.sql` ✅ + `fct_person_familial_hypercholesterolaemia_register.sql` ✅ **COMPLETE**
-- [x] `fct_person_dx_ndh.sql` → `int_ndh_diagnoses_all.sql` ✅ + `fct_person_ndh_register.sql` ✅ **COMPLETE**
-- [x] `fct_person_dx_gestational_diabetes.sql` → `int_gestational_diabetes_diagnoses_all.sql` ✅ + `fct_person_gestational_diabetes_register.sql` ✅ **COMPLETE**
-- [x] `fct_person_dx_obesity.sql` → Uses existing `int_bmi_qof.sql` + `int_ethnicity_qof.sql` → `fct_person_obesity_register.sql` ✅ **COMPLETE**
-- [x] `fct_person_dx_nafld.sql` → `int_nafld_diagnoses_all.sql` ✅ + `fct_person_nafld_register.sql` ✅ **COMPLETE**
+- [ ] `fct_person_dx_depression.sql` → `fct_person_depression_register.sql`
+- [ ] `fct_person_dx_dementia.sql` → `fct_person_dementia_register.sql`
+- [ ] `fct_person_dx_epilepsy.sql` → `fct_person_epilepsy_register.sql`
+- [ ] `fct_person_dx_smi.sql` → `fct_person_smi_register.sql`
+- [ ] `fct_person_dx_ld.sql` → `fct_person_learning_disability_register.sql`
+- [ ] `fct_person_dx_palliative_care.sql` → `fct_person_palliative_care_register.sql`
+
+#### 4.3 Pattern 3: Complex QOF Register (External Validation) ✅ **Priority: MEDIUM**
+*Logic: Diagnosis + additional validation requirements (medication, confirmation).*
+
+- [ ] `fct_person_dx_asthma.sql` → `fct_person_asthma_register.sql`
+- [ ] `fct_person_dx_cyp_asthma.sql` → `fct_person_cyp_asthma_register.sql`
+- [ ] `fct_person_dx_af.sql` → `fct_person_atrial_fibrillation_register.sql`
+
+#### 4.4 Pattern 4: Type Classification Register ✅ **Priority: MEDIUM**
+*Logic: Multiple cluster types with hierarchy/precedence rules for type determination.*
+
+- [ ] `fct_person_dx_diabetes.sql` → `fct_person_diabetes_register.sql`
+- [ ] `fct_person_dx_hf.sql` → `fct_person_heart_failure_register.sql`
+- [ ] `fct_person_dx_ndh.sql` → `fct_person_ndh_register.sql`
+
+#### 4.5 Pattern 5: Lab-Enhanced Register ✅ **Priority: MEDIUM**
+*Logic: Coded diagnosis + lab confirmation/staging with persistence requirements.*
+
+- [ ] `fct_person_dx_ckd.sql` → `fct_person_ckd_register.sql`
+
+#### 4.6 Pattern 6: Complex Clinical Logic ✅ **Priority: LOW**
+*Logic: Multiple data sources with sophisticated clinical algorithms.*
+
+- [x] `fct_person_dx_copd.sql` → `fct_person_copd_register.sql` ✅ **COMPLETE** (spirometry confirmation logic)
+- [ ] `fct_person_dx_hypertension.sql` → `fct_person_hypertension_register.sql`
+- [ ] `fct_person_dx_osteoporosis.sql` → `fct_person_osteoporosis_register.sql`
+- [ ] `fct_person_dx_obesity.sql` → `fct_person_obesity_register.sql` ✅ **COMPLETE**
+- [ ] `fct_person_dx_nafld.sql` → `fct_person_nafld_register.sql` ✅ **COMPLETE**
 
 ### Phase 5: Clinical Quality & Status Fact Tables
 
