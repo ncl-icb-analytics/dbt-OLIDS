@@ -272,7 +272,8 @@ tests:
 tests:
   - unique: [surrogate_key]  # For latest models
   - not_null: [person_id, clinical_effective_date]
-  - cluster_ids_exist: [cluster_id]  # Custom test
+  - cluster_ids_exist: [cluster_id]  # Custom test for observation models
+  - bnf_codes_exist: [bnf_codes]     # Custom test for medication models
   - relationships:
       to: ref('dim_person')
       field: person_id
@@ -283,14 +284,64 @@ tests:
       severity: warn
 ```
 
+#### Code Validation Tests (CRITICAL)
+
+**For Clinical Observation Models:**
+```yaml
+tests:
+  - cluster_ids_exist:
+      cluster_ids: "SYSBP_COD,DIABP_COD,BP_COD"  # Comma-separated list
+```
+
+**For Medication Models:**
+```yaml
+tests:
+  - bnf_codes_exist:
+      bnf_codes: "0601,0212"  # Comma-separated BNF codes  
+```
+
+**Why These Tests Matter:**
+- Validates that our filters are actually finding data
+- Prevents silent failures where models run but return no results
+- Ensures cluster IDs and BNF codes exist in the mapping tables
+- Critical for medication safety and clinical accuracy
+
 ### Custom Healthcare Tests
 
 Located in `macros/testing/generic/`:
 
 - `test_all_source_columns_in_staging`: Ensures staging completeness
 - `test_no_future_dates`: Clinical date validation
-- `test_bnf_codes_exist`: Medication code validation
-- `test_cluster_ids_exist`: Concept mapping validation
+- `test_bnf_codes_exist`: Medication code validation - ensures BNF codes used in filters exist in codesets
+- `test_cluster_ids_exist`: Concept mapping validation - ensures cluster IDs used in filters exist in codesets
+
+#### Usage Examples:
+
+**Clinical Observation Models:**
+```yaml
+# Blood pressure model using multiple cluster IDs
+tests:
+  - cluster_ids_exist:
+      cluster_ids: "SYSBP_COD,DIABP_COD,BP_COD"
+
+# Single cluster ID models  
+tests:
+  - cluster_ids_exist:
+      cluster_ids: "BMIVAL_COD"
+```
+
+**Medication Models:**
+```yaml
+# Single BNF chapter
+tests:
+  - bnf_codes_exist:
+      bnf_codes: "0601"  # Diabetes medications
+
+# Multiple BNF codes
+tests:
+  - bnf_codes_exist:
+      bnf_codes: "100101,100302"  # NSAID codes
+```
 
 ## Documentation Standards
 
@@ -361,6 +412,7 @@ WHERE systolic_value BETWEEN 40 AND 350
 - [ ] **Create** intermediate model using standard patterns
 - [ ] **Apply** clinical validation rules
 - [ ] **Create** individual YAML file with comprehensive documentation and tests
+- [ ] **Add code validation tests** (cluster_ids_exist for observations, bnf_codes_exist for medications)
 - [ ] **Document** clinical logic and business rules
 - [ ] **Validate** results against legacy output
 - [ ] **Performance test** with production data volumes
@@ -385,8 +437,9 @@ WHERE systolic_value BETWEEN 40 AND 350
 ✅ Clear business rule documentation
 ✅ Consistent naming conventions
 ✅ Appropriate materialisation strategy
-✅ Healthcare-specific testing
+✅ Healthcare-specific testing (cluster_ids_exist, bnf_codes_exist)
 ✅ Individual YAML files with comprehensive documentation
+✅ Code validation tests ensuring filters actually find data
 ✅ Traceability to source systems
 
 ## Migration Progress Tracking
@@ -456,15 +509,15 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [x] `intermediate_oral_anticoagulant_orders_all.sql` → `int_anticoagulant_medications_all.sql` ✅ **COMPLETE**
 
 #### 2.3 Respiratory Medications ✅ **Priority: MEDIUM**
-- [ ] `intermediate_inhaled_corticosteroid_orders_all.sql` → `int_inhaled_corticosteroid_medications_all.sql`
-- [ ] `intermediate_systemic_corticosteroid_orders_all.sql` → `int_systemic_corticosteroid_medications_all.sql`
+- [x] `intermediate_inhaled_corticosteroid_orders_all.sql` → `int_inhaled_corticosteroid_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_systemic_corticosteroid_orders_all.sql` → `int_systemic_corticosteroid_medications_all.sql` ✅ **COMPLETE**
 
 #### 2.4 Other Medications ✅ **Priority: MEDIUM**
-- [ ] `intermediate_ppi_orders_all.sql` → `int_ppi_medications_all.sql`
-- [ ] `intermediate_nsaid_orders_all.sql` → `int_nsaid_medications_all.sql`
-- [ ] `intermediate_antidepressant_orders_all.sql` → `int_antidepressant_medications_all.sql`
-- [ ] `intermediate_cardiac_glycoside_orders_all.sql` → `int_cardiac_glycoside_medications_all.sql`
-- [ ] `intermediate_lithium_orders.sql` → `int_lithium_medications_all.sql`
+- [x] `intermediate_ppi_orders_all.sql` → `int_ppi_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_nsaid_orders_all.sql` → `int_nsaid_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_antidepressant_orders_all.sql` → `int_antidepressant_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_cardiac_glycoside_orders_all.sql` → `int_cardiac_glycoside_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_lithium_orders.sql` → `int_lithium_medications_all.sql` ✅ **COMPLETE**
 
 #### 2.5 Specialist Medications ✅ **Priority: LOW**
 - [ ] `intermediate_valproate_orders_all.sql` → `int_valproate_medications_all.sql`
@@ -624,15 +677,15 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - ✅ **Staging Layer**: Complete for all source systems
 - ✅ **Core Dimensions**: Complete for person/patient/practice relationships
 - ✅ **Phase 1 Intermediate**: **100% COMPLETE!** All core clinical observations, laboratory results, risk assessments, clinical examinations, and health checks migrated
-- ✅ **Phase 2.1 & 2.2**: **COMPLETE!** All high-priority diabetes and cardiovascular medications migrated
-- 🎯 **Major Milestone**: **Phase 1 + High-Priority Phase 2 COMPLETE** - comprehensive foundation for cardiovascular risk, diabetes management, kidney function, clinical care processes, and major medication therapy tracking
+- ✅ **Phase 2.1, 2.2, 2.3 & 2.4**: **COMPLETE!** All high-priority and medium-priority medications migrated (diabetes, cardiovascular, respiratory, PPIs, NSAIDs, antidepressants, cardiac glycosides, lithium)
+- 🎯 **Major Milestone**: **Phase 1 + Most of Phase 2 COMPLETE** - comprehensive foundation covering clinical observations, major medication classes, cardiovascular risk, diabetes management, kidney function, respiratory care, gastrointestinal protection, mental health medications, and cardiac therapy
 
 #### Next Priority Actions
 1. **✅ Phase 1 COMPLETE**: All core clinical observations and measurements
-2. **✅ Phase 2.1 & 2.2 COMPLETE**: High-priority diabetes and cardiovascular medications
-3. **🎯 Next Focus**: **Phase 2.3-2.5 - Remaining Medication Tables** (respiratory, other, specialist medications)
-4. **Then Phase 3**: Clinical condition diagnosis intermediate tables
-5. **Finally Phase 4**: Disease register fact tables (requires Phase 1-3 complete)
+2. **✅ Phase 2.1-2.4 COMPLETE**: High-priority and medium-priority medications (diabetes, cardiovascular, respiratory, common medications)
+3. **🎯 Next Focus**: **Phase 2.5 - Specialist Medications** (valproate, asthma, epilepsy, allergy medications - LOW priority)
+4. **Or Skip to Phase 3**: Clinical condition diagnosis intermediate tables (HIGH priority for disease registers)
+5. **Then Phase 4**: Disease register fact tables (requires Phase 1-3 complete)
 
 ## Contact & Questions
 

@@ -6,6 +6,9 @@ models:
       All serum creatinine measurements from observations.
       Simple pattern using CRE_COD with clinical validation and reference ranges.
       Includes ALL persons following intermediate layer principles.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "CRE_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

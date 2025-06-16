@@ -7,6 +7,9 @@ models:
       Uses QOF definitions with cluster IDs: SMOK_COD (general), LSMOK_COD (current smoker),
       EXSMOK_COD (ex-smoker), and NSMOK_COD (never smoked) codes.
       Includes ALL persons following intermediate layer principles.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "SMOK_COD,LSMOK_COD,EXSMOK_COD,NSMOK_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

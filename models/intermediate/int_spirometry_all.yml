@@ -6,6 +6,9 @@ models:
       All spirometry test results for COPD diagnosis (FEV1/FVC ratios).
       Includes both raw FEV1/FVC values and pre-coded "less than 0.7" observations.
       Includes ALL persons following intermediate layer principles.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "FEV1FVC_COD,FEV1FVCL70_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

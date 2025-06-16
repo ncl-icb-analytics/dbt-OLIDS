@@ -6,6 +6,9 @@ models:
       QOF-specific BMI measurements with obesity register business logic.
       Follows the legacy intermediate_bmi_values.sql patterns with age validation
       and QOF obesity register rules. Includes ALL persons following intermediate layer principles.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "BMI30_COD,BMIVAL_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

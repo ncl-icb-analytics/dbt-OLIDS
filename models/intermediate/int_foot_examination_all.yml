@@ -7,6 +7,9 @@ models:
       Includes unsuitable/declined checks, foot status, risk assessments, and Townson scale.
       Complex model that aggregates multiple foot-related cluster IDs by person and date.
       Includes ALL persons following intermediate layer principles.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "FEPU_COD,FEDEC_COD,FRC_COD,CONABL_COD,CONABR_COD,AMPL_COD,AMPR_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

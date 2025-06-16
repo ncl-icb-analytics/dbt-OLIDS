@@ -6,6 +6,9 @@ models:
       All BMI measurements from observations.
       Simple pattern using BMIVAL_COD with clinical validation and obesity classification.
       Includes ALL persons following intermediate layer principles.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "BMIVAL_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"
