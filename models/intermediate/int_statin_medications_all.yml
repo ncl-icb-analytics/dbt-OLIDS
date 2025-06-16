@@ -1,0 +1,116 @@
+version: 2
+
+models:
+  - name: int_statin_medications_all
+    description: |
+      All statin medication orders for cholesterol management and cardiovascular risk reduction.
+      Uses BNF classification (2.12) for HMG CoA reductase inhibitors (statins).
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      
+      Clinical Purpose:
+      - Primary and secondary prevention of cardiovascular disease
+      - LDL cholesterol reduction for lipid management
+      - Evidence-based cardiovascular protection
+      
+      Key Features:
+      - High intensity statin classification for optimal cardiovascular benefits
+      - Individual statin type identification
+      - Combination therapy detection (e.g., simvastatin/ezetimibe)
+      - Long-term therapy recency tracking
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier across the HEI system"
+        tests:
+          - not_null
+          
+      - name: medication_order_id
+        description: "Unique identifier for the medication order record"
+        tests:
+          - not_null
+          - unique
+          
+      - name: statin_type
+        description: "Specific statin medication type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ATORVASTATIN', 'CERIVASTATIN', 'FLUVASTATIN', 'PRAVASTATIN', 'ROSUVASTATIN', 'SIMVASTATIN', 'SIMVASTATIN_EZETIMIBE', 'OTHER_STATIN']
+              
+      - name: is_high_intensity_statin
+        description: "Boolean flag indicating high intensity statin (atorvastatin, rosuvastatin) for optimal cardiovascular benefits"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_atorvastatin
+        description: "Boolean flag indicating atorvastatin use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_simvastatin
+        description: "Boolean flag indicating simvastatin use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_rosuvastatin
+        description: "Boolean flag indicating rosuvastatin use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_pravastatin
+        description: "Boolean flag indicating pravastatin use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_combination_therapy
+        description: "Boolean flag indicating combination statin therapy (e.g., simvastatin/ezetimibe)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: days_since_order
+        description: "Number of days between order date and current date"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 36500
+              severity: warn
+              
+      - name: is_recent_3m
+        description: "Boolean flag indicating if order was within the last 3 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_recent_6m
+        description: "Boolean flag indicating if order was within the last 6 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_recent_12m
+        description: "Boolean flag indicating if order was within the last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+            - medication_order_id 

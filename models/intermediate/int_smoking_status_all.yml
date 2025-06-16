@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: int_smoking_status_all
+    description: |
+      All smoking status observations from clinical records.
+      Uses QOF definitions with cluster IDs: SMOK_COD (general), LSMOK_COD (current smoker),
+      EXSMOK_COD (ex-smoker), and NSMOK_COD (never smoked) codes.
+      Includes ALL persons following intermediate layer principles.
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: "Date of the smoking status observation"
+        tests:
+          - not_null
+      - name: concept_code
+        description: "SNOMED concept code for smoking status"
+        tests:
+          - not_null
+      - name: concept_display
+        description: "Description of the smoking status code"
+        tests:
+          - not_null
+      - name: source_cluster_id
+        description: "Source cluster ID (SMOK_COD, LSMOK_COD, EXSMOK_COD, NSMOK_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD']
+      - name: is_smoker_code
+        description: "Flag indicating current smoker code (LSMOK_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_ex_smoker_code
+        description: "Flag indicating ex-smoker code (EXSMOK_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_never_smoked_code
+        description: "Flag indicating never smoked code (NSMOK_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: smoking_status
+        description: "Derived smoking status category"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'Unknown']
+      - name: is_current_smoker
+        description: "Flag indicating current smoking status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_ex_smoker
+        description: "Flag indicating ex-smoker status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: int_cholesterol_all
+    description: |
+      All total cholesterol measurements from observations.
+      Simple pattern using CHOL2_COD with basic validation.
+      Includes ALL persons following intermediate layer principles.
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: "Date of the cholesterol measurement"
+        tests:
+          - not_null
+      - name: cholesterol_value
+        description: "Total cholesterol value in mmol/L"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0.1
+              max_value: 30
+              severity: warn
+      - name: is_valid_cholesterol
+        description: "Flag indicating if cholesterol is within valid range (0.5-20)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: cholesterol_category
+        description: "Clinical cholesterol category"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Invalid', 'Desirable', 'Borderline High', 'High', 'Unknown'] 

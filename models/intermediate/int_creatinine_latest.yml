@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: int_creatinine_latest
+    description: |
+      Latest valid serum creatinine measurement per person.
+      Filters to most recent valid creatinine (20-1000 µmol/L range).
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      - name: clinical_effective_date
+        description: "Date of the creatinine measurement"
+        tests:
+          - not_null
+      - name: creatinine_value
+        description: "Serum creatinine value in µmol/L (valid range only)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 20
+              max_value: 1000
+      - name: creatinine_category
+        description: "Clinical creatinine category (excludes 'Invalid')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Normal', 'Mildly Elevated', 'Moderately Elevated', 'Severely Elevated']
+      - name: is_elevated_creatinine
+        description: "Flag indicating creatinine > 120 µmol/L"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

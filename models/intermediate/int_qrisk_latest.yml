@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: int_qrisk_latest
+    description: |
+      Latest valid QRISK cardiovascular risk assessment per person.
+      Filters to most recent valid QRISK score (0-100% range).
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      - name: clinical_effective_date
+        description: "Date of the QRISK assessment"
+        tests:
+          - not_null
+      - name: qrisk_value
+        description: "QRISK score as percentage (valid range only)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      - name: cvd_risk_category
+        description: "CVD risk category (excludes 'Invalid')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Low Risk (<10%)', 'Moderate Risk (10-20%)', 'High Risk (≥20%)']
+      - name: is_high_cvd_risk
+        description: "Flag indicating QRISK ≥20% (high risk)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: consider_statin
+        description: "Flag indicating consideration for statin therapy (≥10%)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

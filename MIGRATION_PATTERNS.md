@@ -50,12 +50,14 @@ Following the established legacy patterns from `dim_person_active_patients` and 
 - **Mart Layer**: Filtered populations as needed (active patients, specific age groups, etc.)
 
 **Why this matters:**
+
 - Intermediate tables serve multiple downstream use cases
 - Historical analysis often needs inactive/deceased patients
 - Different analytical models need different population filters
 - Avoids having to rebuild base data for different audiences
 
 **Example Flow:**
+
 ```
 stg_olids_observation → int_blood_pressure_all (ALL persons) → fct_bp_active_patients (active only)
                                                              → fct_bp_population_trends (ALL persons)
@@ -242,7 +244,18 @@ ROW_NUMBER() OVER (
 
 ## Testing Requirements
 
-### Mandatory Tests for All Models
+### YAML Documentation & Testing Requirements
+
+#### Individual Model YAML Files
+
+**CRITICAL RULE: Each model MUST have its own individual YAML file**
+
+- Use format: `{model_name}.yml` (e.g., `int_bmi_all.yml`)
+- Include comprehensive column documentation
+- Add appropriate data quality tests for clinical ranges
+- Document business logic and clinical validation rules
+
+#### Mandatory Tests for All Models
 
 #### Staging Models
 
@@ -257,12 +270,17 @@ tests:
 
 ```yaml
 tests:
-  - unique: [surrogate_key]
+  - unique: [surrogate_key]  # For latest models
   - not_null: [person_id, clinical_effective_date]
   - cluster_ids_exist: [cluster_id]  # Custom test
   - relationships:
       to: ref('dim_person')
       field: person_id
+  - accepted_values: [true, false]  # For all boolean flags
+  - dbt_utils.accepted_range: # For clinical measurements
+      min_value: X
+      max_value: Y
+      severity: warn
 ```
 
 ### Custom Healthcare Tests
@@ -342,7 +360,7 @@ WHERE systolic_value BETWEEN 40 AND 350
 - [ ] **Extract** staging models for new sources (if needed)
 - [ ] **Create** intermediate model using standard patterns
 - [ ] **Apply** clinical validation rules
-- [ ] **Add** comprehensive tests
+- [ ] **Create** individual YAML file with comprehensive documentation and tests
 - [ ] **Document** clinical logic and business rules
 - [ ] **Validate** results against legacy output
 - [ ] **Performance test** with production data volumes
@@ -368,13 +386,254 @@ WHERE systolic_value BETWEEN 40 AND 350
 ✅ Consistent naming conventions
 ✅ Appropriate materialisation strategy
 ✅ Healthcare-specific testing
+✅ Individual YAML files with comprehensive documentation
 ✅ Traceability to source systems
+
+## Migration Progress Tracking
+
+### Phase 1: Core Intermediate Tables (Clinical Observations & Measurements)
+
+Focus on building comprehensive intermediate models for all major clinical domains first, as these serve multiple downstream uses and are needed before condition registers can be built.
+
+#### 1.1 Vital Signs & Basic Measurements ✅ **Priority: HIGH**
+- [x] `intermediate_blood_pressure_all.sql` → `int_blood_pressure_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_blood_pressure_latest.sql` → `int_blood_pressure_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_bmi_historic.sql` → `int_bmi_all.sql` ✅ **COMPLETE** (simple numeric BMI pattern)
+- [x] `intermediate_bmi_latest.sql` → `int_bmi_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_bmi_values.sql` → `int_bmi_qof.sql` ✅ **COMPLETE** (QOF obesity register rules)
+- [ ] `intermediate_waist_circumference_all.sql` → `int_waist_circumference_all.sql`
+- [ ] `intermediate_waist_circumference_latest.sql` → `int_waist_circumference_latest.sql`
+
+#### 1.2 Laboratory Results ✅ **Priority: HIGH**
+- [x] `intermediate_hba1c_all.sql` → `int_hba1c_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_hba1c_latest.sql` → `int_hba1c_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_total_cholesterol_all.sql` → `int_cholesterol_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_total_cholesterol_latest.sql` → `int_cholesterol_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_egfr_all.sql` → `int_egfr_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_egfr_latest.sql` → `int_egfr_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_serum_creatinine_all.sql` → `int_creatinine_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_serum_creatinine_latest.sql` → `int_creatinine_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_urine_acr_all.sql` → `int_urine_acr_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_urine_acr_latest.sql` → `int_urine_acr_latest.sql` ✅ **COMPLETE**
+
+#### 1.1.1 Additional Vital Signs ✅ **Priority: HIGH**
+- [x] `intermediate_waist_circumference_all.sql` → `int_waist_circumference_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_waist_circumference_latest.sql` → `int_waist_circumference_latest.sql` ✅ **COMPLETE**
+
+#### 1.3 Risk Assessments & Scores ✅ **Priority: MEDIUM**
+- [x] `intermediate_qrisk_all.sql` → `int_qrisk_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_qrisk_latest.sql` → `int_qrisk_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_smoking_all.sql` → `int_smoking_status_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_smoking_latest.sql` → `int_smoking_status_latest.sql` ✅ **COMPLETE**
+
+#### 1.4 Clinical Examinations ✅ **Priority: MEDIUM**
+- [x] `intermediate_spirometry.sql` → `int_spirometry_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_foot_check_all.sql` → `int_foot_examination_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_foot_check_latest.sql` → `int_foot_examination_latest.sql` ✅ **COMPLETE**
+- [x] `intermediate_retinal_screening_all.sql` → `int_retinal_screening_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_retinal_screening_latest.sql` → `int_retinal_screening_latest.sql` ✅ **COMPLETE**
+
+#### 1.5 Health Checks & Assessments ✅ **Priority: MEDIUM**
+- [x] `intermediate_nhs_health_check_all.sql` → `int_nhs_health_check_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_nhs_health_check_latest.sql` → `int_nhs_health_check_latest.sql` ✅ **COMPLETE**
+
+#### 1.6 Demographics & Social Factors ✅ **Priority: MEDIUM**
+- [x] `intermediate_ethnicity_all.sql` → `int_ethnicity_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_ethnicity_qof.sql` → `int_ethnicity_qof.sql` ✅ **COMPLETE**
+
+### Phase 2: Medication Intermediate Tables
+
+#### 2.1 Diabetes Medications ✅ **Priority: HIGH**
+- [x] `intermediate_diabetes_orders_all.sql` → `int_diabetes_medications_all.sql` ✅ **COMPLETE**
+
+#### 2.2 Cardiovascular Medications ✅ **Priority: HIGH**
+- [x] `intermediate_statin_orders_all.sql` → `int_statin_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_ace_inhibitor_orders_all.sql` → `int_ace_inhibitor_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_arb_orders_all.sql` → `int_arb_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_beta_blocker_orders_all.sql` → `int_beta_blocker_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_diuretic_orders_all.sql` → `int_diuretic_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_antiplatelet_orders_all.sql` → `int_antiplatelet_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_oral_anticoagulant_orders_all.sql` → `int_anticoagulant_medications_all.sql` ✅ **COMPLETE**
+
+#### 2.3 Respiratory Medications ✅ **Priority: MEDIUM**
+- [ ] `intermediate_inhaled_corticosteroid_orders_all.sql` → `int_inhaled_corticosteroid_medications_all.sql`
+- [ ] `intermediate_systemic_corticosteroid_orders_all.sql` → `int_systemic_corticosteroid_medications_all.sql`
+
+#### 2.4 Other Medications ✅ **Priority: MEDIUM**
+- [ ] `intermediate_ppi_orders_all.sql` → `int_ppi_medications_all.sql`
+- [ ] `intermediate_nsaid_orders_all.sql` → `int_nsaid_medications_all.sql`
+- [ ] `intermediate_antidepressant_orders_all.sql` → `int_antidepressant_medications_all.sql`
+- [ ] `intermediate_cardiac_glycoside_orders_all.sql` → `int_cardiac_glycoside_medications_all.sql`
+- [ ] `intermediate_lithium_orders.sql` → `int_lithium_medications_all.sql`
+
+#### 2.5 Specialist Medications ✅ **Priority: LOW**
+- [ ] `intermediate_valproate_orders_all.sql` → `int_valproate_medications_all.sql`
+- [ ] `intermediate_valproate_orders_6m_latest.sql` → `int_valproate_medications_6m_latest.sql`
+- [ ] `intermediate_asthma_orders_12m.sql` → `int_asthma_medications_12m.sql`
+- [ ] `intermediate_epilepsy_orders_6m.sql` → `int_epilepsy_medications_6m.sql`
+- [ ] `intermediate_allergy_orders_all.sql` → `int_allergy_medications_all.sql`
+
+### Phase 3: Clinical Condition Intermediate Tables
+
+#### 3.1 Major Chronic Conditions ✅ **Priority: HIGH**
+- [ ] `intermediate_diabetes_diagnoses.sql` → `int_diabetes_diagnoses_all.sql`
+- [ ] `intermediate_copd_diagnoses.sql` → `int_copd_diagnoses_all.sql`
+- [ ] `intermediate_depression_details.sql` → `int_depression_diagnoses_all.sql`
+- [ ] `intermediate_mh_diagnoses.sql` → `int_mental_health_diagnoses_all.sql`
+- [ ] `intermediate_cancer_details.sql` → `int_cancer_diagnoses_all.sql`
+- [ ] `intermediate_hf_details.sql` → `int_heart_failure_diagnoses_all.sql`
+
+#### 3.2 Chronic Disease Complications ✅ **Priority: MEDIUM**
+- [ ] `intermediate_osteoporosis_diagnoses.sql` → `int_osteoporosis_diagnoses_all.sql`
+- [ ] `intermediate_fragility_fractures.sql` → `int_fragility_fractures_all.sql`
+- [ ] `intermediate_ckd_lab_inference.sql` → `int_ckd_lab_inference_all.sql`
+- [ ] `intermediate_ndh_diagnoses.sql` → `int_diabetic_retinopathy_diagnoses_all.sql`
+
+#### 3.3 Other Clinical Conditions ✅ **Priority: LOW**
+- [ ] `intermediate_ld_diagnoses_all.sql` → `int_learning_disability_diagnoses_all.sql`
+- [ ] `intermediate_copd_unable_spirometry.sql` → `int_copd_unable_spirometry_all.sql`
+- [ ] `intermediate_perm_absence_preg_risk.sql` → `int_pregnancy_absence_risk_all.sql`
+
+### Phase 4: Analytical Fact Tables (Disease Registers)
+
+#### 4.1 Major Disease Registers ✅ **Priority: HIGH**
+- [ ] `fct_person_dx_diabetes.sql` → `fct_person_diabetes_register.sql`
+- [ ] `fct_person_dx_hypertension.sql` → `fct_person_hypertension_register.sql`
+- [ ] `fct_person_dx_ckd.sql` → `fct_person_ckd_register.sql`
+- [ ] `fct_person_dx_copd.sql` → `fct_person_copd_register.sql`
+- [ ] `fct_person_dx_asthma.sql` → `fct_person_asthma_register.sql`
+- [ ] `fct_person_dx_cyp_asthma.sql` → `fct_person_cyp_asthma_register.sql`
+
+#### 4.2 Cardiovascular Disease Registers ✅ **Priority: HIGH**
+- [ ] `fct_person_dx_chd.sql` → `fct_person_chd_register.sql`
+- [ ] `fct_person_dx_hf.sql` → `fct_person_heart_failure_register.sql`
+- [ ] `fct_person_dx_af.sql` → `fct_person_atrial_fibrillation_register.sql`
+- [ ] `fct_person_dx_pad.sql` → `fct_person_pad_register.sql`
+- [ ] `fct_person_dx_stia.sql` → `fct_person_stroke_tia_register.sql`
+
+#### 4.3 Mental Health & Neurological Registers ✅ **Priority: MEDIUM**
+- [ ] `fct_person_dx_dementia.sql` → `fct_person_dementia_register.sql`
+- [ ] `fct_person_dx_depression.sql` → `fct_person_depression_register.sql`
+- [ ] `fct_person_dx_smi.sql` → `fct_person_smi_register.sql`
+- [ ] `fct_person_dx_epilepsy.sql` → `fct_person_epilepsy_register.sql`
+- [ ] `fct_person_dx_ld.sql` → `fct_person_learning_disability_register.sql`
+
+#### 4.4 Other Disease Registers ✅ **Priority: MEDIUM**
+- [ ] `fct_person_dx_cancer.sql` → `fct_person_cancer_register.sql`
+- [ ] `fct_person_dx_osteoporosis.sql` → `fct_person_osteoporosis_register.sql`
+- [ ] `fct_person_dx_palliative_care.sql` → `fct_person_palliative_care_register.sql`
+- [ ] `fct_person_dx_ra.sql` → `fct_person_rheumatoid_arthritis_register.sql`
+- [ ] `fct_person_dx_obesity.sql` → `fct_person_obesity_register.sql`
+- [ ] `fct_person_dx_nafld.sql` → `fct_person_nafld_register.sql`
+- [ ] `fct_person_dx_fhyp.sql` → `fct_person_familial_hypercholesterolaemia_register.sql`
+- [ ] `fct_person_dx_ndh.sql` → `fct_person_diabetic_retinopathy_register.sql`
+- [ ] `fct_person_dx_gestational_diabetes.sql` → `fct_person_gestational_diabetes_register.sql`
+
+### Phase 5: Clinical Quality & Status Fact Tables
+
+#### 5.1 Clinical Control & Quality Measures ✅ **Priority: HIGH**
+- [ ] `fct_person_bp_control_status.sql` → `fct_person_bp_control.sql`
+- [ ] `fct_person_diabetes_8_care_processes.sql` → `fct_person_diabetes_care_processes.sql`
+- [ ] `fct_person_diabetes_9_care_processes.sql` → `fct_person_diabetes_9_care_processes.sql`
+- [ ] `fct_person_diabetes_triple_target.sql` → `fct_person_diabetes_triple_target.sql`
+- [ ] `fct_person_diabetes_foot_check.sql` → `fct_person_diabetes_foot_check.sql`
+
+#### 5.2 Patient Status & Demographics ✅ **Priority: MEDIUM**
+- [ ] `fct_person_smoking_status.sql` → `fct_person_smoking_status.sql`
+- [ ] `fct_person_pregnant.sql` → `fct_person_pregnancy_status.sql`
+- [ ] `fct_person_nhs_health_check_status.sql` → `fct_person_nhs_health_check_status.sql`
+
+#### 5.3 Clinical Safety ✅ **Priority: MEDIUM**
+- [ ] `fct_clinical_safety_on_valproate_and_pregnant.sql` → `fct_clinical_safety_valproate_pregnancy.sql`
+
+#### 5.4 Service Usage ✅ **Priority: LOW**
+- [ ] `fct_person_appointments_gp_12m.sql` → `fct_person_gp_appointments_12m.sql`
+- [ ] `fct_organisation_active_patients.sql` → `fct_organisation_active_patients.sql`
+- [ ] `fct_person_ltc_summary.sql` → `fct_person_ltc_summary.sql`
+
+### Phase 6: Programme Dimensions
+
+#### 6.1 NHS Health Checks ✅ **Priority: HIGH**
+- [ ] `dim_prog_nhs_health_check_eligibility.sql` → `dim_prog_nhs_health_check_eligibility.sql`
+
+#### 6.2 LTC/LCS Programmes ✅ **Priority: MEDIUM**
+**Note**: These require most intermediate tables to be complete first
+- [ ] `dim_prog_ltc_lcs_moc_base.sql` → `dim_prog_ltc_lcs_base.sql`
+- [ ] `dim_prog_ltc_lcs_cf_summary.sql` → `dim_prog_ltc_lcs_summary.sql`
+- [ ] `dim_prog_ltc_lcs_cf_exclusions.sql` → `dim_prog_ltc_lcs_exclusions.sql`
+
+#### 6.3 LTC/LCS Condition-Specific Programmes ✅ **Priority: LOW**
+- [ ] `dim_prog_ltc_lcs_cf_dm_61.sql` → `dim_prog_ltc_lcs_diabetes_61.sql`
+- [ ] `dim_prog_ltc_lcs_cf_dm_62.sql` → `dim_prog_ltc_lcs_diabetes_62.sql`
+- [ ] `dim_prog_ltc_lcs_cf_dm_63.sql` → `dim_prog_ltc_lcs_diabetes_63.sql`
+- [ ] `dim_prog_ltc_lcs_cf_dm_64.sql` → `dim_prog_ltc_lcs_diabetes_64.sql`
+- [ ] `dim_prog_ltc_lcs_cf_dm_65.sql` → `dim_prog_ltc_lcs_diabetes_65.sql`
+- [ ] `dim_prog_ltc_lcs_cf_dm_66.sql` → `dim_prog_ltc_lcs_diabetes_66.sql`
+- [ ] `dim_prog_ltc_lcs_cf_htn_61.sql` → `dim_prog_ltc_lcs_hypertension_61.sql`
+- [ ] `dim_prog_ltc_lcs_cf_htn_62.sql` → `dim_prog_ltc_lcs_hypertension_62.sql`
+- [ ] `dim_prog_ltc_lcs_cf_htn_63.sql` → `dim_prog_ltc_lcs_hypertension_63.sql`
+- [ ] `dim_prog_ltc_lcs_cf_htn_65.sql` → `dim_prog_ltc_lcs_hypertension_65.sql`
+- [ ] `dim_prog_ltc_lcs_cf_htn_66.sql` → `dim_prog_ltc_lcs_hypertension_66.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cvd_61.sql` → `dim_prog_ltc_lcs_cvd_61.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cvd_62.sql` → `dim_prog_ltc_lcs_cvd_62.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cvd_63.sql` → `dim_prog_ltc_lcs_cvd_63.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cvd_64.sql` → `dim_prog_ltc_lcs_cvd_64.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cvd_65.sql` → `dim_prog_ltc_lcs_cvd_65.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cvd_66.sql` → `dim_prog_ltc_lcs_cvd_66.sql`
+- [ ] `dim_prog_ltc_lcs_cf_ckd_61.sql` → `dim_prog_ltc_lcs_ckd_61.sql`
+- [ ] `dim_prog_ltc_lcs_cf_ckd_62.sql` → `dim_prog_ltc_lcs_ckd_62.sql`
+- [ ] `dim_prog_ltc_lcs_cf_ckd_63.sql` → `dim_prog_ltc_lcs_ckd_63.sql`
+- [ ] `dim_prog_ltc_lcs_cf_ckd_64.sql` → `dim_prog_ltc_lcs_ckd_64.sql`
+- [ ] `dim_prog_ltc_lcs_cf_af_61.sql` → `dim_prog_ltc_lcs_atrial_fibrillation_61.sql`
+- [ ] `dim_prog_ltc_lcs_cf_af_62.sql` → `dim_prog_ltc_lcs_atrial_fibrillation_62.sql`
+- [ ] `dim_prog_ltc_lcs_cf_cyp_ast_61.sql` → `dim_prog_ltc_lcs_cyp_asthma_61.sql`
+
+#### 6.4 Immunisation Programmes ✅ **Priority: MEDIUM**
+- [ ] `dim_prog_imm_base_pop.sql` → `dim_prog_immunisation_base_population.sql`
+- [ ] `dim_prog_imm_child_elig.sql` → `dim_prog_immunisation_child_eligibility.sql`
+- [ ] `dim_prog_imm_child_vaccine.sql` → `dim_prog_immunisation_child_vaccine.sql`
+- [ ] `dim_prog_imm_child_vaccine_temp.sql` → `dim_prog_immunisation_child_vaccine_temp.sql`
+
+#### 6.5 Valproate Safety Programmes ✅ **Priority: LOW**
+- [ ] `dim_prog_valproate_neurology.sql` → `dim_prog_valproate_neurology.sql`
+- [ ] `dim_prog_valproate_psychiatry.sql` → `dim_prog_valproate_psychiatry.sql`
+- [ ] `dim_prog_valproate_araf.sql` → `dim_prog_valproate_araf.sql`
+- [ ] `dim_prog_valproate_araf_referral.sql` → `dim_prog_valproate_araf_referral.sql`
+- [ ] `dim_prog_valproate_db_scope.sql` → `dim_prog_valproate_db_scope.sql`
+
+### Phase 7: Remaining Complex Models
+
+#### 7.1 LTC/LCS Intermediate Supporting Models ✅ **Priority: LOW**
+**Note**: These support the LTC/LCS programme dimensions
+- [ ] `intermediate_ltc_lcs_cf_base_population.sql` → `int_ltc_lcs_base_population.sql`
+- [ ] `intermediate_ltc_lcs_cf_health_checks.sql` → `int_ltc_lcs_health_checks.sql`
+- [ ] `intermediate_ltc_lcs_cf_cvd_base.sql` → `int_ltc_lcs_cvd_base.sql`
+- [ ] `intermediate_ltc_lcs_cf_cvd_65_base.sql` → `int_ltc_lcs_cvd_65_base.sql`
+- [ ] `intermediate_ltc_lcs_cf_cvd_66_base.sql` → `int_ltc_lcs_cvd_66_base.sql`
+- [ ] `intermediate_ltc_lcs_cf_htn_base.sql` → `int_ltc_lcs_hypertension_base.sql`
+- [ ] `intermediate_ltc_lcs_raw_data.sql` → `int_ltc_lcs_raw_data.sql`
+
+### Migration Notes
+
+#### Dependencies
+- **`dim_person_condition_registers`** requires most clinical intermediate tables to be complete first
+- **LTC/LCS programme dimensions** require comprehensive clinical and medication intermediate tables
+- **Disease register fact tables** require their corresponding intermediate diagnosis and medication tables
+
+#### Current State Summary
+- ✅ **Staging Layer**: Complete for all source systems
+- ✅ **Core Dimensions**: Complete for person/patient/practice relationships
+- ✅ **Phase 1 Intermediate**: **100% COMPLETE!** All core clinical observations, laboratory results, risk assessments, clinical examinations, and health checks migrated
+- ✅ **Phase 2.1 & 2.2**: **COMPLETE!** All high-priority diabetes and cardiovascular medications migrated
+- 🎯 **Major Milestone**: **Phase 1 + High-Priority Phase 2 COMPLETE** - comprehensive foundation for cardiovascular risk, diabetes management, kidney function, clinical care processes, and major medication therapy tracking
+
+#### Next Priority Actions
+1. **✅ Phase 1 COMPLETE**: All core clinical observations and measurements
+2. **✅ Phase 2.1 & 2.2 COMPLETE**: High-priority diabetes and cardiovascular medications
+3. **🎯 Next Focus**: **Phase 2.3-2.5 - Remaining Medication Tables** (respiratory, other, specialist medications)
+4. **Then Phase 3**: Clinical condition diagnosis intermediate tables
+5. **Finally Phase 4**: Disease register fact tables (requires Phase 1-3 complete)
 
 ## Contact & Questions
 
 When in doubt about migration patterns or clinical logic, refer back to this document. The patterns documented here represent proven approaches that maintain data quality, performance, and clinical accuracy.
-
----
-
-*Last Updated: 2024*
-*Version: 2.0*

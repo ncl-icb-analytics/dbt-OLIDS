@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: int_nhs_health_check_all
+    description: |
+      All NHS Health Check completed events for all persons.
+      Uses a hardcoded list of SNOMED codes to identify completed health checks.
+      Includes ALL persons following intermediate layer principles.
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: "Date of the NHS Health Check"
+        tests:
+          - not_null
+      - name: concept_code
+        description: "SNOMED concept code for NHS Health Check"
+        tests:
+          - not_null
+      - name: concept_display
+        description: "Description of the health check code"
+        tests:
+          - not_null
+      - name: is_completed_health_check
+        description: "Flag indicating completed health check (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: days_since_health_check
+        description: "Number of days since health check"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 50000
+              severity: warn
+      - name: health_check_current_12m
+        description: "Flag indicating health check within 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: health_check_current_24m
+        description: "Flag indicating health check within 24 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: health_check_current_5y
+        description: "Flag indicating health check within 5 years (NHS cycle)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: years_since_health_check
+        description: "Number of years since health check"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+              severity: warn 

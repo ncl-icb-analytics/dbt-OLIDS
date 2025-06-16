@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: int_arb_medications_all
+    description: |
+      All ARB (Angiotensin Receptor Blocker) medication orders for cardiovascular and renal protection.
+      Uses BNF classification (2.5.5.2) for angiotensin-II receptor antagonists.
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      
+      Clinical Purpose:
+      - Alternative to ACE inhibitors for cardiovascular protection
+      - Heart failure management and post-MI care
+      - Renal protection in diabetes and CKD
+      - Blood pressure management in hypertension
+      
+      Key Features:
+      - Evidence-based ARB identification from major cardiovascular trials
+      - Individual ARB type classification
+      - Long-term therapy recency tracking
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier across the HEI system"
+        tests:
+          - not_null
+          
+      - name: medication_order_id
+        description: "Unique identifier for the medication order record"
+        tests:
+          - not_null
+          - unique
+          
+      - name: arb_type
+        description: "Specific ARB medication type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AZILSARTAN', 'CANDESARTAN', 'EPROSARTAN', 'IRBESARTAN', 'LOSARTAN', 'OLMESARTAN', 'TELMISARTAN', 'VALSARTAN', 'OTHER_ARB']
+              
+      - name: is_evidence_based_cvd
+        description: "Boolean flag indicating evidence-based ARB for cardiovascular disease (losartan, valsartan, candesartan, telmisartan)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_losartan
+        description: "Boolean flag indicating losartan use (LIFE trial evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_valsartan
+        description: "Boolean flag indicating valsartan use (Val-HeFT trial evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_candesartan
+        description: "Boolean flag indicating candesartan use (CHARM trial evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_irbesartan
+        description: "Boolean flag indicating irbesartan use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_telmisartan
+        description: "Boolean flag indicating telmisartan use (ONTARGET trial evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+            - medication_order_id 

@@ -28,18 +28,18 @@
             ON mo.medication_statement_id = ms.id
         JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
             ON ms.medication_statement_core_concept_id = mc.source_code_id
+        JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
+            ON mc.concept_code = bnf.snomed_code
         JOIN {{ ref('stg_olids_patient') }} p
             ON mo.patient_id = p.id
         JOIN {{ ref('stg_olids_patient_person') }} pp
             ON p.id = pp.patient_id
+        WHERE mo.clinical_effective_date IS NOT NULL
         {% if bnf_code is not none %}
-            JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
-                ON mc.concept_code = bnf.snomed_code
-            WHERE bnf.bnf_code LIKE '{{ bnf_code }}%'
-        {% elif cluster_id is not none %}
-            JOIN {{ ref('stg_codesets_combined_codesets') }} cc
-                ON mc.concept_code = cc.code
-            WHERE cc.cluster_id = '{{ cluster_id }}'
+            AND bnf.bnf_code LIKE '{{ bnf_code }}%'
+        {% endif %}
+        {% if cluster_id is not none %}
+            AND mc.cluster_id = '{{ cluster_id }}'
         {% endif %}
     )
     

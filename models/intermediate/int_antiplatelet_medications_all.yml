@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: int_antiplatelet_medications_all
+    description: |
+      All antiplatelet medication orders for cardiovascular protection and thrombosis prevention.
+      Uses BNF classification (2.9) for antiplatelet drugs.
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      
+      Clinical Purpose:
+      - Primary and secondary prevention of cardiovascular events
+      - Post-acute coronary syndrome dual antiplatelet therapy
+      - Stroke prevention in cardiovascular disease
+      - Thrombosis prevention in high-risk patients
+      
+      Key Features:
+      - P2Y12 inhibitor identification for dual antiplatelet therapy
+      - Evidence-based antiplatelet agents from major trials
+      - Low-dose aspirin detection for cardioprotection
+      - Individual antiplatelet type classification
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier across the HEI system"
+        tests:
+          - not_null
+          
+      - name: medication_order_id
+        description: "Unique identifier for the medication order record"
+        tests:
+          - not_null
+          - unique
+          
+      - name: antiplatelet_type
+        description: "Specific antiplatelet medication type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ASPIRIN', 'CLOPIDOGREL', 'DIPYRIDAMOLE', 'PRASUGREL', 'TICAGRELOR', 'TICLOPIDINE', 'OTHER_ANTIPLATELET']
+              
+      - name: is_p2y12_inhibitor
+        description: "Boolean flag indicating P2Y12 inhibitor for dual antiplatelet therapy"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_evidence_based_cvd
+        description: "Boolean flag indicating evidence-based antiplatelet for cardiovascular disease"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_aspirin
+        description: "Boolean flag indicating aspirin use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_clopidogrel
+        description: "Boolean flag indicating clopidogrel use (CAPRIE, CURE trials evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_ticagrelor
+        description: "Boolean flag indicating ticagrelor use (PLATO trial evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_prasugrel
+        description: "Boolean flag indicating prasugrel use (TRITON-TIMI trial evidence)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_dipyridamole
+        description: "Boolean flag indicating dipyridamole use"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_low_dose_aspirin
+        description: "Boolean flag indicating low-dose aspirin (typically 75mg for cardioprotection)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+            - medication_order_id 

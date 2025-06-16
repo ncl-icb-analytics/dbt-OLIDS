@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: int_waist_circumference_latest
+    description: |
+      Latest valid waist circumference measurement per person.
+      Filters to most recent valid waist circumference (30-250 cm range).
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      - name: clinical_effective_date
+        description: "Date of the waist circumference measurement"
+        tests:
+          - not_null
+      - name: waist_circumference_value
+        description: "Waist circumference value in cm (valid range only)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 30
+              max_value: 250
+      - name: waist_risk_category
+        description: "Clinical waist circumference risk category (excludes 'Invalid')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Low Risk', 'Moderate Risk (Female)', 'Moderate Risk', 'High Risk', 'Very High Risk']
+      - name: is_high_waist_risk
+        description: "Flag indicating waist circumference ≥88cm"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_very_high_waist_risk
+        description: "Flag indicating waist circumference ≥102cm"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: int_cholesterol_latest
+    description: |
+      Latest valid total cholesterol measurement per person.
+      Filters to most recent valid cholesterol (0.5-20 mmol/L range).
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+      - name: clinical_effective_date
+        description: "Date of the cholesterol measurement"
+        tests:
+          - not_null
+      - name: cholesterol_value
+        description: "Total cholesterol value in mmol/L (valid range only)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0.5
+              max_value: 20
+      - name: cholesterol_category
+        description: "Clinical cholesterol category (excludes 'Invalid')"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Desirable', 'Borderline High', 'High'] 

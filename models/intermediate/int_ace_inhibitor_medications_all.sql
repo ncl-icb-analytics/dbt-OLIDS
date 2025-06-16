@@ -1,0 +1,103 @@
+{{
+    config(
+        materialized='table',
+        cluster_by=['person_id', 'order_date']
+    )
+}}
+
+/*
+All ACE inhibitor medication orders for cardiovascular and renal protection.
+Uses BNF classification (2.5.5.1) for ACE inhibitors.
+Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+*/
+
+WITH base_orders AS (
+    
+    SELECT
+        medication_order_id,
+        medication_statement_id,
+        person_id,
+        order_date,
+        order_medication_name,
+        order_dose,
+        order_quantity_value,
+        order_quantity_unit,
+        order_duration_days,
+        statement_medication_name,
+        mapped_concept_code,
+        mapped_concept_display,
+        bnf_code,
+        bnf_name
+        
+    FROM {{ get_medication_orders(bnf_code='02050501') }}
+)
+
+SELECT
+    person_id,
+    medication_order_id,
+    medication_statement_id,
+    order_date,
+    order_medication_name,
+    order_dose,
+    order_quantity_value,
+    order_quantity_unit,
+    order_duration_days,
+    statement_medication_name,
+    mapped_concept_code,
+    mapped_concept_display,
+    bnf_code,
+    bnf_name,
+    
+    -- Specific ACE inhibitor classification
+    CASE 
+        WHEN bnf_code LIKE '0205050102%' THEN 'CAPTOPRIL'
+        WHEN bnf_code LIKE '0205050105%' THEN 'CILAZAPRIL'
+        WHEN bnf_code LIKE '0205050110%' THEN 'ENALAPRIL'
+        WHEN bnf_code LIKE '0205050115%' THEN 'FOSINOPRIL'
+        WHEN bnf_code LIKE '0205050120%' THEN 'IMIDAPRIL'
+        WHEN bnf_code LIKE '0205050125%' THEN 'LISINOPRIL'
+        WHEN bnf_code LIKE '0205050130%' THEN 'MOEXIPRIL'
+        WHEN bnf_code LIKE '0205050135%' THEN 'PERINDOPRIL'
+        WHEN bnf_code LIKE '0205050140%' THEN 'QUINAPRIL'
+        WHEN bnf_code LIKE '0205050145%' THEN 'RAMIPRIL'
+        WHEN bnf_code LIKE '0205050150%' THEN 'TRANDOLAPRIL'
+        ELSE 'OTHER_ACE_INHIBITOR'
+    END AS ace_inhibitor_type,
+    
+    -- Evidence-based ACE inhibitors (commonly used in cardiovascular disease)
+    CASE 
+        WHEN bnf_code LIKE '0205050145%' THEN TRUE  -- Ramipril (HOPE trial)
+        WHEN bnf_code LIKE '0205050135%' THEN TRUE  -- Perindopril (EUROPA trial)
+        WHEN bnf_code LIKE '0205050125%' THEN TRUE  -- Lisinopril (GISSI-3 trial)
+        WHEN bnf_code LIKE '0205050110%' THEN TRUE  -- Enalapril (SOLVD trial)
+        ELSE FALSE
+    END AS is_evidence_based_cvd,
+    
+    -- Common ACE inhibitors flags
+    CASE WHEN bnf_code LIKE '0205050145%' THEN TRUE ELSE FALSE END AS is_ramipril,
+    CASE WHEN bnf_code LIKE '0205050125%' THEN TRUE ELSE FALSE END AS is_lisinopril,
+    CASE WHEN bnf_code LIKE '0205050135%' THEN TRUE ELSE FALSE END AS is_perindopril,
+    CASE WHEN bnf_code LIKE '0205050110%' THEN TRUE ELSE FALSE END AS is_enalapril,
+    CASE WHEN bnf_code LIKE '0205050102%' THEN TRUE ELSE FALSE END AS is_captopril,
+    
+    -- Calculate time since order
+    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
+    
+    -- Order recency flags (ACE inhibitors are typically long-term therapy)
+    CASE 
+        WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
+        ELSE FALSE
+    END AS is_recent_3m,
+    
+    CASE 
+        WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
+        ELSE FALSE
+    END AS is_recent_6m,
+    
+    CASE 
+        WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
+        ELSE FALSE
+    END AS is_recent_12m
+
+FROM base_orders
+ORDER BY person_id, order_date DESC 

@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: int_hba1c_all
+    description: |
+      All HbA1c measurements from observations.
+      Handles both IFCC (mmol/mol) and DCCT (%) measurement types with clinical validation.
+      Includes ALL persons following intermediate layer principles.
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: "Date of the HbA1c measurement"
+        tests:
+          - not_null
+      - name: hba1c_ifcc_value
+        description: "HbA1c value in IFCC units (mmol/mol)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 15
+              max_value: 200
+              severity: warn
+              config:
+                where: "hba1c_ifcc_value IS NOT NULL"
+      - name: hba1c_dcct_value
+        description: "HbA1c value in DCCT units (%)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 3.5
+              max_value: 18
+              severity: warn
+              config:
+                where: "hba1c_dcct_value IS NOT NULL"
+      - name: measurement_type
+        description: "Type of HbA1c measurement"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['IFCC (mmol/mol)', 'DCCT (%)', 'Unknown']
+      - name: is_valid_hba1c
+        description: "Flag indicating if HbA1c is within valid range"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: diabetes_control_category
+        description: "Diabetes control category based on HbA1c"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Invalid', 'Normal (<42 mmol/mol)', 'Pre-diabetes (42-47)', 'Diabetes (≥48)', 'Poor Control (≥58)', 'Very Poor Control (≥75)', 'Unknown']
+      - name: is_diabetes_range
+        description: "Flag indicating HbA1c ≥48 mmol/mol (6.5%)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_prediabetes_range
+        description: "Flag indicating HbA1c 42-47 mmol/mol (6.0-6.4%)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 
