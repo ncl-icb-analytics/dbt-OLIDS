@@ -1,0 +1,116 @@
+version: 2
+
+models:
+  - name: int_valproate_medications_all
+    description: |
+      All valproate medication orders for seizure management and bipolar disorder.
+      Uses special matching logic combining medication name patterns and concept ID validation.
+      Critical for pregnancy safety monitoring and teratogenicity risk assessment.
+      Includes ALL persons following intermediate layer principles.
+      
+      Clinical Purpose:
+      - Epilepsy seizure control and prevention
+      - Bipolar disorder mood stabilisation
+      - Pregnancy safety monitoring (high teratogenic risk)
+      - Therapeutic drug monitoring requirements
+      
+      Key Features:
+      - Name-based matching (VALPROATE, VALPROIC ACID patterns)
+      - Product type identification (Epilim, Depakote, etc.)
+      - Clinical indication classification
+      - Dosage categorisation for monitoring
+      - Formulation tracking for bioequivalence
+      - Teratogenicity risk flags
+    
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+            - medication_order_id
+
+    columns:
+      - name: person_id
+        description: "Unique person identifier across the HEI system"
+        tests:
+          - not_null
+          
+      - name: medication_order_id
+        description: "Unique identifier for the medication order record"
+        tests:
+          - not_null
+          - unique
+          
+      - name: order_date
+        description: "Date the valproate medication was ordered"
+        tests:
+          - not_null
+          
+      - name: valproate_product_type
+        description: "Specific valproate product type for brand monitoring"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SODIUM_VALPROATE', 'VALPROIC_ACID', 'EPILIM', 'DEPAKOTE', 'OTHER_VALPROATE']
+              
+      - name: clinical_indication
+        description: "Primary clinical indication for valproate therapy"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ANTI_EPILEPTIC', 'MOOD_STABILISER', 'UNSPECIFIED']
+              
+      - name: is_high_teratogenic_risk
+        description: "Boolean flag indicating high teratogenicity risk (always TRUE for valproate)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: dose_category
+        description: "Dosage category for therapeutic monitoring"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['LOW_DOSE', 'MODERATE_DOSE', 'HIGH_DOSE', 'UNKNOWN_DOSE']
+              
+      - name: formulation_type
+        description: "Formulation type for bioequivalence monitoring"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['TABLET', 'CAPSULE', 'LIQUID', 'MODIFIED_RELEASE', 'UNKNOWN_FORMULATION']
+              
+      - name: matched_on_name
+        description: "Boolean flag indicating medication name-based matching"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: matched_on_concept_id
+        description: "Boolean flag indicating concept ID-based matching"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_recent_3m
+        description: "Boolean flag indicating order within last 3 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_recent_6m
+        description: "Boolean flag indicating order within last 6 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_recent_12m
+        description: "Boolean flag indicating order within last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

@@ -1,0 +1,140 @@
+version: 2
+
+models:
+  - name: int_diabetes_diagnoses_all
+    description: |
+      All diabetes diagnosis observations from clinical records using QOF cluster IDs.
+      Provides comprehensive data collection for diabetes register and type classification.
+      
+      QOF Cluster IDs Used:
+      - DM_COD: General diabetes diagnoses
+      - DMTYPE1_COD: Type 1 diabetes specific diagnoses  
+      - DMTYPE2_COD: Type 2 diabetes specific diagnoses
+      - DMRES_COD: Diabetes resolved/remission codes
+      
+      Clinical Purpose:
+      - QOF diabetes register data collection
+      - Diabetes type classification support  
+      - Disease progression tracking
+      - Resolution status monitoring
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_diabetes_register.sql which applies QOF business rules.
+      
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the diabetes diagnosis observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for diabetes diagnosis"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the diabetes diagnosis code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID (DM_COD, DMTYPE1_COD, DMTYPE2_COD, DMRES_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD']
+              
+      - name: is_general_diabetes_code
+        description: "Flag indicating general diabetes diagnosis (DM_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_type1_diabetes_code
+        description: "Flag indicating Type 1 diabetes diagnosis (DMTYPE1_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_type2_diabetes_code
+        description: "Flag indicating Type 2 diabetes diagnosis (DMTYPE2_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_diabetes_resolved_code
+        description: "Flag indicating diabetes resolved/remission (DMRES_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_diabetes_date
+        description: "Earliest general diabetes diagnosis date for this person"
+        
+      - name: latest_diabetes_date
+        description: "Latest general diabetes diagnosis date for this person"
+        
+      - name: earliest_type1_date
+        description: "Earliest Type 1 diabetes diagnosis date for this person"
+        
+      - name: latest_type1_date
+        description: "Latest Type 1 diabetes diagnosis date for this person"
+        
+      - name: earliest_type2_date
+        description: "Earliest Type 2 diabetes diagnosis date for this person"
+        
+      - name: latest_type2_date
+        description: "Latest Type 2 diabetes diagnosis date for this person"
+        
+      - name: earliest_resolved_date
+        description: "Earliest diabetes resolved date for this person"
+        
+      - name: latest_resolved_date
+        description: "Latest diabetes resolved date for this person"
+        
+      - name: is_diabetes_currently_resolved
+        description: "QOF indicator: diabetes is currently resolved (latest resolved > latest diagnosis)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: diabetes_observation_type
+        description: "Classification of this specific observation (Type 1, Type 2, General, Resolved, Unknown)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Type 1', 'Type 2', 'General', 'Resolved', 'Unknown']
+              
+      - name: all_diabetes_concept_codes
+        description: "Array of all general diabetes concept codes for this person"
+        
+      - name: all_diabetes_concept_displays
+        description: "Array of all general diabetes concept displays for this person"
+        
+      - name: all_type1_concept_codes
+        description: "Array of all Type 1 diabetes concept codes for this person"
+        
+      - name: all_type2_concept_codes
+        description: "Array of all Type 2 diabetes concept codes for this person"
+        
+      - name: all_resolved_concept_codes
+        description: "Array of all diabetes resolved concept codes for this person" 

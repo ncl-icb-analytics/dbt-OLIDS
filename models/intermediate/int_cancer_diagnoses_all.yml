@@ -1,0 +1,146 @@
+version: 2
+
+models:
+  - name: int_cancer_diagnoses_all
+    description: |
+      All cancer diagnosis and care pathway observations from clinical records.
+      Complex cancer care pathway with multiple observation types including diagnoses,
+      reviews, invitations, and patient care adjustments.
+      
+      QOF Register Logic:
+      - Cancer diagnosis (CAN_COD) on/after 1 April 2003
+      - Excludes non-melanotic skin cancers (handled in cluster definitions)
+      - Comprehensive care pathway tracking
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_cancer_register.sql which applies QOF business rules.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "CAN_COD,MDRV_COD,CANINVITE_COD,CANPCADEC_COD,CANPCAPU_COD,CANPCSUPP_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the cancer-related observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for cancer-related observation"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the cancer-related code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID for cancer care pathway"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CAN_COD', 'MDRV_COD', 'CANINVITE_COD', 'CANPCADEC_COD', 'CANPCAPU_COD', 'CANPCSUPP_COD']
+              
+      - name: is_cancer_diagnosis_code
+        description: "Flag indicating cancer diagnosis (CAN_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_cancer_review_code
+        description: "Flag indicating cancer care review (MDRV_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_cancer_invite_code
+        description: "Flag indicating cancer care review invitation (CANINVITE_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_cancer_pca_decline_code
+        description: "Flag indicating patient care adjustment declined (CANPCADEC_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_cancer_pca_unsuitable_code
+        description: "Flag indicating patient care adjustment unsuitable (CANPCAPU_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_cancer_pca_support_code
+        description: "Flag indicating patient care support information provided (CANPCSUPP_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_cancer_diagnosis_date
+        description: "Earliest cancer diagnosis date for this person"
+        
+      - name: latest_cancer_diagnosis_date
+        description: "Latest cancer diagnosis date for this person"
+        
+      - name: earliest_cancer_review_date
+        description: "Earliest cancer care review date for this person"
+        
+      - name: latest_cancer_review_date
+        description: "Latest cancer care review date for this person"
+        
+      - name: earliest_cancer_invite_date
+        description: "Earliest cancer care invitation date for this person"
+        
+      - name: latest_cancer_invite_date
+        description: "Latest cancer care invitation date for this person"
+        
+      - name: latest_pca_decline_date
+        description: "Latest patient care adjustment decline date for this person"
+        
+      - name: latest_pca_unsuitable_date
+        description: "Latest patient care adjustment unsuitable date for this person"
+        
+      - name: latest_pca_support_date
+        description: "Latest patient care support information date for this person"
+        
+      - name: is_eligible_for_cancer_register
+        description: "QOF register eligibility (cancer diagnosis on/after 1 April 2003)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: all_cancer_diagnosis_codes
+        description: "Array of all cancer diagnosis concept codes for this person"
+        
+      - name: all_cancer_diagnosis_displays
+        description: "Array of all cancer diagnosis concept displays for this person"
+        
+      - name: all_cancer_review_codes
+        description: "Array of all cancer review concept codes for this person"
+        
+      - name: all_cancer_review_displays
+        description: "Array of all cancer review concept displays for this person"
+        
+      - name: all_cancer_invite_codes
+        description: "Array of all cancer invitation concept codes for this person"
+        
+      - name: all_cancer_invite_displays
+        description: "Array of all cancer invitation concept displays for this person" 

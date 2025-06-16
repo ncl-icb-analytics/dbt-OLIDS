@@ -39,6 +39,65 @@ Following the established legacy patterns from `dim_person_active_patients` and 
 - **`sk_patient_id`**: Surrogate key (also not necessarily unique per person)
 - **Practice details**: Separated into dedicated dimensions
 
+## New Diagnosis Model Architecture (Improved SRP)
+
+### Single Responsibility Principle for Diagnosis Models
+
+**OLD Legacy Pattern** (violates SRP):
+```
+fct_person_dx_diabetes.sql → Does everything (data collection + QOF logic + register creation)
+```
+
+**NEW Improved Pattern** (follows SRP):
+```
+int_diabetes_diagnoses_all.sql → Data collection from QOF cluster IDs
+fct_person_diabetes_register.sql → QOF register logic + criteria application
+```
+
+### Benefits of New Architecture
+
+1. **Data Collection Layer** (`int_*_diagnoses_all.sql`):
+   - Uses standardised `get_observations()` macro
+   - Collects ALL diagnosis observations for flexibility
+   - QOF cluster ID validation with `cluster_ids_exist` tests
+   - Person-level aggregates for downstream use
+   - Clinical flags and derived fields for context
+   
+2. **Business Logic Layer** (`fct_person_*_register.sql`):
+   - Applies QOF-specific business rules
+   - Age restrictions and eligibility criteria
+   - Cross-model joins (spirometry, medications, etc.)
+   - Register inclusion/exclusion logic
+   - Final analytical model for end users
+
+### QOF Diagnosis Model Pattern
+
+**Template Structure for Diagnosis Intermediate Models:**
+
+```sql
+-- Data collection using our macro
+FROM {{ get_observations("'CONDITION_COD', 'CONDITIONRES_COD'") }} obs
+
+-- QOF-specific flags (observation-level only)
+CASE WHEN obs.source_cluster_id = 'CONDITION_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code
+CASE WHEN obs.source_cluster_id = 'CONDITIONRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code
+
+-- NO person-level aggregates in intermediate layer for incremental refresh efficiency
+-- Complex aggregations and QOF business logic applied in fact layer
+```
+
+**Key Architectural Decision:**
+- **Intermediate models**: Simple, one row per observation, minimal derived fields
+- **Fact models**: Complex aggregations, QOF business rules, person-level analysis
+- **Benefits**: Simpler incremental refreshes, cleaner separation of concerns
+
+**YAML Documentation Requirements:**
+- `cluster_ids_exist` test with comma-separated cluster IDs
+- Comprehensive QOF context in description
+- Clinical purpose explanation
+- Boolean flag validation
+- Individual YAML files (not shared schema.yml)
+
 ## Migration Principles
 
 ### 1. Data Completeness by Layer
@@ -519,22 +578,22 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [x] `intermediate_cardiac_glycoside_orders_all.sql` → `int_cardiac_glycoside_medications_all.sql` ✅ **COMPLETE**
 - [x] `intermediate_lithium_orders.sql` → `int_lithium_medications_all.sql` ✅ **COMPLETE**
 
-#### 2.5 Specialist Medications ✅ **Priority: LOW**
-- [ ] `intermediate_valproate_orders_all.sql` → `int_valproate_medications_all.sql`
-- [ ] `intermediate_valproate_orders_6m_latest.sql` → `int_valproate_medications_6m_latest.sql`
-- [ ] `intermediate_asthma_orders_12m.sql` → `int_asthma_medications_12m.sql`
-- [ ] `intermediate_epilepsy_orders_6m.sql` → `int_epilepsy_medications_6m.sql`
-- [ ] `intermediate_allergy_orders_all.sql` → `int_allergy_medications_all.sql`
+#### 2.5 Specialist Medications ✅ **Priority: LOW** ✅ **COMPLETE**
+- [x] `intermediate_valproate_orders_all.sql` → `int_valproate_medications_all.sql` ✅ **COMPLETE**
+- [x] `intermediate_asthma_orders_12m.sql` → `int_asthma_medications_12m.sql` ✅ **COMPLETE**
+- [x] `intermediate_epilepsy_orders_6m.sql` → `int_epilepsy_medications_6m.sql` ✅ **COMPLETE**
+- [x] `intermediate_allergy_orders_all.sql` → `int_allergy_medications_all.sql` ✅ **COMPLETE**
 
 ### Phase 3: Clinical Condition Intermediate Tables
 
 #### 3.1 Major Chronic Conditions ✅ **Priority: HIGH**
-- [ ] `intermediate_diabetes_diagnoses.sql` → `int_diabetes_diagnoses_all.sql`
-- [ ] `intermediate_copd_diagnoses.sql` → `int_copd_diagnoses_all.sql`
+- [x] `intermediate_diabetes_diagnoses.sql` → `int_diabetes_diagnoses_all.sql` ✅ **COMPLETE** (QOF diabetes cluster IDs: DM_COD, DMTYPE1_COD, DMTYPE2_COD, DMRES_COD)
+- [x] `intermediate_copd_diagnoses.sql` → `int_copd_diagnoses_all.sql` ✅ **COMPLETE** (QOF COPD cluster IDs: COPD_COD, COPDRES_COD with April 2023 spirometry rules)
+- [x] `intermediate_hf_details.sql` → `int_heart_failure_diagnoses_all.sql` ✅ **COMPLETE** (QOF heart failure cluster IDs: HF_COD, HFRES_COD, HFLVSD_COD, REDEJCFRAC_COD)
+- [x] `fct_person_dx_hypertension.sql` → `int_hypertension_diagnoses_all.sql` ✅ **COMPLETE** (QOF hypertension cluster IDs: HYP_COD, HYPRES_COD)
 - [ ] `intermediate_depression_details.sql` → `int_depression_diagnoses_all.sql`
 - [ ] `intermediate_mh_diagnoses.sql` → `int_mental_health_diagnoses_all.sql`
 - [ ] `intermediate_cancer_details.sql` → `int_cancer_diagnoses_all.sql`
-- [ ] `intermediate_hf_details.sql` → `int_heart_failure_diagnoses_all.sql`
 
 #### 3.2 Chronic Disease Complications ✅ **Priority: MEDIUM**
 - [ ] `intermediate_osteoporosis_diagnoses.sql` → `int_osteoporosis_diagnoses_all.sql`
@@ -547,40 +606,44 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - [ ] `intermediate_copd_unable_spirometry.sql` → `int_copd_unable_spirometry_all.sql`
 - [ ] `intermediate_perm_absence_preg_risk.sql` → `int_pregnancy_absence_risk_all.sql`
 
-### Phase 4: Analytical Fact Tables (Disease Registers)
+### Phase 4: Complete QOF Diagnosis Fact Table Migration Checklist
 
-#### 4.1 Major Disease Registers ✅ **Priority: HIGH**
-- [ ] `fct_person_dx_diabetes.sql` → `fct_person_diabetes_register.sql`
-- [ ] `fct_person_dx_hypertension.sql` → `fct_person_hypertension_register.sql`
-- [ ] `fct_person_dx_ckd.sql` → `fct_person_ckd_register.sql`
-- [ ] `fct_person_dx_copd.sql` → `fct_person_copd_register.sql`
-- [ ] `fct_person_dx_asthma.sql` → `fct_person_asthma_register.sql`
-- [ ] `fct_person_dx_cyp_asthma.sql` → `fct_person_cyp_asthma_register.sql`
+**New Pattern**: Each `fct_person_dx_*` needs corresponding `int_*_diagnoses_all` (data collection) + updated `fct_person_*_register` (QOF business rules)
 
-#### 4.2 Cardiovascular Disease Registers ✅ **Priority: HIGH**
-- [ ] `fct_person_dx_chd.sql` → `fct_person_chd_register.sql`
-- [ ] `fct_person_dx_hf.sql` → `fct_person_heart_failure_register.sql`
-- [ ] `fct_person_dx_af.sql` → `fct_person_atrial_fibrillation_register.sql`
-- [ ] `fct_person_dx_pad.sql` → `fct_person_pad_register.sql`
-- [ ] `fct_person_dx_stia.sql` → `fct_person_stroke_tia_register.sql`
+#### 4.1 Major QOF Disease Registers ✅ **Priority: HIGH**
+- [x] `fct_person_dx_diabetes.sql` → `int_diabetes_diagnoses_all.sql` ✅ + `fct_person_diabetes_register.sql`
+- [x] `fct_person_dx_hypertension.sql` → `int_hypertension_diagnoses_all.sql` ✅ + `fct_person_hypertension_register.sql` 
+- [x] `fct_person_dx_copd.sql` → `int_copd_diagnoses_all.sql` ✅ + `fct_person_copd_register.sql`
+- [x] `fct_person_dx_hf.sql` → `int_heart_failure_diagnoses_all.sql` ✅ + `fct_person_heart_failure_register.sql`
+- [x] `fct_person_dx_ckd.sql` → `int_ckd_diagnoses_all.sql` ✅ + `fct_person_ckd_register.sql`
+- [x] `fct_person_dx_asthma.sql` → `int_asthma_diagnoses_all.sql` ✅ + `fct_person_asthma_register.sql`
+- [x] `fct_person_dx_cyp_asthma.sql` → `int_asthma_diagnoses_all.sql` ✅ + `fct_person_cyp_asthma_register.sql` (uses same intermediate, different age filters)
 
-#### 4.3 Mental Health & Neurological Registers ✅ **Priority: MEDIUM**
-- [ ] `fct_person_dx_dementia.sql` → `fct_person_dementia_register.sql`
-- [ ] `fct_person_dx_depression.sql` → `fct_person_depression_register.sql`
-- [ ] `fct_person_dx_smi.sql` → `fct_person_smi_register.sql`
-- [ ] `fct_person_dx_epilepsy.sql` → `fct_person_epilepsy_register.sql`
-- [ ] `fct_person_dx_ld.sql` → `fct_person_learning_disability_register.sql`
+#### 4.2 Mental Health & Neurological QOF Registers ✅ **Priority: HIGH**
+- [x] `fct_person_dx_depression.sql` → `int_depression_diagnoses_all.sql` ✅ + `fct_person_depression_register.sql`
+- [x] `fct_person_dx_dementia.sql` → `int_dementia_diagnoses_all.sql` ✅ + `fct_person_dementia_register.sql`
+- [x] `fct_person_dx_epilepsy.sql` → `int_epilepsy_diagnoses_all.sql` ✅ + `fct_person_epilepsy_register.sql`
+- [x] `fct_person_dx_smi.sql` → `int_smi_diagnoses_all.sql` ✅ + `fct_person_smi_register.sql`
+- [x] `fct_person_dx_ld.sql` → `int_learning_disability_diagnoses_all.sql` ✅ + `fct_person_learning_disability_register.sql`
 
-#### 4.4 Other Disease Registers ✅ **Priority: MEDIUM**
-- [ ] `fct_person_dx_cancer.sql` → `fct_person_cancer_register.sql`
-- [ ] `fct_person_dx_osteoporosis.sql` → `fct_person_osteoporosis_register.sql`
-- [ ] `fct_person_dx_palliative_care.sql` → `fct_person_palliative_care_register.sql`
-- [ ] `fct_person_dx_ra.sql` → `fct_person_rheumatoid_arthritis_register.sql`
-- [ ] `fct_person_dx_obesity.sql` → `fct_person_obesity_register.sql`
-- [ ] `fct_person_dx_nafld.sql` → `fct_person_nafld_register.sql`
-- [ ] `fct_person_dx_fhyp.sql` → `fct_person_familial_hypercholesterolaemia_register.sql`
-- [ ] `fct_person_dx_ndh.sql` → `fct_person_diabetic_retinopathy_register.sql`
-- [ ] `fct_person_dx_gestational_diabetes.sql` → `fct_person_gestational_diabetes_register.sql`
+#### 4.3 Cardiovascular QOF Registers ✅ **Priority: HIGH**
+- [x] `fct_person_dx_chd.sql` → `int_chd_diagnoses_all.sql` ✅ + `fct_person_chd_register.sql`
+- [x] `fct_person_dx_af.sql` → `int_atrial_fibrillation_diagnoses_all.sql` ✅ + `fct_person_atrial_fibrillation_register.sql`
+- [x] `fct_person_dx_pad.sql` → `int_pad_diagnoses_all.sql` ✅ + `fct_person_pad_register.sql`
+- [x] `fct_person_dx_stia.sql` → `int_stroke_tia_diagnoses_all.sql` ✅ + `fct_person_stroke_tia_register.sql`
+
+#### 4.4 Cancer & Chronic Disease QOF Registers ✅ **Priority: MEDIUM**
+- [ ] `fct_person_dx_cancer.sql` → `int_cancer_diagnoses_all.sql` + `fct_person_cancer_register.sql`
+- [ ] `fct_person_dx_osteoporosis.sql` → `int_osteoporosis_diagnoses_all.sql` + `fct_person_osteoporosis_register.sql`
+- [ ] `fct_person_dx_palliative_care.sql` → `int_palliative_care_diagnoses_all.sql` + `fct_person_palliative_care_register.sql`
+- [ ] `fct_person_dx_ra.sql` → `int_rheumatoid_arthritis_diagnoses_all.sql` + `fct_person_rheumatoid_arthritis_register.sql`
+
+#### 4.5 Metabolic & Specialist QOF Registers ✅ **Priority: MEDIUM**
+- [ ] `fct_person_dx_obesity.sql` → `int_obesity_diagnoses_all.sql` + `fct_person_obesity_register.sql`
+- [ ] `fct_person_dx_nafld.sql` → `int_nafld_diagnoses_all.sql` + `fct_person_nafld_register.sql`
+- [ ] `fct_person_dx_fhyp.sql` → `int_familial_hypercholesterolaemia_diagnoses_all.sql` + `fct_person_familial_hypercholesterolaemia_register.sql`
+- [ ] `fct_person_dx_ndh.sql` → `int_diabetic_retinopathy_diagnoses_all.sql` + `fct_person_diabetic_retinopathy_register.sql`
+- [ ] `fct_person_dx_gestational_diabetes.sql` → `int_gestational_diabetes_diagnoses_all.sql` + `fct_person_gestational_diabetes_register.sql`
 
 ### Phase 5: Clinical Quality & Status Fact Tables
 
@@ -677,15 +740,16 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - ✅ **Staging Layer**: Complete for all source systems
 - ✅ **Core Dimensions**: Complete for person/patient/practice relationships
 - ✅ **Phase 1 Intermediate**: **100% COMPLETE!** All core clinical observations, laboratory results, risk assessments, clinical examinations, and health checks migrated
-- ✅ **Phase 2.1, 2.2, 2.3 & 2.4**: **COMPLETE!** All high-priority and medium-priority medications migrated (diabetes, cardiovascular, respiratory, PPIs, NSAIDs, antidepressants, cardiac glycosides, lithium)
-- 🎯 **Major Milestone**: **Phase 1 + Most of Phase 2 COMPLETE** - comprehensive foundation covering clinical observations, major medication classes, cardiovascular risk, diabetes management, kidney function, respiratory care, gastrointestinal protection, mental health medications, and cardiac therapy
+- ✅ **Phase 2.1-2.5**: **100% COMPLETE!** All medication intermediate tables migrated (diabetes, cardiovascular, respiratory, gastrointestinal, mental health, cardiac therapy, specialist medications)
+- 🎯 **MAJOR MILESTONE**: **Phase 1 + Phase 2 FULLY COMPLETE** - comprehensive foundation covering all clinical observations AND all medication classes for complete medication therapy management
 
 #### Next Priority Actions
 1. **✅ Phase 1 COMPLETE**: All core clinical observations and measurements
-2. **✅ Phase 2.1-2.4 COMPLETE**: High-priority and medium-priority medications (diabetes, cardiovascular, respiratory, common medications)
-3. **🎯 Next Focus**: **Phase 2.5 - Specialist Medications** (valproate, asthma, epilepsy, allergy medications - LOW priority)
-4. **Or Skip to Phase 3**: Clinical condition diagnosis intermediate tables (HIGH priority for disease registers)
-5. **Then Phase 4**: Disease register fact tables (requires Phase 1-3 complete)
+2. **✅ Phase 2 COMPLETE**: All medication intermediate tables (diabetes, cardiovascular, respiratory, gastrointestinal, mental health, cardiac therapy, specialist medications)
+3. **🎯 Phase 3.1 - Major Chronic Conditions**: **100% COMPLETE** (diabetes, COPD, heart failure, hypertension, CKD, depression, asthma, dementia, epilepsy, SMI, learning disability all complete)
+4. **✅ Phase 4.3 COMPLETE**: Cardiovascular QOF Registers (CHD, AF, PAD, Stroke/TIA) ✅ **COMPLETE**
+5. **Next Priority**: Phase 4.4-4.5 Cancer, Chronic Disease, and Metabolic QOF Registers
+6. **Finally**: Phase 4 Disease register fact tables (leverages Phase 1-3 foundation with improved SRP architecture)
 
 ## Contact & Questions
 

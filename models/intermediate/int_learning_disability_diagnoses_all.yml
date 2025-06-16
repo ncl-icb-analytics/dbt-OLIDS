@@ -1,0 +1,169 @@
+version: 2
+
+models:
+  - name: int_learning_disability_diagnoses_all
+    description: |
+      All learning disability diagnosis observations from clinical records using QOF cluster ID.
+      Provides comprehensive data collection for learning disability register and special needs service planning.
+      
+      QOF Cluster IDs Used:
+      - LD_DIAGNOSIS_COD: Learning disability diagnoses
+      
+      Clinical Purpose:
+      - QOF learning disability register data collection (age ≥14)
+      - Learning disability care pathway monitoring
+      - Special needs service planning
+      - Health equity monitoring
+      
+      Key QOF Requirements:
+      - Register inclusion: Age ≥14 and presence of learning disability diagnosis (LD_DIAGNOSIS_COD)
+      - No resolution codes - learning disability is considered permanent condition
+      - Age threshold of 14 years for register inclusion
+      - No upper age limit
+      
+      Note: Learning disability does not have resolved codes as it is considered a permanent condition.
+      The register is based purely on the presence of diagnostic codes and age criteria.
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_learning_disability_register.sql which applies QOF business rules and age filtering.
+      
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "LD_DIAGNOSIS_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the learning disability diagnosis observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for learning disability diagnosis"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the learning disability diagnosis code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID (LD_DIAGNOSIS_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['LD_DIAGNOSIS_COD']
+              
+      - name: is_learning_disability_diagnosis_code
+        description: "Flag indicating learning disability diagnosis (LD_DIAGNOSIS_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_ld_diagnosis_date
+        description: "Earliest learning disability diagnosis date for this person"
+        
+      - name: latest_ld_diagnosis_date
+        description: "Latest learning disability diagnosis date for this person"
+        
+      - name: total_ld_diagnoses
+        description: "Total count of learning disability diagnoses for this person"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              severity: warn
+              
+      - name: ld_observation_type
+        description: "Classification of this specific observation (Learning Disability Diagnosis, Unknown)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Learning Disability Diagnosis', 'Unknown']
+              
+      - name: has_learning_disability_diagnosis
+        description: "QOF context: person has learning disability diagnosis (always true)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_recent_ld_diagnosis
+        description: "Clinical flag: learning disability diagnosis in last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_ld_diagnosis_last_24m
+        description: "Clinical flag: learning disability diagnosis in last 24 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_single_ld_diagnosis
+        description: "Clinical indicator: only one learning disability diagnosis recorded"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_multiple_ld_diagnoses
+        description: "Clinical indicator: multiple learning disability diagnoses recorded"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: days_since_first_ld_diagnosis
+        description: "Number of days since first learning disability diagnosis (for service planning)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 36500  # 100 years
+              severity: warn
+              
+      - name: is_newly_diagnosed_ld
+        description: "Clinical flag: learning disability diagnosed in last 2 years"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_established_ld
+        description: "Clinical flag: learning disability diagnosed more than 2 years ago"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_long_term_ld
+        description: "Clinical flag: learning disability diagnosed more than 5 years ago"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_ld_progression_codes
+        description: "Service planning indicator: multiple diagnoses spanning >6 months (may indicate additional assessments)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: all_ld_concept_codes
+        description: "Array of all learning disability diagnosis concept codes for this person"
+        
+      - name: all_ld_concept_displays
+        description: "Array of all learning disability diagnosis concept displays for this person" 

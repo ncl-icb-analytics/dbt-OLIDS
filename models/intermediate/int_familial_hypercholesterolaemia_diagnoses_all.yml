@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: int_familial_hypercholesterolaemia_diagnoses_all
+    description: |
+      All familial hypercholesterolaemia diagnosis observations from clinical records.
+      Simple diagnostic pattern with no resolved codes as FHYP is a permanent genetic condition.
+      
+      QOF Register Logic:
+      - Familial hypercholesterolaemia diagnosis (FHYP_COD)
+      - No resolution codes - FHYP is permanent genetic condition
+      - No age restrictions for FHYP register
+      - Important for high-intensity statin therapy and family screening
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_familial_hypercholesterolaemia_register.sql which applies QOF business rules.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "FHYP_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the familial hypercholesterolaemia diagnosis observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for familial hypercholesterolaemia diagnosis"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the familial hypercholesterolaemia diagnosis code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID (FHYP_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['FHYP_COD']
+              
+      - name: is_fhyp_diagnosis_code
+        description: "Flag indicating familial hypercholesterolaemia diagnosis (FHYP_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

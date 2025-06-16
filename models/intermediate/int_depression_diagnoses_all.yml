@@ -1,0 +1,214 @@
+version: 2
+
+models:
+  - name: int_depression_diagnoses_all
+    description: |
+      All depression diagnosis and care pathway observations from clinical records using QOF cluster IDs.
+      Provides comprehensive data collection for depression register and care monitoring.
+      
+      QOF Cluster IDs Used:
+      - DEPR_COD: Depression diagnoses
+      - DEPRES_COD: Depression resolved/remission codes
+      - DEPRVW_COD: Depression review codes (QOF timing: 10-56 days post-diagnosis)
+      - DEPRINVITE_COD: Depression invite codes
+      - DEPRPCADEC_COD: Depression PCA decline codes  
+      - DEPRPCAPU_COD: Depression PCA unsuitable codes
+      
+      Clinical Purpose:
+      - QOF depression register data collection (aged 18+, unresolved episode since 1 April 2006)
+      - Depression care pathway monitoring
+      - Review and invitation tracking  
+      - Resolution status monitoring
+      
+      Key QOF Requirements:
+      - Register inclusion: Age ≥18, latest unresolved episode since 1 April 2006
+      - Recent episode tracking (12, 15, 24 months)
+      - Review timing validation (10-56 days post-diagnosis)
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_depression_register.sql which applies QOF business rules.
+      
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "DEPR_COD,DEPRES_COD,DEPRVW_COD,DEPRINVITE_COD,DEPRPCADEC_COD,DEPRPCAPU_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the depression-related observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for depression-related observation"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the depression-related code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID for depression care pathway"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['DEPR_COD', 'DEPRES_COD', 'DEPRVW_COD', 'DEPRINVITE_COD', 'DEPRPCADEC_COD', 'DEPRPCAPU_COD']
+              
+      - name: is_depression_diagnosis_code
+        description: "Flag indicating depression diagnosis (DEPR_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_depression_resolved_code
+        description: "Flag indicating depression resolved/remission (DEPRES_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_depression_review_code
+        description: "Flag indicating depression review (DEPRVW_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_depression_invite_code
+        description: "Flag indicating depression invite (DEPRINVITE_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_depression_pca_decline_code
+        description: "Flag indicating depression PCA decline (DEPRPCADEC_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_depression_pca_unsuitable_code
+        description: "Flag indicating depression PCA unsuitable (DEPRPCAPU_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_depression_date
+        description: "Earliest depression diagnosis date for this person"
+        
+      - name: latest_depression_date
+        description: "Latest depression diagnosis date for this person"
+        
+      - name: earliest_resolved_date
+        description: "Earliest depression resolved date for this person"
+        
+      - name: latest_resolved_date
+        description: "Latest depression resolved date for this person"
+        
+      - name: earliest_review_date
+        description: "Earliest depression review date for this person"
+        
+      - name: latest_review_date
+        description: "Latest depression review date for this person"
+        
+      - name: earliest_invite_date
+        description: "Earliest depression invite date for this person"
+        
+      - name: latest_invite_date
+        description: "Latest depression invite date for this person"
+        
+      - name: earliest_pca_decline_date
+        description: "Earliest depression PCA decline date for this person"
+        
+      - name: latest_pca_decline_date
+        description: "Latest depression PCA decline date for this person"
+        
+      - name: earliest_pca_unsuitable_date
+        description: "Earliest depression PCA unsuitable date for this person"
+        
+      - name: latest_pca_unsuitable_date
+        description: "Latest depression PCA unsuitable date for this person"
+        
+      - name: is_depression_currently_resolved
+        description: "QOF indicator: depression is currently resolved (latest resolved > latest diagnosis)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: depression_observation_type
+        description: "Classification of this specific observation"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Depression Diagnosis', 'Depression Resolved', 'Depression Review', 'Depression Invite', 'Depression PCA Decline', 'Depression PCA Unsuitable', 'Unknown']
+              
+      - name: has_potential_qof_depression
+        description: "QOF context: person has potential QOF depression (unresolved since 1 April 2006)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_episode_last_12m
+        description: "QOF flag: depression episode in last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_episode_last_15m
+        description: "QOF flag: depression episode in last 15 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_episode_last_24m
+        description: "QOF flag: depression episode in last 24 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_valid_qof_review_timing
+        description: "QOF validation: review occurred 10-56 days after latest diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: all_depression_concept_codes
+        description: "Array of all depression diagnosis concept codes for this person"
+        
+      - name: all_depression_concept_displays
+        description: "Array of all depression diagnosis concept displays for this person"
+        
+      - name: all_resolved_concept_codes
+        description: "Array of all depression resolved concept codes for this person"
+        
+      - name: all_review_concept_codes
+        description: "Array of all depression review concept codes for this person"
+        
+      - name: all_invite_concept_codes
+        description: "Array of all depression invite concept codes for this person"
+        
+      - name: all_pca_decline_concept_codes
+        description: "Array of all depression PCA decline concept codes for this person"
+        
+      - name: all_pca_unsuitable_concept_codes
+        description: "Array of all depression PCA unsuitable concept codes for this person" 

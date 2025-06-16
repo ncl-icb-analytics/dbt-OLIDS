@@ -1,0 +1,195 @@
+version: 2
+
+models:
+  - name: int_epilepsy_diagnoses_all
+    description: |
+      All epilepsy diagnosis observations from clinical records using QOF cluster IDs.
+      Provides comprehensive data collection for epilepsy register and neurological management.
+      
+      QOF Cluster IDs Used:
+      - EPIL_COD: Epilepsy diagnoses
+      - EPILRES_COD: Epilepsy resolved/remission codes
+      
+      Clinical Purpose:
+      - QOF epilepsy register data collection (aged 18+, active epilepsy diagnosis + recent medication)
+      - Epilepsy care pathway monitoring
+      - Seizure management support
+      - Medication therapy integration for neurological conditions
+      
+      Key QOF Requirements:
+      - Register inclusion: Age ≥18, active epilepsy diagnosis (latest EPIL_COD > latest EPILRES_COD)
+      - AND recent epilepsy medication order (within last 6 months)
+      - Neurological condition with specific medication monitoring requirements
+      
+      Note: This model provides diagnosis codes only. Medication integration is handled 
+      in the corresponding fact table which joins to intermediate_epilepsy_orders_6m.
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_epilepsy_register.sql which applies QOF business rules and medication integration.
+      
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "EPIL_COD,EPILRES_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the epilepsy diagnosis observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for epilepsy diagnosis"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the epilepsy diagnosis code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID (EPIL_COD, EPILRES_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['EPIL_COD', 'EPILRES_COD']
+              
+      - name: is_epilepsy_diagnosis_code
+        description: "Flag indicating epilepsy diagnosis (EPIL_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_epilepsy_resolved_code
+        description: "Flag indicating epilepsy resolved/remission (EPILRES_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_epilepsy_date
+        description: "Earliest epilepsy diagnosis date for this person"
+        
+      - name: latest_epilepsy_date
+        description: "Latest epilepsy diagnosis date for this person"
+        
+      - name: earliest_resolved_date
+        description: "Earliest epilepsy resolved date for this person"
+        
+      - name: latest_resolved_date
+        description: "Latest epilepsy resolved date for this person"
+        
+      - name: is_epilepsy_currently_resolved
+        description: "QOF indicator: epilepsy is currently resolved (latest resolved > latest diagnosis)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: epilepsy_observation_type
+        description: "Classification of this specific observation (Epilepsy Diagnosis, Epilepsy Resolved, Unknown)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Epilepsy Diagnosis', 'Epilepsy Resolved', 'Unknown']
+              
+      - name: has_active_epilepsy_diagnosis
+        description: "QOF context: person has active epilepsy diagnosis (unresolved)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_recent_epilepsy_diagnosis
+        description: "Clinical flag: epilepsy diagnosis in last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_epilepsy_diagnosis_last_24m
+        description: "Clinical flag: epilepsy diagnosis in last 24 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_epilepsy_diagnosis_last_6m
+        description: "Clinical flag: epilepsy diagnosis in last 6 months (important for medication monitoring)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_single_epilepsy_diagnosis
+        description: "Clinical indicator: only one epilepsy diagnosis recorded"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_multiple_epilepsy_diagnoses
+        description: "Clinical indicator: multiple epilepsy diagnoses recorded"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: days_since_first_diagnosis
+        description: "Number of days since first epilepsy diagnosis (for medication monitoring)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 36500  # 100 years
+              severity: warn
+              
+      - name: is_newly_diagnosed_epilepsy
+        description: "Clinical flag: epilepsy diagnosed in last 2 years"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_established_epilepsy
+        description: "Clinical flag: epilepsy diagnosed more than 2 years ago"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_recent_resolution_code
+        description: "Clinical flag: resolution code in last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_long_term_epilepsy_management
+        description: "Clinical indicator: epilepsy management spanning >12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: all_epilepsy_concept_codes
+        description: "Array of all epilepsy diagnosis concept codes for this person"
+        
+      - name: all_epilepsy_concept_displays
+        description: "Array of all epilepsy diagnosis concept displays for this person"
+        
+      - name: all_resolved_concept_codes
+        description: "Array of all epilepsy resolved concept codes for this person"
+        
+      - name: all_resolved_concept_displays
+        description: "Array of all epilepsy resolved concept displays for this person" 

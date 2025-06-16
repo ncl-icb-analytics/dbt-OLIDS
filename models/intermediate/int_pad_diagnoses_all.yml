@@ -1,0 +1,162 @@
+version: 2
+
+models:
+  - name: int_pad_diagnoses_all
+    description: |
+      All peripheral arterial disease (PAD) diagnosis observations from clinical records using QOF cluster ID.
+      Provides comprehensive data collection for PAD register and peripheral vascular disease management.
+      
+      QOF Cluster IDs Used:
+      - PAD_COD: Peripheral arterial disease diagnoses
+      
+      Clinical Purpose:
+      - QOF PAD register data collection
+      - Peripheral vascular disease monitoring
+      - Cardiovascular risk assessment
+      - Limb preservation planning
+      
+      Key QOF Requirements:
+      - Register inclusion: Presence of PAD diagnosis code (PAD_COD)
+      - No age restrictions for PAD register
+      - No resolution codes - PAD is considered permanent condition
+      - Important for cardiovascular disease management
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_pad_register.sql which applies QOF business rules.
+      
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "PAD_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the PAD diagnosis observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for PAD diagnosis"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the PAD diagnosis code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID (PAD_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PAD_COD']
+              
+      - name: is_pad_diagnosis_code
+        description: "Flag indicating PAD diagnosis (PAD_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: earliest_pad_diagnosis_date
+        description: "Earliest PAD diagnosis date for this person"
+        
+      - name: latest_pad_diagnosis_date
+        description: "Latest PAD diagnosis date for this person"
+        
+      - name: total_pad_diagnoses
+        description: "Total number of PAD diagnosis codes for this person"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 100
+              
+      - name: pad_observation_type
+        description: "Classification of this observation"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PAD Diagnosis', 'Unknown']
+              
+      - name: has_pad_diagnosis
+        description: "Flag indicating presence of PAD diagnosis"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_recent_pad_diagnosis
+        description: "Flag indicating PAD diagnosis in last 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_pad_diagnosis_last_24m
+        description: "Flag indicating PAD diagnosis in last 24 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_single_pad_diagnosis
+        description: "Flag indicating only one PAD diagnosis code"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_multiple_pad_diagnoses
+        description: "Flag indicating multiple PAD diagnosis codes"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: days_since_first_pad_diagnosis
+        description: "Number of days since first PAD diagnosis"
+        
+      - name: is_newly_diagnosed_pad
+        description: "Flag indicating PAD diagnosed within last year"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_established_pad
+        description: "Flag indicating PAD diagnosed over a year ago"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: is_long_term_pad
+        description: "Flag indicating PAD diagnosed over 5 years ago"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: has_pad_progression_codes
+        description: "Flag indicating multiple PAD codes over time suggesting progression"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+      - name: all_pad_concept_codes
+        description: "Array of all PAD concept codes for this person"
+        
+      - name: all_pad_concept_displays
+        description: "Array of all PAD concept displays for this person" 

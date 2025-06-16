@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: int_rheumatoid_arthritis_diagnoses_all
+    description: |
+      All rheumatoid arthritis diagnosis observations from clinical records.
+      Simple diagnostic pattern with no resolved codes as RA is considered permanent.
+      
+      QOF Register Logic:
+      - Rheumatoid arthritis diagnosis (RARTH_COD) for patients aged 16+
+      - No resolution codes - RA is permanent condition
+      - Age restrictions applied in fact layer
+      
+      Includes ALL persons following intermediate layer principles.
+      Use as input for fct_person_rheumatoid_arthritis_register.sql which applies QOF business rules.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "RARTH_COD"
+          
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          
+      - name: clinical_effective_date
+        description: "Date of the rheumatoid arthritis diagnosis observation"
+        tests:
+          - not_null
+          
+      - name: concept_code
+        description: "SNOMED concept code for rheumatoid arthritis diagnosis"
+        tests:
+          - not_null
+          
+      - name: concept_display
+        description: "Description of the rheumatoid arthritis diagnosis code"
+        tests:
+          - not_null
+          
+      - name: source_cluster_id
+        description: "QOF cluster ID (RARTH_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['RARTH_COD']
+              
+      - name: is_rheumatoid_arthritis_diagnosis_code
+        description: "Flag indicating rheumatoid arthritis diagnosis (RARTH_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 
