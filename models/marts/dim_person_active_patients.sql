@@ -4,14 +4,15 @@
         tags=['dimension', 'person', 'active'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Dimension table providing active patient status at person level. Excludes deceased patients and dummy patients. Includes practice registration details.'"
+            "COMMENT ON TABLE {{ this }} IS 'Dimension table providing active patient status at person level. Uses proper registration data from episode_of_care to determine current practice. Excludes deceased patients and dummy patients.'"
         ]
     )
 }}
 
 -- Person Active Patients Dimension Table
+-- Now uses proper registration data from episode_of_care via int_patient_registrations
 -- Filters out deceased patients and dummy patients
--- Links PATIENT_PERSON, PATIENT, PERSON, and ORGANISATION tables
+-- Links PATIENT_PERSON, PATIENT, PERSON, and proper registration data
 
 WITH patient_ids_per_person AS (
     -- First collect all patient IDs for each person
@@ -22,8 +23,25 @@ WITH patient_ids_per_person AS (
     GROUP BY pp.person_id
 ),
 
+current_registrations AS (
+    -- Get current registration details per person
+    SELECT
+        ipr.person_id,
+        ipr.organisation_id AS current_practice_id,
+        ipr.practice_name AS current_practice_name,
+        ipr.practice_ods_code AS current_practice_code,
+        ipr.registration_start_date AS current_registration_start,
+        ipr.registration_duration_days AS current_registration_duration,
+        ipr.total_registrations_count,
+        ipr.has_changed_practice,
+        -- Additional registration metadata
+        ipr.care_manager_practitioner_id
+    FROM {{ ref('int_patient_registrations') }} ipr
+    WHERE ipr.is_current_registration = TRUE
+),
+
 latest_patient_record_per_person AS (
-    -- Get the latest patient record for each person
+    -- Get the latest patient record for each person with registration details
     SELECT
         pp.person_id,
         p.sk_patient_id,
@@ -33,8 +51,7 @@ latest_patient_record_per_person AS (
         CASE
             WHEN p.death_year IS NOT NULL THEN FALSE -- Deceased
             WHEN p.is_dummy_patient THEN FALSE -- Dummy patient
-            WHEN php.practice_close_date IS NOT NULL THEN FALSE -- Practice closed
-            WHEN php.practice_is_obsolete THEN FALSE -- Practice obsolete
+            WHEN cr.person_id IS NULL THEN FALSE -- No current registration
             ELSE TRUE
         END AS is_active,
         p.death_year IS NOT NULL AS is_deceased,
@@ -45,17 +62,15 @@ latest_patient_record_per_person AS (
         p.birth_month,
         p.death_year,
         p.death_month,
-        -- Practice details from DIM_PERSON_HISTORICAL_PRACTICE
-        php.practice_id AS registered_practice_id,
-        php.practice_code,
-        php.practice_name,
-        php.practice_type_code,
-        php.practice_type_desc,
-        php.practice_postcode,
-        php.practice_parent_org_id,
-        php.practice_open_date,
-        php.practice_close_date,
-        php.practice_is_obsolete,
+        -- Registration details from proper episode_of_care data
+        cr.current_practice_id,
+        cr.current_practice_code,
+        cr.current_practice_name,
+        cr.current_registration_start,
+        cr.current_registration_duration,
+        cr.total_registrations_count,
+        cr.has_changed_practice,
+        cr.care_manager_practitioner_id,
         p.record_owner_organisation_code AS record_owner_org_code,
         p.lds_datetime_data_acquired AS latest_record_date,
         -- Rank to get the latest record
@@ -72,9 +87,8 @@ latest_patient_record_per_person AS (
         ON pp.person_id = per.id
     JOIN patient_ids_per_person pip
         ON pp.person_id = pip.person_id
-    LEFT JOIN {{ ref('dim_person_historical_practice') }} php
-        ON pp.person_id = php.person_id
-        AND php.is_current_practice = TRUE
+    LEFT JOIN current_registrations cr
+        ON pp.person_id = cr.person_id
 )
 
 -- Select only the latest record per person and only active patients
@@ -92,16 +106,15 @@ SELECT
     birth_month,
     death_year,
     death_month,
-    registered_practice_id,
-    practice_code,
-    practice_name,
-    practice_type_code,
-    practice_type_desc,
-    practice_postcode,
-    practice_parent_org_id,
-    practice_open_date,
-    practice_close_date,
-    practice_is_obsolete,
+    -- Registration-based practice information
+    current_practice_id,
+    current_practice_code,
+    current_practice_name,
+    current_registration_start,
+    current_registration_duration,
+    total_registrations_count,
+    has_changed_practice,
+    care_manager_practitioner_id,
     record_owner_org_code,
     latest_record_date
 FROM latest_patient_record_per_person

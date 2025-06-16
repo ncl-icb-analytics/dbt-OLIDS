@@ -2,39 +2,38 @@
     config(
         materialized='table',
         tags=['dimension', 'person', 'practice', 'historical'],
-        cluster_by=['person_id'],
+        cluster_by=['person_id', 'registration_start_date'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Dimension table tracking all practice registrations (current and historical) for each person. Each row represents a unique practice registration period, determined by aggregating GP relationships - using the earliest GP assignment as the registration start date and the latest GP assignment end date as the registration end date for each practice.'"
+            "COMMENT ON TABLE {{ this }} IS 'Dimension table tracking all practice registrations (current and historical) for each person. Each row represents a unique practice registration period derived from episode_of_care data, providing accurate registration start and end dates.'"
         ]
     )
 }}
 
 -- Person Historical Practice Dimension Table
+-- Now uses proper registration data from episode_of_care via int_patient_registrations
 -- Tracks all practice registrations (current and historical) for each person
 
-WITH practice_registration_periods AS (
-    -- Aggregate practice registrations by person and practice, finding earliest start and latest end dates
+WITH enriched_registrations AS (
+    -- Get all registrations with additional practice details
     SELECT 
-        prp.person_id,
-        prp.organisation_id,
-        MIN(prp.start_date) AS registration_start_date,
-        MAX(prp.end_date) AS registration_end_date
-    FROM {{ ref('stg_olids_patient_registered_practitioner_in_role') }} prp
-    GROUP BY 
-        prp.person_id,
-        prp.organisation_id
-),
-
-all_registrations AS (
-    -- Gets all practice registrations for each person with sequencing
-    SELECT 
-        pp.person_id,
-        p.sk_patient_id,
-        prp.organisation_id AS practice_id,
-        prp.registration_start_date,
-        prp.registration_end_date,
-        o.organisation_code AS practice_code,
-        o.name AS practice_name,
+        ipr.person_id,
+        ipr.sk_patient_id,
+        ipr.organisation_id AS practice_id,
+        ipr.practice_name,
+        ipr.practice_ods_code AS practice_code,
+        ipr.registration_start_date,
+        ipr.registration_end_date,
+        ipr.effective_end_date,
+        ipr.registration_duration_days,
+        ipr.registration_status,
+        ipr.is_current_registration,
+        ipr.is_latest_registration,
+        ipr.registration_sequence,
+        ipr.total_registrations_count,
+        ipr.gap_since_previous_registration_days,
+        ipr.has_changed_practice,
+        ipr.care_manager_practitioner_id,
+        -- Add organisation details
         o.type_code AS practice_type_code,
         o.type_desc AS practice_type_desc,
         o.postcode AS practice_postcode,
@@ -42,32 +41,59 @@ all_registrations AS (
         o.open_date AS practice_open_date,
         o.close_date AS practice_close_date,
         o.is_obsolete AS practice_is_obsolete,
-        -- Sequence number (1 is oldest registration)
-        ROW_NUMBER() OVER (
-            PARTITION BY pp.person_id 
-            ORDER BY 
-                prp.registration_start_date ASC,
-                prp.registration_end_date ASC NULLS LAST
-        ) AS registration_sequence,
-        -- Reverse sequence to identify current registration (1 is newest)
-        ROW_NUMBER() OVER (
-            PARTITION BY pp.person_id 
-            ORDER BY 
-                prp.registration_start_date DESC,
-                prp.registration_end_date DESC NULLS FIRST
-        ) AS reverse_sequence,
-        -- Count total registrations per person
-        COUNT(*) OVER (PARTITION BY pp.person_id) AS total_registrations
-    FROM {{ ref('stg_olids_patient_person') }} pp
-    JOIN {{ ref('stg_olids_patient') }} p 
-        ON pp.patient_id = p.id
-    JOIN practice_registration_periods prp 
-        ON pp.person_id = prp.person_id
-    JOIN {{ ref('stg_olids_organisation') }} o 
-        ON prp.organisation_id = o.id
+        -- Additional registration analysis
+        CASE 
+            WHEN ipr.registration_end_date IS NULL THEN 'Open Registration'
+            WHEN ipr.registration_end_date > CURRENT_DATE() THEN 'Future End Date'
+            ELSE 'Closed Registration'
+        END AS registration_type,
+        -- Calculate age at registration start (approximate)
+        CASE 
+            WHEN p.birth_year IS NOT NULL 
+            THEN YEAR(ipr.registration_start_date) - p.birth_year
+            ELSE NULL
+        END AS age_at_registration_start
+    FROM {{ ref('int_patient_registrations') }} ipr
+    LEFT JOIN {{ ref('stg_olids_organisation') }} o 
+        ON ipr.organisation_id = o.id
+    LEFT JOIN {{ ref('stg_olids_patient') }} p
+        ON ipr.patient_id = p.id
+),
+
+registration_transitions AS (
+    -- Add information about transitions between practices
+    SELECT 
+        er.*,
+        -- Get previous practice details
+        LAG(er.practice_id) OVER (
+            PARTITION BY er.person_id 
+            ORDER BY er.registration_start_date
+        ) AS previous_practice_id,
+        LAG(er.practice_name) OVER (
+            PARTITION BY er.person_id 
+            ORDER BY er.registration_start_date
+        ) AS previous_practice_name,
+        LAG(er.registration_end_date) OVER (
+            PARTITION BY er.person_id 
+            ORDER BY er.registration_start_date
+        ) AS previous_registration_end_date,
+        -- Get next practice details
+        LEAD(er.practice_id) OVER (
+            PARTITION BY er.person_id 
+            ORDER BY er.registration_start_date
+        ) AS next_practice_id,
+        LEAD(er.practice_name) OVER (
+            PARTITION BY er.person_id 
+            ORDER BY er.registration_start_date
+        ) AS next_practice_name,
+        LEAD(er.registration_start_date) OVER (
+            PARTITION BY er.person_id 
+            ORDER BY er.registration_start_date
+        ) AS next_registration_start_date
+    FROM enriched_registrations er
 )
 
--- Select all registrations with additional flags
+-- Final selection with all registration history
 SELECT 
     person_id,
     sk_patient_id,
@@ -83,9 +109,27 @@ SELECT
     practice_is_obsolete,
     registration_start_date,
     registration_end_date,
+    effective_end_date,
+    registration_duration_days,
+    registration_status,
+    registration_type,
+    is_current_registration,
+    is_latest_registration,
     registration_sequence,
-    total_registrations,
-    -- Flag for current practice (reverse_sequence = 1)
-    reverse_sequence = 1 AS is_current_practice
-FROM all_registrations
-ORDER BY person_id, registration_sequence 
+    total_registrations_count,
+    gap_since_previous_registration_days,
+    has_changed_practice,
+    age_at_registration_start,
+    care_manager_practitioner_id,
+    -- Practice transition information
+    previous_practice_id,
+    previous_practice_name,
+    previous_registration_end_date,
+    next_practice_id,
+    next_practice_name,
+    next_registration_start_date,
+    -- Additional computed fields
+    registration_sequence = 1 AS is_first_registration,
+    registration_sequence = total_registrations_count AS is_last_registration
+FROM registration_transitions
+ORDER BY person_id, registration_start_date 
