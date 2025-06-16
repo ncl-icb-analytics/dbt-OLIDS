@@ -18,6 +18,7 @@
         o.problem_end_date,
         o.observation_core_concept_id,
         o.observation_raw_concept_id,
+        mc.concept_id AS mapped_concept_id,
         mc.concept_code AS mapped_concept_code,
         mc.code_description AS mapped_concept_display,
         cc.cluster_id,

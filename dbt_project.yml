@@ -17,9 +17,15 @@ models:
     +database: DATA_LAB_NCL_TRAINING_TEMP
     staging:
       +materialized: view
+      +database: DATA_LAB_NCL_TRAINING_TEMP
       # Models reading from Data_Store_OLIDS_Dummy
       olids:
         +database: DATA_LAB_NCL_TRAINING_TEMP  # Where to create the views
-        +schema: DBT
         +grants:
           reference_usage: ["Data_Store_OLIDS_Dummy"]  # Database we need to read from
+    intermediate:
+      +materialized: table
+      +database: DATA_LAB_NCL_TRAINING_TEMP
+    marts:
+      +materialized: table
+      +database: DATA_LAB_NCL_TRAINING_TEMP

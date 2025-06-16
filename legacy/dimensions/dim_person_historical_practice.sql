@@ -17,20 +17,32 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     TOTAL_REGISTRATIONS NUMBER COMMENT 'Total number of practice registrations for this person',
     IS_CURRENT_PRACTICE BOOLEAN COMMENT 'Flag indicating if this is the current practice registration'
 )
-COMMENT = 'Dimension table tracking all practice registrations (current and historical) for each person, including comprehensive practice details. Each row represents a unique practice registration period.'
+COMMENT = 'Dimension table tracking all practice registrations (current and historical) for each person. Each row represents a unique practice registration period, determined by aggregating GP relationships - using the earliest GP assignment as the registration start date and the latest GP assignment end date as the registration end date for each practice. This ensures continuous registration periods even when GPs change within the same practice.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
-WITH all_registrations AS (
+WITH practice_registration_periods AS (
+    -- Aggregate practice registrations by person and practice, finding earliest start and latest end dates
+    SELECT 
+        prp."person_id",
+        prp."organisation_id",
+        MIN(prp."start_date") AS registration_start_date,
+        MAX(prp."end_date") AS registration_end_date
+    FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_REGISTERED_PRACTITIONER_IN_ROLE prp
+    GROUP BY 
+        prp."person_id",
+        prp."organisation_id"
+),
+all_registrations AS (
     -- Gets all practice registrations for each person with sequencing
     SELECT 
         pp."person_id" AS PERSON_ID,
         p."sk_patient_id" AS SK_PATIENT_ID,
         prp."organisation_id" AS PRACTICE_ID,
-        prp."start_date" AS REGISTRATION_START_DATE,
-        prp."end_date" AS REGISTRATION_END_DATE,
+        prp.registration_start_date AS REGISTRATION_START_DATE,
+        prp.registration_end_date AS REGISTRATION_END_DATE,
         o."organisation_code" AS PRACTICE_CODE,
         o."name" AS PRACTICE_NAME,
         o."type_code" AS PRACTICE_TYPE_CODE,
@@ -44,22 +56,22 @@ WITH all_registrations AS (
         ROW_NUMBER() OVER (
             PARTITION BY pp."person_id" 
             ORDER BY 
-                prp."start_date" ASC,
-                COALESCE(prp."end_date", TIMESTAMP '9999-12-31 23:59:59') ASC
+                prp.registration_start_date ASC,
+                COALESCE(prp.registration_end_date, TIMESTAMP '9999-12-31 23:59:59') ASC
         ) AS registration_sequence,
         -- Reverse sequence to identify current registration (1 is newest)
         ROW_NUMBER() OVER (
             PARTITION BY pp."person_id" 
             ORDER BY 
-                prp."start_date" DESC,
-                COALESCE(prp."end_date", TIMESTAMP '9999-12-31 23:59:59') DESC
+                prp.registration_start_date DESC,
+                COALESCE(prp.registration_end_date, TIMESTAMP '9999-12-31 23:59:59') DESC
         ) AS reverse_sequence,
         -- Count total registrations per person
         COUNT(*) OVER (PARTITION BY pp."person_id") AS total_registrations
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
     JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p 
         ON pp."patient_id" = p."id"
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_REGISTERED_PRACTITIONER_IN_ROLE prp 
+    JOIN practice_registration_periods prp 
         ON pp."person_id" = prp."person_id"
     JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.ORGANISATION o 
         ON prp."organisation_id" = o."id"

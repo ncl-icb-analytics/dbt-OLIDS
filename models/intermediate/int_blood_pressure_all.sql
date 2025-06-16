@@ -1,79 +1,69 @@
 {{
     config(
-        materialized = 'table',
-        tags = ['blood_pressure'],
+        materialized='table',
+        tags=['intermediate', 'clinical', 'blood_pressure'],
+        cluster_by=['person_id', 'clinical_effective_date'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Consolidates blood pressure readings from multiple sources into a single comprehensive view per person per date. Features include:\n- Combines systolic and diastolic readings from the same date\n- Identifies readings taken at home or via ABPM (Ambulatory Blood Pressure Monitoring)\n- Validates readings against clinically acceptable ranges (systolic: 40-350 mmHg, diastolic: 20-200 mmHg)\n- Preserves traceability to source observations\n- Aggregates related concept codes and descriptions\n- Filters out NULL dates and implausible values\nThis table serves as the foundation for blood pressure-related indicators and clinical quality measures.'"
+            "COMMENT ON TABLE {{ this }} IS 'All blood pressure readings consolidated from OLIDS observations. Includes systolic, diastolic and combined BP readings with clinical validation. Contains ALL persons (active and inactive) for comprehensive analysis.'"
         ]
     )
 }}
 
--- Consolidates all valid Blood Pressure (BP) readings (Systolic/Diastolic)
--- into single events per person per date.
--- Filters out readings with NULL dates or implausible values.
--- Determines context flags (Home/ABPM) based on associated codes.
+-- Blood Pressure Observations - All readings for ALL persons
+-- Consolidates systolic, diastolic and combined BP readings from OLIDS
+-- Includes all persons (active/inactive, deceased, etc.) for complete intermediate data
 
-WITH base_bp_readings AS (
-    -- Get all BP-related observations using our observation macro
-    -- This includes systolic, diastolic, and context readings
-    {{ get_observations("'SYSBP_COD', 'DIABP_COD', 'BP_COD', 'HOMEBP_COD', 'HOMEAMBBP_COD', 'ABPM_COD'") }}
+WITH bp_observations AS (
+    -- Get all blood pressure observations using our standard macro
+    SELECT 
+        obs.*,
+        -- Validate clinical ranges
+        CASE 
+            WHEN obs.result_value >= 40 AND obs.result_value <= 350 
+            THEN obs.result_value 
+            ELSE NULL 
+        END AS validated_systolic,
+        CASE 
+            WHEN obs.result_value >= 20 AND obs.result_value <= 200 
+            THEN obs.result_value 
+            ELSE NULL 
+        END AS validated_diastolic
+    FROM (
+        {{ get_observations("'SYSBP_COD', 'DIABP_COD', 'BP_COD'") }}
+    ) obs
+    WHERE obs.clinical_effective_date <= CURRENT_DATE() -- No future dates
 ),
 
-flagged_readings AS (
+bp_typed AS (
+    -- Categorise BP readings by type
     SELECT 
         *,
-        -- Flag for Systolic rows based on cluster ID or display text
-        (cluster_id = 'SYSBP_COD' OR 
-         (cluster_id = 'BP_COD' AND mapped_concept_display ILIKE '%systolic%')
-        ) AS is_systolic_reading,
-        
-        -- Flag for Diastolic rows based on cluster ID or display text
-        (cluster_id = 'DIABP_COD' OR 
-         (cluster_id = 'BP_COD' AND mapped_concept_display ILIKE '%diastolic%')
-        ) AS is_diastolic_reading,
-        
-        -- Context flags
-        (cluster_id IN ('HOMEBP_COD', 'HOMEAMBBP_COD')) AS is_home_bp,
-        (cluster_id = 'ABPM_COD') AS is_abpm_bp
-    FROM base_bp_readings
-    WHERE 
-        -- Initial value validation
-        clinical_effective_date IS NOT NULL
-        AND result_value IS NOT NULL
-        AND result_value > 20   -- Minimum plausible BP value
-        AND result_value < 350  -- Maximum plausible BP value
-),
-
-consolidated_readings AS (
-    SELECT
-        person_id,
-        sk_patient_id,
-        clinical_effective_date AS clinical_effective_date,
-        -- Get systolic/diastolic values
-        MAX(CASE WHEN is_systolic_reading THEN result_value END) AS systolic_value,
-        MAX(CASE WHEN is_diastolic_reading THEN result_value END) AS diastolic_value,
-        -- Aggregate context flags using MAX instead of BOOL_OR
-        MAX(CASE WHEN is_home_bp THEN TRUE ELSE FALSE END) AS is_home_bp_event,
-        MAX(CASE WHEN is_abpm_bp THEN TRUE ELSE FALSE END) AS is_abpm_bp_event,
-        -- Get observation IDs for traceability
-        MAX(CASE WHEN is_systolic_reading THEN observation_id END) AS systolic_observation_id,
-        MAX(CASE WHEN is_diastolic_reading THEN observation_id END) AS diastolic_observation_id,
-        -- Collect all related codes and descriptions
-        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (ORDER BY mapped_concept_code) AS all_concept_codes,
-        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (ORDER BY mapped_concept_display) AS all_concept_displays,
-        ARRAY_AGG(DISTINCT cluster_id) WITHIN GROUP (ORDER BY cluster_id) AS all_cluster_ids
-    FROM flagged_readings
-    GROUP BY 
-        person_id,
-        sk_patient_id,
-        clinical_effective_date
+        CASE 
+            WHEN cluster_id = 'SYSBP_COD' THEN 'Systolic'
+            WHEN cluster_id = 'DIABP_COD' THEN 'Diastolic' 
+            WHEN cluster_id = 'BP_COD' THEN 'Combined'
+            ELSE 'Unknown'
+        END AS bp_type,
+        -- Apply appropriate validation based on type
+        CASE 
+            WHEN cluster_id = 'SYSBP_COD' THEN validated_systolic
+            WHEN cluster_id = 'DIABP_COD' THEN validated_diastolic
+            WHEN cluster_id = 'BP_COD' THEN result_value -- Combined readings may have different ranges
+            ELSE result_value
+        END AS validated_value
+    FROM bp_observations
 )
 
-SELECT *
-FROM consolidated_readings
-WHERE 
-    -- Ensure at least one BP value exists
-    (systolic_value IS NOT NULL OR diastolic_value IS NOT NULL)
-    -- Apply specific range validation for each type
-    AND (systolic_value IS NULL OR (systolic_value >= 40 AND systolic_value <= 350))
-    AND (diastolic_value IS NULL OR (diastolic_value >= 20 AND diastolic_value <= 200)) 
+-- Final selection with ALL persons - no filtering by active status
+-- Downstream models can filter as needed for their specific use cases
+SELECT 
+    bp.*,
+    -- Add basic person demographics for reference (but include ALL persons)
+    p.current_practice_id,
+    p.total_patients
+FROM bp_typed bp
+-- Join to main person dimension (includes ALL persons)
+LEFT JOIN {{ ref('dim_person') }} p
+    ON bp.person_id = p.person_id
+WHERE bp.validated_value IS NOT NULL -- Only valid readings
+ORDER BY bp.person_id, bp.clinical_effective_date DESC 

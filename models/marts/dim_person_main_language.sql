@@ -1,0 +1,149 @@
+{{
+    config(
+        materialized='table',
+        tags=['dimension', 'person', 'language', 'interpreter'],
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Dimension table providing the latest recorded preferred language and interpreter needs for every person. If no preferred language is recorded for a person, language-related fields default to Not Recorded. The LANGUAGE field provides a clean version of the language name without prefixes or suffixes. Includes both preferred language (PREFLANG_COD) and interpreter requirements (REQINTERPRETER_COD).'"
+        ]
+    )
+}}
+
+-- Person Main Language Dimension Table
+-- Holds the latest preferred language and interpreter needs for ALL persons
+-- Starts from PATIENT_PERSON and LEFT JOINs the latest language and interpreter records if available
+-- Language fields display 'Not Recorded' for persons with no recorded preferred language
+
+WITH latest_language_per_person AS (
+    -- Identifies the single most recent language record for each person from the OBSERVATION table
+    -- Uses ROW_NUMBER() partitioned by person_id, ordered by clinical_effective_date (desc) and observation_lds_id (desc as tie-breaker)
+    SELECT
+        o.person_id,
+        o.sk_patient_id,
+        o.clinical_effective_date,
+        o.mapped_concept_id AS concept_id,
+        o.mapped_concept_code AS concept_code,
+        o.mapped_concept_display AS term,
+        -- Extract just the language name from the description
+        CASE 
+            WHEN o.mapped_concept_display LIKE 'Main spoken language %' THEN 
+                REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Main spoken language ', ''), ' \\(finding\\)$', '')
+            WHEN o.mapped_concept_display LIKE 'Using %' THEN 
+                REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Using ', ''), ' \\(observable entity\\)$', '')
+            WHEN o.mapped_concept_display LIKE 'Uses %' THEN 
+                REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Uses ', ''), ' \\(finding\\)$', '')
+            WHEN o.mapped_concept_display LIKE 'Preferred method of communication: %' THEN 
+                REGEXP_REPLACE(o.mapped_concept_display, '^Preferred method of communication: ', '')
+            ELSE o.mapped_concept_display
+        END AS language,
+        -- Categorise the language type
+        CASE
+            WHEN o.mapped_concept_display LIKE '%sign language%' OR 
+                 o.mapped_concept_display LIKE '%Sign Language%' THEN 'Sign'
+            WHEN o.mapped_concept_display LIKE '%Makaton%' OR 
+                 o.mapped_concept_display LIKE '%Preferred method of communication%' THEN 'Other Communication Method'
+            ELSE 'Spoken'
+        END AS language_type,
+        o.cluster_description AS language_category,
+        o.observation_id AS observation_lds_id -- Include for potential tie-breaking
+    FROM (
+        {{ get_observations("'PREFLANG_COD'") }}
+    ) o
+    QUALIFY ROW_NUMBER() OVER (
+            PARTITION BY o.person_id
+            -- Order by date first, then by observation ID as a tie-breaker
+            ORDER BY o.clinical_effective_date DESC, o.observation_id DESC
+        ) = 1 -- Get only the latest record per person
+),
+
+latest_interpreter_needs AS (
+    -- Identifies the latest interpreter needs for each person
+    SELECT
+        o.person_id,
+        o.clinical_effective_date,
+        o.mapped_concept_id AS concept_id,
+        o.mapped_concept_display AS term,
+        -- Determine if interpreter is needed
+        CASE 
+            WHEN o.mapped_concept_display LIKE '%interpreter needed%' OR
+                 o.mapped_concept_display LIKE '%Requires %interpreter%' OR
+                 o.mapped_concept_display LIKE '%Uses %interpreter%' THEN TRUE
+            WHEN o.mapped_concept_display LIKE '%interpreter not needed%' THEN FALSE
+            ELSE NULL
+        END AS interpreter_needed,
+        -- Categorise interpreter type
+        CASE
+            WHEN o.mapped_concept_display LIKE '%sign language%' OR 
+                 o.mapped_concept_display LIKE '%Sign Language%' THEN 'Sign Language'
+            WHEN o.mapped_concept_display LIKE '%deafblind%' THEN 'Deafblind'
+            WHEN o.mapped_concept_display LIKE '%language interpreter%' THEN 'Language'
+            WHEN o.mapped_concept_display LIKE '%lipspeaker%' OR
+                 o.mapped_concept_display LIKE '%note taker%' OR
+                 o.mapped_concept_display LIKE '%speech to text%' THEN 'Other'
+            ELSE NULL
+        END AS interpreter_type,
+        -- Determine if additional communication support is needed
+        CASE
+            WHEN o.mapped_concept_display LIKE '%lipspeaker%' OR
+                 o.mapped_concept_display LIKE '%note taker%' OR
+                 o.mapped_concept_display LIKE '%speech to text%' OR
+                 o.mapped_concept_display LIKE '%aphasia-friendly%' OR
+                 o.mapped_concept_display LIKE '%support for %communication%' OR
+                 o.mapped_concept_display LIKE '%deafblind%' OR
+                 o.mapped_concept_display LIKE '%manual alphabet%' OR
+                 o.mapped_concept_display LIKE '%block alphabet%' OR
+                 o.mapped_concept_display LIKE '%sighted guide%' OR
+                 o.mapped_concept_display LIKE '%communicator guide%' THEN TRUE
+            WHEN o.mapped_concept_display LIKE '%interpreter not needed%' OR
+                 o.mapped_concept_display LIKE '%no support needed%' THEN FALSE
+            ELSE NULL
+        END AS communication_support_needed,
+        -- Categorise communication support type
+        CASE
+            WHEN o.mapped_concept_display LIKE '%lipspeaker%' THEN 'Lipspeaker'
+            WHEN o.mapped_concept_display LIKE '%note taker%' THEN 'Note Taker'
+            WHEN o.mapped_concept_display LIKE '%speech to text%' THEN 'Speech to Text'
+            WHEN o.mapped_concept_display LIKE '%aphasia-friendly%' THEN 'Aphasia Support'
+            WHEN o.mapped_concept_display LIKE '%deafblind%' THEN 'Deafblind Support'
+            WHEN o.mapped_concept_display LIKE '%manual alphabet%' OR
+                 o.mapped_concept_display LIKE '%block alphabet%' THEN 'Deafblind Alphabet'
+            WHEN o.mapped_concept_display LIKE '%sighted guide%' THEN 'Sighted Guide'
+            WHEN o.mapped_concept_display LIKE '%communicator guide%' THEN 'Communicator Guide'
+            WHEN o.mapped_concept_display LIKE '%support for %communication%' THEN 'Communication Support'
+            ELSE NULL
+        END AS communication_support_type,
+        o.observation_id AS observation_lds_id
+    FROM (
+        {{ get_observations("'REQINTERPRETER_COD'") }}
+    ) o
+    QUALIFY ROW_NUMBER() OVER (
+            PARTITION BY o.person_id
+            ORDER BY o.clinical_effective_date DESC, o.observation_id DESC
+        ) = 1
+)
+
+-- Constructs the final dimension by selecting all persons from PATIENT_PERSON and PATIENT tables,
+-- then LEFT JOINing their latest language and interpreter information (if available)
+SELECT
+    pp.person_id,
+    p.sk_patient_id,
+    -- Language fields from the latest record
+    llpp.clinical_effective_date AS latest_language_date,
+    COALESCE(llpp.concept_id, 'Not Recorded') AS concept_id,
+    COALESCE(llpp.concept_code, 'Not Recorded') AS concept_code,
+    COALESCE(llpp.term, 'Not Recorded') AS term,
+    COALESCE(llpp.language, 'Not Recorded') AS language,
+    COALESCE(llpp.language_type, 'Not Recorded') AS language_type,
+    COALESCE(llpp.language_category, 'Not Recorded') AS language_category,
+    -- Interpreter and communication support fields
+    lin.interpreter_needed,
+    lin.interpreter_type,
+    lin.communication_support_needed,
+    lin.communication_support_type
+FROM {{ ref('stg_olids_patient_person') }} pp
+LEFT JOIN {{ ref('stg_olids_patient') }} p
+    ON pp.patient_id = p.id
+LEFT JOIN latest_language_per_person llpp 
+    ON pp.person_id = llpp.person_id
+LEFT JOIN latest_interpreter_needs lin 
+    ON pp.person_id = lin.person_id 

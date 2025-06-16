@@ -1,0 +1,49 @@
+# dbt profiles template for Snowflake HEI Migration project
+# 
+# SETUP INSTRUCTIONS:
+# 1. Copy this file to 'profiles.yml' in the same directory
+# 2. Set the required environment variables (see env.example)
+# 3. Never commit the actual profiles.yml file to git
+#
+# The profiles.yml file is git-ignored for security reasons as it may contain
+# sensitive connection information.
+
+snowflake_hei_migration:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      authenticator: externalbrowser
+      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+      database: DATA_LAB_NCL_TRAINING_TEMP
+      schema: DBT
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      threads: 4
+      client_session_keep_alive: true
+      query_tag: "dbt_hei_migration"
+    
+    prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      authenticator: externalbrowser
+      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+      database: "{{ env_var('SNOWFLAKE_PROD_DATABASE', 'DATA_LAB_NCL_PRODUCTION') }}"
+      schema: DBT
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      threads: 8
+      client_session_keep_alive: false
+      query_tag: "dbt_hei_migration_prod"
+
+# Alternative configuration examples:
+#
+# For password authentication (less secure):
+#   password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+#   authenticator: password  # Remove the externalbrowser line
+#
+# For key-pair authentication:
+#   private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
+#   private_key_passphrase: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE') }}"
+#   authenticator: password  # Remove the externalbrowser line 

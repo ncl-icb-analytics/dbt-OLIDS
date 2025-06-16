@@ -1,0 +1,258 @@
+version: 2
+
+models:
+  - name: dim_person
+    description: |
+      Simplified person dimension providing aggregated patient and practice relationships. 
+      Uses arrays to efficiently store multiple patient IDs and practice associations per person.
+      This is the main person lookup table with arrays for comprehensive relationship tracking.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: sk_patient_ids
+        description: "Array of all surrogate patient keys associated with this person"
+      - name: patient_ids
+        description: "Array of all patient IDs associated with this person"
+      - name: current_practice_id
+        description: "Current/most recent practice ID for this person"
+      - name: total_patients
+        description: "Number of patient records associated with this person"
+
+  - name: dim_person_active_patients
+    description: |
+      Dimension table providing active patient status at person level. 
+      Excludes deceased patients and dummy patients. Includes practice registration details.
+      This is the main table to use for active patient analysis with full practice info.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
+      - name: is_active
+        description: "Whether the person is currently an active patient (always TRUE in this table)"
+      - name: is_deceased
+        description: "Whether the person is recorded as deceased (always FALSE in this table)"
+      - name: practice_code
+        description: "Organisation code of the current practice"
+      - name: practice_name
+        description: "Name of the current practice"
+
+  - name: dim_person_inactive_patients
+    description: |
+      Dimension table providing inactive patient status at person level. 
+      Includes only deceased patients and patients from closed/obsolete practices. 
+      Excludes dummy patients. Complement to dim_person_active_patients.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
+      - name: is_active
+        description: "Whether the person is currently an active patient (always FALSE in this table)"
+      - name: inactive_reason
+        description: "Reason for inactivity (Deceased, Practice Closed, or Practice Obsolete)"
+      - name: practice_code
+        description: "Organisation code of the last practice"
+
+  - name: dim_person_birth_death
+    description: |
+      Core birth and death information for each person. Provides foundation data for age 
+      calculations and demographic analysis. Calculates birth/death dates as the exact 
+      midpoint of the recorded month for optimal statistical precision.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: birth_date_approx
+        description: "Approximate date of birth, calculated as the exact midpoint of the birth month/year"
+      - name: death_date_approx
+        description: "Approximate date of death, calculated as the exact midpoint of the death month/year (NULL if alive)"
+      - name: is_deceased
+        description: "Whether the person is recorded as deceased"
+
+  - name: dim_person_age
+    description: |
+      Comprehensive age-related attributes for each person. Uses dim_person_birth_death as 
+      source and calculates age in various units, derives multiple standard age bands, 
+      life stages, and UK school stages. For deceased persons, calculates age at death.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: age
+        description: "Calculated age in full years (age at death for deceased, current age for living)"
+      - name: age_band_nhs
+        description: "Age band following NHS-style categories commonly used in healthcare reporting"
+      - name: age_life_stage
+        description: "Categorisation of age into life stages (e.g., 'Infant', 'Adolescent', 'Adult')"
+      - name: is_primary_school_age
+        description: "Flag: TRUE if age falls within UK primary school years"
+
+  - name: dim_person_historical_practice
+    description: |
+      Dimension table tracking all practice registrations (current and historical) for each person. 
+      Each row represents a unique practice registration period, determined by aggregating GP 
+      relationships using the earliest GP assignment as registration start and latest as end.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null]
+      - name: practice_id
+        description: "ID of the practice for this registration"
+      - name: registration_sequence
+        description: "Sequential number of this registration (1 is oldest)"
+      - name: is_current_practice
+        description: "Flag indicating if this is the current practice registration"
+
+  - name: dim_person_current_practice
+    description: |
+      Dimension table showing the current practice registration for each person, 
+      derived from dim_person_historical_practice. Simple view for current registrations only.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: practice_id
+        description: "ID of the person's current registered practice"
+      - name: practice_code
+        description: "Organisation code of the current practice"
+      - name: registration_start_date
+        description: "Start date of the current practice registration"
+
+  - name: dim_person_sex
+    description: |
+      Dimension table for person sex. Uses hardcoded gender_concept_id values to determine 
+      sex due to issues with Concept Map/Concept tables.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: sex
+        description: "Derived sex of the person ('Female', 'Male', or 'Unknown')"
+
+  - name: dim_person_ethnicity
+    description: |
+      Dimension table providing the latest recorded ethnicity for every person. 
+      If no ethnicity is recorded for a person, ethnicity-related fields default to 'Not Recorded'.
+      Based on comprehensive ethnicity observations from clinical records.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: latest_ethnicity_date
+        description: "Date of the most recent ethnicity observation for the person; NULL if not recorded"
+      - name: ethnicity_category
+        description: "Broad ethnicity category (e.g., White, Asian); 'Not Recorded' if NULL"
+      - name: ethnicity_subcategory
+        description: "More specific ethnicity subcategory; 'Not Recorded' if NULL"
+      - name: ethnicity_granular
+        description: "Most granular ethnicity detail available; 'Not Recorded' if NULL"
+
+  - name: dim_practice
+    description: |
+      Practice reference dimension table containing organisation details for all practices.
+      Separated from person dimensions for proper normalisation.
+    columns:
+      - name: practice_id
+        description: "Unique identifier for the practice"
+        tests: [not_null, unique]
+      - name: organisation_code
+        description: "Organisation code of the practice"
+      - name: name
+        description: "Name of the practice"
+      - name: is_obsolete
+        description: "Flag indicating if the practice is marked as obsolete"
+
+
+
+  - name: dim_person_women_child_bearing_age
+    description: |
+      Dimension table identifying individuals who are not male and are aged 55 or younger. 
+      Includes flags for standard child-bearing age ranges. Critical for clinical safety 
+      programs (e.g., Valproate prescribing safety).
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: age
+        description: "Age of the person"
+      - name: sex
+        description: "Sex of the person, will be 'Female' or 'Unknown' due to WHERE clause filtering"
+      - name: is_child_bearing_age_12_55
+        description: "Flag: TRUE if age is 12-55 inclusive (standard demographic range)"
+      - name: is_child_bearing_age_0_55
+        description: "Flag: TRUE if age is 0-55 inclusive (wider range, e.g., for Valproate safety programs)"
+
+  - name: dim_person_care_home
+    description: |
+      Dimension table providing the latest recorded care home/nursing home status for persons 
+      who have a recorded residence status. Only includes persons with CAREHOME_COD, 
+      NURSEHOME_COD, or TEMPCARHOME_COD records. Essential for care planning and quality indicators.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: latest_residence_date
+        description: "Date of the most recent care home/nursing home observation"
+      - name: is_care_home_resident
+        description: "Whether the person is currently a care home resident"
+      - name: is_nursing_home_resident
+        description: "Whether the person is currently a nursing home resident"
+      - name: is_temporary_resident
+        description: "Whether the person is temporarily in a care/nursing home"
+      - name: residence_type
+        description: "Type of residence ('Care Home', 'Nursing Home', 'Temporary Care Home')"
+      - name: residence_status
+        description: "Status of residence ('Permanent', 'Temporary')"
+
+  - name: dim_person_is_carer
+    description: |
+      Dimension table providing the latest recorded carer status for persons who have a carer 
+      status record. Only includes persons with a record in ISACARER_COD, NOTACARER_COD, or 
+      UNPAIDCARER_COD clusters. This table specifically tracks patients who are carers themselves, 
+      not patients who have carers. Essential for social care coordination.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: latest_carer_status_date
+        description: "Date of the most recent carer status observation"
+      - name: is_carer
+        description: "Whether the person is currently a carer (TRUE) or not (FALSE)"
+      - name: carer_type
+        description: "Type of carer (e.g., 'Primary Carer', 'Informal Carer', 'Unpaid Carer')"
+      - name: carer_details
+        description: "Additional details about carer status (e.g., 'Caring for person with health condition', 'Caring for family member')"
+      - name: source_cluster_ids
+        description: "Array of cluster IDs that contributed to this carer status"
+
+  - name: dim_person_main_language
+    description: |
+      Dimension table providing the latest recorded preferred language and interpreter needs 
+      for every person. If no preferred language is recorded for a person, language-related 
+      fields default to 'Not Recorded'. The LANGUAGE field provides a clean version of the 
+      language name without prefixes or suffixes. Includes both preferred language (PREFLANG_COD) 
+      and interpreter requirements (REQINTERPRETER_COD). Required for communication and accessibility planning.
+    columns:
+      - name: person_id
+        description: "Unique identifier for a person"
+        tests: [not_null, unique]
+      - name: latest_language_date
+        description: "Date of the most recent language observation for the person; NULL if not recorded"
+      - name: language
+        description: "Clean language name (e.g., 'Somali' from 'Main spoken language Somali (finding)'); 'Not Recorded' if NULL"
+      - name: language_type
+        description: "Type of language: 'Spoken', 'Sign', or 'Other Communication Method'; 'Not Recorded' if NULL"
+      - name: language_category
+        description: "Broad language category (e.g., English, Other); 'Not Recorded' if NULL"
+      - name: interpreter_needed
+        description: "Whether an interpreter is needed (based on REQINTERPRETER_COD)"
+      - name: interpreter_type
+        description: "Type of interpreter needed (e.g., 'Language', 'Sign Language', 'Deafblind', 'Other'); NULL if no interpreter needed"
+      - name: communication_support_needed
+        description: "Whether additional communication support is needed (e.g., lipspeaker, note taker)"
+      - name: communication_support_type
+        description: "Type of communication support needed; NULL if no support needed" 

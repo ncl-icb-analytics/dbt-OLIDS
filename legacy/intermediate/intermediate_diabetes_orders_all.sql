@@ -55,47 +55,109 @@ WITH BaseDiabetesOrders AS (
         MC.CODE_DESCRIPTION AS MAPPED_CONCEPT_DISPLAY,
         bnf.BNF_CODE,
         bnf.BNF_NAME,
+        
+        -- Diabetes medication type classification
         CASE 
-            WHEN bnf.BNF_CODE LIKE '060101%' THEN 'INSULIN'
-            WHEN bnf.BNF_CODE LIKE '060102%' THEN 'ANTIDIABETIC'
-            WHEN bnf.BNF_CODE LIKE '060104%' THEN 'HYPOGLYCAEMIA_TREATMENT'
-            WHEN bnf.BNF_CODE LIKE '060106%' THEN 'MONITORING'
+            WHEN bnf.BNF_CODE LIKE '060101%' THEN 'INSULIN'                    -- BNF 6.1.1: Insulins
+            WHEN bnf.BNF_CODE LIKE '060102%' THEN 'ANTIDIABETIC'              -- BNF 6.1.2: Antidiabetic drugs
+            WHEN bnf.BNF_CODE LIKE '060104%' THEN 'HYPOGLYCAEMIA_TREATMENT'   -- BNF 6.1.4: Treatment of hypoglycaemia
+            WHEN bnf.BNF_CODE LIKE '060106%' THEN 'MONITORING'                -- BNF 6.1.6: Diabetic diagnostic and monitoring agents
             ELSE 'OTHER'
         END AS DIABETES_MEDICATION_TYPE,
+        
+        -- Antidiabetic drug class classification (only for BNF 6.1.2)
         CASE 
-            -- Only categorize when it's an antidiabetic drug
             WHEN bnf.BNF_CODE LIKE '060102%' THEN
                 CASE
-                    -- Biguanides
-                    WHEN bnf.BNF_CODE LIKE '0601022%' THEN 'BIGUANIDE'
-                    -- Sulfonylureas
-                    WHEN bnf.BNF_CODE LIKE '0601021%' THEN 'SULFONYLUREA'
-                    -- Thiazolidinediones
-                    WHEN bnf.BNF_CODE LIKE '0601023B%' OR bnf.BNF_CODE LIKE '0601023S%' THEN 'THIAZOLIDINEDIONE'
-                    -- DPP-4 inhibitors
-                    WHEN bnf.BNF_CODE LIKE '0601023X%' OR bnf.BNF_CODE LIKE '0601023AE%' OR bnf.BNF_CODE LIKE '0601023AC%' 
-                         OR bnf.BNF_CODE LIKE '0601023AK%' OR bnf.BNF_CODE LIKE '0601023AA%' THEN 'DPP4_INHIBITOR'
-                    -- SGLT2 inhibitors
-                    WHEN bnf.BNF_CODE LIKE '0601023AG%' OR bnf.BNF_CODE LIKE '0601023AN%' OR bnf.BNF_CODE LIKE '0601023AM%' 
-                         OR bnf.BNF_CODE LIKE '0601023AX%' THEN 'SGLT2_INHIBITOR'
-                    -- GLP-1 receptor agonists
-                    WHEN bnf.BNF_CODE LIKE '0601023Y%' OR bnf.BNF_CODE LIKE '0601023AB%' OR bnf.BNF_CODE LIKE '0601023AI%' 
-                         OR bnf.BNF_CODE LIKE '0601023AQ%' OR bnf.BNF_CODE LIKE '0601023AW%' OR bnf.BNF_CODE LIKE '0601023AS%' 
-                         OR bnf.BNF_CODE LIKE '0601023AZ%' THEN 'GLP1_AGONIST'
-                    -- Meglitinides
-                    WHEN bnf.BNF_CODE LIKE '0601023R%' OR bnf.BNF_CODE LIKE '0601023U%' THEN 'MEGLITINIDE'
-                    -- Alpha-glucosidase inhibitors
-                    WHEN bnf.BNF_CODE LIKE '0601023A%' THEN 'ALPHA_GLUCOSIDASE_INHIBITOR'
-                    -- Combination products
-                    WHEN bnf.BNF_CODE LIKE '0601023AJ%' OR bnf.BNF_CODE LIKE '0601023AP%' OR bnf.BNF_CODE LIKE '0601023AL%' 
-                         OR bnf.BNF_CODE LIKE '0601023AY%' OR bnf.BNF_CODE LIKE '0601023AR%' OR bnf.BNF_CODE LIKE '0601023W%' 
-                         OR bnf.BNF_CODE LIKE '0601023V%' OR bnf.BNF_CODE LIKE '0601023AD%' OR bnf.BNF_CODE LIKE '0601023Z%' 
-                         OR bnf.BNF_CODE LIKE '0601023AF%' OR bnf.BNF_CODE LIKE '0601023AH%' OR bnf.BNF_CODE LIKE '0601023AU%' 
-                         OR bnf.BNF_CODE LIKE '0601023AV%' THEN 'COMBINATION_PRODUCT'
+                    -- Biguanides (BNF 6.1.2.2)
+                    WHEN bnf.BNF_CODE LIKE '0601022B0%' THEN 'BIGUANIDE'  -- Metformin hydrochloride
+                    
+                    -- Sulfonylureas (BNF 6.1.2.1)
+                    WHEN bnf.BNF_CODE LIKE '0601021A0%'   -- Glimepiride
+                      OR bnf.BNF_CODE LIKE '0601021E0%'   -- Chlorpropamide
+                      OR bnf.BNF_CODE LIKE '0601021H0%'   -- Glibenclamide
+                      OR bnf.BNF_CODE LIKE '0601021M0%'   -- Gliclazide
+                      OR bnf.BNF_CODE LIKE '0601021P0%'   -- Glipizide
+                      OR bnf.BNF_CODE LIKE '0601021X0%'   -- Tolbutamide
+                      THEN 'SULFONYLUREA'
+                    
+                    -- Thiazolidinediones (BNF 6.1.2.3)
+                    WHEN bnf.BNF_CODE LIKE '0601023B0%'   -- Pioglitazone hydrochloride
+                      OR bnf.BNF_CODE LIKE '0601023S0%'   -- Rosiglitazone
+                      THEN 'THIAZOLIDINEDIONE'
+                    
+                    -- DPP-4 inhibitors (BNF 6.1.2.3)
+                    WHEN bnf.BNF_CODE LIKE '0601023X0%'   -- Sitagliptin
+                      OR bnf.BNF_CODE LIKE '0601023AE%'   -- Linagliptin
+                      OR bnf.BNF_CODE LIKE '0601023AC%'   -- Saxagliptin
+                      OR bnf.BNF_CODE LIKE '0601023AA%'   -- Vildagliptin
+                      OR bnf.BNF_CODE LIKE '0601023AK%'   -- Alogliptin
+                      THEN 'DPP4_INHIBITOR'
+                    
+                    -- SGLT2 inhibitors (BNF 6.1.2.3)
+                    WHEN bnf.BNF_CODE LIKE '0601023AG%'   -- Dapagliflozin
+                      OR bnf.BNF_CODE LIKE '0601023AN%'   -- Empagliflozin
+                      OR bnf.BNF_CODE LIKE '0601023AM%'   -- Canagliflozin
+                      OR bnf.BNF_CODE LIKE '0601023AX%'   -- Ertugliflozin
+                      THEN 'SGLT2_INHIBITOR'
+                    
+                    -- GLP-1 receptor agonists (BNF 6.1.2.3)
+                    WHEN bnf.BNF_CODE LIKE '0601023Y0%'   -- Exenatide
+                      OR bnf.BNF_CODE LIKE '0601023AB%'   -- Liraglutide
+                      OR bnf.BNF_CODE LIKE '0601023AQ%'   -- Dulaglutide
+                      OR bnf.BNF_CODE LIKE '0601023AW%'   -- Semaglutide
+                      OR bnf.BNF_CODE LIKE '0601023AI%'   -- Lixisenatide
+                      OR bnf.BNF_CODE LIKE '0601023AS%'   -- Albiglutide
+                      OR bnf.BNF_CODE LIKE '0601023AZ%'   -- Tirzepatide
+                      THEN 'GLP1_AGONIST'
+                    
+                    -- Meglitinides (BNF 6.1.2.3)
+                    WHEN bnf.BNF_CODE LIKE '0601023R0%'   -- Repaglinide
+                      OR bnf.BNF_CODE LIKE '0601023U0%'   -- Nateglinide
+                      THEN 'MEGLITINIDE'
+                    
+                    -- Alpha-glucosidase inhibitors (BNF 6.1.2.3)
+                    WHEN bnf.BNF_CODE LIKE '0601023A0%' THEN 'ALPHA_GLUCOSIDASE_INHIBITOR'  -- Acarbose
+                    
+                    -- Dietary fibre/absorption modulators
+                    WHEN bnf.BNF_CODE LIKE '0601023I0%' THEN 'DIETARY_FIBRE_MODULATOR'  -- Guar gum
+                    
+                    -- Biguanide + DPP-4 inhibitor combinations
+                    WHEN bnf.BNF_CODE LIKE '0601023AJ%'   -- Alogliptin/metformin
+                      OR bnf.BNF_CODE LIKE '0601023AF%'   -- Linagliptin/metformin
+                      OR bnf.BNF_CODE LIKE '0601023AD%'   -- Metformin hydrochloride/sitagliptin
+                      OR bnf.BNF_CODE LIKE '0601023Z0%'   -- Metformin hydrochloride/vildagliptin
+                      OR bnf.BNF_CODE LIKE '0601023AH%'   -- Saxagliptin/metformin
+                      THEN 'BIGUANIDE_DPP4_COMBINATION'
+                    
+                    -- Biguanide + SGLT2 inhibitor combinations
+                    WHEN bnf.BNF_CODE LIKE '0601023AP%'   -- Canagliflozin/metformin
+                      OR bnf.BNF_CODE LIKE '0601023AL%'   -- Dapagliflozin/metformin
+                      OR bnf.BNF_CODE LIKE '0601023AR%'   -- Empagliflozin/metformin
+                      THEN 'BIGUANIDE_SGLT2_COMBINATION'
+                    
+                    -- Biguanide + Thiazolidinedione combinations
+                    WHEN bnf.BNF_CODE LIKE '0601023W0%'   -- Metformin hydrochloride/pioglitazone
+                      OR bnf.BNF_CODE LIKE '0601023V0%'   -- Metformin hydrochloride/rosiglitazone
+                      THEN 'BIGUANIDE_THIAZOLIDINEDIONE_COMBINATION'
+                    
+                    -- DPP-4 + SGLT2 inhibitor combinations
+                    WHEN bnf.BNF_CODE LIKE '0601023AV%'   -- Saxagliptin/dapagliflozin
+                      THEN 'DPP4_SGLT2_COMBINATION'
+                    
+                    -- SGLT2 + DPP-4 inhibitor combinations
+                    WHEN bnf.BNF_CODE LIKE '0601023AY%'   -- Empagliflozin/linagliptin
+                      THEN 'SGLT2_DPP4_COMBINATION'
+                    
+                    -- Insulin + GLP-1 agonist combinations
+                    WHEN bnf.BNF_CODE LIKE '0601023AU%'   -- Ins degludec/liraglutide
+                      THEN 'INSULIN_GLP1_COMBINATION'
+                    
                     ELSE 'OTHER_ANTIDIABETIC'
                 END
             ELSE NULL
         END AS ANTIDIABETIC_CLASS
+        
     FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."MEDICATION_STATEMENT" ms
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."MEDICATION_ORDER" mo
         ON ms."id" = mo."medication_statement_id"
