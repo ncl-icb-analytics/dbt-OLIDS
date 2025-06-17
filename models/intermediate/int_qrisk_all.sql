@@ -9,6 +9,7 @@
 All QRISK cardiovascular risk scores from observations.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 Captures QRISK, QRISK2, and QRISK3 scores with clinical risk categorisation.
+Matches legacy structure with result_unit_display field.
 */
 
 WITH base_observations AS (
@@ -16,8 +17,10 @@ WITH base_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
+        obs.sk_patient_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(6,2)) AS qrisk_score,
+        obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
@@ -38,9 +41,11 @@ WITH base_observations AS (
 
 SELECT
     person_id,
+    sk_patient_id,
     observation_id,
     clinical_effective_date,
     qrisk_score,
+    result_unit_display,
     qrisk_type,
     concept_code,
     concept_display,

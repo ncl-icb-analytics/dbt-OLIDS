@@ -6,11 +6,14 @@ models:
       All urine Albumin-to-Creatinine Ratio (ACR) measurements from observations.
       Uses specific concept codes for ACR tests with clinical validation and CKD staging.
       Includes ALL persons following intermediate layer principles.
+      Matches legacy structure with result_unit_display field.
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (NULL in dummy data, populated in live data)"
       - name: observation_id
         description: "Unique observation identifier"
         tests:
@@ -23,10 +26,12 @@ models:
         description: "Urine ACR value in mg/mmol"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1500
               severity: warn
+      - name: result_unit_display
+        description: "Display value for the result unit (e.g., 'mg/mmol')"
       - name: is_valid_acr
         description: "Flag indicating if ACR is within valid range (0-1000)"
         tests:

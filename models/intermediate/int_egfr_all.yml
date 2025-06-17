@@ -6,9 +6,14 @@ models:
       All estimated Glomerular Filtration Rate (eGFR) measurements from observations.
       Simple pattern using EGFR_COD with clinical validation and CKD staging.
       Includes ALL persons following intermediate layer principles.
+      Matches legacy structure with result_unit_display field.
     columns:
       - name: person_id
         description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
         tests:
           - not_null
       - name: observation_id
@@ -23,10 +28,12 @@ models:
         description: "eGFR value in mL/min/1.73m²"
         tests:
           - not_null
-          - accepted_range:
-              min_value: 0
+          - dbt_utils.accepted_range:
+              min_value: 1
               max_value: 250
               severity: warn
+      - name: result_unit_display
+        description: "Display value for the result unit (e.g., 'mL/min/1.73m²')"
       - name: is_valid_egfr
         description: "Flag indicating if eGFR is within valid range (1-200)"
         tests:
@@ -40,7 +47,7 @@ models:
           - accepted_values:
               values: ['Invalid', 'Normal/High (≥90)', 'Mild decrease (60-89)', 'CKD Stage 3a (45-59)', 'CKD Stage 3b (30-44)', 'CKD Stage 4 (15-29)', 'CKD Stage 5 (<15)', 'Unknown']
       - name: is_ckd_indicator
-        description: "Flag indicating eGFR < 60 (suggests CKD)"
+        description: "Flag indicating CKD (eGFR < 60)"
         tests:
           - not_null
           - accepted_values:

@@ -6,11 +6,14 @@ models:
       All total cholesterol measurements from observations.
       Simple pattern using CHOL2_COD with basic validation.
       Includes ALL persons following intermediate layer principles.
+      Matches legacy structure with result_unit_display field.
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (NULL in dummy data, populated in live data)"
       - name: observation_id
         description: "Unique observation identifier"
         tests:
@@ -23,10 +26,12 @@ models:
         description: "Total cholesterol value in mmol/L"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0.1
               max_value: 30
               severity: warn
+      - name: result_unit_display
+        description: "Display value for the result unit (e.g., 'mmol/L')"
       - name: is_valid_cholesterol
         description: "Flag indicating if cholesterol is within valid range (0.5-20)"
         tests:

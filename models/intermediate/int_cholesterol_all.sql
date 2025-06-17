@@ -9,6 +9,7 @@
 All total cholesterol measurements from observations.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 Simple pattern using CHOL2_COD with basic validation.
+Matches legacy structure with result_unit_display field.
 */
 
 WITH base_observations AS (
@@ -16,8 +17,10 @@ WITH base_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
+        obs.sk_patient_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(6,1)) AS cholesterol_value,
+        obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
@@ -30,9 +33,11 @@ WITH base_observations AS (
 
 SELECT
     person_id,
+    sk_patient_id,
     observation_id,
     clinical_effective_date,
     cholesterol_value,
+    result_unit_display,
     concept_code,
     concept_display,
     source_cluster_id,

@@ -6,9 +6,14 @@ models:
       All serum creatinine measurements from observations.
       Simple pattern using CRE_COD with clinical validation and reference ranges.
       Includes ALL persons following intermediate layer principles.
+      Matches legacy structure with result_unit_display field.
     columns:
       - name: person_id
         description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
         tests:
           - not_null
       - name: observation_id
@@ -23,10 +28,12 @@ models:
         description: "Serum creatinine value in µmol/L"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 10
               max_value: 1500
               severity: warn
+      - name: result_unit_display
+        description: "Display value for the result unit (e.g., 'µmol/L')"
       - name: is_valid_creatinine
         description: "Flag indicating if creatinine is within valid range (20-1000)"
         tests:
@@ -40,7 +47,7 @@ models:
           - accepted_values:
               values: ['Invalid', 'Normal', 'Mildly Elevated', 'Moderately Elevated', 'Severely Elevated', 'Unknown']
       - name: is_elevated_creatinine
-        description: "Flag indicating creatinine > 120 µmol/L"
+        description: "Flag indicating elevated creatinine (>120 µmol/L)"
         tests:
           - not_null
           - accepted_values:
