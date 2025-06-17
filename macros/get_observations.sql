@@ -12,6 +12,7 @@
         o.clinical_effective_date,
         o.result_value,
         o.result_value_unit_concept_id,
+        unit_con.display AS result_unit_display,
         o.result_text,
         o.is_problem,
         o.is_review,
@@ -32,5 +33,7 @@
         ON o.observation_core_concept_id = mc.source_code_id
     JOIN {{ ref('stg_codesets_combined_codesets') }} cc
         ON mc.concept_code = cc.code
+    LEFT JOIN {{ ref('stg_olids_term_concept') }} unit_con
+        ON o.result_value_unit_concept_id = unit_con.id
     WHERE cc.cluster_id IN ({{ cluster_ids }})
 {% endmacro %} 

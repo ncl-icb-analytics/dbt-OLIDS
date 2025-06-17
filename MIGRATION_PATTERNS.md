@@ -214,6 +214,323 @@ CASE WHEN obs.source_cluster_id = 'CONDITIONRES_COD' THEN TRUE ELSE FALSE END AS
 - Boolean flag validation
 - Individual YAML files (not shared schema.yml)
 
+## Advanced Architecture Patterns
+
+### Event-Based Clinical Measurement Consolidation
+
+**Pattern**: Transform observation-level clinical measurements into event-based paired readings with clinical context intelligence.
+
+**Use Case**: Critical for measurements requiring paired values (systolic/diastolic BP, height/weight, before/after readings) where clinical context affects interpretation.
+
+#### Legacy vs Enhanced Architecture Comparison
+
+**❌ Legacy Observation-Level Structure:**
+```sql
+-- One row per individual measurement observation
+person_id | date       | measurement_type | value | context
+12345     | 2024-01-15 | Systolic        | 140   | Clinic
+12345     | 2024-01-15 | Diastolic       | 90    | Clinic
+12345     | 2024-01-15 | Systolic        | 135   | Home
+12345     | 2024-01-15 | Diastolic       | 85    | Home
+```
+
+**✅ Enhanced Event-Based Structure:**
+```sql
+-- One row per clinical event with paired values and context
+person_id | date       | systolic | diastolic | is_home_bp | is_abpm_bp | context
+12345     | 2024-01-15 | 140      | 90        | FALSE      | FALSE      | Clinic  
+12345     | 2024-01-15 | 135      | 85        | TRUE       | FALSE      | Home
+```
+
+#### Implementation Pattern
+
+**1. Event Consolidation Logic:**
+```sql
+WITH base_observations AS (
+    SELECT 
+        obs.person_id,
+        obs.clinical_effective_date,
+        obs.result_value,
+        obs.cluster_id AS source_cluster_id,
+        obs.mapped_concept_display AS concept_display
+    FROM ({{ get_observations("'CLUSTER_IDS'") }}) obs
+    WHERE obs.result_value IS NOT NULL
+    AND obs.clinical_effective_date IS NOT NULL
+    -- Apply clinical range validation
+    AND obs.result_value BETWEEN min_plausible AND max_plausible
+),
+
+row_classification AS (
+    SELECT *,
+        -- Classify measurement type
+        (source_cluster_id = 'SYSBP_COD' OR 
+         (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%systolic%')) AS is_systolic_row,
+        (source_cluster_id = 'DIABP_COD' OR 
+         (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%diastolic%')) AS is_diastolic_row,
+         
+        -- Detect clinical context
+        (source_cluster_id IN ('HOMEBP_COD', 'HOMEAMBBP_COD') OR 
+         concept_display ILIKE '%home%') AS is_home_measurement,
+        (source_cluster_id = 'ABPM_COD' OR 
+         concept_display ILIKE '%ambulatory%') AS is_abpm_measurement
+    FROM base_observations
+),
+
+event_consolidation AS (
+    SELECT
+        person_id,
+        clinical_effective_date,
+        
+        -- Paired value consolidation
+        MAX(CASE WHEN is_systolic_row THEN result_value END) AS systolic_value,
+        MAX(CASE WHEN is_diastolic_row THEN result_value END) AS diastolic_value,
+        
+        -- Clinical context aggregation
+        BOOLOR_AGG(is_home_measurement) AS is_home_bp_event,
+        BOOLOR_AGG(is_abpm_measurement) AS is_abpm_bp_event,
+        
+        -- Rich traceability metadata
+        ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids,
+        ARRAY_AGG(DISTINCT source_cluster_id) AS all_source_clusters,
+        ARRAY_AGG(DISTINCT concept_display) AS all_concept_displays
+        
+    FROM row_classification
+    GROUP BY person_id, clinical_effective_date
+    
+    -- Quality filters: Ensure paired readings for clinical validity
+    HAVING systolic_value IS NOT NULL AND diastolic_value IS NOT NULL
+)
+
+SELECT *,
+    -- Clinical context classification for downstream use
+    CASE 
+        WHEN is_abpm_bp_event THEN 'ABPM'
+        WHEN is_home_bp_event THEN 'Home'
+        ELSE 'Clinic'
+    END AS measurement_context
+FROM event_consolidation
+```
+
+**2. Data Quality Companion Pattern:**
+```sql
+-- Parallel DQ table captures filtered-out events for clinical governance
+WITH problematic_events AS (
+    -- Same base logic but WITHOUT quality filters
+    -- Captures orphaned readings, out-of-range values, missing dates
+    SELECT person_id, clinical_effective_date, 
+           systolic_original, diastolic_original,
+           
+           -- DQ Flag definitions
+           CASE WHEN systolic_original < 40 OR systolic_original > 350 
+                THEN TRUE ELSE FALSE END AS is_sbp_out_of_range,
+           CASE WHEN (systolic_original IS NOT NULL AND diastolic_original IS NULL) 
+                  OR (systolic_original IS NULL AND diastolic_original IS NOT NULL) 
+                THEN TRUE ELSE FALSE END AS is_orphaned_reading,
+           -- ... other DQ flags
+    FROM raw_event_aggregation
+)
+
+SELECT * FROM problematic_events 
+WHERE is_sbp_out_of_range OR is_orphaned_reading OR /* other DQ issues */
+```
+
+#### Clinical Intelligence Integration
+
+**3. Context-Specific Clinical Logic:**
+```sql
+-- NICE Guidelines: Different BP thresholds by measurement context
+CASE 
+    -- Severe hypertension (universal threshold)
+    WHEN systolic_value >= 180 OR diastolic_value >= 120 
+        THEN 'Severe HTN'
+        
+    -- Stage 2 Hypertension (context-specific)
+    WHEN (measurement_context IN ('Home', 'ABPM') 
+          AND (systolic_value >= 155 OR diastolic_value >= 95))
+      OR (measurement_context = 'Clinic' 
+          AND (systolic_value >= 160 OR diastolic_value >= 100))
+        THEN 'Stage 2 HTN'
+        
+    -- Stage 1 Hypertension (context-specific)  
+    WHEN (measurement_context IN ('Home', 'ABPM') 
+          AND (systolic_value >= 135 OR diastolic_value >= 85))
+      OR (measurement_context = 'Clinic' 
+          AND (systolic_value >= 140 OR diastolic_value >= 90))
+        THEN 'Stage 1 HTN'
+        
+    ELSE 'Normal / High Normal'
+END AS clinical_stage
+```
+
+#### Benefits of Event-Based Pattern
+
+**Clinical Advantages:**
+- ✅ **Paired readings**: Systolic/diastolic values guaranteed to be from same clinical event
+- ✅ **Context awareness**: Clinical interpretation varies by measurement setting (Home vs Clinic vs ABPM)
+- ✅ **Quality assurance**: Orphaned or problematic readings tracked separately for clinical review
+- ✅ **Clinical guidelines compliance**: Context-specific thresholds (NICE, AHA, etc.) properly implemented
+
+**Analytical Advantages:**
+- ✅ **Simplified downstream queries**: No complex joins needed to pair measurements
+- ✅ **Event-based analysis**: Trends, patterns, and changes easier to track over time
+- ✅ **Performance optimization**: Fewer rows, better clustering, faster aggregations
+- ✅ **Rich metadata**: Full traceability to source observations for audit purposes
+
+**Data Quality Advantages:**
+- ✅ **Proactive issue detection**: DQ companion table identifies problems before clinical use
+- ✅ **Clinical governance**: Problematic data flagged for clinical review processes
+- ✅ **Validation alignment**: DQ logic mirrors main consolidation for consistency
+- ✅ **Audit compliance**: Complete visibility into data transformations and quality issues
+
+#### When to Apply This Pattern
+
+**⚠️ IMPORTANT: Blood Pressure is Uniquely Complex**
+
+The full event-based consolidation pattern above is specifically designed for **blood pressure measurements**, which are uniquely complex due to:
+- **Mandatory paired readings** (systolic/diastolic must be from same clinical event)
+- **Context-critical interpretation** (Home/ABPM vs Clinic thresholds differ significantly)
+- **Safety-critical accuracy** (hypertension staging affects clinical decisions)
+
+**✅ Apply FULL pattern for:**
+- **Blood pressure only** (systolic/diastolic pairs with measurement context)
+- Other truly paired measurements requiring context-specific clinical interpretation
+
+**✅ Apply SIMPLIFIED pattern for most other clinical measurements:**
+- Single-value observations (HbA1c, cholesterol, BMI, etc.)
+- Use standard intermediate → latest pattern without complex event consolidation
+- Focus on good result presentation and clinical interpretation enhancement
+
+**❌ Don't over-engineer:**
+- Simple single-value measurements (weight, temperature, glucose)
+- Measurements without clinical context variation
+- Non-safety-critical observations
+- Reference data or categorical observations
+
+#### Implementation Checklist
+
+- [ ] **Identify pairing requirements**: What values must be measured together?
+- [ ] **Map clinical contexts**: How does measurement setting affect interpretation?
+- [ ] **Define quality criteria**: What makes a valid clinical event?
+- [ ] **Design DQ companion**: How will problematic data be tracked?
+- [ ] **Implement clinical logic**: What guidelines need context-specific rules?
+- [ ] **Plan traceability**: What metadata is needed for clinical audit?
+- [ ] **Test edge cases**: Orphaned readings, missing dates, out-of-range values
+- [ ] **Validate clinical output**: Do staging rules match clinical guidelines?
+
+This pattern transforms basic observation data into **clinically intelligent, analytically powerful, and quality-assured measurement events** that support sophisticated population health analysis and clinical decision-making.
+
+### Standard Clinical Measurement Enhancement Pattern
+
+**Pattern**: Enhance single-value clinical measurements with better result presentation and clinical interpretation without complex event consolidation.
+
+**Use Case**: Most clinical observations (HbA1c, cholesterol, BMI, laboratory results) that don't require paired readings but benefit from improved clinical interpretation and result formatting.
+
+#### Implementation Pattern for Standard Measurements
+
+**Focus Areas for Enhancement:**
+1. **Result Presentation**: Clear value formatting with appropriate units and clinical context
+2. **Clinical Interpretation**: Thresholds, target ranges, and clinical significance flags
+3. **Type Classification**: Handle different measurement types/units (e.g., HbA1c IFCC vs DCCT)
+4. **Quality Flags**: Basic range validation and clinical plausibility checks
+
+**Example: Enhanced HbA1c Pattern**
+```sql
+-- Enhanced intermediate with clinical intelligence
+WITH base_observations AS (
+    SELECT 
+        obs.person_id,
+        obs.clinical_effective_date,
+        obs.result_value,
+        obs.result_unit_display,
+        obs.mapped_concept_display AS concept_display
+    FROM ({{ get_observations("'HBA1C_COD'") }}) obs
+    WHERE obs.result_value IS NOT NULL
+    AND obs.clinical_effective_date IS NOT NULL
+),
+
+enhanced_results AS (
+    SELECT *,
+        -- Enhanced type detection
+        CASE 
+            WHEN result_unit_display ILIKE '%mmol/mol%' OR result_value > 20 THEN TRUE
+            ELSE FALSE 
+        END AS is_ifcc,
+        
+        CASE 
+            WHEN result_unit_display ILIKE '%\%%' OR result_value <= 20 THEN TRUE
+            ELSE FALSE 
+        END AS is_dcct,
+        
+        -- Clinical range validation
+        CASE 
+            WHEN (result_value > 20 AND result_value BETWEEN 20 AND 200) 
+              OR (result_value <= 20 AND result_value BETWEEN 3 AND 20)
+            THEN TRUE ELSE FALSE 
+        END AS is_plausible_value,
+        
+        -- Clinical interpretation flags
+        CASE 
+            WHEN (is_ifcc AND result_value < 42) OR (is_dcct AND result_value < 6.0)
+            THEN 'Normal'
+            WHEN (is_ifcc AND result_value BETWEEN 42 AND 47) OR (is_dcct AND result_value BETWEEN 6.0 AND 6.4)
+            THEN 'Prediabetes'
+            WHEN (is_ifcc AND result_value >= 48) OR (is_dcct AND result_value >= 6.5)
+            THEN 'Diabetes'
+            ELSE 'Unknown'
+        END AS clinical_interpretation
+        
+    FROM base_observations
+    WHERE is_plausible_value = TRUE
+)
+
+SELECT 
+    person_id,
+    clinical_effective_date,
+    result_value AS hba1c_value,
+    result_unit_display,
+    is_ifcc,
+    is_dcct,
+    clinical_interpretation,
+    
+    -- Enhanced clinical context
+    CASE 
+        WHEN clinical_interpretation = 'Diabetes' THEN TRUE 
+        ELSE FALSE 
+    END AS indicates_diabetes,
+    
+    -- Metadata for traceability
+    concept_display,
+    observation_id
+FROM enhanced_results
+ORDER BY person_id, clinical_effective_date DESC
+```
+
+**Key Principles for Standard Measurements:**
+- ✅ **Enhanced presentation**: Clear value formatting and clinical context
+- ✅ **Type handling**: Proper detection of measurement units/types using both cluster IDs and actual unit display
+- ✅ **Clinical intelligence**: Threshold interpretation and clinical flags
+- ✅ **Quality validation**: Range checks and plausibility validation
+- ✅ **Proper unit capture**: Use enhanced `get_observations()` macro with `result_unit_display` from source
+- ❌ **Avoid over-complexity**: No event consolidation or complex context logic unless truly needed
+
+#### Enhanced get_observations() Macro
+
+The `get_observations()` macro has been enhanced to properly capture result unit display text from the source system:
+
+```sql
+-- Enhanced macro now includes result_unit_display
+LEFT JOIN {{ ref('stg_olids_term_concept') }} unit_con
+    ON o.result_value_unit_concept_id = unit_con.id
+
+-- Returns result_unit_display field with actual units (e.g., 'mmol/mol', '%', 'mg/L')
+```
+
+**Benefits:**
+- ✅ **Authentic units**: Uses actual unit text from source system instead of hardcoded values  
+- ✅ **Enhanced type detection**: Can detect measurement types using both cluster ID and unit display
+- ✅ **Better result presentation**: Combines value + unit for clear clinical display
+- ✅ **Legacy compatibility**: Matches legacy approach for unit handling
+
 ## Migration Principles
 
 ### 1. Data Completeness by Layer
@@ -883,11 +1200,12 @@ Focus on building comprehensive intermediate models for all major clinical domai
 ### Phase 5: Clinical Quality & Status Fact Tables
 
 #### 5.1 Clinical Control & Quality Measures ✅ **Priority: HIGH** ✅ **COMPLETE**
-- [x] `fct_person_bp_control_status.sql` → `fct_person_bp_control.sql` ✅ **COMPLETE**
+- [x] `fct_person_bp_control_status.sql` → `fct_person_bp_control.sql` ✅ **COMPLETE** ✅ **ENHANCED** (event-based BP structure)
 - [x] `fct_person_diabetes_8_care_processes.sql` → `fct_person_diabetes_8_care_processes.sql` ✅ **COMPLETE**
 - [x] `fct_person_diabetes_9_care_processes.sql` → `fct_person_diabetes_9_care_processes.sql` ✅ **COMPLETE**
-- [x] `fct_person_diabetes_triple_target.sql` → `fct_person_diabetes_triple_target.sql` ✅ **COMPLETE**
+- [x] `fct_person_diabetes_triple_target.sql` → `fct_person_diabetes_triple_target.sql` ✅ **COMPLETE** ✅ **ENHANCED** (proper BP integration)
 - [x] `fct_person_diabetes_foot_check.sql` → `fct_person_diabetes_foot_check.sql` ✅ **COMPLETE**
+- [x] `dq_blood_pressure_issues.sql` → `dq_blood_pressure_issues.sql` ✅ **NEW** (data quality monitoring)
 
 #### 5.2 Patient Status & Demographics ✅ **Priority: HIGH**
 - [x] `fct_person_smoking_status.sql` → `fct_person_smoking_status.sql` ✅ **COMPLETE** (using existing int_smoking_status_all/latest)
@@ -982,8 +1300,9 @@ Focus on building comprehensive intermediate models for all major clinical domai
 - ✅ **Phase 4.3**: **100% COMPLETE!** Pattern 3 registers (3/3 complex registers with external medication validation)
 - ✅ **Phase 4.4**: **100% COMPLETE!** Pattern 4 registers (3/3 type classification registers with complex business logic)
 - ❌ **Phase 4.5**: **DISCONTINUED** Pattern 5 (lab-enhanced registers - functionality handled separately)
-- ✅ **Phase 4.6**: **100% COMPLETE!** Pattern 6 registers (4/4 complex clinical logic registers)
+- ✅ **Phase 4.6**: **100% COMPLETE!** Pattern 6 registers (4/4 complex clinical logic registers including enhanced HTN register)
 - 🎯 **MAJOR MILESTONE**: **ALL QOF REGISTER PATTERNS COMPLETE!** 25 total register fact tables implemented
+- ✅ **BP ARCHITECTURE ENHANCEMENT**: Event-based blood pressure structure implemented with clinical context awareness
 
 #### Next Priority Actions
 1. **🎯 Phase 5**: Clinical Quality & Status Fact Tables (diabetes care processes, BP control, clinical safety measures)

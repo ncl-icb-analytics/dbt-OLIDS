@@ -20,7 +20,11 @@ SELECT
     source_cluster_id,
     is_ifcc,
     is_dcct,
+    result_unit_display,
+    hba1c_result_display,
     hba1c_category,
+    indicates_diabetes,
+    meets_qof_target,
     original_result_value
 
 FROM (
