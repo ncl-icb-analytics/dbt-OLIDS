@@ -41,8 +41,8 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of mental health codes following QOF definitions
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'MH_COD' THEN TRUE ELSE FALSE END AS is_mental_health_diagnosis_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'MHREM_COD' THEN TRUE ELSE FALSE END AS is_mental_health_remission_code
+        CASE WHEN obs.cluster_id = 'MH_COD' THEN TRUE ELSE FALSE END AS is_mental_health_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'MHREM_COD' THEN TRUE ELSE FALSE END AS is_mental_health_remission_code
         
     FROM ({{ get_observations("'MH_COD', 'MHREM_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL

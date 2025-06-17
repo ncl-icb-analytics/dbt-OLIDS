@@ -21,9 +21,9 @@ preg_risk_observations AS (
     SELECT
         o.person_id,
         o.clinical_effective_date,
-        o.concept_code,
-        o.concept_display,
-        o.source_cluster_id,
+        o.mapped_concept_code AS concept_code,
+        o.mapped_concept_display AS concept_display,
+        o.cluster_id AS source_cluster_id,
         vpc.code_category,
         vpc.lookback_years_offset,
         o.date_recorded,

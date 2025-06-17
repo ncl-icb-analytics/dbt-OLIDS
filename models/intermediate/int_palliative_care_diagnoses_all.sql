@@ -40,8 +40,8 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of palliative care codes following QOF definitions
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'PALCARE_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'PALCARENI_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_not_indicated_code
+        CASE WHEN obs.cluster_id = 'PALCARE_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_code,
+        CASE WHEN obs.cluster_id = 'PALCARENI_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_not_indicated_code
         
     FROM ({{ get_observations("'PALCARE_COD', 'PALCARENI_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL

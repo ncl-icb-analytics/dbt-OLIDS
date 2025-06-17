@@ -9,7 +9,7 @@ WITH base_observations AS (
         pp.person_id,
         o.id AS observation_id,
         o.clinical_effective_date::DATE AS clinical_effective_date,
-        mc.concept_code,
+        mc.mapped_concept_code AS concept_code,
         mc.code_description AS concept_display,
         -- Additional fields for consistency
         p.id AS patient_id,

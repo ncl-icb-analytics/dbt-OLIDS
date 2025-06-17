@@ -34,10 +34,10 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of heart failure codes following QOF definitions
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_diagnosis_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_resolved_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code
+        CASE WHEN obs.cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_resolved_code,
+        CASE WHEN obs.cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
+        CASE WHEN obs.cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code
         
     FROM ({{ get_observations("'HF_COD', 'HFRES_COD', 'HFLVSD_COD', 'REDEJCFRAC_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -63,11 +63,11 @@ person_aggregates AS (
         MAX(CASE WHEN is_heart_failure_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(CASE WHEN is_heart_failure_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_code END) ELSE NULL END) AS all_hf_concept_codes,
-        ARRAY_AGG(CASE WHEN is_heart_failure_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_display END) ELSE NULL END) AS all_hf_concept_displays,
-        ARRAY_AGG(CASE WHEN is_hf_lvsd_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_hf_lvsd_code THEN concept_code END) ELSE NULL END) AS all_hf_lvsd_concept_codes,
-        ARRAY_AGG(CASE WHEN is_reduced_ef_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_reduced_ef_code THEN concept_code END) ELSE NULL END) AS all_reduced_ef_concept_codes,
-        ARRAY_AGG(CASE WHEN is_heart_failure_resolved_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_resolved_code THEN concept_code END) ELSE NULL END) AS all_resolved_concept_codes
+        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_code ELSE NULL END) AS all_hf_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_display ELSE NULL END) AS all_hf_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_hf_lvsd_code THEN concept_code ELSE NULL END) AS all_hf_lvsd_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_reduced_ef_code THEN concept_code ELSE NULL END) AS all_reduced_ef_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
             
     FROM base_observations
     GROUP BY person_id

@@ -41,12 +41,12 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of depression codes following QOF definitions
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEPR_COD' THEN TRUE ELSE FALSE END AS is_depression_diagnosis_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEPRES_COD' THEN TRUE ELSE FALSE END AS is_depression_resolved_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEPRVW_COD' THEN TRUE ELSE FALSE END AS is_depression_review_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEPRINVITE_COD' THEN TRUE ELSE FALSE END AS is_depression_invite_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEPRPCADEC_COD' THEN TRUE ELSE FALSE END AS is_depression_pca_decline_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEPRPCAPU_COD' THEN TRUE ELSE FALSE END AS is_depression_pca_unsuitable_code
+        CASE WHEN obs.cluster_id = 'DEPR_COD' THEN TRUE ELSE FALSE END AS is_depression_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'DEPRES_COD' THEN TRUE ELSE FALSE END AS is_depression_resolved_code,
+        CASE WHEN obs.cluster_id = 'DEPRVW_COD' THEN TRUE ELSE FALSE END AS is_depression_review_code,
+        CASE WHEN obs.cluster_id = 'DEPRINVITE_COD' THEN TRUE ELSE FALSE END AS is_depression_invite_code,
+        CASE WHEN obs.cluster_id = 'DEPRPCADEC_COD' THEN TRUE ELSE FALSE END AS is_depression_pca_decline_code,
+        CASE WHEN obs.cluster_id = 'DEPRPCAPU_COD' THEN TRUE ELSE FALSE END AS is_depression_pca_unsuitable_code
         
     FROM ({{ get_observations("'DEPR_COD', 'DEPRES_COD', 'DEPRVW_COD', 'DEPRINVITE_COD', 'DEPRPCADEC_COD', 'DEPRPCAPU_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -76,13 +76,13 @@ person_aggregates AS (
         MAX(CASE WHEN is_depression_pca_unsuitable_code THEN clinical_effective_date END) AS latest_pca_unsuitable_date,
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(CASE WHEN is_depression_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_code END) ELSE NULL END) AS all_depression_concept_codes,
-        ARRAY_AGG(CASE WHEN is_depression_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_display END) ELSE NULL END) AS all_depression_concept_displays,
-        ARRAY_AGG(CASE WHEN is_depression_resolved_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_resolved_code THEN concept_code END) ELSE NULL END) AS all_resolved_concept_codes,
-        ARRAY_AGG(CASE WHEN is_depression_review_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_review_code THEN concept_code END) ELSE NULL END) AS all_review_concept_codes,
-        ARRAY_AGG(CASE WHEN is_depression_invite_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_invite_code THEN concept_code END) ELSE NULL END) AS all_invite_concept_codes,
-        ARRAY_AGG(CASE WHEN is_depression_pca_decline_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_pca_decline_code THEN concept_code END) ELSE NULL END) AS all_pca_decline_concept_codes,
-        ARRAY_AGG(CASE WHEN is_depression_pca_unsuitable_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_depression_pca_unsuitable_code THEN concept_code END) ELSE NULL END) AS all_pca_unsuitable_concept_codes
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_code ELSE NULL END) AS all_depression_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_display ELSE NULL END) AS all_depression_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_review_code THEN concept_code ELSE NULL END) AS all_review_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_invite_code THEN concept_code ELSE NULL END) AS all_invite_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_pca_decline_code THEN concept_code ELSE NULL END) AS all_pca_decline_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_pca_unsuitable_code THEN concept_code ELSE NULL END) AS all_pca_unsuitable_concept_codes
             
     FROM base_observations
     GROUP BY person_id
@@ -92,9 +92,9 @@ SELECT
     bo.person_id,
     bo.observation_id,
     bo.clinical_effective_date,
-    bo.mapped_concept_code AS concept_code,
-    bo.mapped_concept_display AS concept_display,
-    bo.cluster_id AS source_cluster_id,
+            bo.concept_code,
+        bo.concept_display,
+        bo.source_cluster_id,
     
     -- Depression type flags
     bo.is_depression_diagnosis_code,

@@ -39,12 +39,12 @@ WITH base_observations AS (
         obs.numeric_value,
         
         -- Flag different types of DXA observations
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DXA_COD' THEN TRUE ELSE FALSE END AS is_dxa_scan_procedure,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'DXA2_COD' THEN TRUE ELSE FALSE END AS is_dxa_t_score_measurement,
+        CASE WHEN obs.cluster_id = 'DXA_COD' THEN TRUE ELSE FALSE END AS is_dxa_scan_procedure,
+        CASE WHEN obs.cluster_id = 'DXA2_COD' THEN TRUE ELSE FALSE END AS is_dxa_t_score_measurement,
         
         -- T-score clinical validation and interpretation
         CASE 
-            WHEN obs.cluster_id AS source_cluster_id = 'DXA2_COD' 
+            WHEN obs.source_cluster_id = 'DXA2_COD' 
                  AND obs.numeric_value IS NOT NULL 
                  AND obs.numeric_value BETWEEN -6.0 AND 6.0  -- Clinical range validation
             THEN obs.numeric_value 
@@ -53,7 +53,7 @@ WITH base_observations AS (
         
         -- Clinical interpretation of T-score
         CASE 
-            WHEN obs.cluster_id AS source_cluster_id = 'DXA2_COD' 
+            WHEN obs.source_cluster_id = 'DXA2_COD' 
                  AND obs.numeric_value IS NOT NULL 
                  AND obs.numeric_value BETWEEN -6.0 AND 6.0
             THEN CASE 
@@ -66,7 +66,7 @@ WITH base_observations AS (
         
         -- QOF osteoporosis confirmation flag
         CASE 
-            WHEN obs.cluster_id AS source_cluster_id = 'DXA2_COD' 
+            WHEN obs.source_cluster_id = 'DXA2_COD' 
                  AND obs.numeric_value IS NOT NULL 
                  AND obs.numeric_value <= -2.5
             THEN TRUE 

@@ -24,8 +24,8 @@ WITH base_observations AS (
         
         -- Extract BMI value from result_value, handling both numeric and coded values
         CASE 
-            WHEN obs.cluster_id AS source_cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
-            WHEN obs.cluster_id AS source_cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
+            WHEN obs.source_cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
+            WHEN obs.source_cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
             ELSE NULL
         END AS bmi_value
         

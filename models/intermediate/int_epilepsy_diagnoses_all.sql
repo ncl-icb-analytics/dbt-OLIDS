@@ -40,8 +40,8 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of epilepsy codes following QOF definitions
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'EPIL_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_diagnosis_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'EPILRES_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_resolved_code
+        CASE WHEN obs.cluster_id = 'EPIL_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'EPILRES_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_resolved_code
         
     FROM ({{ get_observations("'EPIL_COD', 'EPILRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -61,10 +61,10 @@ person_aggregates AS (
         MAX(CASE WHEN is_epilepsy_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(CASE WHEN is_epilepsy_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_diagnosis_code THEN concept_code END) ELSE NULL END) AS all_epilepsy_concept_codes,
-        ARRAY_AGG(CASE WHEN is_epilepsy_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_diagnosis_code THEN concept_display END) ELSE NULL END) AS all_epilepsy_concept_displays,
-        ARRAY_AGG(CASE WHEN is_epilepsy_resolved_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_resolved_code THEN concept_code END) ELSE NULL END) AS all_resolved_concept_codes,
-        ARRAY_AGG(CASE WHEN is_epilepsy_resolved_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_resolved_code THEN concept_display END) ELSE NULL END) AS all_resolved_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_diagnosis_code THEN concept_code ELSE NULL END) AS all_epilepsy_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_diagnosis_code THEN concept_display ELSE NULL END) AS all_epilepsy_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_resolved_code THEN concept_display ELSE NULL END) AS all_resolved_concept_displays
             
     FROM base_observations
     GROUP BY person_id
@@ -74,9 +74,9 @@ SELECT
     bo.person_id,
     bo.observation_id,
     bo.clinical_effective_date,
-    bo.mapped_concept_code AS concept_code,
-    bo.mapped_concept_display AS concept_display,
-    bo.cluster_id AS source_cluster_id,
+            bo.concept_code,
+        bo.concept_display,
+        bo.source_cluster_id,
     
     -- Epilepsy type flags
     bo.is_epilepsy_diagnosis_code,

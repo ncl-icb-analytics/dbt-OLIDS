@@ -17,8 +17,8 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
         obs.source_cluster_id
         
     FROM {{ ref('stg_olids_observation') }} obs

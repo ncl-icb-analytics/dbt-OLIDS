@@ -25,12 +25,12 @@ WITH base_observations AS (
         
         -- Flag measurement types
         CASE 
-            WHEN obs.cluster_id AS source_cluster_id = 'IFCCHBAM_COD' THEN TRUE 
+            WHEN obs.source_cluster_id = 'IFCCHBAM_COD' THEN TRUE 
             ELSE FALSE 
         END AS is_ifcc,
         
         CASE 
-            WHEN obs.cluster_id AS source_cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
+            WHEN obs.source_cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
             ELSE FALSE 
         END AS is_dcct
         

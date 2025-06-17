@@ -23,9 +23,9 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of smoking codes
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'LSMOK_COD' THEN TRUE ELSE FALSE END AS is_smoker_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'EXSMOK_COD' THEN TRUE ELSE FALSE END AS is_ex_smoker_code,
-        CASE WHEN obs.cluster_id AS source_cluster_id = 'NSMOK_COD' THEN TRUE ELSE FALSE END AS is_never_smoked_code
+        CASE WHEN obs.cluster_id = 'LSMOK_COD' THEN TRUE ELSE FALSE END AS is_smoker_code,
+        CASE WHEN obs.cluster_id = 'EXSMOK_COD' THEN TRUE ELSE FALSE END AS is_ex_smoker_code,
+        CASE WHEN obs.cluster_id = 'NSMOK_COD' THEN TRUE ELSE FALSE END AS is_never_smoked_code
         
     FROM ({{ get_observations("'SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
