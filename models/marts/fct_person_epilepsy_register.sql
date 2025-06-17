@@ -12,35 +12,36 @@
 WITH epilepsy_diagnoses AS (
     SELECT
         person_id,
-        earliest_diagnosis_date AS earliest_epilepsy_diagnosis_date,
-        latest_diagnosis_date AS latest_epilepsy_diagnosis_date,
+        earliest_epilepsy_date AS earliest_epilepsy_diagnosis_date,
+        latest_epilepsy_date AS latest_epilepsy_diagnosis_date,
         latest_resolved_date AS latest_epilepsy_resolved_date,
         
         -- QOF register logic: active diagnosis required
         CASE
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
+            WHEN latest_epilepsy_date IS NOT NULL 
+                AND (latest_resolved_date IS NULL OR latest_epilepsy_date > latest_resolved_date)
             THEN TRUE
             ELSE FALSE
         END AS has_active_epilepsy_diagnosis,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays,
-        all_source_cluster_ids
+        all_epilepsy_concept_codes,
+        all_epilepsy_concept_displays,
+        all_resolved_concept_codes,
+        all_resolved_concept_displays
     FROM {{ ref('int_epilepsy_diagnoses_all') }}
 ),
 
 epilepsy_medications AS (
     SELECT
         person_id,
-        latest_order_date AS latest_epilepsy_medication_date,
-        latest_medication_name AS latest_epilepsy_medication_name,
-        latest_medication_dose AS latest_epilepsy_medication_dose,
-        latest_concept_code AS latest_epilepsy_medication_concept_code,
-        latest_concept_display AS latest_epilepsy_medication_concept_display,
-        recent_order_count AS recent_epilepsy_medication_count
+        MAX(order_date) AS latest_epilepsy_medication_date,
+        MAX(order_medication_name) AS latest_epilepsy_medication_name,
+        MAX(mapped_concept_code) AS latest_epilepsy_medication_concept_code,
+        MAX(mapped_concept_display) AS latest_epilepsy_medication_concept_display,
+        COUNT(*) AS recent_epilepsy_medication_count
     FROM {{ ref('int_epilepsy_medications_6m') }}
+    GROUP BY person_id
 ),
 
 register_logic AS (
@@ -73,15 +74,15 @@ register_logic AS (
         -- Medication details
         med.latest_epilepsy_medication_date,
         med.latest_epilepsy_medication_name,
-        med.latest_epilepsy_medication_dose,
         med.latest_epilepsy_medication_concept_code,
         med.latest_epilepsy_medication_concept_display,
         med.recent_epilepsy_medication_count,
         
         -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
-        diag.all_source_cluster_ids,
+        diag.all_epilepsy_concept_codes,
+        diag.all_epilepsy_concept_displays,
+        diag.all_resolved_concept_codes,
+        diag.all_resolved_concept_displays,
         
         -- Person demographics
         age.age
@@ -105,15 +106,15 @@ SELECT
     -- Medication validation details  
     latest_epilepsy_medication_date,
     latest_epilepsy_medication_name,
-    latest_epilepsy_medication_dose,
     latest_epilepsy_medication_concept_code,
     latest_epilepsy_medication_concept_display,
     recent_epilepsy_medication_count,
     
     -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    all_source_cluster_ids,
+    all_epilepsy_concept_codes,
+    all_epilepsy_concept_displays,
+    all_resolved_concept_codes,
+    all_resolved_concept_displays,
     
     -- Criteria flags for transparency
     meets_age_criteria,
