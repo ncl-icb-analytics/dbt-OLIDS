@@ -12,17 +12,28 @@
 WITH ckd_diagnoses AS (
     SELECT
         person_id,
-        earliest_ckd_date AS earliest_ckd_diagnosis_date,
-        latest_ckd_date AS latest_ckd_diagnosis_date,
-        latest_resolved_date AS latest_ckd_resolved_date,
         
-        -- QOF register logic: active diagnosis required (use existing logic)
-        has_active_ckd_diagnosis,
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_ckd_diagnosis_code THEN clinical_effective_date END) AS earliest_ckd_diagnosis_date,
+        MAX(CASE WHEN is_ckd_diagnosis_code THEN clinical_effective_date END) AS latest_ckd_diagnosis_date,
+        MAX(CASE WHEN is_ckd_resolved_code THEN clinical_effective_date END) AS latest_ckd_resolved_date,
+        
+        -- QOF register logic: active diagnosis required
+        CASE
+            WHEN MAX(CASE WHEN is_ckd_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_ckd_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_ckd_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_ckd_resolved_code THEN clinical_effective_date END))
+            THEN TRUE
+            ELSE FALSE
+        END AS has_active_ckd_diagnosis,
         
         -- Traceability arrays
-        all_ckd_concept_codes,
-        all_resolved_concept_codes
+        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_diagnosis_code THEN concept_code ELSE NULL END) AS all_ckd_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        
     FROM {{ ref('int_ckd_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 register_logic AS (

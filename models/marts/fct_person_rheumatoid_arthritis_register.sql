@@ -1,62 +1,116 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
 /*
-Rheumatoid Arthritis Register - QOF Quality Measures
-Tracks all patients aged 16+ with rheumatoid arthritis diagnoses.
+Rheumatoid Arthritis (RA) register fact table - one row per person.
+Applies QOF RA register inclusion criteria.
 
-Simple Register Pattern with Age Filter:
-- Presence of RA diagnosis for age ≥16 = on register
-- No resolution codes (RA is permanent)
-- Age restriction: patients must be 16+ years
-- Important for DMARDs monitoring
+Clinical Purpose:
+- QOF RA register for musculoskeletal disease management
+- Disease activity monitoring and treatment pathway identification
+- Inflammatory arthritis care pathway
 
-QOF Business Rules:
-1. RA diagnosis (RARTH_COD) for patients aged 16+ qualifies for register
-2. RA is considered a permanent condition - no resolution
-3. Used for DMARDs therapy monitoring and joint health assessment
-4. Supports rheumatology care quality measures
+QOF Register Criteria:
+- Any RA diagnosis code (RA_COD)
+- Age ≥16 years at diagnosis (applied in this fact table)
+- No resolution codes (simple diagnosis-based register)
+- Lifelong condition register for ongoing disease management
 
-Matches legacy fct_person_dx_ra business logic and field structure.
+Includes only active patients as per QOF population requirements.
+This table provides one row per person for analytical use.
 */
 
-WITH base_diagnoses AS (
-    SELECT 
+WITH ra_diagnoses AS (
+    SELECT
         person_id,
-        earliest_ra_date,
-        latest_ra_date,
-        total_ra_episodes,
-        all_ra_concept_codes,
-        all_ra_concept_displays
+        
+        -- Register inclusion dates  
+        MIN(CASE WHEN is_ra_diagnosis_code THEN clinical_effective_date END) AS earliest_ra_date,
+        MAX(CASE WHEN is_ra_diagnosis_code THEN clinical_effective_date END) AS latest_ra_date,
+        
+        -- Episode counts
+        COUNT(CASE WHEN is_ra_diagnosis_code THEN 1 END) AS total_ra_episodes,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_ra_diagnosis_code THEN concept_code END) 
+            AS ra_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_ra_diagnosis_code THEN concept_display END) 
+            AS ra_diagnosis_displays,
+        
+        -- Latest observation details
+        ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
+            
     FROM {{ ref('int_rheumatoid_arthritis_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
--- Add person demographics and apply age filter
-final AS (
+register_inclusion AS (
     SELECT
-        bd.person_id,
-        age.age,
+        rd.*,
         
-        -- Register flag (always true after age filtering)
-        TRUE AS is_on_ra_register,
+        -- Age at first diagnosis calculation using current age (approximation)
+        CASE 
+            WHEN earliest_ra_date IS NOT NULL 
+            THEN age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())
+        END AS age_at_first_ra_diagnosis,
         
-        -- Diagnosis dates
-        bd.earliest_ra_date AS earliest_ra_diagnosis_date,
-        bd.latest_ra_date AS latest_ra_diagnosis_date,
+        -- QOF register logic: Include if has diagnosis and estimated age ≥16 at first diagnosis
+        CASE 
+            WHEN earliest_ra_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())) >= 16
+            THEN TRUE 
+            ELSE FALSE 
+        END AS is_on_ra_register,
         
-        -- Code arrays for traceability  
-        bd.all_ra_concept_codes,
-        bd.all_ra_concept_displays
+        -- Clinical interpretation
+        CASE 
+            WHEN earliest_ra_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())) >= 16
+            THEN 'Active RA diagnosis (age ≥16)'
+            WHEN earliest_ra_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())) < 16
+            THEN 'RA diagnosis (age <16 - excluded from QOF)'
+            ELSE 'No RA diagnosis'
+        END AS ra_status,
         
-    FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
-    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
-    
-    -- Apply QOF age filter: patients aged 16 or over
-    WHERE age.age >= 16
+        -- Days calculations
+        CASE 
+            WHEN earliest_ra_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_ra_date, CURRENT_DATE()) 
+        END AS days_since_first_ra,
+        
+        CASE 
+            WHEN latest_ra_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_ra_date, CURRENT_DATE()) 
+        END AS days_since_latest_ra
+        
+    FROM ra_diagnoses rd
+    INNER JOIN {{ ref('dim_person_active_patients') }} ap
+        ON rd.person_id = ap.person_id
+    INNER JOIN {{ ref('dim_person_age') }} age
+        ON rd.person_id = age.person_id
 )
 
-SELECT * FROM final 
+SELECT
+    ri.person_id,
+    ri.is_on_ra_register,
+    ri.ra_status,
+    ri.earliest_ra_date,
+    ri.latest_ra_date,
+    ri.age_at_first_ra_diagnosis,
+    ri.total_ra_episodes,
+    ri.days_since_first_ra,
+    ri.days_since_latest_ra,
+    ri.ra_diagnosis_codes,
+    ri.ra_diagnosis_displays,
+    ri.all_observation_ids
+    
+FROM register_inclusion ri
+WHERE ri.is_on_ra_register = TRUE
+
+ORDER BY ri.earliest_ra_date DESC, ri.person_id 

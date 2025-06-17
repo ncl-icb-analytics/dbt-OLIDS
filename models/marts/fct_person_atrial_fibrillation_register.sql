@@ -12,17 +12,28 @@
 WITH af_diagnoses AS (
     SELECT
         person_id,
-        earliest_af_diagnosis_date,
-        latest_af_diagnosis_date,
-        latest_af_resolved_date,
         
-        -- QOF register logic: active diagnosis required (use existing column)
-        has_active_af_diagnosis,
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_af_diagnosis_code THEN clinical_effective_date END) AS earliest_af_diagnosis_date,
+        MAX(CASE WHEN is_af_diagnosis_code THEN clinical_effective_date END) AS latest_af_diagnosis_date,
+        MAX(CASE WHEN is_af_resolved_code THEN clinical_effective_date END) AS latest_af_resolved_date,
+        
+        -- QOF register logic: active diagnosis required
+        CASE
+            WHEN MAX(CASE WHEN is_af_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_af_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_af_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_af_resolved_code THEN clinical_effective_date END))
+            THEN TRUE
+            ELSE FALSE
+        END AS has_active_af_diagnosis,
         
         -- Traceability arrays
-        all_af_concept_codes,
-        all_af_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_af_diagnosis_code THEN concept_code ELSE NULL END) AS all_af_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_af_diagnosis_code THEN concept_display ELSE NULL END) AS all_af_concept_displays
+        
     FROM {{ ref('int_atrial_fibrillation_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 register_logic AS (

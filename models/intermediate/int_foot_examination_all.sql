@@ -10,6 +10,7 @@ All foot examination records and related observations.
 Includes unsuitable/declined checks, foot status, risk assessments, and Townson scale.
 Complex model that aggregates multiple foot-related cluster IDs by person and date.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+Enhanced with analytics-ready fields and legacy structure alignment.
 */
 
 WITH foot_observations AS (
@@ -17,6 +18,7 @@ WITH foot_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
+        obs.sk_patient_id,
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
@@ -71,6 +73,8 @@ foot_status AS (
 check_details AS (
     SELECT 
         person_id,
+        -- Get sk_patient_id (all should be same for person+date, so MAX is fine)
+        MAX(sk_patient_id) AS sk_patient_id,
         clinical_effective_date,
         
         -- Check status
@@ -124,6 +128,7 @@ check_details AS (
 -- Final selection combining check details with foot status
 SELECT 
     cd.person_id,
+    cd.sk_patient_id,
     cd.clinical_effective_date,
     cd.is_unsuitable,
     cd.is_declined,
@@ -141,6 +146,7 @@ SELECT
     cd.all_concept_displays,
     cd.all_source_cluster_ids,
     
+    -- Enhanced analytics fields (improvements over legacy)
     -- Check completion status
     CASE 
         WHEN cd.is_unsuitable THEN 'Unsuitable'
@@ -161,7 +167,18 @@ SELECT
         WHEN cd.left_foot_checked AND (fs.right_foot_absent OR fs.right_foot_amputated) THEN TRUE
         WHEN cd.right_foot_checked AND (fs.left_foot_absent OR fs.left_foot_amputated) THEN TRUE
         ELSE FALSE
-    END AS is_valid_examination
+    END AS is_valid_examination,
+    
+    -- Diabetes foot risk classification for analytics
+    CASE 
+        WHEN cd.left_foot_risk_level = 'Ulcerated' OR cd.right_foot_risk_level = 'Ulcerated' THEN 'Ulcerated (High Risk)'
+        WHEN cd.left_foot_risk_level = 'High' OR cd.right_foot_risk_level = 'High' THEN 'High Risk'
+        WHEN cd.left_foot_risk_level = 'Moderate' OR cd.right_foot_risk_level = 'Moderate' THEN 'Moderate Risk'
+        WHEN cd.left_foot_risk_level = 'Low' AND cd.right_foot_risk_level = 'Low' THEN 'Low Risk'
+        WHEN cd.left_foot_risk_level = 'Low' OR cd.right_foot_risk_level = 'Low' THEN 'Low Risk'
+        WHEN cd.left_foot_checked OR cd.right_foot_checked THEN 'Risk Not Specified'
+        ELSE 'No Valid Examination'
+    END AS diabetes_foot_risk_category
 
 FROM check_details cd
 LEFT JOIN foot_status fs ON cd.person_id = fs.person_id

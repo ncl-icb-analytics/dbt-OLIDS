@@ -15,7 +15,7 @@ SELECT
     observation_id,
     clinical_effective_date,
     concept_code,
-    concept_display,
+    code_description,
     source_cluster_id,
     is_smoker_code,
     is_ex_smoker_code,

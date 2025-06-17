@@ -27,16 +27,30 @@ Matches legacy business logic and field structure with simplification.
 */
 
 WITH learning_disability_diagnoses AS (
-    
     SELECT
-        ld.person_id,
-        ld.earliest_ld_diagnosis_date,
-        ld.latest_ld_diagnosis_date,
-        ld.all_ld_concept_codes,
-        ld.all_ld_concept_displays
+        person_id,
         
-    FROM {{ ref('int_learning_disability_diagnoses_all') }} ld
-    WHERE ld.has_learning_disability_diagnosis = TRUE
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS earliest_ld_diagnosis_date,
+        MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS latest_ld_diagnosis_date,
+        MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END) AS latest_ld_resolved_date,
+        
+        -- QOF register logic: active diagnosis required
+        CASE
+            WHEN MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END))
+            THEN TRUE
+            ELSE FALSE
+        END AS has_active_ld_diagnosis,
+        
+        -- Traceability arrays
+        ARRAY_AGG(DISTINCT CASE WHEN is_learning_disability_diagnosis_code THEN concept_code ELSE NULL END) AS all_ld_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_learning_disability_diagnosis_code THEN concept_display ELSE NULL END) AS all_ld_concept_displays
+        
+    FROM {{ ref('int_learning_disability_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 register_logic AS (
@@ -45,14 +59,15 @@ register_logic AS (
         ld.*,
         age.age,
         
-        -- QOF Register Logic: LD diagnosis + age ≥14
-        (age.age >= 14) AS is_on_ld_register
+        -- QOF Register Logic: Active LD diagnosis + age ≥14
+        (ld.has_active_ld_diagnosis = TRUE AND age.age >= 14) AS is_on_ld_register
         
     FROM learning_disability_diagnoses ld
     INNER JOIN {{ ref('dim_person') }} p
         ON ld.person_id = p.person_id
     INNER JOIN {{ ref('dim_person_age') }} age
         ON ld.person_id = age.person_id
+    WHERE ld.has_active_ld_diagnosis = TRUE  -- Only include persons with active LD diagnosis
 )
 
 -- Final selection: Only include patients on the learning disability register

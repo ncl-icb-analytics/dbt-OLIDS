@@ -1,59 +1,117 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
 /*
-Familial Hypercholesterolaemia Register - QOF Quality Measures
-Tracks all patients with familial hypercholesterolaemia diagnoses.
+Familial Hypercholesterolaemia (FH) register fact table - one row per person.
+Applies QOF FH register inclusion criteria.
 
-Simple Register Pattern:
-- Presence of FH diagnosis = on register (lifelong genetic condition)
-- No resolution codes (FH is permanent genetic condition)
-- No age restrictions
-- Important for cascade screening and high-intensity statin therapy
+Clinical Purpose:
+- QOF FH register for genetic cardiovascular risk management  
+- Familial hypercholesterolaemia cascade screening
+- High-intensity statin therapy monitoring
+- Family screening pathway identification
 
-QOF Business Rules:
-1. Any FH diagnosis code qualifies for register inclusion
-2. FH is considered a permanent genetic condition - no resolution
-3. Used for cascade family screening programmes
-4. High-intensity statin therapy monitoring
+QOF Register Criteria:
+- Any FH diagnosis code (FHYP_COD)
+- Age ≥20 years (applied in this fact table)
+- No resolution codes (genetic condition)
+- Important for cascade family screening programmes
 
-Matches legacy fct_person_dx_fhyp business logic and field structure.
+Includes only active patients as per QOF population requirements.
+This table provides one row per person for analytical use.
 */
 
-WITH base_diagnoses AS (
-    SELECT 
+WITH fh_diagnoses AS (
+    SELECT
         person_id,
-        earliest_fhyp_date AS earliest_fh_date,
-        latest_fhyp_date AS latest_fh_date,
-        total_fhyp_episodes AS total_fh_episodes,
-        all_fhyp_concept_codes AS all_fh_concept_codes,
-        all_fhyp_concept_displays AS all_fh_concept_displays
+        
+        -- Register inclusion dates  
+        MIN(CASE WHEN is_fh_diagnosis_code THEN clinical_effective_date END) AS earliest_fh_date,
+        MAX(CASE WHEN is_fh_diagnosis_code THEN clinical_effective_date END) AS latest_fh_date,
+        
+        -- Episode counts
+        COUNT(CASE WHEN is_fh_diagnosis_code THEN 1 END) AS total_fh_episodes,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_fh_diagnosis_code THEN concept_code END) 
+            AS fh_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_fh_diagnosis_code THEN concept_display END) 
+            AS fh_diagnosis_displays,
+        
+        -- Latest observation details
+        ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
+            
     FROM {{ ref('int_familial_hypercholesterolaemia_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
--- Add person demographics matching legacy structure
-final AS (
+register_inclusion AS (
     SELECT
-        bd.person_id,
-        age.age,
+        fd.*,
         
-        -- Register flag (always true for simple register pattern)
-        TRUE AS is_on_fhyp_register,
+        -- Age at first diagnosis calculation using current age (approximation)
+        CASE 
+            WHEN earliest_fh_date IS NOT NULL 
+            THEN age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())
+        END AS age_at_first_fh_diagnosis,
         
-        -- Diagnosis dates
-        bd.earliest_fh_date AS earliest_fhyp_date,
-        bd.latest_fh_date AS latest_fhyp_date,
+        -- QOF register logic: Include if has diagnosis and estimated age ≥20 at first diagnosis
+        CASE 
+            WHEN earliest_fh_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())) >= 20
+            THEN TRUE 
+            ELSE FALSE 
+        END AS is_on_fh_register,
         
-        -- Code arrays for traceability  
-        bd.all_fh_concept_codes AS all_fhyp_concept_codes,
-        bd.all_fh_concept_displays AS all_fhyp_concept_displays
+        -- Clinical interpretation
+        CASE 
+            WHEN earliest_fh_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())) >= 20
+            THEN 'Active FH diagnosis (age ≥20)'
+            WHEN earliest_fh_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())) < 20
+            THEN 'FH diagnosis (age <20 - excluded from QOF)'
+            ELSE 'No FH diagnosis'
+        END AS fh_status,
         
-    FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
-    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
+        -- Days calculations
+        CASE 
+            WHEN earliest_fh_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_fh_date, CURRENT_DATE()) 
+        END AS days_since_first_fh,
+        
+        CASE 
+            WHEN latest_fh_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_fh_date, CURRENT_DATE()) 
+        END AS days_since_latest_fh
+        
+    FROM fh_diagnoses fd
+    INNER JOIN {{ ref('dim_person_active_patients') }} ap
+        ON fd.person_id = ap.person_id
+    INNER JOIN {{ ref('dim_person_age') }} age
+        ON fd.person_id = age.person_id
 )
 
-SELECT * FROM final 
+SELECT
+    ri.person_id,
+    ri.is_on_fh_register,
+    ri.fh_status,
+    ri.earliest_fh_date,
+    ri.latest_fh_date,
+    ri.age_at_first_fh_diagnosis,
+    ri.total_fh_episodes,
+    ri.days_since_first_fh,
+    ri.days_since_latest_fh,
+    ri.fh_diagnosis_codes,
+    ri.fh_diagnosis_displays,
+    ri.all_observation_ids
+    
+FROM register_inclusion ri
+WHERE ri.is_on_fh_register = TRUE
+
+ORDER BY ri.earliest_fh_date DESC, ri.person_id 

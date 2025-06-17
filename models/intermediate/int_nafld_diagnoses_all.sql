@@ -1,78 +1,63 @@
--- Non-Alcoholic Fatty Liver Disease (NAFLD) diagnosis intermediate model
--- Uses hardcoded SNOMED concept codes as no cluster is currently available
--- This should be updated with proper cluster ID once available in codesets
-
-WITH base_observations AS (
-    -- Direct query approach since no cluster is available for NAFLD
-    -- Uses hardcoded SNOMED concept codes
-    SELECT 
-        pp.person_id,
-        o.id AS observation_id,
-        o.clinical_effective_date::DATE AS clinical_effective_date,
-        mc.concept_code,
-        mc.code_description AS concept_display,
-        -- Additional fields for consistency
-        p.id AS patient_id,
-        CAST(o.result_value AS NUMBER(10,2)) AS numeric_value,
-        -- Source cluster placeholder (no cluster available)
-        'HARDCODED_NAFLD' AS source_cluster_id,
-        -- NAFLD diagnosis flag (all observations are NAFLD diagnoses)
-        TRUE AS is_nafld_diagnosis
-    FROM {{ ref('stg_olids_observation') }} o
-    INNER JOIN {{ ref('stg_olids_patient_person') }} pp 
-        ON o.patient_id = pp.patient_id
-    INNER JOIN {{ ref('stg_olids_patient') }} p 
-        ON o.patient_id = p.id
-    LEFT JOIN {{ ref('stg_codesets_mapped_concepts') }} mc 
-        ON o.observation_core_concept_id = mc.source_code_id
-    WHERE mc.concept_code IN (
-        '197315008',    -- Non-alcoholic fatty liver disease
-        '1197739005',   -- NAFLD related code
-        '1231824009',   -- NAFLD related code
-        '442685003',    -- NAFLD related code
-        '722866000',    -- NAFLD related code
-        '503681000000108' -- NAFLD related code
+{{
+    config(
+        materialized='table',
+        cluster_by=['person_id', 'clinical_effective_date']
     )
-    AND o.clinical_effective_date IS NOT NULL
-),
+}}
 
-person_aggregates AS (
-    SELECT
-        person_id,
-        
-        -- Date aggregates
-        MIN(clinical_effective_date) AS earliest_nafld_date,
-        MAX(clinical_effective_date) AS latest_nafld_date,
-        COUNT(DISTINCT clinical_effective_date) AS total_nafld_episodes,
-        
-        -- Code arrays for detailed analysis
-        ARRAY_AGG(DISTINCT concept_code) AS all_nafld_concept_codes,
-        ARRAY_AGG(DISTINCT concept_display) AS all_nafld_concept_displays
-        
-    FROM base_observations
-    GROUP BY person_id
-)
+/*
+All Non-Alcoholic Fatty Liver Disease (NAFLD) diagnosis observations from clinical records.
+Currently uses hardcoded SNOMED concept codes as no cluster is available in codesets.
+
+⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in codesets.
+
+Clinical Purpose:
+- NAFLD diagnosis tracking
+- Liver health assessment
+- Potential QOF register development
+
+Note: This should be updated to use get_observations() macro once proper cluster ID is available.
+
+Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+This is OBSERVATION-LEVEL data - one row per NAFLD observation.
+Use this model as input for fct_person_nafld_register.sql which applies business rules.
+*/
 
 SELECT 
-    bo.person_id,
-    bo.observation_id,
-    bo.clinical_effective_date,
-    bo.concept_code,
-    bo.concept_display,
-    bo.source_cluster_id,
+    o.id AS observation_id,
+    pp.person_id,
+    o.clinical_effective_date::DATE AS clinical_effective_date,
+    mc.concept_code,
+    mc.code_description AS concept_display,
     
-    -- NAFLD-specific flags
-    bo.is_nafld_diagnosis,
+    -- Source information
+    'HARDCODED_NAFLD' AS source_cluster_id,
+    p.id AS patient_id,
     
-    -- Person-level aggregate context
-    pa.earliest_nafld_date,
-    pa.latest_nafld_date,
-    pa.total_nafld_episodes,
-    pa.all_nafld_concept_codes,
-    pa.all_nafld_concept_displays
+    -- NAFLD-specific flags (observation-level only)
+    TRUE AS is_nafld_diagnosis_code,
+    
+    -- Observation type determination  
+    'NAFLD Diagnosis' AS nafld_observation_type,
+    
+    -- Additional clinical context
+    CAST(o.result_value AS NUMBER(10,2)) AS numeric_value
 
-FROM base_observations bo
-LEFT JOIN person_aggregates pa 
-    ON bo.person_id = pa.person_id
+FROM {{ ref('stg_olids_observation') }} o
+INNER JOIN {{ ref('stg_olids_patient_person') }} pp 
+    ON o.patient_id = pp.patient_id
+INNER JOIN {{ ref('stg_olids_patient') }} p 
+    ON o.patient_id = p.id
+LEFT JOIN {{ ref('stg_codesets_mapped_concepts') }} mc 
+    ON o.observation_core_concept_id = mc.source_code_id
+WHERE mc.concept_code IN (
+    '197315008',    -- Non-alcoholic fatty liver disease
+    '1197739005',   -- NAFLD related code
+    '1231824009',   -- NAFLD related code
+    '442685003',    -- NAFLD related code
+    '722866000',    -- NAFLD related code
+    '503681000000108' -- NAFLD related code
+)
+AND o.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

@@ -9,22 +9,26 @@
 -- Business Logic: Age ≥18 + Active HTN diagnosis + Clinical staging based on latest BP with context-specific NICE thresholds
 -- Complex Logic: BP staging varies by measurement context (Home/ABPM vs Clinic readings)
 
-WITH hypertension_diagnoses AS (
+WITH hypertension_person_aggregates AS (
     SELECT
         person_id,
-        earliest_hypertension_date AS earliest_htn_diagnosis_date,
-        latest_hypertension_date AS latest_htn_diagnosis_date,
-        latest_resolved_date AS latest_htn_resolved_date,
         
-        -- QOF register logic: active diagnosis required
-        has_active_hypertension_diagnosis AS has_active_htn_diagnosis,
+        -- Hypertension diagnosis dates
+        MIN(CASE WHEN is_hypertension_diagnosis_code THEN clinical_effective_date END) AS earliest_htn_diagnosis_date,
+        MAX(CASE WHEN is_hypertension_diagnosis_code THEN clinical_effective_date END) AS latest_htn_diagnosis_date,
+        
+        -- Resolution dates
+        MIN(CASE WHEN is_hypertension_resolved_code THEN clinical_effective_date END) AS earliest_resolved_date,
+        MAX(CASE WHEN is_hypertension_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- Traceability arrays
-        all_hypertension_concept_codes,
-        all_hypertension_concept_displays,
-        all_resolved_concept_codes,
-        all_resolved_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_hypertension_diagnosis_code THEN concept_code ELSE NULL END) AS all_hypertension_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_hypertension_diagnosis_code THEN concept_display ELSE NULL END) AS all_hypertension_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_hypertension_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_hypertension_resolved_code THEN concept_display ELSE NULL END) AS all_resolved_concept_displays
+        
     FROM {{ ref('int_hypertension_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 -- Latest BP readings using new event-based structure
@@ -54,13 +58,21 @@ register_logic AS (
         -- Age restriction: ≥18 years for HTN register
         CASE WHEN age.age >= 18 THEN TRUE ELSE FALSE END AS meets_age_criteria,
         
-        -- Diagnosis component
-        COALESCE(diag.has_active_htn_diagnosis, FALSE) AS has_active_diagnosis,
+        -- QOF register logic: active hypertension diagnosis required
+        CASE 
+            WHEN diag.latest_resolved_date IS NULL THEN TRUE -- Never resolved
+            WHEN diag.latest_htn_diagnosis_date > diag.latest_resolved_date THEN TRUE -- Re-diagnosed after resolution
+            ELSE FALSE -- Currently resolved
+        END AS has_active_htn_diagnosis,
         
         -- Final register inclusion: Age + Active diagnosis required
         CASE
             WHEN age.age >= 18
-                AND diag.has_active_htn_diagnosis = TRUE
+                AND diag.earliest_htn_diagnosis_date IS NOT NULL -- Has HTN diagnosis
+                AND (
+                    diag.latest_resolved_date IS NULL -- Never resolved
+                    OR diag.latest_htn_diagnosis_date > diag.latest_resolved_date -- Re-diagnosed after resolution
+                )
             THEN TRUE
             ELSE FALSE
         END AS is_on_htn_register,
@@ -68,7 +80,7 @@ register_logic AS (
         -- Clinical dates
         diag.earliest_htn_diagnosis_date,
         diag.latest_htn_diagnosis_date,
-        diag.latest_htn_resolved_date,
+        diag.latest_resolved_date,
         
         -- Latest BP data from event-based structure
         bp.latest_bp_date,
@@ -114,7 +126,7 @@ register_logic AS (
         age.age
     FROM {{ ref('dim_person') }} p
     INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
-    LEFT JOIN hypertension_diagnoses diag ON p.person_id = diag.person_id
+    LEFT JOIN hypertension_person_aggregates diag ON p.person_id = diag.person_id
     LEFT JOIN latest_bp_events bp ON p.person_id = bp.person_id
 )
 
@@ -127,7 +139,7 @@ SELECT
     -- Clinical diagnosis dates
     earliest_htn_diagnosis_date,
     latest_htn_diagnosis_date,
-    latest_htn_resolved_date,
+    latest_resolved_date,
     
     -- Latest BP data and staging
     latest_bp_date,
@@ -146,6 +158,6 @@ SELECT
     
     -- Criteria flags for transparency
     meets_age_criteria,
-    has_active_diagnosis
+    has_active_htn_diagnosis
 FROM register_logic
 WHERE is_on_htn_register = TRUE 

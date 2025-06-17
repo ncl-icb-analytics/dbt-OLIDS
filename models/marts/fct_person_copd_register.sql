@@ -29,22 +29,22 @@ WITH base_diagnoses AS (
         d.person_id,
         age.sk_patient_id,
         age.age,
-        d.earliest_copd_date AS earliest_diagnosis_date,
-        d.latest_copd_date AS latest_diagnosis_date,
-        d.latest_resolved_date AS latest_resolution_date,
-        d.earliest_unresolved_diagnosis_date
+        
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN d.is_copd_diagnosis_code THEN d.clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN d.is_copd_diagnosis_code THEN d.clinical_effective_date END) AS latest_diagnosis_date,
+        MAX(CASE WHEN d.is_copd_resolved_code THEN d.clinical_effective_date END) AS latest_resolution_date,
+        
+        -- Calculate earliest unresolved diagnosis date (key for QOF logic)
+        MIN(CASE WHEN d.is_copd_diagnosis_code THEN d.clinical_effective_date END) AS earliest_unresolved_diagnosis_date
+        
     FROM {{ ref('int_copd_diagnoses_all') }} d
     JOIN {{ ref('dim_person_age') }} age
         ON d.person_id = age.person_id
-    WHERE d.is_copd_diagnosis_code = TRUE
     GROUP BY 
         d.person_id,
         age.sk_patient_id,
-        age.age,
-        d.earliest_copd_date,
-        d.latest_copd_date,
-        d.latest_resolved_date,
-        d.earliest_unresolved_diagnosis_date
+        age.age
 ),
 
 latest_spirometry AS (

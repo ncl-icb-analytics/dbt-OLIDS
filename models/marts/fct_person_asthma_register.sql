@@ -12,24 +12,30 @@
 WITH asthma_diagnoses AS (
     SELECT
         person_id,
-        earliest_asthma_date AS earliest_asthma_diagnosis_date,
-        latest_asthma_date AS latest_asthma_diagnosis_date,
-        latest_resolved_date AS latest_asthma_resolved_date,
+        
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_asthma_diagnosis_code THEN clinical_effective_date END) AS earliest_asthma_diagnosis_date,
+        MAX(CASE WHEN is_asthma_diagnosis_code THEN clinical_effective_date END) AS latest_asthma_diagnosis_date,
+        MAX(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END) AS latest_asthma_resolved_date,
         
         -- QOF register logic: active diagnosis required
         CASE
-            WHEN latest_asthma_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_asthma_date > latest_resolved_date)
+            WHEN MAX(CASE WHEN is_asthma_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_asthma_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END))
             THEN TRUE
             ELSE FALSE
         END AS has_active_asthma_diagnosis,
         
         -- Traceability arrays
-        all_asthma_concept_codes,
-        all_asthma_concept_displays,
-        all_resolved_concept_codes,
-        all_resolved_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_diagnosis_code THEN concept_code ELSE NULL END) AS all_asthma_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_diagnosis_code THEN concept_display ELSE NULL END) AS all_asthma_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_resolved_code THEN concept_display ELSE NULL END) AS all_resolved_concept_displays
+        
     FROM {{ ref('int_asthma_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 asthma_medications AS (

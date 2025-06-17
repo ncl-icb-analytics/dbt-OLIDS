@@ -1,75 +1,103 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
--- Non-Alcoholic Fatty Liver Disease (NAFLD) Register (QOF Pattern 1: Simple Register)
--- Business Logic: Simple presence of NAFLD diagnosis code = on register
--- Uses hardcoded concept codes (no cluster ID available in terminology mapping)
+/*
+Non-Alcoholic Fatty Liver Disease (NAFLD) register fact table - one row per person.
+Applies NAFLD register inclusion criteria.
+
+Clinical Purpose:
+- NAFLD diagnosis tracking and monitoring
+- Liver health assessment
+- Potential QOF register development
+
+Register Criteria (Simple Pattern):
+- Any NAFLD diagnosis code (hardcoded SNOMED concepts)
+- No age restrictions
+- No resolution codes (simple diagnosis-based register)
+
+⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in codesets.
+
+Includes only active patients as per standard population requirements.
+This table provides one row per person for analytical use.
+*/
 
 WITH nafld_diagnoses AS (
     SELECT
         person_id,
-        earliest_nafld_date AS earliest_nafld_diagnosis_date,
-        latest_nafld_date AS latest_nafld_diagnosis_date,
         
-        -- Simple register logic: presence of any diagnosis = on register
-        TRUE AS is_on_nafld_register,
+        -- Register inclusion dates  
+        MIN(CASE WHEN is_nafld_diagnosis_code THEN clinical_effective_date END) AS earliest_nafld_date,
+        MAX(CASE WHEN is_nafld_diagnosis_code THEN clinical_effective_date END) AS latest_nafld_date,
         
-        -- Traceability arrays
-        all_nafld_concept_codes AS all_diagnosis_concept_codes,
-        all_nafld_concept_displays AS all_diagnosis_concept_displays
+        -- Episode counts
+        COUNT(CASE WHEN is_nafld_diagnosis_code THEN 1 END) AS total_nafld_episodes,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_nafld_diagnosis_code THEN concept_code END) 
+            AS nafld_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_nafld_diagnosis_code THEN concept_display END) 
+            AS nafld_diagnosis_displays,
+        
+        -- Latest observation details
+        ARRAY_AGG(observation_id ORDER BY clinical_effective_date DESC) AS all_observation_ids
+            
     FROM {{ ref('int_nafld_diagnoses_all') }}
-    WHERE person_id IS NOT NULL
-    GROUP BY person_id, earliest_nafld_date, latest_nafld_date, all_nafld_concept_codes, all_nafld_concept_displays
+    GROUP BY person_id
 ),
 
-register_logic AS (
+register_inclusion AS (
     SELECT
-        p.person_id,
+        nd.*,
         
-        -- No age restriction for NAFLD register
-        TRUE AS meets_criteria,
-        
-        -- Simple inclusion logic: presence of diagnosis
-        CASE
-            WHEN diag.is_on_nafld_register = TRUE
-            THEN TRUE
-            ELSE FALSE
+        -- Simple register logic: Include if has diagnosis
+        CASE 
+            WHEN earliest_nafld_date IS NOT NULL 
+            THEN TRUE 
+            ELSE FALSE 
         END AS is_on_nafld_register,
         
-        -- Clinical dates
-        diag.earliest_nafld_diagnosis_date,
-        diag.latest_nafld_diagnosis_date,
+        -- Clinical interpretation
+        CASE 
+            WHEN earliest_nafld_date IS NOT NULL 
+            THEN 'Active NAFLD diagnosis'
+            ELSE 'No NAFLD diagnosis'
+        END AS nafld_status,
         
-        -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
+        -- Days calculations
+        CASE 
+            WHEN earliest_nafld_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_nafld_date, CURRENT_DATE()) 
+        END AS days_since_first_nafld,
         
-        -- Person demographics
-        age.age
-    FROM {{ ref('dim_person') }} p
-    INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
-    LEFT JOIN nafld_diagnoses diag ON p.person_id = diag.person_id
+        CASE 
+            WHEN latest_nafld_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_nafld_date, CURRENT_DATE()) 
+        END AS days_since_latest_nafld
+        
+    FROM nafld_diagnoses nd
 )
 
--- Final selection: Only individuals with NAFLD diagnosis
 SELECT
-    person_id,
-    age,
-    is_on_nafld_register,
+    ri.person_id,
+    ri.is_on_nafld_register,
+    ri.nafld_status,
+    ri.earliest_nafld_date,
+    ri.latest_nafld_date,
+    ri.total_nafld_episodes,
+    ri.days_since_first_nafld,
+    ri.days_since_latest_nafld,
+    ri.nafld_diagnosis_codes,
+    ri.nafld_diagnosis_displays,
+    ri.all_observation_ids
     
-    -- Clinical diagnosis dates
-    earliest_nafld_diagnosis_date,
-    latest_nafld_diagnosis_date,
-    
-    -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    
-    -- Criteria flags for transparency
-    meets_criteria
-FROM register_logic
-WHERE is_on_nafld_register = TRUE 
+FROM register_inclusion ri
+INNER JOIN {{ ref('dim_person_active_patients') }} ap
+    ON ri.person_id = ap.person_id
+WHERE ri.is_on_nafld_register = TRUE
+
+ORDER BY ri.earliest_nafld_date DESC, ri.person_id 

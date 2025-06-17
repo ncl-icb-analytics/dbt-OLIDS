@@ -27,18 +27,51 @@ Matches legacy business logic and field structure with simplification (no episod
 */
 
 WITH depression_diagnoses AS (
-    
     SELECT
-        diag.person_id,
-        diag.earliest_depression_date,
-        diag.latest_depression_date,
-        diag.latest_resolved_date,
-        diag.all_depression_concept_codes,
-        diag.all_depression_concept_displays,
-        diag.all_resolved_concept_codes
+        person_id,
         
-    FROM {{ ref('int_depression_diagnoses_all') }} diag
-    WHERE diag.has_potential_qof_depression = TRUE
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) AS earliest_depression_diagnosis_date,
+        MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) AS latest_depression_diagnosis_date,
+        MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END) AS latest_depression_resolved_date,
+        
+        -- QOF register logic: active diagnosis required since April 2006
+        CASE
+            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= '2006-04-01'
+                AND (MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END))
+            THEN TRUE
+            ELSE FALSE
+        END AS has_active_depression_diagnosis,
+        
+        -- QOF temporal flags for recent episodes
+        CASE 
+            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= CURRENT_DATE - INTERVAL '12 months' 
+            THEN TRUE 
+            ELSE FALSE 
+        END AS has_episode_last_12m,
+        
+        CASE 
+            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= CURRENT_DATE - INTERVAL '15 months' 
+            THEN TRUE 
+            ELSE FALSE 
+        END AS has_episode_last_15m,
+        
+        CASE 
+            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= CURRENT_DATE - INTERVAL '24 months' 
+            THEN TRUE 
+            ELSE FALSE 
+        END AS has_episode_last_24m,
+        
+        -- Traceability arrays
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_code ELSE NULL END) AS all_depression_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_display ELSE NULL END) AS all_depression_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_depression_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        
+    FROM {{ ref('int_depression_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 register_logic AS (
@@ -47,11 +80,10 @@ register_logic AS (
         dd.*,
         age.age,
         
-        -- QOF Register Logic: Age ≥18 + episode ≥1 April 2006 + unresolved
+        -- QOF Register Logic: Age ≥18 + Active depression diagnosis
         (
             age.age >= 18
-            AND dd.latest_depression_date >= DATE '2006-04-01'
-            AND (dd.latest_resolved_date IS NULL OR dd.latest_resolved_date < dd.latest_depression_date)
+            AND dd.has_active_depression_diagnosis = TRUE
         ) AS is_on_depression_register
         
     FROM depression_diagnoses dd
@@ -59,6 +91,7 @@ register_logic AS (
         ON dd.person_id = p.person_id
     INNER JOIN {{ ref('dim_person_age') }} age
         ON dd.person_id = age.person_id
+    WHERE dd.has_active_depression_diagnosis = TRUE  -- Only include persons with active depression diagnosis
 )
 
 -- Final selection: Only include patients on the depression register
@@ -66,9 +99,9 @@ SELECT
     rl.person_id,
     rl.age,
     rl.is_on_depression_register,
-    rl.earliest_depression_date AS earliest_depression_diagnosis_date,
-    rl.latest_depression_date AS latest_depression_diagnosis_date,
-    rl.latest_resolved_date AS latest_depression_resolved_date,
+    rl.earliest_depression_diagnosis_date,
+    rl.latest_depression_diagnosis_date,
+    rl.latest_depression_resolved_date,
     rl.all_depression_concept_codes,
     rl.all_depression_concept_displays,
     rl.all_resolved_concept_codes AS all_depression_resolved_concept_codes

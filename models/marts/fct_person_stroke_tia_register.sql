@@ -1,62 +1,122 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
 /*
-Stroke/TIA Register - QOF Cardiovascular Disease Quality Measures
-Tracks all patients with stroke and transient ischaemic attack diagnoses.
+Stroke and TIA register fact table - one row per person.
+Applies QOF stroke register inclusion criteria with resolution logic.
 
-Simple Register Pattern:
-- Presence of stroke or TIA diagnosis = on register (lifelong condition)
-- No resolution codes (stroke/TIA are permanent)
+Clinical Purpose:
+- QOF stroke register for secondary prevention measures
+- Cardiovascular risk management post-stroke
+- Stroke care pathway monitoring
+
+QOF Register Criteria:
+- Person has stroke or TIA diagnosis code (STIA_COD)
+- Not resolved/removed by resolution codes (STIARES_COD)
 - No age restrictions
-- Important for secondary prevention monitoring
+- Lifelong condition register for secondary prevention
 
-QOF Business Rules:
-1. Any stroke or TIA diagnosis code qualifies for register inclusion
-2. Stroke/TIA are considered permanent conditions - no resolution
-3. Used for secondary prevention medication monitoring
-4. Cardiovascular risk management and anticoagulation decisions
-
-Matches legacy fct_person_dx_stia business logic and field structure.
+Includes only active patients as per QOF population requirements.
+This table provides one row per person for analytical use.
 */
 
-WITH base_diagnoses AS (
-    SELECT 
+WITH stroke_tia_diagnoses AS (
+    SELECT
         person_id,
-        has_stroke_tia_diagnosis,
-        earliest_stroke_tia_date,
-        latest_stroke_tia_date,
-        total_stroke_tia_episodes,
-        all_stroke_tia_concept_codes,
-        all_stroke_tia_concept_displays
+        
+        -- Register inclusion dates  
+        MIN(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS earliest_stroke_tia_date,
+        MAX(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS latest_stroke_tia_date,
+        
+        -- Resolution dates
+        MIN(CASE WHEN is_stroke_tia_resolved_code THEN clinical_effective_date END) AS earliest_resolution_date,
+        MAX(CASE WHEN is_stroke_tia_resolved_code THEN clinical_effective_date END) AS latest_resolution_date,
+        
+        -- Episode counts
+        COUNT(CASE WHEN is_stroke_tia_diagnosis_code THEN 1 END) AS total_stroke_tia_episodes,
+        COUNT(CASE WHEN is_stroke_tia_resolved_code THEN 1 END) AS total_resolution_codes,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_diagnosis_code THEN concept_code END) 
+            AS stroke_tia_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_resolved_code THEN concept_code END) 
+            AS stroke_tia_resolution_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_diagnosis_code THEN concept_display END) 
+            AS stroke_tia_diagnosis_displays,
+        
+        -- Latest observation details
+        ARRAY_AGG(observation_id ORDER BY clinical_effective_date DESC) AS all_observation_ids
+            
     FROM {{ ref('int_stroke_tia_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
--- Add person demographics matching legacy structure
-final AS (
+register_inclusion AS (
     SELECT
-        bd.person_id,
-        age.age,
+        std.*,
         
-        -- Register flag (always true for simple register pattern)
-        TRUE AS is_on_stia_register,
+        -- QOF register logic: Include if has diagnosis and not resolved
+        CASE 
+            WHEN earliest_stroke_tia_date IS NOT NULL 
+                 AND (earliest_resolution_date IS NULL 
+                      OR earliest_resolution_date > latest_stroke_tia_date)
+            THEN TRUE 
+            ELSE FALSE 
+        END AS is_on_stroke_tia_register,
         
-        -- Diagnosis dates
-        bd.earliest_stroke_tia_date,
-        bd.latest_stroke_tia_date,
+        -- Clinical interpretation
+        CASE 
+            WHEN earliest_stroke_tia_date IS NOT NULL 
+                 AND earliest_resolution_date IS NULL
+            THEN 'Active stroke/TIA - never resolved'
+            WHEN earliest_stroke_tia_date IS NOT NULL 
+                 AND earliest_resolution_date > latest_stroke_tia_date
+            THEN 'Active stroke/TIA - resolved before last diagnosis'
+            WHEN earliest_stroke_tia_date IS NOT NULL 
+                 AND earliest_resolution_date <= latest_stroke_tia_date  
+            THEN 'Resolved stroke/TIA'
+            ELSE 'No stroke/TIA diagnosis'
+        END AS stroke_tia_status,
         
-        -- Code arrays for traceability  
-        bd.all_stroke_tia_concept_codes,
-        bd.all_stroke_tia_concept_displays
+        -- Days calculations
+        CASE 
+            WHEN earliest_stroke_tia_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_stroke_tia_date, CURRENT_DATE()) 
+        END AS days_since_first_stroke_tia,
         
-    FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON bd.person_id = p.person_id
-    LEFT JOIN {{ ref('dim_person_age') }} age
-        ON bd.person_id = age.person_id
+        CASE 
+            WHEN latest_stroke_tia_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_stroke_tia_date, CURRENT_DATE()) 
+        END AS days_since_latest_stroke_tia
+        
+    FROM stroke_tia_diagnoses std
 )
 
-SELECT * FROM final 
+SELECT
+    ri.person_id,
+    ri.is_on_stroke_tia_register,
+    ri.stroke_tia_status,
+    ri.earliest_stroke_tia_date,
+    ri.latest_stroke_tia_date,
+    ri.earliest_resolution_date,
+    ri.latest_resolution_date,
+    ri.total_stroke_tia_episodes,
+    ri.total_resolution_codes,
+    ri.days_since_first_stroke_tia,
+    ri.days_since_latest_stroke_tia,
+    ri.stroke_tia_diagnosis_codes,
+    ri.stroke_tia_resolution_codes,
+    ri.stroke_tia_diagnosis_displays,
+    ri.all_observation_ids
+    
+FROM register_inclusion ri
+INNER JOIN {{ ref('dim_person_active_patients') }} ap
+    ON ri.person_id = ap.person_id
+WHERE ri.is_on_stroke_tia_register = TRUE
+
+ORDER BY ri.earliest_stroke_tia_date DESC, ri.person_id 

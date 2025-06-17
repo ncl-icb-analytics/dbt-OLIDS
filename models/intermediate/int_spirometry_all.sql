@@ -9,6 +9,7 @@
 All spirometry test results for COPD diagnosis (FEV1/FVC ratios).
 Includes both raw FEV1/FVC values and pre-coded "less than 0.7" observations.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+Enhanced with analytics-ready fields and legacy structure alignment.
 */
 
 WITH base_observations AS (
@@ -16,10 +17,12 @@ WITH base_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
+        obs.sk_patient_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(10,3)) AS fev1_fvc_ratio,
+        obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
-        obs.mapped_concept_display AS concept_display,
+        obs.mapped_concept_display AS code_description,
         obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
         
@@ -29,21 +32,24 @@ WITH base_observations AS (
 
 SELECT
     person_id,
+    sk_patient_id,
     observation_id,
     clinical_effective_date,
     fev1_fvc_ratio,
+    result_unit_display,
     original_result_value,
     concept_code,
-    concept_display,
+    code_description,
     source_cluster_id,
     
-    -- Determine if ratio indicates COPD (below 0.7)
+    -- Core legacy boolean flag (matching legacy exactly)
     CASE
         WHEN source_cluster_id = 'FEV1FVCL70_COD' THEN TRUE -- Pre-coded as less than 0.7
         WHEN source_cluster_id = 'FEV1FVC_COD' AND fev1_fvc_ratio < 0.7 THEN TRUE -- Raw value less than 0.7
         ELSE FALSE
     END AS is_below_0_7,
     
+    -- Enhanced analytics flags
     -- Validate spirometry reading
     CASE 
         WHEN source_cluster_id = 'FEV1FVCL70_COD' THEN TRUE -- Pre-coded values are valid
@@ -57,7 +63,26 @@ SELECT
         WHEN source_cluster_id = 'FEV1FVC_COD' AND fev1_fvc_ratio < 0.7 THEN 'COPD Indicated (Measured <0.7)'
         WHEN source_cluster_id = 'FEV1FVC_COD' AND fev1_fvc_ratio >= 0.7 THEN 'Normal (≥0.7)'
         ELSE 'Invalid'
-    END AS spirometry_interpretation
+    END AS spirometry_interpretation,
+    
+    -- COPD severity staging based on FEV1/FVC ratio
+    CASE
+        WHEN source_cluster_id = 'FEV1FVCL70_COD' OR fev1_fvc_ratio < 0.7 THEN 'Airway Obstruction'
+        WHEN fev1_fvc_ratio >= 0.7 THEN 'Normal'
+        ELSE 'Unknown'
+    END AS copd_staging,
+    
+    -- Analytics-ready COPD risk indicators  
+    CASE
+        WHEN source_cluster_id = 'FEV1FVCL70_COD' OR fev1_fvc_ratio < 0.7 THEN TRUE
+        ELSE FALSE
+    END AS indicates_copd,
+    
+    -- QOF-specific spirometry confirmation flag
+    CASE
+        WHEN (source_cluster_id = 'FEV1FVCL70_COD' OR fev1_fvc_ratio < 0.7) AND is_valid_spirometry THEN TRUE
+        ELSE FALSE
+    END AS confirms_copd_spirometry
 
 FROM base_observations
 ORDER BY person_id, clinical_effective_date DESC 

@@ -3,15 +3,17 @@ version: 2
 models:
   - name: int_smoking_status_all
     description: |
-      All smoking status observations from clinical records.
-      Uses QOF definitions with cluster IDs: SMOK_COD (general), LSMOK_COD (current smoker),
-      EXSMOK_COD (ex-smoker), and NSMOK_COD (never smoked) codes.
-      Includes ALL persons following intermediate layer principles.
+      All smoking status observations from clinical records using QOF definitions.
+      Enhanced with analytics-ready flags and legacy structure alignment.
+      Uses cluster IDs: SMOK_COD (general smoking codes), LSMOK_COD (current smoker codes), 
+      EXSMOK_COD (ex-smoker codes), and NSMOK_COD (never smoked codes).
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests:
           - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient (NULL in dummy data, populated in live data)"
       - name: observation_id
         description: "Unique observation identifier"
         tests:
@@ -21,11 +23,11 @@ models:
         tests:
           - not_null
       - name: concept_code
-        description: "SNOMED concept code for smoking status"
+        description: "Clinical concept code"
         tests:
           - not_null
-      - name: concept_display
-        description: "Description of the smoking status code"
+      - name: code_description
+        description: "Display term for the concept code"
         tests:
           - not_null
       - name: source_cluster_id
@@ -35,19 +37,19 @@ models:
           - accepted_values:
               values: ['SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD']
       - name: is_smoker_code
-        description: "Flag indicating current smoker code (LSMOK_COD)"
+        description: "Flag indicating if this is a current smoker code (LSMOK_COD)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
       - name: is_ex_smoker_code
-        description: "Flag indicating ex-smoker code (EXSMOK_COD)"
+        description: "Flag indicating if this is an ex-smoker code (EXSMOK_COD)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
       - name: is_never_smoked_code
-        description: "Flag indicating never smoked code (NSMOK_COD)"
+        description: "Flag indicating if this is a never smoked code (NSMOK_COD)"
         tests:
           - not_null
           - accepted_values:
@@ -57,16 +59,34 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'Unknown']
+              values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'General Smoking Code', 'Unknown']
       - name: is_current_smoker
-        description: "Flag indicating current smoking status"
+        description: "Boolean flag for current smoker status"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
       - name: is_ex_smoker
-        description: "Flag indicating ex-smoker status"
+        description: "Boolean flag for ex-smoker status"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]
+      - name: is_never_smoker
+        description: "Boolean flag for never smoker status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: has_smoking_history
+        description: "Analytics flag indicating any smoking history (current or ex-smoker)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: smoking_risk_category
+        description: "QOF-specific risk categorisation for analytics"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Active Smoker (QOF Risk)', 'Ex-Smoker (CVD Risk)', 'Never Smoked (Low Risk)', 'Unknown Risk'] 

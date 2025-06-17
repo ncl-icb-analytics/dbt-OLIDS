@@ -1,26 +1,53 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
--- Osteoporosis Register (QOF Pattern 6: Complex Clinical Logic)
--- Business Logic: Age 50-74 + ALL of the following:
---   1. Fragility fracture after April 2012
---   2. Osteoporosis diagnosis  
---   3. DXA confirmation (DXA scan OR T-score ≤ -2.5)
--- Complex Logic: Multiple mandatory components with specific clinical thresholds
+/*
+Osteoporosis Register fact table - one row per person.
+Applies QOF osteoporosis register inclusion criteria.
+
+Clinical Purpose:
+- QOF osteoporosis register for fracture prevention
+- Bone health monitoring
+- DXA scanning compliance
+
+QOF Register Criteria (Complex Pattern):
+- Age 50-74 years
+- AND ALL of the following:
+  1. Fragility fracture after April 2012
+  2. Osteoporosis diagnosis (OSTEO_COD)
+  3. DXA confirmation (DXA scan OR T-score ≤ -2.5)
+
+Includes only active patients as per QOF population requirements.
+This table provides one row per person for analytical use.
+*/
 
 WITH osteoporosis_diagnoses AS (
     SELECT
         person_id,
-        is_osteoporosis_diagnosis AS has_osteoporosis_diagnosis,
-        earliest_osteoporosis_date,
-        latest_osteoporosis_date,
-        all_osteoporosis_concept_codes,
-        all_osteoporosis_concept_displays
+        
+        -- Register inclusion dates  
+        MIN(CASE WHEN is_osteoporosis_diagnosis_code THEN clinical_effective_date END) AS earliest_osteoporosis_date,
+        MAX(CASE WHEN is_osteoporosis_diagnosis_code THEN clinical_effective_date END) AS latest_osteoporosis_date,
+        
+        -- Episode counts
+        COUNT(CASE WHEN is_osteoporosis_diagnosis_code THEN 1 END) AS total_osteoporosis_episodes,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_osteoporosis_diagnosis_code THEN concept_code END) 
+            AS osteoporosis_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_osteoporosis_diagnosis_code THEN concept_display END) 
+            AS osteoporosis_diagnosis_displays,
+        
+        -- Latest observation details
+        ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
+            
     FROM {{ ref('int_osteoporosis_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 dxa_data AS (
@@ -63,7 +90,7 @@ register_logic AS (
         COALESCE(frac.has_fragility_fracture, FALSE) AS has_fragility_fracture,
         
         -- Component 2: Osteoporosis diagnosis requirement
-        COALESCE(diag.has_osteoporosis_diagnosis, FALSE) AS has_osteoporosis_diagnosis,
+        CASE WHEN diag.earliest_osteoporosis_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_osteoporosis_diagnosis,
         
         -- Component 3: DXA confirmation requirement (scan OR T-score ≤ -2.5)
         CASE
@@ -80,7 +107,7 @@ register_logic AS (
         CASE
             WHEN age.age BETWEEN 50 AND 74
                 AND frac.has_fragility_fracture = TRUE
-                AND diag.has_osteoporosis_diagnosis = TRUE
+                AND diag.earliest_osteoporosis_date IS NOT NULL
                 AND (
                     dxa.has_dxa_scan = TRUE OR 
                     (dxa.has_dxa_t_score = TRUE AND dxa.latest_dxa_t_score <= -2.5)
@@ -92,6 +119,7 @@ register_logic AS (
         -- Clinical dates - osteoporosis
         diag.earliest_osteoporosis_date,
         diag.latest_osteoporosis_date,
+        diag.total_osteoporosis_episodes,
         
         -- Clinical dates - DXA
         dxa.earliest_dxa_date,
@@ -105,8 +133,9 @@ register_logic AS (
         frac.latest_fragility_fracture_date,
         
         -- Traceability - osteoporosis
-        diag.all_osteoporosis_concept_codes,
-        diag.all_osteoporosis_concept_displays,
+        diag.osteoporosis_diagnosis_codes,
+        diag.osteoporosis_diagnosis_displays,
+        diag.all_observation_ids,
         
         -- Traceability - DXA
         dxa.all_dxa_concept_codes,
@@ -119,7 +148,7 @@ register_logic AS (
         
         -- Person demographics
         age.age
-    FROM {{ ref('dim_person') }} p
+    FROM {{ ref('dim_person_active_patients') }} p
     INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
     LEFT JOIN osteoporosis_diagnoses diag ON p.person_id = diag.person_id
     LEFT JOIN dxa_data dxa ON p.person_id = dxa.person_id
@@ -143,6 +172,7 @@ SELECT
     -- Clinical dates - osteoporosis
     earliest_osteoporosis_date,
     latest_osteoporosis_date,
+    total_osteoporosis_episodes,
     
     -- Clinical dates - DXA
     earliest_dxa_date,
@@ -156,12 +186,15 @@ SELECT
     latest_fragility_fracture_date,
     
     -- Traceability for audit
-    all_osteoporosis_concept_codes,
-    all_osteoporosis_concept_displays,
+    osteoporosis_diagnosis_codes,
+    osteoporosis_diagnosis_displays,
+    all_observation_ids,
     all_dxa_concept_codes,
     all_dxa_concept_displays,
     all_fragility_fracture_concept_codes,
     all_fragility_fracture_concept_displays,
     all_fracture_sites
 FROM register_logic
-WHERE is_on_osteoporosis_register = TRUE 
+WHERE is_on_osteoporosis_register = TRUE
+
+ORDER BY earliest_osteoporosis_date DESC, person_id 

@@ -6,78 +6,42 @@
 }}
 
 /*
-All rheumatoid arthritis (RA) diagnoses from clinical records.
-Uses QOF cluster ID RARTH_COD for rheumatoid arthritis diagnosis codes.
+All rheumatoid arthritis diagnoses from clinical records.
+Uses QOF cluster ID RA_COD for all forms of rheumatoid arthritis diagnosis.
 
 Clinical Purpose:
-- RA register inclusion for QOF quality measures
-- Rheumatoid arthritis disease management monitoring
-- DMARDs (Disease-Modifying Anti-Rheumatic Drugs) prescribing support
+- RA register inclusion for QOF musculoskeletal disease management
+- Disease activity monitoring and treatment pathway identification
+- Inflammatory arthritis care pathway
 
 QOF Context:
-RA register follows simple diagnosis-only pattern with age restriction - any RA diagnosis 
-for patients aged 16+ qualifies for register inclusion. No resolution codes.
-This supports RA quality measures and specialist care monitoring.
-
-Note: QOF RA register requires age ≥16 years at diagnosis.
+RA register follows simple diagnosis-only pattern - any RA diagnosis code 
+qualifies for register inclusion. No resolution codes or complex criteria.
+This is a lifelong condition register for ongoing disease management.
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Use this model as input for RA register (with age filtering applied in fact layer).
+This is OBSERVATION-LEVEL data - one row per RA observation.
+Use this model as input for fct_person_rheumatoid_arthritis_register.sql which applies QOF business rules.
 */
 
-WITH base_observations AS (
-    SELECT
-        obs.observation_id,
-        obs.person_id,
-        obs.clinical_effective_date,
-        obs.mapped_concept_code AS concept_code,
-        obs.mapped_concept_display AS concept_display,
-        obs.cluster_id AS source_cluster_id,
-        
-        -- Rheumatoid arthritis-specific flags
-        CASE WHEN obs.cluster_id = 'RARTH_COD' THEN TRUE ELSE FALSE END AS is_ra_diagnosis
-        
-    FROM ({{ get_observations("'RARTH_COD'") }}) obs
-    WHERE obs.clinical_effective_date IS NOT NULL
-),
-
-person_aggregates AS (
-    SELECT
-        person_id,
-        
-        -- Date aggregates
-        MIN(clinical_effective_date) AS earliest_ra_date,
-        MAX(clinical_effective_date) AS latest_ra_date,
-        COUNT(DISTINCT clinical_effective_date) AS total_ra_episodes,
-        
-        -- Code arrays for detailed analysis
-        ARRAY_AGG(DISTINCT concept_code) AS all_ra_concept_codes,
-        ARRAY_AGG(DISTINCT concept_display) AS all_ra_concept_displays
-        
-    FROM base_observations
-    GROUP BY person_id
-)
-
-SELECT 
-    bo.person_id,
-    bo.observation_id,
-    bo.clinical_effective_date,
-    bo.concept_code,
-    bo.concept_display,
-    bo.source_cluster_id,
+SELECT
+    obs.observation_id,
+    obs.person_id,
+    obs.clinical_effective_date,
+    obs.mapped_concept_code AS concept_code,
+    obs.mapped_concept_display AS concept_display,
+    obs.cluster_id AS source_cluster_id,
     
-    -- Rheumatoid arthritis-specific flags
-    bo.is_ra_diagnosis,
+    -- RA-specific flags (observation-level only)
+    CASE WHEN obs.cluster_id = 'RA_COD' THEN TRUE ELSE FALSE END AS is_ra_diagnosis_code,
     
-    -- Person-level aggregate context
-    pa.earliest_ra_date,
-    pa.latest_ra_date,
-    pa.total_ra_episodes,
-    pa.all_ra_concept_codes,
-    pa.all_ra_concept_displays
+    -- Observation type determination
+    CASE
+        WHEN obs.cluster_id = 'RA_COD' THEN 'Rheumatoid Arthritis Diagnosis'
+        ELSE 'Unknown'
+    END AS ra_observation_type
 
-FROM base_observations bo
-LEFT JOIN person_aggregates pa 
-    ON bo.person_id = pa.person_id
+FROM ({{ get_observations("'RA_COD'") }}) obs
+WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

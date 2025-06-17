@@ -13,12 +13,11 @@ WITH twelve_months_ago AS (
 ),
 
 diabetes_register AS (
-    -- Base population: people with diabetes diagnoses
+    -- Base population: people on the diabetes register (one row per person)
     SELECT 
         person_id
-    FROM {{ ref('int_diabetes_diagnoses_all') }}
-    WHERE earliest_diabetes_date IS NOT NULL
-    GROUP BY person_id
+    FROM {{ ref('fct_person_diabetes_register') }}
+    -- No WHERE clause needed - this table already filters to people on the register
 ),
 
 care_process_data AS (

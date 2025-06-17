@@ -12,24 +12,29 @@
 WITH epilepsy_diagnoses AS (
     SELECT
         person_id,
-        earliest_epilepsy_date AS earliest_epilepsy_diagnosis_date,
-        latest_epilepsy_date AS latest_epilepsy_diagnosis_date,
-        latest_resolved_date AS latest_epilepsy_resolved_date,
+        
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) AS earliest_epilepsy_diagnosis_date,
+        MAX(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) AS latest_epilepsy_diagnosis_date,
+        MAX(CASE WHEN is_epilepsy_resolved_code THEN clinical_effective_date END) AS latest_epilepsy_resolved_date,
         
         -- QOF register logic: active diagnosis required
         CASE
-            WHEN latest_epilepsy_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_epilepsy_date > latest_resolved_date)
+            WHEN MAX(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_epilepsy_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_epilepsy_resolved_code THEN clinical_effective_date END))
             THEN TRUE
             ELSE FALSE
         END AS has_active_epilepsy_diagnosis,
         
         -- Traceability arrays
-        all_epilepsy_concept_codes,
-        all_epilepsy_concept_displays,
-        all_resolved_concept_codes,
-        all_resolved_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_diagnosis_code THEN concept_code ELSE NULL END) AS all_epilepsy_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_diagnosis_code THEN concept_display ELSE NULL END) AS all_epilepsy_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_epilepsy_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        
     FROM {{ ref('int_epilepsy_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 epilepsy_medications AS (
@@ -82,7 +87,6 @@ register_logic AS (
         diag.all_epilepsy_concept_codes,
         diag.all_epilepsy_concept_displays,
         diag.all_resolved_concept_codes,
-        diag.all_resolved_concept_displays,
         
         -- Person demographics
         age.age
@@ -114,7 +118,6 @@ SELECT
     all_epilepsy_concept_codes,
     all_epilepsy_concept_displays,
     all_resolved_concept_codes,
-    all_resolved_concept_displays,
     
     -- Criteria flags for transparency
     meets_age_criteria,

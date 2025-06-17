@@ -26,12 +26,19 @@ Matches legacy fct_person_dx_chd business logic and field structure.
 WITH base_diagnoses AS (
     SELECT 
         person_id,
-        earliest_chd_date,
-        latest_chd_date,
-        total_chd_episodes,
-        all_chd_concept_codes,
-        all_chd_concept_displays
+        
+        -- Person-level aggregation from observation-level data
+        MIN(clinical_effective_date) AS earliest_chd_date,
+        MAX(clinical_effective_date) AS latest_chd_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_chd_episodes,
+        
+        -- Traceability arrays
+        ARRAY_AGG(DISTINCT concept_code) AS all_chd_concept_codes,
+        ARRAY_AGG(DISTINCT concept_display) AS all_chd_concept_displays
+        
     FROM {{ ref('int_chd_diagnoses_all') }}
+    WHERE is_chd_diagnosis = TRUE
+    GROUP BY person_id
 ),
 
 -- Add person demographics matching legacy structure

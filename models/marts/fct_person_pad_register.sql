@@ -1,59 +1,102 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
 /*
-PAD Register - QOF Cardiovascular Disease Quality Measures
-Tracks all patients with peripheral arterial disease diagnoses.
+Peripheral Arterial Disease (PAD) register fact table - one row per person.
+Applies QOF PAD register inclusion criteria.
 
-Simple Register Pattern:
-- Presence of PAD diagnosis = on register (lifelong condition)
-- No resolution codes (PAD is permanent)
+Clinical Purpose:
+- QOF PAD register for cardiovascular disease management
+- Cardiovascular risk stratification and monitoring
+- Secondary prevention pathway identification
+
+QOF Register Criteria (Simple Pattern):
+- Any PAD diagnosis code (PAD_COD)
 - No age restrictions
-- Important for secondary prevention monitoring
+- No resolution codes (simple diagnosis-based register)
+- Lifelong condition register for cardiovascular secondary prevention
 
-QOF Business Rules:
-1. Any PAD diagnosis code qualifies for register inclusion
-2. PAD is considered a permanent condition - no resolution
-3. Used for secondary prevention medication monitoring
-4. Cardiovascular risk management
-
-Matches legacy fct_person_dx_pad business logic and field structure.
+Includes only active patients as per QOF population requirements.
+This table provides one row per person for analytical use.
 */
 
-WITH base_diagnoses AS (
-    SELECT 
+WITH pad_diagnoses AS (
+    SELECT
         person_id,
-        earliest_pad_date,
-        latest_pad_date,
-        total_pad_episodes,
-        all_pad_concept_codes,
-        all_pad_concept_displays
+        
+        -- Register inclusion dates  
+        MIN(CASE WHEN is_pad_diagnosis_code THEN clinical_effective_date END) AS earliest_pad_date,
+        MAX(CASE WHEN is_pad_diagnosis_code THEN clinical_effective_date END) AS latest_pad_date,
+        
+        -- Episode counts
+        COUNT(CASE WHEN is_pad_diagnosis_code THEN 1 END) AS total_pad_episodes,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_pad_diagnosis_code THEN concept_code END) 
+            AS pad_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_pad_diagnosis_code THEN concept_display END) 
+            AS pad_diagnosis_displays,
+        
+        -- Latest observation details
+        ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
+            
     FROM {{ ref('int_pad_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
--- Add person demographics matching legacy structure
-final AS (
+register_inclusion AS (
     SELECT
-        bd.person_id,
-        age.age,
+        pd.*,
         
-        -- Register flag (always true for simple register pattern)
-        TRUE AS is_on_pad_register,
+        -- Simple register logic: Include if has diagnosis
+        CASE 
+            WHEN earliest_pad_date IS NOT NULL 
+            THEN TRUE 
+            ELSE FALSE 
+        END AS is_on_pad_register,
         
-        -- Diagnosis dates
-        bd.earliest_pad_date,
-        bd.latest_pad_date,
+        -- Clinical interpretation
+        CASE 
+            WHEN earliest_pad_date IS NOT NULL 
+            THEN 'Active PAD diagnosis'
+            ELSE 'No PAD diagnosis'
+        END AS pad_status,
         
-        -- Code arrays for traceability  
-        bd.all_pad_concept_codes,
-        bd.all_pad_concept_displays
+        -- Days calculations
+        CASE 
+            WHEN earliest_pad_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_pad_date, CURRENT_DATE()) 
+        END AS days_since_first_pad,
         
-    FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
-    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
+        CASE 
+            WHEN latest_pad_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_pad_date, CURRENT_DATE()) 
+        END AS days_since_latest_pad
+        
+    FROM pad_diagnoses pd
 )
 
-SELECT * FROM final 
+SELECT
+    ri.person_id,
+    ri.is_on_pad_register,
+    ri.pad_status,
+    ri.earliest_pad_date,
+    ri.latest_pad_date,
+    ri.total_pad_episodes,
+    ri.days_since_first_pad,
+    ri.days_since_latest_pad,
+    ri.pad_diagnosis_codes,
+    ri.pad_diagnosis_displays,
+    ri.all_observation_ids
+    
+FROM register_inclusion ri
+INNER JOIN {{ ref('dim_person_active_patients') }} ap
+    ON ri.person_id = ap.person_id
+WHERE ri.is_on_pad_register = TRUE
+
+ORDER BY ri.earliest_pad_date DESC, ri.person_id 

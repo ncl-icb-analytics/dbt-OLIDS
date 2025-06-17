@@ -13,31 +13,50 @@ WITH heart_failure_diagnoses AS (
     SELECT
         person_id,
         
-        -- General heart failure dates
-        earliest_hf_date AS earliest_hf_diagnosis_date,
-        latest_hf_date AS latest_hf_diagnosis_date,
-        latest_resolved_date AS latest_hf_resolved_date,
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) AS earliest_hf_diagnosis_date,
+        MAX(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) AS latest_hf_diagnosis_date,
+        MAX(CASE WHEN is_heart_failure_resolved_code THEN clinical_effective_date END) AS latest_hf_resolved_date,
         
         -- LVSD-specific dates
-        earliest_hf_lvsd_date AS earliest_hf_lvsd_diagnosis_date,
-        latest_hf_lvsd_date AS latest_hf_lvsd_diagnosis_date,
+        MIN(CASE WHEN is_hf_lvsd_code THEN clinical_effective_date END) AS earliest_hf_lvsd_diagnosis_date,
+        MAX(CASE WHEN is_hf_lvsd_code THEN clinical_effective_date END) AS latest_hf_lvsd_diagnosis_date,
         
         -- Reduced ejection fraction dates
-        earliest_reduced_ef_date AS earliest_reduced_ef_diagnosis_date,
-        latest_reduced_ef_date AS latest_reduced_ef_diagnosis_date,
+        MIN(CASE WHEN is_reduced_ef_code THEN clinical_effective_date END) AS earliest_reduced_ef_diagnosis_date,
+        MAX(CASE WHEN is_reduced_ef_code THEN clinical_effective_date END) AS latest_reduced_ef_diagnosis_date,
         
-        -- QOF register logic: active HF diagnosis required (use existing logic)
-        has_active_heart_failure_diagnosis AS has_active_hf_diagnosis,
+        -- QOF register logic: active HF diagnosis required
+        CASE
+            WHEN MAX(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_heart_failure_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_heart_failure_resolved_code THEN clinical_effective_date END))
+            THEN TRUE
+            ELSE FALSE
+        END AS has_active_hf_diagnosis,
         
-        -- Subtype flags (use existing columns)
-        has_heart_failure_reduced_ef_indicators AS has_lvsd_diagnosis,
-        has_heart_failure_reduced_ef_indicators AS has_reduced_ef_diagnosis,
+        -- Subtype flags
+        CASE 
+            WHEN MAX(CASE WHEN is_hf_lvsd_code THEN clinical_effective_date END) IS NOT NULL 
+              OR MAX(CASE WHEN is_reduced_ef_code THEN clinical_effective_date END) IS NOT NULL
+            THEN TRUE 
+            ELSE FALSE 
+        END AS has_lvsd_diagnosis,
+        
+        CASE 
+            WHEN MAX(CASE WHEN is_reduced_ef_code THEN clinical_effective_date END) IS NOT NULL
+            THEN TRUE 
+            ELSE FALSE 
+        END AS has_reduced_ef_diagnosis,
         
         -- Traceability arrays
-        all_hf_concept_codes,
-        all_hf_concept_displays,
-        all_resolved_concept_codes
+        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_code ELSE NULL END) AS all_hf_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_display ELSE NULL END) AS all_hf_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        
     FROM {{ ref('int_heart_failure_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 register_logic AS (

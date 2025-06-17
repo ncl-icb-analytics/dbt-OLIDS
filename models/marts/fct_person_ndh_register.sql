@@ -1,161 +1,189 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        pre_hook="DROP TABLE IF EXISTS {{ this }}"
     )
 }}
 
--- Non-Diabetic Hyperglycaemia (NDH) Register (QOF Pattern 4: Type Classification Register)
--- Business Logic: Age ≥18 + NDH diagnosis + Complex diabetes exclusion logic 
--- Complex Logic: Has NDH AND (never had diabetes OR diabetes is resolved)
+/*
+Non-Diabetic Hyperglycaemia (NDH) register fact table - one row per person.
+Applies QOF NDH register inclusion criteria.
+
+Clinical Purpose:
+- QOF NDH register for diabetes prevention and intervention
+- Pre-diabetes monitoring and lifestyle intervention
+- Glucose metabolism disorder tracking
+- Diabetes prevention pathway support
+
+QOF Register Criteria (Complex Pattern):
+- Age ≥18 years at diagnosis
+- NDH/IGT/PRD diagnosis (NDH_COD, IGT_COD, PRD_COD)
+- Complex diabetes exclusion: never had diabetes OR diabetes is resolved
+- Important for diabetes prevention programmes
+
+Includes only active patients as per QOF population requirements.
+This table provides one row per person for analytical use.
+*/
 
 WITH ndh_diagnoses AS (
     SELECT
         person_id,
         
-        -- NDH diagnosis dates (includes NDH, IGT, PRD)
-        earliest_ndh_date,
-        latest_ndh_date,
-        earliest_igt_date,
-        latest_igt_date,
-        earliest_prd_date,
-        latest_prd_date,
-        earliest_multndh_date, -- Earliest of any NDH/IGT/PRD
-        latest_multndh_date,   -- Latest of any NDH/IGT/PRD
+        -- Register inclusion dates for different NDH types
+        MIN(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END) AS earliest_ndh_date,
+        MAX(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END) AS latest_ndh_date,
+        MIN(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END) AS earliest_igt_date,
+        MAX(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END) AS latest_igt_date,
+        MIN(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) AS earliest_prd_date,
+        MAX(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) AS latest_prd_date,
         
-        -- Flags for NDH subtypes
-        CASE WHEN earliest_ndh_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_ndh_diagnosis,
-        CASE WHEN earliest_igt_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_igt_diagnosis,
-        CASE WHEN earliest_prd_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_prd_diagnosis,
+        -- Overall NDH dates (any type)
+        MIN(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS earliest_any_ndh_date,
+        MAX(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS latest_any_ndh_date,
         
-        -- Traceability arrays
-        all_ndh_concept_codes,
-        all_ndh_concept_displays,
-        all_igt_concept_codes,
-        all_igt_concept_displays,
-        all_prd_concept_codes,
-        all_prd_concept_displays
+        -- Episode counts
+        COUNT(CASE WHEN is_ndh_diagnosis_code THEN 1 END) AS total_ndh_episodes,
+        COUNT(CASE WHEN is_igt_diagnosis_code THEN 1 END) AS total_igt_episodes,
+        COUNT(CASE WHEN is_pre_diabetes_diagnosis_code THEN 1 END) AS total_prd_episodes,
+        
+        -- Subtype flags
+        CASE WHEN MIN(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+             THEN TRUE ELSE FALSE END AS has_ndh_diagnosis,
+        CASE WHEN MIN(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+             THEN TRUE ELSE FALSE END AS has_igt_diagnosis,
+        CASE WHEN MIN(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+             THEN TRUE ELSE FALSE END AS has_prd_diagnosis,
+        
+        -- Concept code arrays for traceability
+        ARRAY_AGG(DISTINCT CASE WHEN is_ndh_diagnosis_code THEN concept_code END) AS ndh_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_ndh_diagnosis_code THEN concept_display END) AS ndh_diagnosis_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_igt_diagnosis_code THEN concept_code END) AS igt_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_igt_diagnosis_code THEN concept_display END) AS igt_diagnosis_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_pre_diabetes_diagnosis_code THEN concept_code END) AS prd_diagnosis_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_pre_diabetes_diagnosis_code THEN concept_display END) AS prd_diagnosis_displays,
+        
+        -- All observation IDs
+        ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
+            
     FROM {{ ref('int_ndh_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 diabetes_status AS (
     SELECT
         person_id,
         
-        -- Diabetes dates
-        earliest_diabetes_date,
-        latest_diabetes_date,
-        latest_resolved_date AS latest_diabetes_resolved_date,
+        -- Diabetes history for exclusion logic
+        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diabetes_date,
+        MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
-        -- Diabetes flags (use existing logic from intermediate model)
-        CASE WHEN earliest_diabetes_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_diabetes_diagnosis,
-        is_diabetes_currently_resolved = FALSE AS is_diabetes_resolved,
+        -- Diabetes flags
+        CASE WHEN MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) IS NOT NULL 
+             THEN TRUE ELSE FALSE END AS has_diabetes_diagnosis,
+        CASE WHEN MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) > 
+                  MAX(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END)
+             THEN TRUE ELSE FALSE END AS is_diabetes_resolved
         
-        -- Traceability
-        all_diabetes_concept_codes,
-        all_diabetes_concept_displays
     FROM {{ ref('int_diabetes_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
-register_logic AS (
+register_inclusion AS (
     SELECT
-        p.person_id,
+        nd.*,
+        ds.has_diabetes_diagnosis,
+        ds.is_diabetes_resolved,
+        ds.earliest_diabetes_date,
+        ds.latest_resolved_date,
         
-        -- Age restriction: ≥18 years for NDH register
-        CASE WHEN age.age >= 18 THEN TRUE ELSE FALSE END AS meets_age_criteria,
+        -- Age at first NDH diagnosis calculation using current age (approximation)
+        CASE 
+            WHEN earliest_any_ndh_date IS NOT NULL 
+            THEN age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())
+        END AS age_at_first_ndh_diagnosis,
         
-        -- NDH component
-        CASE WHEN ndh.earliest_multndh_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_ndh_diagnosis,
-        
-        -- Diabetes exclusion logic
-        COALESCE(dm.has_diabetes_diagnosis, FALSE) AS has_diabetes_diagnosis,
-        COALESCE(dm.is_diabetes_resolved, FALSE) AS is_diabetes_resolved,
-        
-        -- Final register inclusion: Age + NDH + (never diabetes OR diabetes resolved)
-        CASE
-            WHEN age.age >= 18
-                AND ndh.earliest_multndh_date IS NOT NULL
-                AND (dm.earliest_diabetes_date IS NULL OR dm.is_diabetes_resolved = TRUE)
-            THEN TRUE
-            ELSE FALSE
+        -- QOF register logic: Age ≥18 + NDH + (never diabetes OR diabetes resolved)
+        CASE 
+            WHEN earliest_any_ndh_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())) >= 18
+                 AND (COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE 
+                      OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
+            THEN TRUE 
+            ELSE FALSE 
         END AS is_on_ndh_register,
         
-        -- Clinical dates
-        ndh.earliest_ndh_date,
-        ndh.latest_ndh_date,
-        ndh.earliest_igt_date,
-        ndh.latest_igt_date,
-        ndh.earliest_prd_date,
-        ndh.latest_prd_date,
-        ndh.earliest_multndh_date,
-        ndh.latest_multndh_date,
-        dm.earliest_diabetes_date,
-        dm.latest_diabetes_date,
-        dm.latest_diabetes_resolved_date,
+        -- Clinical interpretation
+        CASE 
+            WHEN earliest_any_ndh_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())) >= 18
+                 AND (COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE 
+                      OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
+            THEN 'Active NDH - eligible for diabetes prevention'
+            WHEN earliest_any_ndh_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())) < 18
+            THEN 'NDH diagnosis (age <18 - excluded from QOF)'
+            WHEN earliest_any_ndh_date IS NOT NULL 
+                 AND COALESCE(ds.has_diabetes_diagnosis, FALSE) = TRUE
+                 AND COALESCE(ds.is_diabetes_resolved, FALSE) = FALSE
+            THEN 'NDH diagnosis (excluded - unresolved diabetes)'
+            ELSE 'No NDH diagnosis'
+        END AS ndh_status,
         
-        -- Subtype flags
-        ndh.has_ndh_diagnosis AS has_specific_ndh_diagnosis,
-        ndh.has_igt_diagnosis,
-        ndh.has_prd_diagnosis,
+        -- Days calculations
+        CASE 
+            WHEN earliest_any_ndh_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_any_ndh_date, CURRENT_DATE()) 
+        END AS days_since_first_ndh,
         
-        -- Traceability
-        ndh.all_ndh_concept_codes,
-        ndh.all_ndh_concept_displays,
-        ndh.all_igt_concept_codes,
-        ndh.all_igt_concept_displays,
-        ndh.all_prd_concept_codes,
-        ndh.all_prd_concept_displays,
-        dm.all_diabetes_concept_codes,
-        dm.all_diabetes_concept_displays,
+        CASE 
+            WHEN latest_any_ndh_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_any_ndh_date, CURRENT_DATE()) 
+        END AS days_since_latest_ndh
         
-        -- Person demographics
-        age.age
-    FROM {{ ref('dim_person') }} p
-    INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
-    LEFT JOIN ndh_diagnoses ndh ON p.person_id = ndh.person_id
-    LEFT JOIN diabetes_status dm ON p.person_id = dm.person_id
+    FROM ndh_diagnoses nd
+    INNER JOIN {{ ref('dim_person_active_patients') }} ap
+        ON nd.person_id = ap.person_id
+    INNER JOIN {{ ref('dim_person_age') }} age
+        ON nd.person_id = age.person_id
+    LEFT JOIN diabetes_status ds
+        ON nd.person_id = ds.person_id
 )
 
--- Final selection: Only individuals on NDH register
 SELECT
-    person_id,
-    age,
-    is_on_ndh_register,
+    ri.person_id,
+    ri.is_on_ndh_register,
+    ri.ndh_status,
+    ri.earliest_any_ndh_date,
+    ri.latest_any_ndh_date,
+    ri.earliest_ndh_date,
+    ri.latest_ndh_date,
+    ri.earliest_igt_date,
+    ri.latest_igt_date,
+    ri.earliest_prd_date,
+    ri.latest_prd_date,
+    ri.age_at_first_ndh_diagnosis,
+    ri.total_ndh_episodes,
+    ri.total_igt_episodes,
+    ri.total_prd_episodes,
+    ri.has_ndh_diagnosis,
+    ri.has_igt_diagnosis,
+    ri.has_prd_diagnosis,
+    ri.has_diabetes_diagnosis,
+    ri.is_diabetes_resolved,
+    ri.earliest_diabetes_date,
+    ri.latest_resolved_date,
+    ri.days_since_first_ndh,
+    ri.days_since_latest_ndh,
+    ri.ndh_diagnosis_codes,
+    ri.ndh_diagnosis_displays,
+    ri.igt_diagnosis_codes,
+    ri.igt_diagnosis_displays,
+    ri.prd_diagnosis_codes,
+    ri.prd_diagnosis_displays,
+    ri.all_observation_ids
     
-    -- Clinical diagnosis dates
-    earliest_ndh_date,
-    latest_ndh_date,
-    earliest_igt_date,
-    latest_igt_date,
-    earliest_prd_date,
-    latest_prd_date,
-    earliest_multndh_date,
-    latest_multndh_date,
-    
-    -- Diabetes context dates
-    earliest_diabetes_date,
-    latest_diabetes_date,
-    latest_diabetes_resolved_date,
-    
-    -- Subtype classification flags
-    has_specific_ndh_diagnosis,
-    has_igt_diagnosis,
-    has_prd_diagnosis,
-    has_diabetes_diagnosis,
-    is_diabetes_resolved,
-    
-    -- Traceability for audit
-    all_ndh_concept_codes,
-    all_ndh_concept_displays,
-    all_igt_concept_codes,
-    all_igt_concept_displays,
-    all_prd_concept_codes,
-    all_prd_concept_displays,
-    all_diabetes_concept_codes,
-    all_diabetes_concept_displays,
-    
-    -- Criteria flags for transparency
-    meets_age_criteria,
-    has_ndh_diagnosis
-FROM register_logic
-WHERE is_on_ndh_register = TRUE 
+FROM register_inclusion ri
+WHERE ri.is_on_ndh_register = TRUE
+
+ORDER BY ri.earliest_any_ndh_date DESC, ri.person_id 

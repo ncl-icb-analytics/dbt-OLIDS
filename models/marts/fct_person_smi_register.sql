@@ -26,21 +26,32 @@ Used for serious mental illness quality measures including:
 Matches legacy business logic and field structure with simplification.
 */
 
-WITH mental_health_diagnoses AS (
-    
+WITH smi_diagnoses AS (
     SELECT
-        smi.person_id,
-        smi.earliest_mh_diagnosis_date,
-        smi.latest_mh_diagnosis_date,
-        smi.latest_remission_date,
-        smi.is_mental_health_currently_in_remission,
-        smi.all_mh_diagnosis_concept_codes,
-        smi.all_mh_diagnosis_concept_displays,
-        smi.all_remission_concept_codes,
-        smi.all_remission_concept_displays
+        person_id,
         
-    FROM {{ ref('int_smi_diagnoses_all') }} smi
-    WHERE smi.has_mental_health_diagnosis = TRUE
+        -- Person-level aggregation from observation-level data
+        MIN(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) AS earliest_smi_diagnosis_date,
+        MAX(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) AS latest_smi_diagnosis_date,
+        MAX(CASE WHEN is_smi_resolved_code THEN clinical_effective_date END) AS latest_smi_resolved_date,
+        
+        -- QOF register logic: active diagnosis required
+        CASE
+            WHEN MAX(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
+                AND (MAX(CASE WHEN is_smi_resolved_code THEN clinical_effective_date END) IS NULL 
+                     OR MAX(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) > 
+                        MAX(CASE WHEN is_smi_resolved_code THEN clinical_effective_date END))
+            THEN TRUE
+            ELSE FALSE
+        END AS has_active_smi_diagnosis,
+        
+        -- Traceability arrays
+        ARRAY_AGG(DISTINCT CASE WHEN is_smi_diagnosis_code THEN concept_code ELSE NULL END) AS all_smi_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_smi_diagnosis_code THEN concept_display ELSE NULL END) AS all_smi_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_smi_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        
+    FROM {{ ref('int_smi_diagnoses_all') }}
+    GROUP BY person_id
 ),
 
 lithium_medications AS (
@@ -61,45 +72,44 @@ lithium_medications AS (
 combined_smi_eligibility AS (
     
     SELECT
-        COALESCE(mh.person_id, lith.person_id) AS person_id,
+        COALESCE(smi.person_id, lith.person_id) AS person_id,
         age.age,
         
         -- Mental health diagnosis details
-        mh.earliest_mh_diagnosis_date,
-        mh.latest_mh_diagnosis_date,
-        mh.latest_remission_date,
-        COALESCE(mh.is_mental_health_currently_in_remission, FALSE) AS is_in_remission,
+        smi.earliest_smi_diagnosis_date,
+        smi.latest_smi_diagnosis_date,
+        smi.latest_smi_resolved_date,
+        smi.has_active_smi_diagnosis,
         
         -- Lithium therapy details
         lith.latest_lithium_order_date,
         lith.recent_lithium_orders_count,
         
-        -- SMI Register Logic: MH diagnosis not in remission OR recent lithium therapy
-        (
-            (mh.latest_mh_diagnosis_date IS NOT NULL AND NOT COALESCE(mh.is_mental_health_currently_in_remission, FALSE))
-            OR
-            (lith.recent_lithium_orders_count > 0)
-        ) AS is_on_smi_register,
+                 -- SMI Register Logic: Active SMI diagnosis OR recent lithium therapy
+         (
+             smi.has_active_smi_diagnosis = TRUE
+             OR
+             (lith.recent_lithium_orders_count > 0)
+         ) AS is_on_smi_register,
         
         -- Supporting flags
-        mh.latest_mh_diagnosis_date IS NOT NULL AS has_mh_diagnosis,
+        smi.latest_smi_diagnosis_date IS NOT NULL AS has_mh_diagnosis,
         lith.recent_lithium_orders_count > 0 AS is_on_lithium,
         
         -- Concept arrays
-        mh.all_mh_diagnosis_concept_codes,
-        mh.all_mh_diagnosis_concept_displays,
-        mh.all_remission_concept_codes,
-        mh.all_remission_concept_displays,
+        smi.all_smi_concept_codes,
+        smi.all_smi_concept_displays,
+        smi.all_resolved_concept_codes,
         lith.all_lithium_concept_codes,
         lith.all_lithium_concept_displays
         
-    FROM mental_health_diagnoses mh
+    FROM smi_diagnoses smi
     FULL OUTER JOIN lithium_medications lith
-        ON mh.person_id = lith.person_id
+        ON smi.person_id = lith.person_id
     INNER JOIN {{ ref('dim_person') }} p
-        ON COALESCE(mh.person_id, lith.person_id) = p.person_id
+        ON COALESCE(smi.person_id, lith.person_id) = p.person_id
     INNER JOIN {{ ref('dim_person_age') }} age
-        ON COALESCE(mh.person_id, lith.person_id) = age.person_id
+        ON COALESCE(smi.person_id, lith.person_id) = age.person_id
 )
 
 -- Final selection: Only include patients on the SMI register
@@ -109,13 +119,14 @@ SELECT
     cse.is_on_smi_register,
     cse.is_on_lithium,
     cse.has_mh_diagnosis,
-    cse.is_in_remission,
-    cse.earliest_mh_diagnosis_date,
-    cse.latest_mh_diagnosis_date,
-    cse.latest_remission_date,
+    cse.has_active_smi_diagnosis,
+    cse.earliest_smi_diagnosis_date,
+    cse.latest_smi_diagnosis_date,
+    cse.latest_smi_resolved_date,
     cse.latest_lithium_order_date,
-    cse.all_mh_diagnosis_concept_codes AS all_mh_concept_codes,
-    cse.all_mh_diagnosis_concept_displays AS all_mh_concept_displays,
+    cse.all_smi_concept_codes AS all_mh_concept_codes,
+    cse.all_smi_concept_displays AS all_mh_concept_displays,
+    cse.all_resolved_concept_codes,
     cse.all_lithium_concept_codes,
     cse.all_lithium_concept_displays
 
