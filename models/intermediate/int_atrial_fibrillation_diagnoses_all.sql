@@ -78,9 +78,9 @@ final_with_derived_fields AS (
         bo.person_id,
         bo.observation_id,
         bo.clinical_effective_date,
-        bo.mapped_concept_code AS concept_code,
-        bo.mapped_concept_display AS concept_display,
-        bo.cluster_id AS source_cluster_id,
+        bo.concept_code,
+        bo.concept_display,
+        bo.source_cluster_id,
         bo.is_af_diagnosis_code,
         bo.is_af_resolved_code,
         
