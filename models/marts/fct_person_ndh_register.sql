@@ -43,25 +43,17 @@ diabetes_status AS (
         person_id,
         
         -- Diabetes dates
-        earliest_diagnosis_date AS earliest_diabetes_date,
-        latest_diagnosis_date AS latest_diabetes_date,
+        earliest_diabetes_date,
+        latest_diabetes_date,
         latest_resolved_date AS latest_diabetes_resolved_date,
         
-        -- Diabetes flags
-        CASE WHEN earliest_diagnosis_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_diabetes_diagnosis,
-        CASE 
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
-            THEN FALSE -- Active diabetes
-            WHEN latest_diabetes_resolved_date IS NOT NULL 
-                AND latest_diabetes_resolved_date > latest_diagnosis_date
-            THEN TRUE  -- Resolved diabetes
-            ELSE FALSE
-        END AS is_diabetes_resolved,
+        -- Diabetes flags (use existing logic from intermediate model)
+        CASE WHEN earliest_diabetes_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_diabetes_diagnosis,
+        is_diabetes_currently_resolved = FALSE AS is_diabetes_resolved,
         
         -- Traceability
-        all_diagnosis_concept_codes AS all_diabetes_concept_codes,
-        all_diagnosis_concept_displays AS all_diabetes_concept_displays
+        all_diabetes_concept_codes,
+        all_diabetes_concept_displays
     FROM {{ ref('int_diabetes_diagnoses_all') }}
 ),
 

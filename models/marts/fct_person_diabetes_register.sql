@@ -81,9 +81,11 @@ register_logic AS (
         diag.latest_diabetes_type2_date,
         
         -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
-        diag.all_source_cluster_ids,
+        diag.all_diabetes_concept_codes,
+        diag.all_diabetes_concept_displays,
+        diag.all_type1_concept_codes,
+        diag.all_type2_concept_codes,
+        diag.all_resolved_concept_codes,
         
         -- Person demographics
         age.age
@@ -111,9 +113,11 @@ SELECT
     latest_diabetes_type2_date,
     
     -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    all_source_cluster_ids,
+    all_diabetes_concept_codes,
+    all_diabetes_concept_displays,
+    all_type1_concept_codes,
+    all_type2_concept_codes,
+    all_resolved_concept_codes,
     
     -- Criteria flags for transparency
     meets_age_criteria,
