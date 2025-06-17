@@ -41,7 +41,7 @@ WITH base_observations AS (
         CASE WHEN obs.source_cluster_id = 'AFIB_COD' THEN TRUE ELSE FALSE END AS is_af_diagnosis_code,
         CASE WHEN obs.source_cluster_id = 'AFIBRES_COD' THEN TRUE ELSE FALSE END AS is_af_resolved_code
         
-    FROM {{ get_observations("'AFIB_COD', 'AFIBRES_COD'") }} obs
+    FROM ({{ get_observations("'AFIB_COD', 'AFIBRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

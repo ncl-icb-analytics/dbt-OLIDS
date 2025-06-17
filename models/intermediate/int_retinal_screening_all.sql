@@ -22,7 +22,7 @@ WITH base_observations AS (
         obs.concept_display,
         obs.source_cluster_id
         
-    FROM {{ get_observations("'RETSCREN_COD'") }} obs
+    FROM ({{ get_observations("'RETSCREN_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 )
 

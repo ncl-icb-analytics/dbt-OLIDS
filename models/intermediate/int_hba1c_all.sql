@@ -34,7 +34,7 @@ WITH base_observations AS (
             ELSE FALSE 
         END AS is_dcct
         
-    FROM {{ get_observations("'IFCCHBAM_COD', 'DCCTHBA1C_COD'") }} obs
+    FROM ({{ get_observations("'IFCCHBAM_COD', 'DCCTHBA1C_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
 )

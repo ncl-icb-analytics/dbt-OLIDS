@@ -31,7 +31,7 @@ WITH base_observations AS (
             ELSE 'Unknown'
         END AS qrisk_type
         
-    FROM {{ get_observations("'QRISKSCORE_COD'") }} obs
+    FROM ({{ get_observations("'QRISKSCORE_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
 )

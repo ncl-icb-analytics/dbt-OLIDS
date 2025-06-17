@@ -13,7 +13,7 @@ WITH base_observations AS (
         mc.code_description AS concept_display,
         -- Additional fields for consistency
         p.id AS patient_id,
-        o.numeric_value,
+        o.observation_numeric_value AS numeric_value,
         -- NAFLD diagnosis flag (all observations are NAFLD diagnoses)
         TRUE AS is_nafld_diagnosis
     FROM {{ ref('stg_olids_observation') }} o

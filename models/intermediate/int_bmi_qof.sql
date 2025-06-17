@@ -29,7 +29,7 @@ WITH base_observations AS (
             ELSE NULL
         END AS bmi_value
         
-    FROM {{ get_observations("'BMI30_COD', 'BMIVAL_COD'") }} obs
+    FROM ({{ get_observations("'BMI30_COD', 'BMIVAL_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

@@ -42,7 +42,7 @@ WITH base_observations AS (
         -- Flag gestational diabetes diagnosis codes following QOF definitions
         CASE WHEN obs.source_cluster_id = 'GESTDIAB_COD' THEN TRUE ELSE FALSE END AS is_gestational_diabetes_diagnosis_code
         
-    FROM {{ get_observations("'GESTDIAB_COD'") }} obs
+    FROM ({{ get_observations("'GESTDIAB_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

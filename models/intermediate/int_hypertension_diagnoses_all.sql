@@ -35,7 +35,7 @@ WITH base_observations AS (
         CASE WHEN obs.source_cluster_id = 'HYP_COD' THEN TRUE ELSE FALSE END AS is_hypertension_diagnosis_code,
         CASE WHEN obs.source_cluster_id = 'HYPRES_COD' THEN TRUE ELSE FALSE END AS is_hypertension_resolved_code
         
-    FROM {{ get_observations("'HYP_COD', 'HYPRES_COD'") }} obs
+    FROM ({{ get_observations("'HYP_COD', 'HYPRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

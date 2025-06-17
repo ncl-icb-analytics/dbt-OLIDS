@@ -48,7 +48,7 @@ WITH base_observations AS (
         CASE WHEN obs.source_cluster_id = 'DEPRPCADEC_COD' THEN TRUE ELSE FALSE END AS is_depression_pca_decline_code,
         CASE WHEN obs.source_cluster_id = 'DEPRPCAPU_COD' THEN TRUE ELSE FALSE END AS is_depression_pca_unsuitable_code
         
-    FROM {{ get_observations("'DEPR_COD', 'DEPRES_COD', 'DEPRVW_COD', 'DEPRINVITE_COD', 'DEPRPCADEC_COD', 'DEPRPCAPU_COD'") }} obs
+    FROM ({{ get_observations("'DEPR_COD', 'DEPRES_COD', 'DEPRVW_COD', 'DEPRINVITE_COD', 'DEPRPCADEC_COD', 'DEPRPCAPU_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

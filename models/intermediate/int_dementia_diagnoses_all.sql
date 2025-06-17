@@ -42,7 +42,7 @@ WITH base_observations AS (
         -- Flag dementia diagnosis codes following QOF definitions
         CASE WHEN obs.source_cluster_id = 'DEM_COD' THEN TRUE ELSE FALSE END AS is_dementia_diagnosis_code
         
-    FROM {{ get_observations("'DEM_COD'") }} obs
+    FROM ({{ get_observations("'DEM_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

@@ -36,7 +36,7 @@ WITH base_observations AS (
         observation_value_numeric,
         observation_units,
         date_recorded
-    FROM {{ get_observations("'RARTH_COD'") }}
+    FROM ({{ get_observations("'RARTH_COD'") }}) obs
 ),
 
 -- Add person demographics for context

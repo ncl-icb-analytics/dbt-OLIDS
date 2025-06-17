@@ -23,7 +23,7 @@ WITH base_observations AS (
         obs.source_cluster_id,
         obs.result_value AS original_result_value
         
-    FROM {{ get_observations("'WAIST_COD'") }} obs
+    FROM ({{ get_observations("'WAIST_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
       AND REGEXP_LIKE(obs.result_value::VARCHAR, '^[+-]?([0-9]*[.])?[0-9]+$') -- Ensure numeric

@@ -34,7 +34,7 @@ WITH fracture_observations AS (
         END AS fracture_site,
         -- Clinical flags
         source_cluster_id = 'FF_COD' AS is_fragility_fracture_code
-    FROM {{ get_observations("'FF_COD'") }}
+    FROM ({{ get_observations("'FF_COD'") }}) obs
     -- Only include fractures after April 2012 as per QOF requirements
     WHERE clinical_effective_date >= '2012-04-01'
 ),

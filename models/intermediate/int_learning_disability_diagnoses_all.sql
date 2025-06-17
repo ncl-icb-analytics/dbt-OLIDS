@@ -42,7 +42,7 @@ WITH base_observations AS (
         -- Flag learning disability codes following QOF definitions
         CASE WHEN obs.source_cluster_id = 'LD_DIAGNOSIS_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_diagnosis_code
         
-    FROM {{ get_observations("'LD_DIAGNOSIS_COD'") }} obs
+    FROM ({{ get_observations("'LD_DIAGNOSIS_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

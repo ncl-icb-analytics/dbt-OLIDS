@@ -25,7 +25,7 @@ WITH asthma_orders_base AS (
         mo.mapped_concept_display,
         'ASTTRT_COD' AS cluster_id
         
-    FROM {{ get_medication_orders(cluster_id='ASTTRT_COD') }} mo
+    FROM ({{ get_medication_orders(cluster_id='ASTTRT_COD') }}) mo
     WHERE mo.order_date >= CURRENT_DATE() - INTERVAL '12 months'
         AND mo.order_date <= CURRENT_DATE()
 ),

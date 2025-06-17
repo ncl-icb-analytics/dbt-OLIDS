@@ -51,7 +51,7 @@ WITH foot_observations AS (
             ELSE NULL
         END AS risk_level
         
-    FROM {{ get_observations("'FEPU_COD', 'FEDEC_COD', 'FRC_COD', 'CONABL_COD', 'CONABR_COD', 'AMPL_COD', 'AMPR_COD'") }} obs
+    FROM ({{ get_observations("'FEPU_COD', 'FEDEC_COD', 'FRC_COD', 'CONABL_COD', 'CONABR_COD', 'AMPL_COD', 'AMPR_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

@@ -39,7 +39,7 @@ WITH base_observations AS (
         CASE WHEN obs.source_cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
         CASE WHEN obs.source_cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code
         
-    FROM {{ get_observations("'HF_COD', 'HFRES_COD', 'HFLVSD_COD', 'REDEJCFRAC_COD'") }} obs
+    FROM ({{ get_observations("'HF_COD', 'HFRES_COD', 'HFLVSD_COD', 'REDEJCFRAC_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 

@@ -40,7 +40,7 @@ WITH base_observations AS (
         -- Flag osteoporosis diagnosis codes following QOF definitions
         CASE WHEN obs.source_cluster_id = 'OSTEO_COD' THEN TRUE ELSE FALSE END AS is_osteoporosis_diagnosis_code
         
-    FROM {{ get_observations("'OSTEO_COD'") }} obs
+    FROM ({{ get_observations("'OSTEO_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 )
 

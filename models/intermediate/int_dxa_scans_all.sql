@@ -73,7 +73,7 @@ WITH base_observations AS (
             ELSE FALSE 
         END AS confirms_osteoporosis_diagnosis
         
-    FROM {{ get_observations("'DXA_COD', 'DXA2_COD'") }} obs
+    FROM ({{ get_observations("'DXA_COD', 'DXA2_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 )
 
