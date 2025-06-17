@@ -26,13 +26,8 @@ current_smoking_status AS (
         latest.concept_display AS latest_code_description,
         latest.source_cluster_id AS latest_cluster_id,
         
-        -- Determine smoking status based on latest record
-        CASE
-            WHEN latest.is_current_smoker_code = TRUE THEN 'Current Smoker'
-            WHEN latest.is_ex_smoker_code = TRUE THEN 'Ex Smoker'
-            WHEN latest.is_never_smoked_code = TRUE THEN 'Never Smoked'
-            ELSE 'Unknown'
-        END AS smoking_status,
+        -- Determine smoking status based on latest record (use existing column)
+        latest.smoking_status,
         
         -- Include history
         hist.earliest_smoking_date,
