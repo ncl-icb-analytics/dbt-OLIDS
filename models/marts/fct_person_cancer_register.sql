@@ -29,7 +29,6 @@ Matches legacy fct_person_dx_cancer business logic and field structure.
 WITH base_diagnoses AS (
     SELECT 
         person_id,
-        has_cancer_diagnosis,
         earliest_cancer_date,
         latest_cancer_date,
         total_cancer_episodes,
@@ -38,15 +37,14 @@ WITH base_diagnoses AS (
     FROM {{ ref('int_cancer_diagnoses_all') }}
     
     -- Apply QOF date filter: cancer diagnosis on/after 1 April 2003
-    WHERE latest_cancer_date >= DATE '2003-04-01'
+    WHERE earliest_cancer_date >= DATE '2003-04-01'
 ),
 
 -- Add person demographics matching legacy structure
 final AS (
     SELECT
         bd.person_id,
-        p.sk_patient_id,
-        p.age_years AS age,
+        age.age,
         
         -- Register flag (always true after date filtering)
         TRUE AS is_on_cancer_register,
@@ -60,8 +58,8 @@ final AS (
         bd.all_cancer_concept_displays
         
     FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
 )
 
 SELECT * FROM final 

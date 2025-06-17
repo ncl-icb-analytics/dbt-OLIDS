@@ -14,6 +14,8 @@ WITH base_observations AS (
         -- Additional fields for consistency
         p.id AS patient_id,
         CAST(o.result_value AS NUMBER(10,2)) AS numeric_value,
+        -- Source cluster placeholder (no cluster available)
+        'HARDCODED_NAFLD' AS source_cluster_id,
         -- NAFLD diagnosis flag (all observations are NAFLD diagnoses)
         TRUE AS is_nafld_diagnosis
     FROM {{ ref('stg_olids_observation') }} o
@@ -32,19 +34,45 @@ WITH base_observations AS (
         '503681000000108' -- NAFLD related code
     )
     AND o.clinical_effective_date IS NOT NULL
+),
+
+person_aggregates AS (
+    SELECT
+        person_id,
+        
+        -- Date aggregates
+        MIN(clinical_effective_date) AS earliest_nafld_date,
+        MAX(clinical_effective_date) AS latest_nafld_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_nafld_episodes,
+        
+        -- Code arrays for detailed analysis
+        ARRAY_AGG(DISTINCT concept_code) AS all_nafld_concept_codes,
+        ARRAY_AGG(DISTINCT concept_display) AS all_nafld_concept_displays
+        
+    FROM base_observations
+    GROUP BY person_id
 )
 
-SELECT
-    person_id,
-    patient_id,
-    observation_id,
-    clinical_effective_date,
-    concept_code,
-    concept_display,
-    numeric_value,
-    -- Source cluster placeholder (no cluster available)
-    'HARDCODED_NAFLD' AS source_cluster_id,
-    is_nafld_diagnosis
+SELECT 
+    bo.person_id,
+    bo.observation_id,
+    bo.clinical_effective_date,
+    bo.concept_code,
+    bo.concept_display,
+    bo.source_cluster_id,
+    
+    -- NAFLD-specific flags
+    bo.is_nafld_diagnosis,
+    
+    -- Person-level aggregate context
+    pa.earliest_nafld_date,
+    pa.latest_nafld_date,
+    pa.total_nafld_episodes,
+    pa.all_nafld_concept_codes,
+    pa.all_nafld_concept_displays
 
-FROM base_observations
-ORDER BY person_id, clinical_effective_date DESC 
+FROM base_observations bo
+LEFT JOIN person_aggregates pa 
+    ON bo.person_id = pa.person_id
+
+ORDER BY person_id, clinical_effective_date, observation_id 

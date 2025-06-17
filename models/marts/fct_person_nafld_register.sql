@@ -12,16 +12,18 @@
 WITH nafld_diagnoses AS (
     SELECT
         person_id,
-        earliest_diagnosis_date AS earliest_nafld_diagnosis_date,
-        latest_diagnosis_date AS latest_nafld_diagnosis_date,
+        earliest_nafld_date AS earliest_nafld_diagnosis_date,
+        latest_nafld_date AS latest_nafld_diagnosis_date,
         
         -- Simple register logic: presence of any diagnosis = on register
         TRUE AS is_on_nafld_register,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays
+        all_nafld_concept_codes AS all_diagnosis_concept_codes,
+        all_nafld_concept_displays AS all_diagnosis_concept_displays
     FROM {{ ref('int_nafld_diagnoses_all') }}
+    WHERE person_id IS NOT NULL
+    GROUP BY person_id, earliest_nafld_date, latest_nafld_date, all_nafld_concept_codes, all_nafld_concept_displays
 ),
 
 register_logic AS (

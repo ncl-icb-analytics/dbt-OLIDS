@@ -26,12 +26,11 @@ Matches legacy fct_person_dx_fhyp business logic and field structure.
 WITH base_diagnoses AS (
     SELECT 
         person_id,
-        has_fh_diagnosis,
-        earliest_fh_date,
-        latest_fh_date,
-        total_fh_episodes,
-        all_fh_concept_codes,
-        all_fh_concept_displays
+        earliest_fhyp_date AS earliest_fh_date,
+        latest_fhyp_date AS latest_fh_date,
+        total_fhyp_episodes AS total_fh_episodes,
+        all_fhyp_concept_codes AS all_fh_concept_codes,
+        all_fhyp_concept_displays AS all_fh_concept_displays
     FROM {{ ref('int_familial_hypercholesterolaemia_diagnoses_all') }}
 ),
 
@@ -39,8 +38,7 @@ WITH base_diagnoses AS (
 final AS (
     SELECT
         bd.person_id,
-        p.sk_patient_id,
-        p.age_years AS age,
+        age.age,
         
         -- Register flag (always true for simple register pattern)
         TRUE AS is_on_fhyp_register,
@@ -54,8 +52,8 @@ final AS (
         bd.all_fh_concept_displays AS all_fhyp_concept_displays
         
     FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
 )
 
 SELECT * FROM final 

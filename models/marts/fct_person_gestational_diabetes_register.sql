@@ -26,7 +26,6 @@ Matches legacy fct_person_dx_gestational_diabetes business logic and field struc
 WITH base_diagnoses AS (
     SELECT 
         person_id,
-        has_gestational_diabetes_diagnosis,
         earliest_gestational_diabetes_date,
         latest_gestational_diabetes_date,
         total_gestational_diabetes_episodes,
@@ -39,8 +38,7 @@ WITH base_diagnoses AS (
 final AS (
     SELECT
         bd.person_id,
-        p.sk_patient_id,
-        p.age_years AS age,
+        age.age,
         
         -- Register flag (always true for simple register pattern)
         TRUE AS is_on_gestational_diabetes_register,
@@ -54,8 +52,8 @@ final AS (
         bd.all_gestational_diabetes_concept_displays
         
     FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
 )
 
 SELECT * FROM final 

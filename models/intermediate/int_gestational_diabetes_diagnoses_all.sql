@@ -44,18 +44,45 @@ WITH base_observations AS (
         
     FROM ({{ get_observations("'GESTDIAB_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
+),
+
+person_aggregates AS (
+    SELECT
+        person_id,
+        
+        -- Date aggregates
+        MIN(clinical_effective_date) AS earliest_gestational_diabetes_date,
+        MAX(clinical_effective_date) AS latest_gestational_diabetes_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_gestational_diabetes_episodes,
+        
+        -- Code arrays for detailed analysis
+        ARRAY_AGG(DISTINCT concept_code) AS all_gestational_diabetes_concept_codes,
+        ARRAY_AGG(DISTINCT concept_display) AS all_gestational_diabetes_concept_displays
+        
+    FROM base_observations
+    GROUP BY person_id
 )
 
-SELECT
-    person_id,
-    observation_id,
-    clinical_effective_date,
-    concept_code,
-    concept_display,
-    source_cluster_id,
-    is_gestational_diabetes_diagnosis_code
+SELECT 
+    bo.person_id,
+    bo.observation_id,
+    bo.clinical_effective_date,
+    bo.concept_code,
+    bo.concept_display,
+    bo.source_cluster_id,
+    
+    -- Gestational diabetes-specific flags
+    bo.is_gestational_diabetes_diagnosis_code,
+    
+    -- Person-level aggregate context
+    pa.earliest_gestational_diabetes_date,
+    pa.latest_gestational_diabetes_date,
+    pa.total_gestational_diabetes_episodes,
+    pa.all_gestational_diabetes_concept_codes,
+    pa.all_gestational_diabetes_concept_displays
 
-FROM base_observations
+FROM base_observations bo
+LEFT JOIN person_aggregates pa 
+    ON bo.person_id = pa.person_id
 
--- Sort for consistent output
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date, observation_id 

@@ -26,7 +26,6 @@ Matches legacy fct_person_dx_ra business logic and field structure.
 WITH base_diagnoses AS (
     SELECT 
         person_id,
-        has_ra_diagnosis,
         earliest_ra_date,
         latest_ra_date,
         total_ra_episodes,
@@ -39,8 +38,7 @@ WITH base_diagnoses AS (
 final AS (
     SELECT
         bd.person_id,
-        p.sk_patient_id,
-        p.age_years AS age,
+        age.age,
         
         -- Register flag (always true after age filtering)
         TRUE AS is_on_ra_register,
@@ -54,11 +52,11 @@ final AS (
         bd.all_ra_concept_displays
         
     FROM base_diagnoses bd
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person') }} p ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} age ON bd.person_id = age.person_id
     
     -- Apply QOF age filter: patients aged 16 or over
-    WHERE p.age_years >= 16
+    WHERE age.age >= 16
 )
 
 SELECT * FROM final 
