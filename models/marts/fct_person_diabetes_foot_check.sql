@@ -10,7 +10,6 @@
 
 SELECT 
     d.person_id,
-    d.sk_patient_id,
     d.diabetes_type,
     
     -- Latest foot check details

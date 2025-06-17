@@ -13,8 +13,8 @@ WITH latest_bp AS (
     SELECT 
         person_id, 
         clinical_effective_date,
-        systolic_value,
-        diastolic_value
+        validated_systolic AS systolic_value,
+        validated_diastolic AS diastolic_value
     FROM {{ ref('int_blood_pressure_latest') }}
 ),
 
@@ -22,7 +22,6 @@ patient_characteristics AS (
     -- Gather key patient characteristics for BP threshold determination
     SELECT
         bp.person_id,
-        age.sk_patient_id,
         bp.clinical_effective_date AS latest_bp_date,
         bp.systolic_value AS latest_systolic_value,
         bp.diastolic_value AS latest_diastolic_value,
@@ -34,16 +33,17 @@ patient_characteristics AS (
         
         -- CKD status and latest ACR
         CASE WHEN ckd.person_id IS NOT NULL THEN TRUE ELSE FALSE END AS has_ckd,
-        ckd.latest_acr_value,
+        acr.acr_value AS latest_acr_value,
         
         -- Hypertension diagnosis status
-        COALESCE(htn.is_on_hypertension_register, FALSE) AS is_diagnosed_htn
+        COALESCE(htn.is_on_htn_register, FALSE) AS is_diagnosed_htn
         
     FROM latest_bp bp
     JOIN {{ ref('dim_person_age') }} age ON bp.person_id = age.person_id
     LEFT JOIN {{ ref('fct_person_diabetes_register') }} dm ON bp.person_id = dm.person_id
     LEFT JOIN {{ ref('fct_person_ckd_register') }} ckd ON bp.person_id = ckd.person_id
     LEFT JOIN {{ ref('fct_person_hypertension_register') }} htn ON bp.person_id = htn.person_id
+    LEFT JOIN {{ ref('int_urine_acr_latest') }} acr ON bp.person_id = acr.person_id
 ),
 
 ranked_thresholds AS (
@@ -88,7 +88,6 @@ ranked_thresholds AS (
 
 SELECT
     rt.person_id,
-    rt.sk_patient_id,
     
     -- Latest BP reading details
     rt.latest_bp_date,

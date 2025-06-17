@@ -14,7 +14,6 @@ WITH twelve_months_ago AS (
 
 SELECT
     eight.person_id,
-    eight.sk_patient_id,
     
     -- Copy all fields from 8 processes
     eight.latest_hba1c_date,

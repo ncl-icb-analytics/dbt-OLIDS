@@ -120,8 +120,8 @@ WITH condition_union AS (
         'DEP' AS condition_code,
         'Depression' AS condition_name,
         is_on_depression_register AS is_on_register,
-        earliest_depression_date AS earliest_diagnosis_date,
-        latest_depression_date AS latest_diagnosis_date
+        earliest_depression_diagnosis_date AS earliest_diagnosis_date,
+        latest_depression_diagnosis_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_depression_register') }}
     WHERE is_on_depression_register = TRUE
 
@@ -158,11 +158,11 @@ WITH condition_union AS (
         person_id,
         'FHYP' AS condition_code,
         'Familial Hypercholesterolaemia' AS condition_name,
-        is_on_fh_register AS is_on_register,
-        earliest_fh_diagnosis_date AS earliest_diagnosis_date,
-        latest_fh_diagnosis_date AS latest_diagnosis_date
+        is_on_fhyp_register AS is_on_register,
+        earliest_fhyp_date AS earliest_diagnosis_date,
+        latest_fhyp_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_familial_hypercholesterolaemia_register') }}
-    WHERE is_on_fh_register = TRUE
+    WHERE is_on_fhyp_register = TRUE
 
     UNION ALL
 
@@ -172,8 +172,8 @@ WITH condition_union AS (
         'GESTDIAB' AS condition_code,
         'Gestational Diabetes' AS condition_name,
         is_on_gestational_diabetes_register AS is_on_register,
-        earliest_gestational_diabetes_diagnosis_date AS earliest_diagnosis_date,
-        latest_gestational_diabetes_diagnosis_date AS latest_diagnosis_date
+        earliest_gestational_diabetes_date AS earliest_diagnosis_date,
+        latest_gestational_diabetes_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_gestational_diabetes_register') }}
     WHERE is_on_gestational_diabetes_register = TRUE
 
@@ -197,11 +197,11 @@ WITH condition_union AS (
         person_id,
         'HTN' AS condition_code,
         'Hypertension' AS condition_name,
-        is_on_hypertension_register AS is_on_register,
-        earliest_hypertension_diagnosis_date AS earliest_diagnosis_date,
-        latest_hypertension_diagnosis_date AS latest_diagnosis_date
+        is_on_htn_register AS is_on_register,
+        earliest_htn_diagnosis_date AS earliest_diagnosis_date,
+        latest_htn_diagnosis_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_hypertension_register') }}
-    WHERE is_on_hypertension_register = TRUE
+    WHERE is_on_htn_register = TRUE
 
     UNION ALL
 
@@ -250,7 +250,7 @@ WITH condition_union AS (
         'OB' AS condition_code,
         'Obesity' AS condition_name,
         is_on_obesity_register AS is_on_register,
-        earliest_bmi_date AS earliest_diagnosis_date,
+        latest_valid_bmi_date AS earliest_diagnosis_date,
         latest_bmi_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_obesity_register') }}
     WHERE is_on_obesity_register = TRUE
@@ -327,11 +327,11 @@ WITH condition_union AS (
         person_id,
         'STIA' AS condition_code,
         'Stroke or Transient Ischaemic Attack' AS condition_name,
-        is_on_stroke_tia_register AS is_on_register,
+        is_on_stia_register AS is_on_register,
         earliest_stroke_tia_date AS earliest_diagnosis_date,
         latest_stroke_tia_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_stroke_tia_register') }}
-    WHERE is_on_stroke_tia_register = TRUE
+    WHERE is_on_stia_register = TRUE
 )
 
 SELECT 
