@@ -122,15 +122,15 @@ final_with_derived_fields AS (
         
         -- Clinical flags for care planning
         CASE 
-            WHEN pda.latest_mh_diagnosis_date >= CURRENT_DATE - INTERVAL '12 months' THEN TRUE
+            WHEN pda.latest_mh_diagnosis_date >= DATEADD(month, -12, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS has_recent_mh_diagnosis,
         CASE 
-            WHEN pda.latest_mh_diagnosis_date >= CURRENT_DATE - INTERVAL '24 months' THEN TRUE
+            WHEN pda.latest_mh_diagnosis_date >= DATEADD(month, -24, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS has_mh_diagnosis_last_24m,
         CASE 
-            WHEN pda.latest_remission_date >= CURRENT_DATE - INTERVAL '12 months' THEN TRUE
+            WHEN pda.latest_remission_date >= DATEADD(month, -12, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS has_recent_remission_code,
         
@@ -142,23 +142,23 @@ final_with_derived_fields AS (
         -- Care planning fields
         CASE 
             WHEN pda.earliest_mh_diagnosis_date IS NOT NULL 
-            THEN CURRENT_DATE - pda.earliest_mh_diagnosis_date
+            THEN DATEDIFF(day, pda.earliest_mh_diagnosis_date, CURRENT_DATE)
             ELSE NULL
         END AS days_since_first_mh_diagnosis,
         
         CASE 
-            WHEN pda.earliest_mh_diagnosis_date >= CURRENT_DATE - INTERVAL '2 years' THEN TRUE
+            WHEN pda.earliest_mh_diagnosis_date >= DATEADD(year, -2, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS is_newly_diagnosed_mh,
         CASE 
-            WHEN pda.earliest_mh_diagnosis_date < CURRENT_DATE - INTERVAL '2 years' THEN TRUE
+            WHEN pda.earliest_mh_diagnosis_date < DATEADD(year, -2, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS is_established_mh,
         
         -- Complex care indicators
         CASE 
             WHEN pda.total_mh_diagnoses > 1 
-                AND (pda.latest_mh_diagnosis_date - pda.earliest_mh_diagnosis_date) > INTERVAL '6 months'
+                AND DATEDIFF(month, pda.earliest_mh_diagnosis_date, pda.latest_mh_diagnosis_date) > 6
             THEN TRUE
             ELSE FALSE
         END AS has_long_term_mh_management,

@@ -44,7 +44,7 @@ WITH base_observations AS (
         
     FROM ({{ get_observations("'GESTDIAB_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
-),
+)
 
 SELECT
     person_id,
@@ -58,4 +58,4 @@ SELECT
 FROM base_observations
 
 -- Sort for consistent output
-ORDER BY obs.person_id, obs.clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC 

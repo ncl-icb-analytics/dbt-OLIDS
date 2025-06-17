@@ -95,11 +95,11 @@ final_with_derived_fields AS (
         
         -- Clinical flags for care planning
         CASE 
-            WHEN pda.latest_ld_diagnosis_date >= CURRENT_DATE - INTERVAL '12 months' THEN TRUE
+            WHEN pda.latest_ld_diagnosis_date >= DATEADD(month, -12, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS has_recent_ld_diagnosis,
         CASE 
-            WHEN pda.latest_ld_diagnosis_date >= CURRENT_DATE - INTERVAL '24 months' THEN TRUE
+            WHEN pda.latest_ld_diagnosis_date >= DATEADD(month, -24, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS has_ld_diagnosis_last_24m,
         
@@ -110,27 +110,27 @@ final_with_derived_fields AS (
         -- Care planning fields
         CASE 
             WHEN pda.earliest_ld_diagnosis_date IS NOT NULL 
-            THEN CURRENT_DATE - pda.earliest_ld_diagnosis_date
+            THEN DATEDIFF(day, pda.earliest_ld_diagnosis_date, CURRENT_DATE)
             ELSE NULL
         END AS days_since_first_ld_diagnosis,
         
         CASE 
-            WHEN pda.earliest_ld_diagnosis_date >= CURRENT_DATE - INTERVAL '2 years' THEN TRUE
+            WHEN pda.earliest_ld_diagnosis_date >= DATEADD(year, -2, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS is_newly_diagnosed_ld,
         CASE 
-            WHEN pda.earliest_ld_diagnosis_date < CURRENT_DATE - INTERVAL '2 years' THEN TRUE
+            WHEN pda.earliest_ld_diagnosis_date < DATEADD(year, -2, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS is_established_ld,
         CASE 
-            WHEN pda.earliest_ld_diagnosis_date < CURRENT_DATE - INTERVAL '5 years' THEN TRUE
+            WHEN pda.earliest_ld_diagnosis_date < DATEADD(year, -5, CURRENT_DATE) THEN TRUE
             ELSE FALSE
         END AS is_long_term_ld,
         
         -- Service planning indicators
         CASE 
             WHEN pda.total_ld_diagnoses > 1 
-                AND (pda.latest_ld_diagnosis_date - pda.earliest_ld_diagnosis_date) > INTERVAL '6 months'
+                AND DATEDIFF(month, pda.earliest_ld_diagnosis_date, pda.latest_ld_diagnosis_date) > 6
             THEN TRUE
             ELSE FALSE
         END AS has_ld_progression_codes,

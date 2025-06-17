@@ -24,8 +24,8 @@ WITH base_observations AS (
         
         -- Extract BMI value from result_value, handling both numeric and coded values
         CASE 
-            WHEN obs.source_cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
-            WHEN obs.source_cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
+            WHEN obs.cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
+            WHEN obs.cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
             ELSE NULL
         END AS bmi_value
         
@@ -73,13 +73,9 @@ person_level_aggregation AS (
         MAX(clinical_effective_date) AS latest_bmi_date,
         MAX(CASE WHEN is_valid_bmi THEN clinical_effective_date END) AS latest_valid_bmi_date,
         
-        -- Get latest valid BMI value
-        MAX(CASE WHEN is_valid_bmi THEN bmi_value END) 
-            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) AS latest_valid_bmi_value,
-        
         -- QOF flags based on any qualifying observation
-        BOOL_OR(is_bmi_30_plus) AS has_bmi_30_plus_ever,
-        BOOL_OR(is_bmi_27_5_plus) AS has_bmi_27_5_plus_ever,
+        MAX(is_bmi_30_plus::int)::boolean AS has_bmi_30_plus_ever,
+        MAX(is_bmi_27_5_plus::int)::boolean AS has_bmi_27_5_plus_ever,
         
         -- Aggregate concept information
         ARRAY_AGG(DISTINCT concept_code) AS all_bmi_concept_codes,
@@ -87,6 +83,16 @@ person_level_aggregation AS (
         
     FROM validated_observations
     GROUP BY person_id
+),
+
+latest_valid_bmi AS (
+    
+    SELECT 
+        person_id,
+        bmi_value AS latest_valid_bmi_value,
+        ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) AS rn
+    FROM validated_observations
+    WHERE is_valid_bmi = TRUE
 ),
 
 latest_observations AS (
@@ -102,9 +108,9 @@ SELECT
     lo.person_id,
     lo.observation_id,
     lo.clinical_effective_date,
-    lo.mapped_concept_code AS concept_code,
-    lo.mapped_concept_display AS concept_display,
-    lo.cluster_id AS source_cluster_id,
+    lo.concept_code,
+    lo.concept_display,
+    lo.source_cluster_id,
     lo.bmi_value,
     lo.is_bmi_30_plus,
     lo.is_bmi_27_5_plus,
@@ -115,7 +121,7 @@ SELECT
     -- Person-level aggregated data
     pla.latest_bmi_date,
     pla.latest_valid_bmi_date,
-    pla.latest_valid_bmi_value,
+    lvb.latest_valid_bmi_value,
     pla.has_bmi_30_plus_ever,
     pla.has_bmi_27_5_plus_ever,
     pla.all_bmi_concept_codes,
@@ -123,4 +129,5 @@ SELECT
 
 FROM latest_observations lo
 LEFT JOIN person_level_aggregation pla ON lo.person_id = pla.person_id
+LEFT JOIN latest_valid_bmi lvb ON lo.person_id = lvb.person_id AND lvb.rn = 1
 WHERE lo.rn = 1 

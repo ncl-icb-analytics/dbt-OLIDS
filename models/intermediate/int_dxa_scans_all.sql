@@ -36,7 +36,7 @@ WITH base_observations AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
-        obs.numeric_value,
+        CAST(obs.result_value AS NUMBER(6,2)) AS numeric_value,
         
         -- Flag different types of DXA observations
         CASE WHEN obs.cluster_id = 'DXA_COD' THEN TRUE ELSE FALSE END AS is_dxa_scan_procedure,
@@ -44,21 +44,21 @@ WITH base_observations AS (
         
         -- T-score clinical validation and interpretation
         CASE 
-            WHEN obs.source_cluster_id = 'DXA2_COD' 
-                 AND obs.numeric_value IS NOT NULL 
-                 AND obs.numeric_value BETWEEN -6.0 AND 6.0  -- Clinical range validation
-            THEN obs.numeric_value 
+            WHEN obs.cluster_id = 'DXA2_COD' 
+                 AND CAST(obs.result_value AS NUMBER(6,2)) IS NOT NULL 
+                 AND CAST(obs.result_value AS NUMBER(6,2)) BETWEEN -6.0 AND 6.0  -- Clinical range validation
+            THEN CAST(obs.result_value AS NUMBER(6,2)) 
             ELSE NULL 
         END AS validated_t_score,
         
         -- Clinical interpretation of T-score
         CASE 
-            WHEN obs.source_cluster_id = 'DXA2_COD' 
-                 AND obs.numeric_value IS NOT NULL 
-                 AND obs.numeric_value BETWEEN -6.0 AND 6.0
+            WHEN obs.cluster_id = 'DXA2_COD' 
+                 AND CAST(obs.result_value AS NUMBER(6,2)) IS NOT NULL 
+                 AND CAST(obs.result_value AS NUMBER(6,2)) BETWEEN -6.0 AND 6.0
             THEN CASE 
-                    WHEN obs.numeric_value <= -2.5 THEN 'Osteoporosis'
-                    WHEN obs.numeric_value <= -1.0 THEN 'Osteopenia'
+                    WHEN CAST(obs.result_value AS NUMBER(6,2)) <= -2.5 THEN 'Osteoporosis'
+                    WHEN CAST(obs.result_value AS NUMBER(6,2)) <= -1.0 THEN 'Osteopenia'
                     ELSE 'Normal'
                 END
             ELSE NULL 
@@ -66,9 +66,9 @@ WITH base_observations AS (
         
         -- QOF osteoporosis confirmation flag
         CASE 
-            WHEN obs.source_cluster_id = 'DXA2_COD' 
-                 AND obs.numeric_value IS NOT NULL 
-                 AND obs.numeric_value <= -2.5
+            WHEN obs.cluster_id = 'DXA2_COD' 
+                 AND CAST(obs.result_value AS NUMBER(6,2)) IS NOT NULL 
+                 AND CAST(obs.result_value AS NUMBER(6,2)) <= -2.5
             THEN TRUE 
             ELSE FALSE 
         END AS confirms_osteoporosis_diagnosis

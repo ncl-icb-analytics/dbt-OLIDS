@@ -26,7 +26,7 @@ WITH base_observations AS (
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
-        obs.source_cluster_id
+        obs.cluster_id AS source_cluster_id
         
     FROM ({{ get_observations("'UNABLESPI_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -54,9 +54,9 @@ SELECT
     bo.person_id,
     bo.observation_id,
     bo.clinical_effective_date,
-    bo.mapped_concept_code AS concept_code,
-    bo.mapped_concept_display AS concept_display,
-    bo.cluster_id AS source_cluster_id,
+    bo.concept_code,
+    bo.concept_display,
+    bo.source_cluster_id,
     
     -- Person-level aggregate context
     pa.earliest_unable_spirometry_date,
@@ -68,7 +68,7 @@ SELECT
     
     -- QOF context fields
     CASE 
-        WHEN pa.latest_unable_spirometry_date >= CURRENT_DATE - INTERVAL '12 months' THEN TRUE
+        WHEN pa.latest_unable_spirometry_date >= DATEADD(month, -12, CURRENT_DATE) THEN TRUE
         ELSE FALSE
     END AS has_recent_unable_spirometry,
     

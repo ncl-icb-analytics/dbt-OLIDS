@@ -18,14 +18,11 @@ WITH base_observations AS (
         obs.person_id,
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
-        obs.mapped_concept_display AS concept_display,
-        obs.source_cluster_id
+        obs.mapped_concept_display AS concept_display
         
-    FROM {{ ref('stg_olids_observation') }} obs
-    JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
-        ON obs.observation_core_concept_id = mc.source_code_id
+    FROM ({{ get_observations("'NHSHEALTHCHECK_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
-      AND mc.concept_code IN (
+      AND obs.mapped_concept_code IN (
           '1959151000006103',
           '1948791000006100',
           '1728781000006106',

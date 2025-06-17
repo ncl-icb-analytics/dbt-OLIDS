@@ -20,7 +20,7 @@ WITH base_observations AS (
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
-        obs.source_cluster_id
+        obs.cluster_id AS source_cluster_id
         
     FROM ({{ get_observations("'RETSCREN_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -49,7 +49,10 @@ SELECT
     CASE 
         WHEN DATEDIFF(day, clinical_effective_date, CURRENT_DATE()) <= 730 THEN TRUE
         ELSE FALSE
-    END AS screening_current_24m
+    END AS screening_current_24m,
+    
+    -- Flag retinal screening and diabetic eye screening observations
+    CASE WHEN source_cluster_id = 'RETSCREN_COD' THEN TRUE ELSE FALSE END AS is_retinal_screening_code
 
 FROM base_observations
 ORDER BY person_id, clinical_effective_date DESC 

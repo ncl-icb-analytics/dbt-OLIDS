@@ -25,15 +25,14 @@ WITH base_observations AS (
         
         -- Flag measurement types
         CASE 
-            WHEN obs.source_cluster_id = 'IFCCHBAM_COD' THEN TRUE 
+            WHEN obs.cluster_id = 'IFCCHBAM_COD' THEN TRUE 
             ELSE FALSE 
         END AS is_ifcc,
         
         CASE 
-            WHEN obs.source_cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
+            WHEN obs.cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
             ELSE FALSE 
         END AS is_dcct
-        
     FROM ({{ get_observations("'IFCCHBAM_COD', 'DCCTHBA1C_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
