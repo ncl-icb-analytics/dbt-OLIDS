@@ -43,7 +43,6 @@ register_logic AS (
     
     SELECT
         ld.*,
-        p.sk_patient_id,
         age.age,
         
         -- QOF Register Logic: LD diagnosis + age ≥14
@@ -59,7 +58,6 @@ register_logic AS (
 -- Final selection: Only include patients on the learning disability register
 SELECT
     rl.person_id,
-    rl.sk_patient_id,
     rl.age,
     rl.is_on_ld_register,
     rl.earliest_ld_diagnosis_date,

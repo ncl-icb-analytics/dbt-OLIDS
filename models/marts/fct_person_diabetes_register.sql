@@ -14,8 +14,8 @@ WITH diabetes_diagnoses AS (
         person_id,
         
         -- General diabetes dates
-        earliest_diagnosis_date AS earliest_diabetes_diagnosis_date,
-        latest_diagnosis_date AS latest_diabetes_diagnosis_date,
+        earliest_diabetes_date AS earliest_diabetes_diagnosis_date,
+        latest_diabetes_date AS latest_diabetes_diagnosis_date,
         latest_resolved_date AS latest_diabetes_resolved_date,
         
         -- Type-specific dates (from specialized type clusters)
@@ -24,18 +24,15 @@ WITH diabetes_diagnoses AS (
         earliest_type2_date AS earliest_diabetes_type2_date,
         latest_type2_date AS latest_diabetes_type2_date,
         
-        -- QOF register logic: active diabetes diagnosis required
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_diabetes_diagnosis,
+        -- QOF register logic: active diabetes diagnosis required (use existing logic)
+        is_diabetes_currently_resolved = FALSE AS has_active_diabetes_diagnosis,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays,
-        all_source_cluster_ids
+        all_diabetes_concept_codes,
+        all_diabetes_concept_displays,
+        all_type1_concept_codes,
+        all_type2_concept_codes,
+        all_resolved_concept_codes
     FROM {{ ref('int_diabetes_diagnoses_all') }}
 ),
 

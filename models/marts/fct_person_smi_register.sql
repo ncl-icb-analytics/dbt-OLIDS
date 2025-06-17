@@ -62,7 +62,6 @@ combined_smi_eligibility AS (
     
     SELECT
         COALESCE(mh.person_id, lith.person_id) AS person_id,
-        p.sk_patient_id,
         age.age,
         
         -- Mental health diagnosis details
@@ -106,7 +105,6 @@ combined_smi_eligibility AS (
 -- Final selection: Only include patients on the SMI register
 SELECT
     cse.person_id,
-    cse.sk_patient_id,
     cse.age,
     cse.is_on_smi_register,
     cse.is_on_lithium,

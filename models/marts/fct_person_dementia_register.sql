@@ -42,7 +42,6 @@ WITH dementia_diagnoses AS (
 -- Final selection with person demographics
 SELECT
     dd.person_id,
-    p.sk_patient_id,
     age.age,
     TRUE AS is_on_dementia_register,
     dd.earliest_dementia_date AS earliest_dementia_diagnosis_date,

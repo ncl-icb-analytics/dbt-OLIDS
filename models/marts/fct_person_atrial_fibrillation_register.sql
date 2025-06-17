@@ -12,22 +12,16 @@
 WITH af_diagnoses AS (
     SELECT
         person_id,
-        earliest_diagnosis_date AS earliest_af_diagnosis_date,
-        latest_diagnosis_date AS latest_af_diagnosis_date,
-        latest_resolved_date AS latest_af_resolved_date,
+        earliest_af_diagnosis_date,
+        latest_af_diagnosis_date,
+        latest_af_resolved_date,
         
-        -- QOF register logic: active diagnosis required
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_af_diagnosis,
+        -- QOF register logic: active diagnosis required (use existing column)
+        has_active_af_diagnosis,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays,
-        all_source_cluster_ids
+        all_af_concept_codes,
+        all_af_concept_displays
     FROM {{ ref('int_atrial_fibrillation_diagnoses_all') }}
 ),
 
@@ -55,9 +49,8 @@ register_logic AS (
         diag.latest_af_resolved_date,
         
         -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
-        diag.all_source_cluster_ids
+        diag.all_af_concept_codes,
+        diag.all_af_concept_displays
     FROM {{ ref('dim_person') }} p
     INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
     LEFT JOIN af_diagnoses diag ON p.person_id = diag.person_id
@@ -75,9 +68,8 @@ SELECT
     latest_af_resolved_date,
     
     -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    all_source_cluster_ids,
+    all_af_concept_codes,
+    all_af_concept_displays,
     
     -- Criteria flags for transparency
     meets_age_criteria,

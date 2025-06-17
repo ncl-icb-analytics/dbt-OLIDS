@@ -12,22 +12,16 @@
 WITH ckd_diagnoses AS (
     SELECT
         person_id,
-        earliest_diagnosis_date AS earliest_ckd_diagnosis_date,
-        latest_diagnosis_date AS latest_ckd_diagnosis_date,
+        earliest_ckd_date AS earliest_ckd_diagnosis_date,
+        latest_ckd_date AS latest_ckd_diagnosis_date,
         latest_resolved_date AS latest_ckd_resolved_date,
         
-        -- QOF register logic: active diagnosis required
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_ckd_diagnosis,
+        -- QOF register logic: active diagnosis required (use existing logic)
+        has_active_ckd_diagnosis,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays,
-        all_source_cluster_ids
+        all_ckd_concept_codes,
+        all_resolved_concept_codes
     FROM {{ ref('int_ckd_diagnoses_all') }}
 ),
 
@@ -55,9 +49,8 @@ register_logic AS (
         diag.latest_ckd_resolved_date,
         
         -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
-        diag.all_source_cluster_ids,
+        diag.all_ckd_concept_codes,
+        diag.all_resolved_concept_codes,
         
         -- Person demographics
         age.age
@@ -78,9 +71,8 @@ SELECT
     latest_ckd_resolved_date,
     
     -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    all_source_cluster_ids,
+    all_ckd_concept_codes,
+    all_resolved_concept_codes,
     
     -- Criteria flags for transparency
     meets_age_criteria,

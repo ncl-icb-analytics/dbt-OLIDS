@@ -53,7 +53,7 @@ latest_spirometry AS (
         person_id,
         MAX(clinical_effective_date) AS latest_spirometry_date,
         MAX(CASE WHEN is_below_0_7 THEN fev1_fvc_ratio ELSE NULL END) AS latest_spirometry_fev1_fvc_ratio,
-        BOOL_OR(is_below_0_7) AS has_spirometry_confirmation
+        MAX(CASE WHEN is_below_0_7 THEN 1 ELSE 0 END) = 1 AS has_spirometry_confirmation
     FROM {{ ref('int_spirometry_all') }}
     GROUP BY person_id
 ),

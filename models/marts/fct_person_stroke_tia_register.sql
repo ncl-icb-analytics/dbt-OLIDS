@@ -39,8 +39,7 @@ WITH base_diagnoses AS (
 final AS (
     SELECT
         bd.person_id,
-        p.sk_patient_id,
-        p.age_years AS age,
+        age.age,
         
         -- Register flag (always true for simple register pattern)
         TRUE AS is_on_stia_register,
@@ -56,6 +55,8 @@ final AS (
     FROM base_diagnoses bd
     LEFT JOIN {{ ref('dim_person') }} p
         ON bd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} age
+        ON bd.person_id = age.person_id
 )
 
 SELECT * FROM final 

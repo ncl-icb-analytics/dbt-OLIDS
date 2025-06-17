@@ -60,14 +60,10 @@ person_aggregates AS (
         MIN(no_longer_indicated_date) AS earliest_no_longer_indicated_date,
         
         -- Concept arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_code THEN concept_code END) 
-            FILTER (WHERE is_palliative_care_code) AS all_palliative_care_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_code THEN concept_display END) 
-            FILTER (WHERE is_palliative_care_code) AS all_palliative_care_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_not_indicated_code THEN concept_code END) 
-            FILTER (WHERE is_palliative_care_not_indicated_code) AS all_no_longer_indicated_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_not_indicated_code THEN concept_display END) 
-            FILTER (WHERE is_palliative_care_not_indicated_code) AS all_no_longer_indicated_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_code THEN concept_code ELSE NULL END) AS all_palliative_care_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_code THEN concept_display ELSE NULL END) AS all_palliative_care_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_not_indicated_code THEN concept_code ELSE NULL END) AS all_no_longer_indicated_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_not_indicated_code THEN concept_display ELSE NULL END) AS all_no_longer_indicated_concept_displays
         
     FROM palliative_care_observations
     GROUP BY person_id
@@ -77,7 +73,6 @@ register_logic AS (
     
     SELECT
         pa.*,
-        p.sk_patient_id,
         age.age,
         
         -- QOF Register Logic: Palliative care after April 2008 + not marked as no longer indicated
@@ -99,7 +94,6 @@ register_logic AS (
 -- Final selection: Only include patients on the palliative care register
 SELECT
     rl.person_id,
-    rl.sk_patient_id,
     rl.age,
     rl.is_on_palliative_care_register,
     rl.earliest_palliative_care_date,

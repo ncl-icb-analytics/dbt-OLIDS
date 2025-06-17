@@ -13,23 +13,22 @@ WITH twelve_months_ago AS (
 ),
 
 diabetes_register AS (
-    -- Base population: people on diabetes register with intermediate table references
+    -- Base population: people with diabetes diagnoses
     SELECT 
-        person_id,
-        sk_patient_id
+        person_id
     FROM {{ ref('int_diabetes_diagnoses_all') }}
     WHERE earliest_diabetes_date IS NOT NULL
+    GROUP BY person_id
 ),
 
 care_process_data AS (
     SELECT
         dr.person_id,
-        dr.sk_patient_id,
         
         -- HbA1c
         hba.clinical_effective_date AS latest_hba1c_date,
         CASE WHEN hba.clinical_effective_date >= t.twelve_months_ago THEN TRUE ELSE FALSE END AS hba1c_completed_in_last_12m,
-        hba.result_value AS latest_hba1c_value,
+        hba.hba1c_value AS latest_hba1c_value,
         
         -- Blood Pressure
         bp.clinical_effective_date AS latest_bp_date,
@@ -93,7 +92,6 @@ care_process_data AS (
 
 SELECT
     person_id,
-    sk_patient_id,
     
     -- Individual care process dates and completion flags
     latest_hba1c_date,
