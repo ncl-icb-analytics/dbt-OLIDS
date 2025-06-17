@@ -14,34 +14,29 @@ WITH heart_failure_diagnoses AS (
         person_id,
         
         -- General heart failure dates
-        earliest_diagnosis_date AS earliest_hf_diagnosis_date,
-        latest_diagnosis_date AS latest_hf_diagnosis_date,
+        earliest_hf_date AS earliest_hf_diagnosis_date,
+        latest_hf_date AS latest_hf_diagnosis_date,
         latest_resolved_date AS latest_hf_resolved_date,
         
         -- LVSD-specific dates
-        earliest_lvsd_date AS earliest_hf_lvsd_diagnosis_date,
-        latest_lvsd_date AS latest_hf_lvsd_diagnosis_date,
+        earliest_hf_lvsd_date AS earliest_hf_lvsd_diagnosis_date,
+        latest_hf_lvsd_date AS latest_hf_lvsd_diagnosis_date,
         
         -- Reduced ejection fraction dates
         earliest_reduced_ef_date AS earliest_reduced_ef_diagnosis_date,
         latest_reduced_ef_date AS latest_reduced_ef_diagnosis_date,
         
-        -- QOF register logic: active HF diagnosis required
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_hf_diagnosis,
+        -- QOF register logic: active HF diagnosis required (use existing logic)
+        has_active_heart_failure_diagnosis AS has_active_hf_diagnosis,
         
-        -- Subtype flags
-        CASE WHEN earliest_lvsd_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_lvsd_diagnosis,
-        CASE WHEN earliest_reduced_ef_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_reduced_ef_diagnosis,
+        -- Subtype flags (use existing columns)
+        has_heart_failure_reduced_ef_indicators AS has_lvsd_diagnosis,
+        has_heart_failure_reduced_ef_indicators AS has_reduced_ef_diagnosis,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays,
-        all_source_cluster_ids
+        all_hf_concept_codes,
+        all_hf_concept_displays,
+        all_resolved_concept_codes
     FROM {{ ref('int_heart_failure_diagnoses_all') }}
 ),
 
@@ -85,9 +80,9 @@ register_logic AS (
         diag.has_reduced_ef_diagnosis,
         
         -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
-        diag.all_source_cluster_ids
+        diag.all_hf_concept_codes,
+        diag.all_hf_concept_displays,
+        diag.all_resolved_concept_codes
     FROM {{ ref('dim_person') }} p
     INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
     LEFT JOIN heart_failure_diagnoses diag ON p.person_id = diag.person_id
@@ -116,9 +111,9 @@ SELECT
     has_reduced_ef_diagnosis,
     
     -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    all_source_cluster_ids,
+    all_hf_concept_codes,
+    all_hf_concept_displays,
+    all_resolved_concept_codes,
     
     -- Criteria flags for transparency
     meets_age_criteria,

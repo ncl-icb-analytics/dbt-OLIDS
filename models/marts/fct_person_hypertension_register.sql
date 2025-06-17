@@ -12,22 +12,18 @@
 WITH hypertension_diagnoses AS (
     SELECT
         person_id,
-        earliest_diagnosis_date AS earliest_htn_diagnosis_date,
-        latest_diagnosis_date AS latest_htn_diagnosis_date,
+        earliest_hypertension_date AS earliest_htn_diagnosis_date,
+        latest_hypertension_date AS latest_htn_diagnosis_date,
         latest_resolved_date AS latest_htn_resolved_date,
         
         -- QOF register logic: active diagnosis required
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL 
-                AND (latest_resolved_date IS NULL OR latest_diagnosis_date > latest_resolved_date)
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_htn_diagnosis,
+        has_active_hypertension_diagnosis AS has_active_htn_diagnosis,
         
         -- Traceability arrays
-        all_diagnosis_concept_codes,
-        all_diagnosis_concept_displays,
-        all_source_cluster_ids
+        all_hypertension_concept_codes,
+        all_hypertension_concept_displays,
+        all_resolved_concept_codes,
+        all_resolved_concept_displays
     FROM {{ ref('int_hypertension_diagnoses_all') }}
 ),
 
@@ -35,11 +31,33 @@ latest_bp_data AS (
     SELECT
         person_id,
         clinical_effective_date AS latest_bp_date,
-        systolic_value AS latest_bp_systolic_value,
-        diastolic_value AS latest_bp_diastolic_value,
-        is_home_bp_event AS latest_bp_is_home,
-        is_abpm_bp_event AS latest_bp_is_abpm
+        validated_value AS latest_bp_value,
+        bp_type,
+        -- Extract systolic/diastolic if available (note: simplified for now)
+        CASE WHEN bp_type = 'Systolic' THEN validated_value ELSE NULL END AS systolic_value,
+        CASE WHEN bp_type = 'Diastolic' THEN validated_value ELSE NULL END AS diastolic_value
     FROM {{ ref('int_blood_pressure_latest') }}
+),
+
+-- Get latest systolic and diastolic readings separately
+latest_systolic AS (
+    SELECT 
+        person_id,
+        MAX(CASE WHEN bp_type = 'Systolic' THEN validated_value END) AS latest_bp_systolic_value,
+        MAX(CASE WHEN bp_type = 'Systolic' THEN clinical_effective_date END) AS latest_systolic_date
+    FROM {{ ref('int_blood_pressure_all') }}
+    WHERE bp_type = 'Systolic'
+    GROUP BY person_id
+),
+
+latest_diastolic AS (
+    SELECT 
+        person_id,
+        MAX(CASE WHEN bp_type = 'Diastolic' THEN validated_value END) AS latest_bp_diastolic_value,
+        MAX(CASE WHEN bp_type = 'Diastolic' THEN clinical_effective_date END) AS latest_diastolic_date
+    FROM {{ ref('int_blood_pressure_all') }}
+    WHERE bp_type = 'Diastolic'
+    GROUP BY person_id
 ),
 
 register_logic AS (
@@ -66,50 +84,38 @@ register_logic AS (
         diag.latest_htn_resolved_date,
         
         -- Latest BP data
-        bp.latest_bp_date,
-        bp.latest_bp_systolic_value,
-        bp.latest_bp_diastolic_value,
-        bp.latest_bp_is_home,
-        bp.latest_bp_is_abpm,
+        GREATEST(sys.latest_systolic_date, dias.latest_diastolic_date) AS latest_bp_date,
+        sys.latest_bp_systolic_value,
+        dias.latest_bp_diastolic_value,
         
         -- Complex clinical staging logic based on NICE guidelines with context-specific thresholds
         CASE
-            WHEN bp.latest_bp_systolic_value IS NULL OR bp.latest_bp_diastolic_value IS NULL 
+            WHEN sys.latest_bp_systolic_value IS NULL OR dias.latest_bp_diastolic_value IS NULL 
                 THEN NULL -- Cannot stage without BP values
             -- Severe threshold (applies regardless of context)
-            WHEN bp.latest_bp_systolic_value >= 180 OR bp.latest_bp_diastolic_value >= 120 
+            WHEN sys.latest_bp_systolic_value >= 180 OR dias.latest_bp_diastolic_value >= 120 
                 THEN 'Severe HTN'
-            -- Home/ABPM context - different thresholds per NICE guidance
-            WHEN bp.latest_bp_is_home OR bp.latest_bp_is_abpm THEN
-                CASE 
-                    WHEN bp.latest_bp_systolic_value >= 150 OR bp.latest_bp_diastolic_value >= 95 
-                        THEN 'Stage 2 HTN (Home/ABPM Threshold)'
-                    WHEN bp.latest_bp_systolic_value >= 135 OR bp.latest_bp_diastolic_value >= 85 
-                        THEN 'Stage 1 HTN (Home/ABPM Threshold)'
-                    ELSE 'Normal (Home/ABPM Threshold)'
-                END
-            -- Clinic context - standard clinic thresholds
-            ELSE
-                CASE
-                    WHEN bp.latest_bp_systolic_value >= 160 OR bp.latest_bp_diastolic_value >= 100 
-                        THEN 'Stage 2 HTN (Clinic Threshold)'
-                    WHEN bp.latest_bp_systolic_value >= 140 OR bp.latest_bp_diastolic_value >= 90 
-                        THEN 'Stage 1 HTN (Clinic Threshold)'
-                    ELSE 'Normal / High Normal (Clinic Threshold)'
-                END
+            -- Standard clinic thresholds (simplified - no home/ABPM context available)
+            WHEN sys.latest_bp_systolic_value >= 160 OR dias.latest_bp_diastolic_value >= 100 
+                THEN 'Stage 2 HTN'
+            WHEN sys.latest_bp_systolic_value >= 140 OR dias.latest_bp_diastolic_value >= 90 
+                THEN 'Stage 1 HTN'
+            ELSE 'Normal / High Normal'
         END AS latest_bp_htn_stage,
         
         -- Traceability
-        diag.all_diagnosis_concept_codes,
-        diag.all_diagnosis_concept_displays,
-        diag.all_source_cluster_ids,
+        diag.all_hypertension_concept_codes,
+        diag.all_hypertension_concept_displays,
+        diag.all_resolved_concept_codes,
+        diag.all_resolved_concept_displays,
         
         -- Person demographics
         age.age
     FROM {{ ref('dim_person') }} p
     INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
     LEFT JOIN hypertension_diagnoses diag ON p.person_id = diag.person_id
-    LEFT JOIN latest_bp_data bp ON p.person_id = bp.person_id
+    LEFT JOIN latest_systolic sys ON p.person_id = sys.person_id
+    LEFT JOIN latest_diastolic dias ON p.person_id = dias.person_id
 )
 
 -- Final selection: Only individuals with active HTN diagnosis
@@ -127,14 +133,13 @@ SELECT
     latest_bp_date,
     latest_bp_systolic_value,
     latest_bp_diastolic_value,
-    latest_bp_is_home,
-    latest_bp_is_abpm,
     latest_bp_htn_stage,
     
     -- Traceability for audit
-    all_diagnosis_concept_codes,
-    all_diagnosis_concept_displays,
-    all_source_cluster_ids,
+    all_hypertension_concept_codes,
+    all_hypertension_concept_displays,
+    all_resolved_concept_codes,
+    all_resolved_concept_displays,
     
     -- Criteria flags for transparency
     meets_age_criteria,

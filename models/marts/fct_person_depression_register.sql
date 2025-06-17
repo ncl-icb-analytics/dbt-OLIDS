@@ -35,8 +35,7 @@ WITH depression_diagnoses AS (
         diag.latest_resolved_date,
         diag.all_depression_concept_codes,
         diag.all_depression_concept_displays,
-        diag.all_resolved_concept_codes,
-        diag.all_resolved_concept_displays
+        diag.all_resolved_concept_codes
         
     FROM {{ ref('int_depression_diagnoses_all') }} diag
     WHERE diag.has_potential_qof_depression = TRUE
@@ -46,7 +45,6 @@ register_logic AS (
     
     SELECT
         dd.*,
-        p.sk_patient_id,
         age.age,
         
         -- QOF Register Logic: Age ≥18 + episode ≥1 April 2006 + unresolved
@@ -66,7 +64,6 @@ register_logic AS (
 -- Final selection: Only include patients on the depression register
 SELECT
     rl.person_id,
-    rl.sk_patient_id,
     rl.age,
     rl.is_on_depression_register,
     rl.earliest_depression_date AS earliest_depression_diagnosis_date,
@@ -74,8 +71,7 @@ SELECT
     rl.latest_resolved_date AS latest_depression_resolved_date,
     rl.all_depression_concept_codes,
     rl.all_depression_concept_displays,
-    rl.all_resolved_concept_codes AS all_depression_resolved_concept_codes,
-    rl.all_resolved_concept_displays AS all_depression_resolved_concept_displays
+    rl.all_resolved_concept_codes AS all_depression_resolved_concept_codes
 
 FROM register_logic rl
 WHERE rl.is_on_depression_register = TRUE 
