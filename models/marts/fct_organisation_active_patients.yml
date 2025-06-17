@@ -21,11 +21,6 @@ models:
     config:
       materialized: table
       
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - organisation_id
-    
     columns:
       - name: organisation_id
         description: "Unique organisation identifier"

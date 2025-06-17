@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: fct_person_ltc_summary
+    description: |
+      Comprehensive summary of all long-term condition (LTC) registers for analytical
+      and reporting purposes. Unions all QOF disease registers into a single fact table
+      for cross-condition analysis.
+      
+      **Key Features:**
+      - One row per person per condition they're registered for
+      - Standardised condition codes and names
+      - Earliest and latest diagnosis dates per condition
+      - Only includes people who are on each register (is_on_register = TRUE)
+      
+      **Condition Coverage:**
+      - All major QOF registers (AF, Asthma, Cancer, CHD, CKD, COPD, etc.)
+      - Includes both adult and paediatric registers
+      - Standardised condition codes for reporting
+      
+      **Usage:**
+      - Multi-morbidity analysis
+      - Population health reporting
+      - Cross-condition prevalence studies
+      - QOF achievement reporting
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+
+      - name: condition_code
+        description: "Standardised condition code (AF, AST, CA, CHD, CKD, COPD, DEM, DEP, DM, EPIL, etc.)"
+        tests:
+          - not_null
+
+      - name: condition_name
+        description: "Full condition name for reporting"
+        tests:
+          - not_null
+
+      - name: is_on_register
+        description: "Boolean flag - always TRUE for this table (filtered to registered patients only)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: earliest_diagnosis_date
+        description: "Earliest diagnosis date for this condition"
+        tests:
+          - not_null
+
+      - name: latest_diagnosis_date
+        description: "Latest diagnosis date for this condition"
+        tests:
+          - not_null
+
+      - name: total_conditions
+        description: "Total number of LTC conditions this person is registered for"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 30
+
+      - name: condition_count_category
+        description: "Categorised count of conditions (Single condition, 2-3 conditions, 4-5 conditions, 6+ conditions)"
+        tests:
+          - not_null
+
+      - name: has_multiple_conditions
+        description: "Boolean flag indicating if person has multiple LTC conditions (multi-morbidity)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: earliest_condition_date
+        description: "Earliest diagnosis date across all conditions for this person"
+        tests:
+          - not_null
+
+      - name: latest_condition_date
+        description: "Latest diagnosis date across all conditions for this person"
+        tests:
+          - not_null
+
+      - name: years_since_first_diagnosis
+        description: "Years since first LTC diagnosis"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100 

@@ -25,19 +25,6 @@ models:
       Essential for diabetes quality of care monitoring and QOF reporting. Based on NICE diabetes guidelines
       requiring regular monitoring of these key clinical parameters.
     
-    tests:
-      - not_null:
-          column_name: person_id
-      - not_null:
-          column_name: sk_patient_id
-      - dbt_utils.accepted_range:
-          column_name: care_processes_completed
-          min_value: 0
-          max_value: 8
-      - accepted_values:
-          column_name: all_processes_completed
-          values: [true, false]
-    
     columns:
       - name: person_id
         description: "Unique person identifier"

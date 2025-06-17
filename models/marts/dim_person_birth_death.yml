@@ -1,0 +1,81 @@
+version: 2
+
+models:
+  - name: dim_person_birth_death
+    description: |
+      Core birth and death information for each person providing foundation data for age calculations
+      and demographic analysis. Calculates birth/death dates as the exact midpoint of the recorded
+      month for optimal statistical precision.
+      
+      **Date Calculation Logic:**
+      - Birth and death dates use mathematical midpoint of recorded month
+      - Provides more accurate statistical estimates than start/end of month
+      - Foundation table for all age-related calculations
+      
+      **Data Sources:**
+      - Birth/death information from stg_olids_patient
+      - Person linkage via stg_olids_patient_person
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: sk_patient_id
+        description: "Surrogate patient key"
+        tests:
+          - not_null
+
+      - name: birth_year
+        description: "Year of birth (YYYY format)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1900
+              max_value: 2030
+
+      - name: birth_month
+        description: "Month of birth (1-12)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 12
+
+      - name: birth_date_approx
+        description: "Approximate birth date calculated as exact midpoint of birth month for statistical precision"
+        tests:
+          - not_null
+
+      - name: death_year
+        description: "Year of death (YYYY format, NULL if alive)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1900
+              max_value: 2030
+
+      - name: death_month
+        description: "Month of death (1-12, NULL if alive)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 12
+
+      - name: death_date_approx
+        description: "Approximate death date calculated as exact midpoint of death month (NULL if alive)"
+
+      - name: is_deceased
+        description: "Boolean flag indicating if person is deceased (derived from presence of death_year)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_dummy_patient
+        description: "Boolean flag indicating if this is a dummy/test patient record"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

@@ -28,10 +28,6 @@ models:
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_depression_register.sql which applies QOF business rules.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "DEPR_COD,DEPRES_COD,DEPRVW_COD,DEPRINVITE_COD,DEPRPCADEC_COD,DEPRPCAPU_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

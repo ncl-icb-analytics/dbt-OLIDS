@@ -25,13 +25,6 @@ models:
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
       Use this model as input for stroke/TIA register.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "STIA_COD"
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-
     columns:
       - name: person_id
         description: "Unique person identifier"

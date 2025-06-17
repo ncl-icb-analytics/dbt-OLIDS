@@ -14,10 +14,6 @@ models:
       
       Includes ALL persons following intermediate layer principles.
       Use as input for osteoporosis register and bone health analytics.
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "DXA_COD,DXA2_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

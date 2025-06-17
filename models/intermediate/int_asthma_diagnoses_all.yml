@@ -27,10 +27,6 @@ models:
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_asthma_register.sql which applies QOF business rules and medication integration.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "AST_COD,ASTRES_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

@@ -1,0 +1,178 @@
+version: 2
+
+models:
+  - name: int_fragility_fractures_all
+    description: |
+      Intermediate model collecting all fragility fracture observations using QOF cluster FF_COD.
+      Only includes fractures after April 2012 as per QOF guidelines for osteoporosis register.
+      Provides foundation data for osteoporosis register with fracture site classification
+      and person-level aggregations.
+      
+      **QOF Context:**
+      - Uses cluster ID FF_COD for fragility fracture codes
+      - Filters to fractures after April 2012 (QOF requirement)
+      - Classifies fracture sites for clinical analysis
+      - Supports osteoporosis register business rules
+      
+      **Key Features:**
+      - One row per fracture observation
+      - Fracture site classification (Hip, Wrist, Spine, Humerus, Pelvis, Femur, Other)
+      - Person-level aggregates for comprehensive fracture history
+      - Timeline context for fracture progression analysis
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+
+      - name: patient_id
+        description: "Patient identifier"
+        tests:
+          - not_null
+
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          - unique
+
+      - name: clinical_effective_date
+        description: "Date of fracture observation (all after 2012-04-01)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: "'2012-04-01'"
+              max_value: "current_date()"
+
+      - name: source_cluster_id
+        description: "Source cluster ID - should be FF_COD for all rows"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['FF_COD']
+
+      - name: concept_code
+        description: "Clinical concept code for the fracture"
+        tests:
+          - not_null
+
+      - name: code_description
+        description: "Display term for the fracture concept code"
+        tests:
+          - not_null
+
+      - name: fracture_site
+        description: "Classified fracture site (Hip, Wrist, Spine, Humerus, Pelvis, Femur, Other)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Hip', 'Wrist', 'Spine', 'Humerus', 'Pelvis', 'Femur', 'Other']
+
+      - name: is_fragility_fracture_code
+        description: "Boolean flag - always TRUE for this table (FF_COD cluster)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: numeric_value
+        description: "Numeric value from observation (if any)"
+
+      - name: total_fracture_observations
+        description: "Total number of fracture observations for this person"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 50
+
+      - name: earliest_fracture_date
+        description: "Earliest fracture date for this person (after April 2012)"
+        tests:
+          - not_null
+
+      - name: latest_fracture_date
+        description: "Latest fracture date for this person"
+        tests:
+          - not_null
+
+      - name: distinct_fracture_sites
+        description: "Number of distinct fracture sites for this person"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 7
+
+      - name: distinct_fracture_dates
+        description: "Number of distinct fracture dates for this person"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 50
+
+      - name: all_fracture_concept_codes
+        description: "Array of all fracture concept codes for this person"
+        tests:
+          - not_null
+
+      - name: all_fracture_concept_displays
+        description: "Array of all fracture concept display terms for this person"
+        tests:
+          - not_null
+
+      - name: all_fracture_sites
+        description: "Array of all fracture sites for this person"
+        tests:
+          - not_null
+
+      - name: has_hip_fracture
+        description: "Boolean flag indicating if person has had a hip fracture"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_wrist_fracture
+        description: "Boolean flag indicating if person has had a wrist fracture"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_spine_fracture
+        description: "Boolean flag indicating if person has had a spine fracture"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_humerus_fracture
+        description: "Boolean flag indicating if person has had a humerus fracture"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: months_since_first_fracture
+        description: "Months elapsed since person's first fracture to this observation"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 500
+
+      - name: is_earliest_fracture
+        description: "Boolean flag indicating if this is the person's earliest fracture"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_latest_fracture
+        description: "Boolean flag indicating if this is the person's latest fracture"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

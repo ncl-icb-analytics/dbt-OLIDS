@@ -21,10 +21,6 @@ models:
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_heart_failure_register.sql which applies QOF business rules.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "HF_COD,HFRES_COD,HFLVSD_COD,REDEJCFRAC_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

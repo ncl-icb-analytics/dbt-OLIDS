@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: dim_person_current_practice
+    description: |
+      Current practice registration details for each person.
+      Provides current practice relationships and registration status.
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: current_practice_id
+        description: "Current practice ID"
+
+      - name: current_practice_code
+        description: "Current practice ODS code"
+
+      - name: current_practice_name
+        description: "Current practice name"
+
+      - name: is_currently_registered
+        description: "Boolean flag indicating current registration status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false] 

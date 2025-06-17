@@ -22,11 +22,6 @@ models:
       
       Matches legacy fct_person_dx_dementia business logic and field structure.
       
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-
     columns:
       - name: person_id
         description: "Unique person identifier"

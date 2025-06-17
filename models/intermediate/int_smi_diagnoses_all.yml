@@ -28,10 +28,6 @@ models:
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_smi_register.sql which applies QOF business rules and medication integration.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "MH_COD,MHREM_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

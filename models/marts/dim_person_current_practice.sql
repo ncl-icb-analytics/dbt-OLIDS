@@ -28,4 +28,4 @@ SELECT
     registration_start_date,
     registration_end_date
 FROM {{ ref('dim_person_historical_practice') }}
-WHERE is_current_practice = TRUE 
+WHERE is_current_registration = TRUE 

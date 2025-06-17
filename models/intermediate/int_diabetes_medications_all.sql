@@ -11,27 +11,6 @@ Uses BNF classification (6.1.x) with detailed medication type categorisation.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 */
 
-WITH base_orders AS (
-    
-    SELECT
-        medication_order_id,
-        medication_statement_id,
-        person_id,
-        order_date,
-        order_medication_name,
-        order_dose,
-        order_quantity_value,
-        order_quantity_unit,
-        order_duration_days,
-        statement_medication_name,
-        mapped_concept_code,
-        mapped_concept_display,
-        bnf_code,
-        bnf_name
-        
-    FROM {{ get_medication_orders(bnf_code='0601') }}
-)
-
 SELECT
     person_id,
     medication_order_id,
@@ -104,5 +83,7 @@ SELECT
         ELSE FALSE
     END AS is_recent_6m
 
-FROM base_orders
+FROM (
+    {{ get_medication_orders(bnf_code='0601') }}
+) base_orders
 ORDER BY person_id, order_date DESC 

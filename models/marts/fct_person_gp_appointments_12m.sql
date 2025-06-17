@@ -12,7 +12,7 @@ SELECT
     a.person_id,
     a.organisation_id,
     'GP_APPOINTMENTS_12M' AS measure_id,
-    COUNT(a.appointment_id) AS appointment_count,
+    COUNT(a.id) AS appointment_count,
     MIN(a.start_date) AS earliest_appointment_date,
     MAX(a.start_date) AS latest_appointment_date,
     

@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: dim_person_is_carer
+    description: |
+      Dimension identifying patients who are carers for enhanced support services
+      and carer-specific health programmes.
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: is_carer
+        description: "Boolean flag indicating if person is identified as a carer"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: carer_type
+        description: "Type or category of caring role"
+
+      - name: carer_identified_date
+        description: "Date when carer status was first identified" 

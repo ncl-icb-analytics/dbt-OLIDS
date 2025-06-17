@@ -81,7 +81,7 @@ latest_patient_record_per_person AS (
         ON pp.person_id = pip.person_id
     LEFT JOIN {{ ref('dim_person_historical_practice') }} php
         ON pp.person_id = php.person_id
-        AND php.is_current_practice = TRUE
+        AND php.is_current_registration = TRUE
 )
 
 -- Select only the latest record per person and only inactive patients

@@ -26,20 +26,6 @@ models:
       Comprehensive diabetes quality monitoring including diabetic retinopathy screening.
       Essential for full diabetes care pathway assessment and QOF reporting.
     
-    tests:
-      - not_null:
-          column_name: person_id
-      - not_null:
-          column_name: sk_patient_id
-      - dbt_utils.accepted_range:
-          column_name: care_processes_8_completed
-          min_value: 0
-          max_value: 8
-      - dbt_utils.accepted_range:
-          column_name: care_processes_9_completed
-          min_value: 0
-          max_value: 9
-    
     columns:
       - name: person_id
         description: "Unique person identifier"

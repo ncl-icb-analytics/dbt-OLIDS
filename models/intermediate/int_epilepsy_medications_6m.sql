@@ -16,18 +16,34 @@ Includes ALL persons (active, inactive, deceased) following intermediate layer p
 WITH epilepsy_orders_base AS (
     -- Get all medication orders using EPILDRUG_COD cluster for anti-epileptic drugs
     SELECT 
-        mo.person_id,
-        mo.sk_patient_id,
-        mo.medication_order_id,
-        mo.order_date,
-        mo.order_medication_name,
-        mo.mapped_concept_code,
-        mo.mapped_concept_display,
+        mo.id AS medication_order_id,
+        ms.id AS medication_statement_id,
+        pp.person_id,
+        p.sk_patient_id,
+        mo.clinical_effective_date::DATE AS order_date,
+        mo.medication_name AS order_medication_name,
+        mo.dose AS order_dose,
+        mo.quantity_value AS order_quantity_value,
+        mo.quantity_unit AS order_quantity_unit,
+        mo.duration_days AS order_duration_days,
+        ms.medication_name AS statement_medication_name,
+        mc.concept_code AS mapped_concept_code,
+        mc.code_description AS mapped_concept_display,
         'EPILDRUG_COD' AS cluster_id
         
-    FROM {{ get_medication_orders(cluster_id='EPILDRUG_COD') }} mo
-    WHERE mo.order_date >= CURRENT_DATE() - INTERVAL '6 months'
-        AND mo.order_date <= CURRENT_DATE()
+    FROM {{ ref('stg_olids_medication_statement') }} ms
+    JOIN {{ ref('stg_olids_medication_order') }} mo
+        ON ms.id = mo.medication_statement_id
+    JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
+        ON ms.medication_statement_core_concept_id = mc.source_code_id
+    JOIN {{ ref('stg_olids_patient_person') }} pp
+        ON mo.patient_id = pp.patient_id
+    JOIN {{ ref('stg_olids_patient') }} p
+        ON mo.patient_id = p.id
+    WHERE 
+        mc.cluster_id = 'EPILDRUG_COD'
+        AND mo.clinical_effective_date::DATE >= CURRENT_DATE() - INTERVAL '6 months'
+        AND mo.clinical_effective_date::DATE <= CURRENT_DATE()
 ),
 
 epilepsy_enhanced AS (
@@ -130,7 +146,7 @@ epilepsy_with_counts AS (
         
         -- High-risk combination flags
         CASE 
-            WHEN COUNT(*) FILTER (WHERE ee.requires_tdm = TRUE) OVER (PARTITION BY ee.person_id) > 1 THEN TRUE
+            WHEN SUM(CASE WHEN ee.requires_tdm = TRUE THEN 1 ELSE 0 END) OVER (PARTITION BY ee.person_id) > 1 THEN TRUE
             ELSE FALSE
         END AS multiple_tdm_drugs
         

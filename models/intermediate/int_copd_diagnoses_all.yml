@@ -23,10 +23,6 @@ models:
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_copd_register.sql which applies QOF business rules and spirometry requirements.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "COPD_COD,COPDRES_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

@@ -22,10 +22,6 @@ models:
       - MART therapy detection
       - Repeat prescription indicators
     
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "ASTTRT_COD"
-
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"

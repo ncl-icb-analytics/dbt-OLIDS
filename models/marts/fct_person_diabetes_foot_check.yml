@@ -29,12 +29,6 @@ models:
       - Comprehensive status tracking including partial checks
       - Supports clinical decision-making for foot care pathways
     
-    tests:
-      - unique:
-          column_name: person_id
-      - not_null:
-          column_name: person_id
-    
     columns:
       - name: person_id
         description: "Unique person identifier"

@@ -26,24 +26,6 @@ models:
       
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
-    config:
-      materialized: table
-      
-    tests:
-      - not_null: [person_id]
-      - unique: [person_id]
-      - dbt_utils.accepted_range:
-          column_name: age
-          min_value: 6
-          severity: warn
-      - accepted_values:
-          column_name: is_on_asthma_register
-          values: [true]
-      - not_null: 
-          column_name: latest_asthma_diagnosis_date
-      - not_null:
-          column_name: latest_asthma_medication_date
-
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"

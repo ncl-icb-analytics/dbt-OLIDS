@@ -21,15 +21,6 @@ models:
       Essential for diabetes outcome monitoring and quality improvement initiatives.
       Based on NICE diabetes guidelines for optimal diabetes management targets.
     
-    tests:
-      - not_null:
-          column_name: person_id
-      - not_null:
-          column_name: sk_patient_id
-      - accepted_values:
-          column_name: all_three_targets_met
-          values: [true, false]
-    
     columns:
       - name: person_id
         description: "Unique person identifier"

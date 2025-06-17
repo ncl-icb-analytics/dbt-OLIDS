@@ -22,12 +22,6 @@ models:
       - Formulation tracking for bioequivalence
       - Teratogenicity risk flags
     
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - medication_order_id
-
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"

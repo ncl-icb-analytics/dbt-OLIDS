@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: dim_person_care_home
+    description: |
+      Dimension identifying patients residing in care homes for enhanced care
+      pathways and medication safety monitoring.
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: is_care_home_resident
+        description: "Boolean flag indicating if person resides in a care home"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: care_home_name
+        description: "Name of care home (if resident)"
+
+      - name: care_home_type
+        description: "Type of care home facility" 

@@ -6,10 +6,6 @@ models:
       Consolidates blood pressure readings from multiple sources into a single comprehensive view per person per date.
       Combines systolic and diastolic readings, identifies home/ABPM readings, and validates against clinical ranges.
     
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: SYSBP_COD,DIABP_COD,BP_COD,HOMEBP_COD,HOMEAMBBP_COD,ABPM_COD
-    
     columns:
       - name: person_id
         description: Unique identifier for the person

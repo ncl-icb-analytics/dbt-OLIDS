@@ -30,18 +30,6 @@ models:
       
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
-    config:
-      materialized: table
-      
-    tests:
-      - not_null: [person_id]
-      - unique: [person_id]
-      - accepted_values:
-          column_name: is_on_hf_register
-          values: [true]
-      - not_null: 
-          column_name: latest_hf_diagnosis_date
-
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"

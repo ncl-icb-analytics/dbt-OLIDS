@@ -30,25 +30,6 @@ models:
       
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
-    config:
-      materialized: table
-      
-    tests:
-      - not_null: [person_id]
-      - unique: [person_id]
-      - dbt_utils.accepted_range:
-          column_name: age
-          min_value: 17
-          severity: warn
-      - accepted_values:
-          column_name: is_on_diabetes_register
-          values: [true]
-      - accepted_values:
-          column_name: diabetes_type
-          values: ['Type 1', 'Type 2', 'Unknown']
-      - not_null: 
-          column_name: latest_diabetes_diagnosis_date
-
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"

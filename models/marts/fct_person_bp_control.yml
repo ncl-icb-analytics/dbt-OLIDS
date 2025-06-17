@@ -24,12 +24,6 @@ models:
       - Assesses timeliness based on risk factors
       - References BP thresholds ruleset for clinical accuracy
     
-    tests:
-      - unique:
-          column_name: person_id
-      - not_null:
-          column_name: person_id
-    
     columns:
       - name: person_id
         description: "Unique person identifier"

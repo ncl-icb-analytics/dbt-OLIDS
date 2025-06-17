@@ -47,7 +47,7 @@ current_practices AS (
         practice_code AS current_practice_code,
         practice_name AS current_practice_name
     FROM {{ ref('dim_person_historical_practice') }}
-    WHERE is_current_practice = TRUE
+    WHERE is_current_registration = TRUE
 )
 
 -- Final aggregation

@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: dim_person_historical_practice
+    description: |
+      Historical practice registration dimension providing complete registration
+      history for each person across all practices. Supports practice mobility
+      analysis and continuity of care tracking.
+      
+      **Key Features:**
+      - Multiple rows per person (one per registration)
+      - Current and historical registrations
+      - Registration start/end dates and durations
+      - Practice details and organisational context
+      
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+
+      - name: practice_id
+        description: "Practice identifier"
+        tests:
+          - not_null
+
+      - name: practice_code
+        description: "Practice ODS code"
+        tests:
+          - not_null
+
+      - name: practice_name
+        description: "Practice name"
+        tests:
+          - not_null
+
+      - name: registration_start_date
+        description: "Start date of registration at this practice"
+        tests:
+          - not_null
+
+      - name: registration_end_date
+        description: "End date of registration (NULL if current)"
+
+      - name: is_current_practice
+        description: "Boolean flag indicating if this is the current practice registration"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: registration_duration_days
+        description: "Duration of registration in days"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 50000
+
+      - name: registration_sequence
+        description: "Sequence number of this registration for the person (1 = first practice)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 50 

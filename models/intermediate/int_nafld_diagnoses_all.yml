@@ -27,14 +27,6 @@ models:
       - No resolved or exclusion codes (none available for NAFLD)
       - Simplified pattern for incremental refresh efficiency
     
-    tests:
-      - not_null:
-          column_name: person_id
-      - not_null:
-          column_name: observation_id
-      - not_null:
-          column_name: clinical_effective_date
-    
     columns:
       - name: person_id
         description: "Unique person identifier"

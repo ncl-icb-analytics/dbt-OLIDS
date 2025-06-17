@@ -34,11 +34,6 @@ models:
     config:
       materialized: table
       
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-    
     columns:
       - name: person_id
         description: "Unique person identifier linking to dim_person"

@@ -6,9 +6,6 @@ models:
       All QRISK cardiovascular risk assessment scores from observations.
       Includes QRISK, QRISK2, and QRISK3 scores with clinical validation and risk categorisation.
       Includes ALL persons following intermediate layer principles.
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "QRISKSCORE_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

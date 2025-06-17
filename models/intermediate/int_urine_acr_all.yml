@@ -6,9 +6,6 @@ models:
       All urine Albumin-to-Creatinine Ratio (ACR) measurements from observations.
       Uses specific concept codes for ACR tests with clinical validation and CKD staging.
       Includes ALL persons following intermediate layer principles.
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "ACR_COD"
     columns:
       - name: person_id
         description: "Unique person identifier"

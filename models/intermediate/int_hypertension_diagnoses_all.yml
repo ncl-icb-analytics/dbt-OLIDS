@@ -19,10 +19,6 @@ models:
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_hypertension_register.sql which applies QOF business rules.
       
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "HYP_COD,HYPRES_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

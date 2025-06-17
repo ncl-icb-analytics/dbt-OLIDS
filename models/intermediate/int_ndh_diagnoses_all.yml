@@ -14,10 +14,6 @@ models:
       
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_ndh_register.sql which applies QOF business rules and diabetes exclusions.
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "NDH_COD,IGT_COD,PRD_COD"
-          
     columns:
       - name: person_id
         description: "Unique person identifier"

@@ -13,56 +13,78 @@ Critical for pregnancy safety monitoring and teratogenicity risk assessment.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 */
 
-WITH valproate_orders AS (
-    -- Get all medication orders with valproate name matching or concept ID matching
+WITH base_medication_orders AS (
+    -- Get base medication order and statement data following legacy pattern
+    SELECT DISTINCT
+        mo.id AS medication_order_id,
+        ms.id AS medication_statement_id,
+        pp.person_id,
+        mo.clinical_effective_date::DATE AS order_date,
+        mo.medication_name AS order_medication_name,
+        mo.dose AS order_dose,
+        mo.quantity_value AS order_quantity_value,
+        mo.quantity_unit AS order_quantity_unit,
+        mo.duration_days AS order_duration_days,
+        ms.medication_name AS statement_medication_name,
+        mc.concept_code AS mapped_concept_code,
+        mc.code_description AS mapped_concept_display,
+        mc.concept_id AS mapped_concept_id,
+        vp.valproate_product_term,
+        NULL AS bnf_code,
+        NULL AS bnf_name
+    FROM {{ ref('stg_olids_medication_order') }} mo
+    INNER JOIN {{ ref('stg_olids_medication_statement') }} ms 
+        ON mo.medication_statement_id = ms.id
+    INNER JOIN {{ ref('stg_olids_patient_person') }} pp 
+        ON mo.patient_id = pp.patient_id
+    LEFT JOIN {{ ref('stg_codesets_mapped_concepts') }} mc 
+        ON ms.medication_statement_core_concept_id = mc.source_code_id
+    LEFT JOIN {{ ref('stg_codesets_valproate_prog_codes') }} vp
+        ON mc.concept_code = vp.code
+        AND vp.code_category = 'DRUG'
+    WHERE (
+        -- Name-based matching for valproate (following legacy logic)
+        mo.medication_name ILIKE '%VALPROATE%' OR
+        mo.medication_name ILIKE '%VALPROIC ACID%' OR
+        ms.medication_name ILIKE '%VALPROATE%' OR
+        ms.medication_name ILIKE '%VALPROIC ACID%'
+    )
+    OR (
+        -- Concept ID matching via VALPROATE_PROG_CODES
+        vp.code IS NOT NULL
+    )
+),
+
+valproate_orders AS (
     SELECT 
-        mo.medication_order_id,
-        mo.medication_statement_id,
-        mo.person_id,
-        mo.order_date,
-        mo.order_medication_name,
-        mo.order_dose,
-        mo.order_quantity_value,
-        mo.order_quantity_unit,
-        mo.order_duration_days,
-        mo.statement_medication_name,
-        mo.mapped_concept_code,
-        mo.mapped_concept_display,
-        mo.bnf_code,
-        mo.bnf_name,
+        bmo.*,
         
         -- Check for valproate name patterns (case-insensitive)
         (
-            mo.order_medication_name ILIKE '%VALPROATE%' OR
-            mo.order_medication_name ILIKE '%VALPROIC ACID%' OR
-            mo.statement_medication_name ILIKE '%VALPROATE%' OR
-            mo.statement_medication_name ILIKE '%VALPROIC ACID%'
+            bmo.order_medication_name ILIKE '%VALPROATE%' OR
+            bmo.order_medication_name ILIKE '%VALPROIC ACID%' OR
+            bmo.statement_medication_name ILIKE '%VALPROATE%' OR
+            bmo.statement_medication_name ILIKE '%VALPROIC ACID%'
         ) AS matched_on_name,
         
-        -- Placeholder for concept ID matching (would need valproate concept codes table)
-        FALSE AS matched_on_concept_id,
+        -- Concept ID matching flag
+        (bmo.valproate_product_term IS NOT NULL) AS matched_on_concept_id,
         
         -- Extract specific valproate product information
         CASE 
-            WHEN mo.statement_medication_name ILIKE '%SODIUM VALPROATE%' 
-                OR mo.order_medication_name ILIKE '%SODIUM VALPROATE%' THEN 'SODIUM_VALPROATE'
-            WHEN mo.statement_medication_name ILIKE '%VALPROIC ACID%' 
-                OR mo.order_medication_name ILIKE '%VALPROIC ACID%' THEN 'VALPROIC_ACID'
-            WHEN mo.statement_medication_name ILIKE '%EPILIM%' 
-                OR mo.order_medication_name ILIKE '%EPILIM%' THEN 'EPILIM'
-            WHEN mo.statement_medication_name ILIKE '%DEPAKOTE%' 
-                OR mo.order_medication_name ILIKE '%DEPAKOTE%' THEN 'DEPAKOTE'
+            WHEN bmo.valproate_product_term IS NOT NULL THEN bmo.valproate_product_term
+            WHEN bmo.statement_medication_name ILIKE '%SODIUM VALPROATE%' 
+                OR bmo.order_medication_name ILIKE '%SODIUM VALPROATE%' THEN 'SODIUM_VALPROATE'
+            WHEN bmo.statement_medication_name ILIKE '%VALPROIC ACID%' 
+                OR bmo.order_medication_name ILIKE '%VALPROIC ACID%' THEN 'VALPROIC_ACID'
+            WHEN bmo.statement_medication_name ILIKE '%EPILIM%' 
+                OR bmo.order_medication_name ILIKE '%EPILIM%' THEN 'EPILIM'
+            WHEN bmo.statement_medication_name ILIKE '%DEPAKOTE%' 
+                OR bmo.order_medication_name ILIKE '%DEPAKOTE%' THEN 'DEPAKOTE'
             ELSE 'OTHER_VALPROATE'
         END AS valproate_product_type
         
-    FROM {{ get_medication_orders() }} mo
-    WHERE (
-        -- Name-based matching for valproate
-        mo.order_medication_name ILIKE '%VALPROATE%' OR
-        mo.order_medication_name ILIKE '%VALPROIC ACID%' OR
-        mo.statement_medication_name ILIKE '%VALPROATE%' OR
-        mo.statement_medication_name ILIKE '%VALPROIC ACID%'
-    )
+    FROM base_medication_orders bmo
 ),
 
 valproate_enhanced AS (
