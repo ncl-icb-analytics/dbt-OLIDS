@@ -12,13 +12,7 @@ Uses BNF classification (3.4) for antihistamines and related allergy medications
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 */
 
-WITH base_orders AS (
-    SELECT * FROM (
-        {{ get_medication_orders(bnf_code='0304') }}
-    )
-),
-
-allergy_enhanced AS (
+WITH allergy_enhanced AS (
     SELECT 
         bo.*,
         
@@ -121,15 +115,20 @@ allergy_enhanced AS (
             ELSE FALSE
         END AS is_paediatric_formulation,
         
-        -- Over-the-counter availability
+        -- Over-the-counter availability - use direct CASE logic instead of referencing derived column
         CASE 
-            WHEN bo.antihistamine_type IN ('CETIRIZINE', 'LORATADINE', 'CHLORPHENAMINE', 'ACRIVASTINE') THEN TRUE
+            WHEN (bo.statement_medication_name ILIKE '%CETIRIZINE%' OR bo.order_medication_name ILIKE '%CETIRIZINE%')
+                OR (bo.statement_medication_name ILIKE '%LORATADINE%' OR bo.order_medication_name ILIKE '%LORATADINE%')
+                OR (bo.statement_medication_name ILIKE '%CHLORPHENAMINE%' OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%')
+                OR (bo.statement_medication_name ILIKE '%ACRIVASTINE%' OR bo.order_medication_name ILIKE '%ACRIVASTINE%') THEN TRUE
             ELSE FALSE
         END AS is_otc_available,
         
-        -- Drowsiness warning required
+        -- Drowsiness warning required - use direct CASE logic instead of referencing derived column
         CASE 
-            WHEN bo.sedation_profile = 'SEDATING' THEN TRUE
+            WHEN (bo.statement_medication_name ILIKE '%CHLORPHENAMINE%' OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%')
+                OR (bo.statement_medication_name ILIKE '%PROMETHAZINE%' OR bo.order_medication_name ILIKE '%PROMETHAZINE%')
+                OR (bo.statement_medication_name ILIKE '%HYDROXYZINE%' OR bo.order_medication_name ILIKE '%HYDROXYZINE%') THEN TRUE
             ELSE FALSE
         END AS requires_drowsiness_warning,
         
@@ -138,7 +137,7 @@ allergy_enhanced AS (
         bo.order_date >= CURRENT_DATE() - INTERVAL '6 months' AS is_recent_6m,
         bo.order_date >= CURRENT_DATE() - INTERVAL '12 months' AS is_recent_12m
         
-    FROM base_orders bo
+    FROM ({{ get_medication_orders(bnf_code='0304') }}) bo
 ),
 
 allergy_with_counts AS (

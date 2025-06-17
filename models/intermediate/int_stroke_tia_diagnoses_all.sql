@@ -1,7 +1,7 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id']
     )
 }}
 
@@ -27,26 +27,29 @@ WITH base_observations AS (
     SELECT
         person_id,
         clinical_effective_date,
-        source_cluster_id,
-        concept_code,
-        concept_description,
-        observation_value_text,
-        observation_value_numeric,
-        observation_units,
-        date_recorded
-    FROM {{ get_observations("'STIA_COD'") }}
+        cluster_id AS source_cluster_id,
+        mapped_concept_code AS concept_code,
+        mapped_concept_display AS concept_description,
+        result_text AS observation_value_text,
+        result_value AS observation_value_numeric,
+        result_value_unit_concept_id AS observation_units,
+        observation_id  -- Using observation_id as substitute for date_recorded
+    FROM (
+        {{ get_observations("'STIA_COD'") }}
+    ) o
 ),
 
--- Add person demographics for context
-observations_with_person AS (
+-- Latest values first
+latest_values AS (
     SELECT
-        obs.*,
-        p.age_years,
-        p.gender,
-        p.is_active
-    FROM base_observations obs
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON obs.person_id = p.person_id
+        person_id,
+        concept_code AS latest_stroke_tia_concept_code,
+        concept_description AS latest_stroke_tia_concept_description,
+        ROW_NUMBER() OVER (
+            PARTITION BY person_id 
+            ORDER BY clinical_effective_date DESC, observation_id DESC
+        ) AS rn
+    FROM base_observations
 ),
 
 -- Person-level aggregation for efficient downstream use
@@ -64,31 +67,23 @@ person_level_aggregates AS (
         
         -- Code arrays for detailed analysis
         ARRAY_AGG(DISTINCT concept_code) AS all_stroke_tia_concept_codes,
-        ARRAY_AGG(DISTINCT concept_description) AS all_stroke_tia_concept_displays,
-        
-        -- Latest values for reference
-        FIRST_VALUE(concept_code) OVER (
-            PARTITION BY person_id 
-            ORDER BY clinical_effective_date DESC, date_recorded DESC
-        ) AS latest_stroke_tia_concept_code,
-        
-        FIRST_VALUE(concept_description) OVER (
-            PARTITION BY person_id 
-            ORDER BY clinical_effective_date DESC, date_recorded DESC
-        ) AS latest_stroke_tia_concept_description
+        ARRAY_AGG(DISTINCT concept_description) AS all_stroke_tia_concept_displays
 
-    FROM observations_with_person
+    FROM base_observations
     GROUP BY person_id
 )
 
 SELECT
-    person_id,
-    has_stroke_tia_diagnosis,
-    earliest_stroke_tia_date,
-    latest_stroke_tia_date,
-    total_stroke_tia_episodes,
-    all_stroke_tia_concept_codes,
-    all_stroke_tia_concept_displays,
-    latest_stroke_tia_concept_code,
-    latest_stroke_tia_concept_description
-FROM person_level_aggregates 
+    pla.person_id,
+    pla.has_stroke_tia_diagnosis,
+    pla.earliest_stroke_tia_date,
+    pla.latest_stroke_tia_date,
+    pla.total_stroke_tia_episodes,
+    pla.all_stroke_tia_concept_codes,
+    pla.all_stroke_tia_concept_displays,
+    lv.latest_stroke_tia_concept_code,
+    lv.latest_stroke_tia_concept_description
+FROM person_level_aggregates pla
+LEFT JOIN latest_values lv 
+    ON pla.person_id = lv.person_id 
+    AND lv.rn = 1 
