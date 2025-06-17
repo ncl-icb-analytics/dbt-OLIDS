@@ -18,19 +18,19 @@ WITH base_observations AS (
         obs.person_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(6,2)) AS hba1c_value,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value,
         
         -- Flag measurement types
         CASE 
-            WHEN obs.source_cluster_id = 'IFCCHBAM_COD' THEN TRUE 
+            WHEN obs.cluster_id AS source_cluster_id = 'IFCCHBAM_COD' THEN TRUE 
             ELSE FALSE 
         END AS is_ifcc,
         
         CASE 
-            WHEN obs.source_cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
+            WHEN obs.cluster_id AS source_cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
             ELSE FALSE 
         END AS is_dcct
         

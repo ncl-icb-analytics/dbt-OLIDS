@@ -33,13 +33,13 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of atrial fibrillation codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'AFIB_COD' THEN TRUE ELSE FALSE END AS is_af_diagnosis_code,
-        CASE WHEN obs.source_cluster_id = 'AFIBRES_COD' THEN TRUE ELSE FALSE END AS is_af_resolved_code
+        CASE WHEN obs.cluster_id = 'AFIB_COD' THEN TRUE ELSE FALSE END AS is_af_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'AFIBRES_COD' THEN TRUE ELSE FALSE END AS is_af_resolved_code
         
     FROM ({{ get_observations("'AFIB_COD', 'AFIBRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -135,7 +135,7 @@ final_with_derived_fields AS (
         -- Anticoagulation planning fields
         CASE 
             WHEN pda.earliest_af_diagnosis_date IS NOT NULL 
-            THEN CURRENT_DATE - pda.earliest_af_diagnosis_date
+            THEN DATEDIFF(DAY, pda.earliest_af_diagnosis_date, CURRENT_DATE)
             ELSE NULL
         END AS days_since_first_af_diagnosis,
         
@@ -163,7 +163,7 @@ final_with_derived_fields AS (
         -- Disease progression indicators
         CASE 
             WHEN pda.total_af_diagnoses > 1 
-                AND (pda.latest_af_diagnosis_date - pda.earliest_af_diagnosis_date) > INTERVAL '6 months'
+                AND DATEDIFF(MONTH, pda.earliest_af_diagnosis_date, pda.latest_af_diagnosis_date) > 6
             THEN TRUE
             ELSE FALSE
         END AS has_af_recurrence_codes,

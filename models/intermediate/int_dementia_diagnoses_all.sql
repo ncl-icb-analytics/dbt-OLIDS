@@ -35,12 +35,12 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag dementia diagnosis codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'DEM_COD' THEN TRUE ELSE FALSE END AS is_dementia_diagnosis_code
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'DEM_COD' THEN TRUE ELSE FALSE END AS is_dementia_diagnosis_code
         
     FROM ({{ get_observations("'DEM_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -59,10 +59,8 @@ person_aggregates AS (
         COUNT(CASE WHEN is_dementia_diagnosis_code THEN 1 END) AS total_dementia_diagnoses,
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_code END) 
-            FILTER (WHERE is_dementia_diagnosis_code) AS all_dementia_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_display END) 
-            FILTER (WHERE is_dementia_diagnosis_code) AS all_dementia_concept_displays
+        ARRAY_AGG(CASE WHEN is_dementia_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_code END) ELSE NULL END) AS all_dementia_concept_codes,
+        ARRAY_AGG(CASE WHEN is_dementia_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_display END) ELSE NULL END) AS all_dementia_concept_displays
             
     FROM base_observations
     GROUP BY person_id
@@ -72,9 +70,9 @@ SELECT
     bo.person_id,
     bo.observation_id,
     bo.clinical_effective_date,
-    bo.concept_code,
-    bo.concept_display,
-    bo.source_cluster_id,
+    bo.mapped_concept_code AS concept_code,
+    bo.mapped_concept_display AS concept_display,
+    bo.cluster_id AS source_cluster_id,
     
     -- Dementia type flags
     bo.is_dementia_diagnosis_code,

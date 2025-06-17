@@ -36,13 +36,13 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of CKD codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'CKD_COD' THEN TRUE ELSE FALSE END AS is_ckd_diagnosis_code,
-        CASE WHEN obs.source_cluster_id = 'CKDRES_COD' THEN TRUE ELSE FALSE END AS is_ckd_resolved_code
+        CASE WHEN obs.cluster_id = 'CKD_COD' THEN TRUE ELSE FALSE END AS is_ckd_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'CKDRES_COD' THEN TRUE ELSE FALSE END AS is_ckd_resolved_code
         
     FROM ({{ get_observations("'CKD_COD', 'CKDRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -62,14 +62,10 @@ person_aggregates AS (
         MAX(CASE WHEN is_ckd_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_diagnosis_code THEN concept_code END) 
-            FILTER (WHERE is_ckd_diagnosis_code) AS all_ckd_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_diagnosis_code THEN concept_display END) 
-            FILTER (WHERE is_ckd_diagnosis_code) AS all_ckd_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_resolved_code THEN concept_code END) 
-            FILTER (WHERE is_ckd_resolved_code) AS all_resolved_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_resolved_code THEN concept_display END) 
-            FILTER (WHERE is_ckd_resolved_code) AS all_resolved_concept_displays
+        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_diagnosis_code THEN concept_code ELSE NULL END) AS all_ckd_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_diagnosis_code THEN concept_display ELSE NULL END) AS all_ckd_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_ckd_resolved_code THEN concept_display ELSE NULL END) AS all_resolved_concept_displays
             
     FROM base_observations
     GROUP BY person_id

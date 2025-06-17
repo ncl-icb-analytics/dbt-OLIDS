@@ -18,16 +18,16 @@ WITH base_observations AS (
         obs.person_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(6,2)) AS qrisk_score,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value,
         
         -- Derive QRISK type from concept display
         CASE 
-            WHEN UPPER(obs.concept_display) LIKE '%QRISK3%' THEN 'QRISK3'
-            WHEN UPPER(obs.concept_display) LIKE '%QRISK2%' THEN 'QRISK2'
-            WHEN UPPER(obs.concept_display) LIKE '%QRISK%' THEN 'QRISK'
+            WHEN UPPER(obs.mapped_concept_display AS concept_display) LIKE '%QRISK3%' THEN 'QRISK3'
+            WHEN UPPER(obs.mapped_concept_display AS concept_display) LIKE '%QRISK2%' THEN 'QRISK2'
+            WHEN UPPER(obs.mapped_concept_display AS concept_display) LIKE '%QRISK%' THEN 'QRISK'
             ELSE 'Unknown'
         END AS qrisk_type
         

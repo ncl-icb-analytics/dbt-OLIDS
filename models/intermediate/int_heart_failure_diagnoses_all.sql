@@ -29,15 +29,15 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of heart failure codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_diagnosis_code,
-        CASE WHEN obs.source_cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_resolved_code,
-        CASE WHEN obs.source_cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
-        CASE WHEN obs.source_cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_diagnosis_code,
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_resolved_code,
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code
         
     FROM ({{ get_observations("'HF_COD', 'HFRES_COD', 'HFLVSD_COD', 'REDEJCFRAC_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -63,16 +63,11 @@ person_aggregates AS (
         MAX(CASE WHEN is_heart_failure_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_code END) 
-            FILTER (WHERE is_heart_failure_diagnosis_code) AS all_hf_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_display END) 
-            FILTER (WHERE is_heart_failure_diagnosis_code) AS all_hf_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_hf_lvsd_code THEN concept_code END) 
-            FILTER (WHERE is_hf_lvsd_code) AS all_hf_lvsd_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_reduced_ef_code THEN concept_code END) 
-            FILTER (WHERE is_reduced_ef_code) AS all_reduced_ef_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_resolved_code THEN concept_code END) 
-            FILTER (WHERE is_heart_failure_resolved_code) AS all_resolved_concept_codes
+        ARRAY_AGG(CASE WHEN is_heart_failure_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_code END) ELSE NULL END) AS all_hf_concept_codes,
+        ARRAY_AGG(CASE WHEN is_heart_failure_diagnosis_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_diagnosis_code THEN concept_display END) ELSE NULL END) AS all_hf_concept_displays,
+        ARRAY_AGG(CASE WHEN is_hf_lvsd_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_hf_lvsd_code THEN concept_code END) ELSE NULL END) AS all_hf_lvsd_concept_codes,
+        ARRAY_AGG(CASE WHEN is_reduced_ef_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_reduced_ef_code THEN concept_code END) ELSE NULL END) AS all_reduced_ef_concept_codes,
+        ARRAY_AGG(CASE WHEN is_heart_failure_resolved_code THEN ARRAY_AGG(DISTINCT CASE WHEN is_heart_failure_resolved_code THEN concept_code END) ELSE NULL END) AS all_resolved_concept_codes
             
     FROM base_observations
     GROUP BY person_id
@@ -82,9 +77,9 @@ SELECT
     bo.person_id,
     bo.observation_id,
     bo.clinical_effective_date,
-    bo.concept_code,
-    bo.concept_display,
-    bo.source_cluster_id,
+    bo.mapped_concept_code AS concept_code,
+    bo.mapped_concept_display AS concept_display,
+    bo.cluster_id AS source_cluster_id,
     
     -- Heart failure type flags
     bo.is_heart_failure_diagnosis_code,

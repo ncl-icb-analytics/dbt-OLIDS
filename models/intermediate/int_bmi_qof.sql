@@ -17,15 +17,15 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value,
         
         -- Extract BMI value from result_value, handling both numeric and coded values
         CASE 
-            WHEN obs.source_cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
-            WHEN obs.source_cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
+            WHEN obs.cluster_id AS source_cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
+            WHEN obs.cluster_id AS source_cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
             ELSE NULL
         END AS bmi_value
         
@@ -102,9 +102,9 @@ SELECT
     lo.person_id,
     lo.observation_id,
     lo.clinical_effective_date,
-    lo.concept_code,
-    lo.concept_display,
-    lo.source_cluster_id,
+    lo.mapped_concept_code AS concept_code,
+    lo.mapped_concept_display AS concept_display,
+    lo.cluster_id AS source_cluster_id,
     lo.bmi_value,
     lo.is_bmi_30_plus,
     lo.is_bmi_27_5_plus,

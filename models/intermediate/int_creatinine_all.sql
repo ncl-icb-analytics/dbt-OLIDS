@@ -18,9 +18,9 @@ WITH base_observations AS (
         obs.person_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(6,1)) AS creatinine_value,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
         
     FROM ({{ get_observations("'CRE_COD'") }}) obs

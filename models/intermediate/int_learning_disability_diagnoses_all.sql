@@ -35,12 +35,12 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag learning disability codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'LD_DIAGNOSIS_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_diagnosis_code
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'LD_DIAGNOSIS_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_diagnosis_code
         
     FROM ({{ get_observations("'LD_DIAGNOSIS_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -74,9 +74,9 @@ final_with_derived_fields AS (
         bo.person_id,
         bo.observation_id,
         bo.clinical_effective_date,
-        bo.concept_code,
-        bo.concept_display,
-        bo.source_cluster_id,
+        bo.mapped_concept_code AS concept_code,
+        bo.mapped_concept_display AS concept_display,
+        bo.cluster_id AS source_cluster_id,
         bo.is_learning_disability_diagnosis_code,
         
         -- Person-level aggregates

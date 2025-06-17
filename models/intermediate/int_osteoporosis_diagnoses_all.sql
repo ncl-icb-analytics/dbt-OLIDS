@@ -33,12 +33,12 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag osteoporosis diagnosis codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'OSTEO_COD' THEN TRUE ELSE FALSE END AS is_osteoporosis_diagnosis_code
+        CASE WHEN obs.cluster_id AS source_cluster_id = 'OSTEO_COD' THEN TRUE ELSE FALSE END AS is_osteoporosis_diagnosis_code
         
     FROM ({{ get_observations("'OSTEO_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
