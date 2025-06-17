@@ -19,20 +19,26 @@ WITH valproate_preg_risk_codes AS (
 
 preg_risk_observations AS (
     SELECT
-        o.person_id,
+        pp.person_id,
         o.clinical_effective_date,
-        o.mapped_concept_code AS concept_code,
-        o.mapped_concept_display AS concept_display,
-        o.cluster_id AS source_cluster_id,
+        mc.concept_code,
+        mc.code_description AS concept_display,
+        cc.cluster_id AS source_cluster_id,
         vpc.code_category,
         vpc.lookback_years_offset,
         o.date_recorded,
         o.lds_datetime_data_acquired
     FROM {{ ref('stg_olids_observation') }} o
+    JOIN {{ ref('stg_olids_patient') }} p
+        ON o.patient_id = p.id
+    JOIN {{ ref('stg_olids_patient_person') }} pp 
+        ON p.id = pp.patient_id
     INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
         ON o.observation_core_concept_id = mc.source_code_id
+    INNER JOIN {{ ref('stg_codesets_combined_codesets') }} cc
+        ON mc.concept_code = cc.code
     INNER JOIN valproate_preg_risk_codes vpc
-        ON mc.concept_code = vpc.code
+        ON cc.code = vpc.code
     WHERE vpc.code_category = 'PREGRISK'
         AND (
             vpc.lookback_years_offset IS NULL 

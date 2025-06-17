@@ -18,10 +18,10 @@ WITH fracture_observations AS (
         patient_id,
         observation_id,
         clinical_effective_date,
-        source_cluster_id,
-        concept_code,
-        code_description,
-        numeric_value,
+        cluster_id AS source_cluster_id,
+        mapped_concept_code AS concept_code,
+        mapped_concept_display AS code_description,
+        CAST(result_value AS NUMBER(10,2)) AS numeric_value,
         -- Extract fracture site from code description
         CASE 
             WHEN LOWER(code_description) LIKE '%hip%' THEN 'Hip'
@@ -33,7 +33,7 @@ WITH fracture_observations AS (
             ELSE 'Other'
         END AS fracture_site,
         -- Clinical flags
-        source_cluster_id = 'FF_COD' AS is_fragility_fracture_code
+        cluster_id = 'FF_COD' AS is_fragility_fracture_code
     FROM ({{ get_observations("'FF_COD'") }}) obs
     -- Only include fractures after April 2012 as per QOF requirements
     WHERE clinical_effective_date >= '2012-04-01'
@@ -67,8 +67,8 @@ SELECT
     fo.patient_id,
     fo.observation_id,
     fo.clinical_effective_date,
-    fo.cluster_id AS source_cluster_id,
-    fo.mapped_concept_code AS concept_code,
+    fo.source_cluster_id,
+    fo.concept_code,
     fo.code_description,
     fo.fracture_site,
     fo.is_fragility_fracture_code,

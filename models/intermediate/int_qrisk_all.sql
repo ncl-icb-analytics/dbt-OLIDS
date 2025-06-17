@@ -25,9 +25,9 @@ WITH base_observations AS (
         
         -- Derive QRISK type from concept display
         CASE 
-            WHEN UPPER(obs.concept_display) LIKE '%QRISK3%' THEN 'QRISK3'
-            WHEN UPPER(obs.concept_display) LIKE '%QRISK2%' THEN 'QRISK2'
-            WHEN UPPER(obs.concept_display) LIKE '%QRISK%' THEN 'QRISK'
+            WHEN UPPER(obs.mapped_concept_display) LIKE '%QRISK3%' THEN 'QRISK3'
+            WHEN UPPER(obs.mapped_concept_display) LIKE '%QRISK2%' THEN 'QRISK2'
+            WHEN UPPER(obs.mapped_concept_display) LIKE '%QRISK%' THEN 'QRISK'
             ELSE 'Unknown'
         END AS qrisk_type
         

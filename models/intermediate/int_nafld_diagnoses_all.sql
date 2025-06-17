@@ -9,11 +9,11 @@ WITH base_observations AS (
         pp.person_id,
         o.id AS observation_id,
         o.clinical_effective_date::DATE AS clinical_effective_date,
-        mc.mapped_concept_code AS concept_code,
+        mc.concept_code,
         mc.code_description AS concept_display,
         -- Additional fields for consistency
         p.id AS patient_id,
-        o.observation_numeric_value AS numeric_value,
+        CAST(o.result_value AS NUMBER(10,2)) AS numeric_value,
         -- NAFLD diagnosis flag (all observations are NAFLD diagnoses)
         TRUE AS is_nafld_diagnosis
     FROM {{ ref('stg_olids_observation') }} o
