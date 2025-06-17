@@ -52,7 +52,7 @@ models:
       - name: registration_duration_days
         description: "Duration of registration in days"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 50000
 
@@ -60,6 +60,6 @@ models:
         description: "Sequence number of this registration for the person (1 = first practice)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50 

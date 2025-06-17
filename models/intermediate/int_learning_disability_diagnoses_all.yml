@@ -76,7 +76,7 @@ models:
       - name: total_ld_diagnoses
         description: "Total count of learning disability diagnoses for this person"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               severity: warn
               
@@ -125,7 +125,7 @@ models:
       - name: days_since_first_ld_diagnosis
         description: "Number of days since first learning disability diagnosis (for service planning)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 36500  # 100 years
               severity: warn

@@ -41,7 +41,7 @@ models:
         description: "Current age of person (≥17 years for diabetes register eligibility)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 17
               max_value: 120
 

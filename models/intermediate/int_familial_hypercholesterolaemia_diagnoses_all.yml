@@ -45,23 +45,17 @@ models:
         description: "Date of first recorded FH diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_fh_date"
-
-      - name: latest_fh_date
+          - name: latest_fh_date
         description: "Date of most recent FH diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_fh_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_fh_episodes
         description: "Total number of distinct FH diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 20
 

@@ -61,7 +61,7 @@ models:
         description: "Total number of LTC conditions this person is registered for"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 30
 
@@ -90,6 +90,6 @@ models:
       - name: years_since_first_diagnosis
         description: "Years since first LTC diagnosis"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 100 

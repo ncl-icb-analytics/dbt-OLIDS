@@ -43,7 +43,7 @@ models:
         description: "Date when the NAFLD diagnosis was clinically effective"
         tests:
           - not_null
-          - dbt_utils.not_future_date
+          - test_no_future_dates
       
       - name: concept_code
         description: "SNOMED concept code for the NAFLD diagnosis"

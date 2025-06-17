@@ -23,14 +23,14 @@ models:
         description: "Age at time of BMI measurement"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 120
       - name: bmi_value
         description: "BMI value in kg/m²"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 5
               max_value: 150
               severity: warn

@@ -23,7 +23,7 @@ models:
         description: "Urine ACR value in mg/mmol"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 1500
               severity: warn

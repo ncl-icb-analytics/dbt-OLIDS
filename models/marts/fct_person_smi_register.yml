@@ -39,7 +39,7 @@ models:
       - name: age
         description: "Current age of person in years"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 120
 
@@ -74,16 +74,10 @@ models:
       - name: earliest_mh_diagnosis_date
         description: "Date of first recorded mental health diagnosis"
         tests:
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_mh_diagnosis_date"
-
-      - name: latest_mh_diagnosis_date
+          - name: latest_mh_diagnosis_date
         description: "Date of most recent mental health diagnosis"
         tests:
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_mh_diagnosis_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: latest_remission_date
         description: "Date of most recent mental health remission code (NULL if never in remission)"

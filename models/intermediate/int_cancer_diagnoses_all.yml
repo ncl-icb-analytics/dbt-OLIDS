@@ -45,23 +45,17 @@ models:
         description: "Date of first recorded cancer diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_cancer_date"
-
-      - name: latest_cancer_date
+          - name: latest_cancer_date
         description: "Date of most recent cancer diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_cancer_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_cancer_episodes
         description: "Total number of distinct cancer diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50
 

@@ -22,6 +22,122 @@ models/
 - **Transformed Schema**: `DBT`
 - **Materialisation**: Views for staging, tables for intermediate/marts
 
+## Critical Macro Usage Patterns
+
+### ⚠️ AVOID RECURSIVE CTE ISSUES
+
+**❌ INCORRECT PATTERN (Causes recursive WITH errors):**
+```sql
+WITH base_orders AS (
+    SELECT * FROM {{ get_medication_orders(bnf_code='0304') }}
+)
+```
+
+**❌ INCORRECT PATTERN (Causes nested SELECT errors):**
+```sql
+FROM {{ get_observations("'AST_COD', 'ASTRES_COD'") }} obs
+```
+
+**✅ CORRECT PATTERN (Use subquery wrapper):**
+```sql
+-- For medication models
+FROM ({{ get_medication_orders(bnf_code='0304') }}) base_orders
+
+-- For diagnosis/observation models  
+FROM ({{ get_observations("'AST_COD', 'ASTRES_COD'") }}) obs
+```
+
+### Medication Models - Correct Pattern
+
+```sql
+{{
+    config(
+        materialized='table',
+        cluster_by=['person_id', 'order_date']
+    )
+}}
+
+SELECT
+    base_orders.person_id,
+    base_orders.medication_order_id,
+    base_orders.order_date,
+    base_orders.order_medication_name,
+    -- ... other base columns with base_orders. prefix
+    
+    -- Derived fields
+    CASE 
+        WHEN base_orders.statement_medication_name ILIKE '%IBUPROFEN%' THEN 'IBUPROFEN'
+        ELSE 'OTHER'
+    END AS medication_type
+    
+FROM ({{ get_medication_orders(bnf_code='1001') }}) base_orders
+WHERE base_orders.bnf_code LIKE '100101%'
+ORDER BY base_orders.person_id, base_orders.order_date DESC
+```
+
+### Diagnosis Models - Correct Pattern
+
+```sql
+{{
+    config(
+        materialized='table',
+        cluster_by=['person_id', 'clinical_effective_date']
+    )
+}}
+
+WITH base_observations AS (
+    SELECT
+        obs.observation_id,
+        obs.person_id,
+        obs.clinical_effective_date,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
+        
+        -- Derived flags
+        CASE WHEN obs.cluster_id = 'DM_COD' THEN TRUE ELSE FALSE END AS is_diabetes_code
+        
+    FROM ({{ get_observations("'DM_COD', 'DMRES_COD'") }}) obs
+    WHERE obs.clinical_effective_date IS NOT NULL
+)
+
+-- Use conditional aggregation instead of FILTER clauses for Snowflake
+SELECT 
+    person_id,
+    ARRAY_AGG(DISTINCT CASE WHEN is_diabetes_code THEN concept_code ELSE NULL END) AS diabetes_codes
+FROM base_observations  
+GROUP BY person_id
+```
+
+### Column Mapping for get_observations() Macro
+
+**The `get_observations()` macro returns these columns:**
+- `observation_id` ✅
+- `person_id` ✅  
+- `clinical_effective_date` ✅
+- `mapped_concept_code` → alias as `concept_code`
+- `mapped_concept_display` → alias as `concept_display`
+- `cluster_id` → alias as `source_cluster_id`
+
+**Always use proper aliasing:**
+```sql
+obs.mapped_concept_code AS concept_code,
+obs.mapped_concept_display AS concept_display,
+obs.cluster_id AS source_cluster_id
+```
+
+### Snowflake Compatibility Notes
+
+**❌ FILTER clause not supported:**
+```sql
+ARRAY_AGG(value) FILTER (WHERE condition)  -- PostgreSQL syntax
+```
+
+**✅ Use conditional aggregation:**
+```sql
+ARRAY_AGG(CASE WHEN condition THEN value ELSE NULL END)  -- Snowflake compatible
+```
+
 ## New Dimensional Structure (Following Legacy Patterns)
 
 ### Core Dimension Tables
@@ -314,33 +430,104 @@ ROW_NUMBER() OVER (
 - Add appropriate data quality tests for clinical ranges
 - Document business logic and clinical validation rules
 
+#### ⚠️ AVOIDING DUPLICATE TESTS
+
+**❌ INCORRECT - Causes duplicate test conflicts:**
+```yaml
+# int_diabetes_diagnoses_all.yml
+models:
+  - name: int_diabetes_diagnoses_all
+    tests:  # ❌ Model-level tests block
+      - cluster_ids_exist:
+          cluster_ids: "DM_COD,DMRES_COD"
+    columns:
+      - name: person_id
+        tests: [not_null]  # ❌ Will conflict with model-level tests
+```
+
+**✅ CORRECT - Use ONLY column-level tests:**
+```yaml
+# int_diabetes_diagnoses_all.yml  
+models:
+  - name: int_diabetes_diagnoses_all
+    description: |
+      All diabetes diagnosis observations from clinical records.
+      Uses QOF diabetes cluster IDs: DM_COD, DMTYPE1_COD, DMTYPE2_COD, DMRES_COD
+    # ✅ NO model-level tests block
+    
+    columns:
+      - name: person_id
+        description: "Unique person identifier"
+        tests: [not_null]
+        
+      - name: concept_code
+        description: "Clinical concept code"
+        tests: 
+          - not_null
+          - cluster_ids_exist:
+              cluster_ids: "DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD"
+```
+
 #### Mandatory Tests for All Models
 
 #### Staging Models
 
 ```yaml
-tests:
-  - all_source_columns_in_staging  # Custom test
-  - not_null: [patient_id, clinical_effective_date]
-  - no_future_dates: [clinical_effective_date]
+# Column-level tests only
+columns:
+  - name: patient_id
+    tests: [not_null]
+  - name: clinical_effective_date  
+    tests: 
+      - not_null
+      - no_future_dates  # Custom generic test
 ```
 
 #### Intermediate/Mart Models
 
 ```yaml
-tests:
-  - unique: [surrogate_key]  # For latest models
-  - not_null: [person_id, clinical_effective_date]
-  - cluster_ids_exist: [cluster_id]  # Custom test for observation models
-  - bnf_codes_exist: [bnf_codes]     # Custom test for medication models
-  - relationships:
-      to: ref('dim_person')
-      field: person_id
-  - accepted_values: [true, false]  # For all boolean flags
-  - dbt_utils.accepted_range: # For clinical measurements
-      min_value: X
-      max_value: Y
-      severity: warn
+# Column-level tests only
+columns:
+  - name: person_id
+    tests: 
+      - not_null
+      - relationships:
+          to: ref('dim_person')
+          field: person_id
+          
+  - name: clinical_effective_date
+    tests: 
+      - not_null
+      - no_future_dates  # Custom generic test
+    
+        - name: concept_code  # For observation models
+        tests:
+          - test_cluster_ids_exist:
+              cluster_ids: "AST_COD,ASTRES_COD"  # Comma-separated
+              
+      - name: bnf_code  # For medication models  
+        tests:
+          - test_bnf_codes_exist:
+              bnf_codes: "0304,1001"  # Comma-separated
+          
+  - name: is_diabetes_code  # Boolean flags
+    tests:
+      - accepted_values:
+          values: [true, false]
+          
+        - name: systolic_value  # Clinical measurements
+        tests:
+          - accepted_range:  # dbt built-in range validation
+              min_value: 40
+              max_value: 350
+              severity: warn
+              
+      - name: diastolic_value  # Clinical measurements
+        tests:
+          - accepted_range:  # dbt built-in range validation
+              min_value: 20
+              max_value: 200
+              severity: warn
 ```
 
 #### Code Validation Tests (CRITICAL)
@@ -348,14 +535,14 @@ tests:
 **For Clinical Observation Models:**
 ```yaml
 tests:
-  - cluster_ids_exist:
+  - test_cluster_ids_exist:
       cluster_ids: "SYSBP_COD,DIABP_COD,BP_COD"  # Comma-separated list
 ```
 
 **For Medication Models:**
 ```yaml
 tests:
-  - bnf_codes_exist:
+  - test_bnf_codes_exist:
       bnf_codes: "0601,0212"  # Comma-separated BNF codes  
 ```
 
@@ -369,10 +556,22 @@ tests:
 
 Located in `macros/testing/generic/`:
 
-- `test_all_source_columns_in_staging`: Ensures staging completeness
-- `test_no_future_dates`: Clinical date validation
-- `test_bnf_codes_exist`: Medication code validation - ensures BNF codes used in filters exist in codesets
+- `test_no_future_dates`: Clinical date validation - ensures dates are not in the future
 - `test_cluster_ids_exist`: Concept mapping validation - ensures cluster IDs used in filters exist in codesets
+- `test_bnf_codes_exist`: Medication code validation - ensures BNF codes used in filters exist in codesets  
+- `test_all_source_columns_in_staging`: Ensures staging completeness (staging models only)
+
+**✅ Use dbt built-in tests and our custom healthcare-specific tests:**
+
+```yaml
+# ✅ dbt built-in tests for clinical data
+- test_no_future_dates      # Custom date validation
+- accepted_range:           # dbt built-in range validation
+    min_value: 40
+    max_value: 350
+- test_cluster_ids_exist:   # Healthcare-specific validation
+    cluster_ids: "AST_COD,ASTRES_COD"
+```
 
 #### Usage Examples:
 
@@ -380,12 +579,12 @@ Located in `macros/testing/generic/`:
 ```yaml
 # Blood pressure model using multiple cluster IDs
 tests:
-  - cluster_ids_exist:
+  - test_cluster_ids_exist:
       cluster_ids: "SYSBP_COD,DIABP_COD,BP_COD"
 
 # Single cluster ID models  
 tests:
-  - cluster_ids_exist:
+  - test_cluster_ids_exist:
       cluster_ids: "BMIVAL_COD"
 ```
 
@@ -393,12 +592,12 @@ tests:
 ```yaml
 # Single BNF chapter
 tests:
-  - bnf_codes_exist:
+  - test_bnf_codes_exist:
       bnf_codes: "0601"  # Diabetes medications
 
 # Multiple BNF codes
 tests:
-  - bnf_codes_exist:
+  - test_bnf_codes_exist:
       bnf_codes: "100101,100302"  # NSAID codes
 ```
 
@@ -791,6 +990,95 @@ Focus on building comprehensive intermediate models for all major clinical domai
 2. **Then**: Phase 6 - Programme Dimensions (NHS Health Checks, LTC/LCS programmes)
 3. **Finally**: Phase 7 - Remaining Complex Models (LTC/LCS supporting models)
 
+## Troubleshooting Common Issues
+
+### 🔧 dbt Compilation Errors
+
+#### "Recursive CTE" or "WITH clause" errors
+**Symptoms:** Models fail with recursive CTE or WITH clause compilation errors
+**Cause:** Using macros directly in WITH clauses
+**Solution:** Use subquery pattern:
+```sql
+# ❌ Wrong: WITH base AS (SELECT * FROM {{ macro() }})
+# ✅ Right: FROM ({{ macro() }}) base
+```
+
+#### "Invalid identifier" errors
+**Symptoms:** Column not found errors during compilation
+**Cause:** Incorrect column names from macro output
+**Solution:** Use proper column mapping:
+```sql
+# For get_observations() macro:
+obs.mapped_concept_code AS concept_code,
+obs.mapped_concept_display AS concept_display,
+obs.cluster_id AS source_cluster_id
+```
+
+#### "FILTER clause not supported" errors  
+**Symptoms:** FILTER (WHERE ...) syntax fails in Snowflake
+**Solution:** Use conditional aggregation:
+```sql
+# ❌ Wrong: ARRAY_AGG(value) FILTER (WHERE condition)
+# ✅ Right: ARRAY_AGG(CASE WHEN condition THEN value ELSE NULL END)
+```
+
+### 🔧 YAML Test Errors
+
+#### "Duplicate test" errors
+**Symptoms:** Tests fail with duplicate test name conflicts
+**Cause:** Both model-level and column-level tests defined
+**Solution:** Use ONLY column-level tests - remove any `tests:` block under the model name
+
+#### "cluster_ids_exist" test failures
+**Symptoms:** Test fails saying cluster IDs don't exist
+**Cause:** Incorrect cluster ID spelling or missing IDs in codesets
+**Solution:** 
+1. Check spelling of cluster IDs
+2. Verify IDs exist in `stg_codesets_combined_codesets`
+3. Use comma-separated format: `"AST_COD,ASTRES_COD"`
+
+### 🔧 Performance Issues
+
+#### Slow model compilation
+**Symptoms:** Models take very long to compile/run
+**Cause:** Inefficient macro usage or missing clustering
+**Solution:**
+1. Use subquery pattern for macros
+2. Add appropriate clustering: `cluster_by=['person_id', 'clinical_effective_date']`
+3. Avoid unnecessary joins in intermediate models
+
+#### Memory errors
+**Symptoms:** Out of memory errors during large aggregations
+**Cause:** Complex aggregations without proper filtering
+**Solution:**
+1. Filter early in WHERE clauses
+2. Use incremental materialization for large tables
+3. Break complex logic into multiple steps
+
+### 🔧 Data Quality Issues
+
+#### Empty result sets
+**Symptoms:** Models run successfully but return no data
+**Cause:** Incorrect cluster IDs or date filtering
+**Solution:**
+1. Verify cluster IDs using `cluster_ids_exist` test
+2. Check date filters aren't too restrictive
+3. Validate source data exists for the time period
+
+#### Unexpected NULL values
+**Symptoms:** Expected data shows as NULL
+**Cause:** Incorrect column mapping or joins
+**Solution:**
+1. Check column aliases match macro output
+2. Use LEFT JOIN appropriately for optional data
+3. Add NOT NULL tests to catch issues early
+
 ## Contact & Questions
 
 When in doubt about migration patterns or clinical logic, refer back to this document. The patterns documented here represent proven approaches that maintain data quality, performance, and clinical accuracy.
+
+**Key Resources:**
+- **Macro Usage**: Always use subquery pattern to avoid recursive CTE issues
+- **YAML Testing**: Use only column-level tests to avoid duplicates  
+- **Column Mapping**: Use proper aliases for macro outputs
+- **Snowflake Compatibility**: Use conditional aggregation instead of FILTER clauses

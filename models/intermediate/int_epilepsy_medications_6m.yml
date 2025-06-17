@@ -86,7 +86,7 @@ models:
         description: "Count of epilepsy medication orders in last 6 months for this person"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50
               severity: warn
@@ -95,7 +95,7 @@ models:
         description: "Number of unique AED types for polytherapy detection"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 10
               severity: warn

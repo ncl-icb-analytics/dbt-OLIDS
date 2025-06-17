@@ -45,23 +45,17 @@ models:
         description: "Date of first recorded CHD diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_chd_date"
-
-      - name: latest_chd_date
+          - name: latest_chd_date
         description: "Date of most recent CHD diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_chd_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_chd_episodes
         description: "Total number of distinct CHD diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 100
 

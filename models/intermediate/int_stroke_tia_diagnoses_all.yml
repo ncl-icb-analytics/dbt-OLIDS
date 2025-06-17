@@ -45,23 +45,17 @@ models:
         description: "Date of first recorded stroke/TIA diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_stroke_tia_date"
-
-      - name: latest_stroke_tia_date
+          - name: latest_stroke_tia_date
         description: "Date of most recent stroke/TIA diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_stroke_tia_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_stroke_tia_episodes
         description: "Total number of distinct stroke/TIA diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50
 

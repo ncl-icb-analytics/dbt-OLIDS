@@ -90,14 +90,14 @@ models:
       - name: total_mh_diagnoses
         description: "Total count of mental health diagnoses for this person"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               severity: warn
               
       - name: total_remission_codes
         description: "Total count of mental health remission codes for this person"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               severity: warn
               
@@ -174,7 +174,7 @@ models:
       - name: days_since_first_mh_diagnosis
         description: "Number of days since first mental health diagnosis (for care planning)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 36500  # 100 years
               severity: warn

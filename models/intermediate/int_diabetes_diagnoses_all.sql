@@ -29,17 +29,17 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of diabetes codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'DM_COD' THEN TRUE ELSE FALSE END AS is_general_diabetes_code,
-        CASE WHEN obs.source_cluster_id = 'DMTYPE1_COD' THEN TRUE ELSE FALSE END AS is_type1_diabetes_code,
-        CASE WHEN obs.source_cluster_id = 'DMTYPE2_COD' THEN TRUE ELSE FALSE END AS is_type2_diabetes_code,
-        CASE WHEN obs.source_cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END AS is_diabetes_resolved_code
+        CASE WHEN obs.cluster_id = 'DM_COD' THEN TRUE ELSE FALSE END AS is_general_diabetes_code,
+        CASE WHEN obs.cluster_id = 'DMTYPE1_COD' THEN TRUE ELSE FALSE END AS is_type1_diabetes_code,
+        CASE WHEN obs.cluster_id = 'DMTYPE2_COD' THEN TRUE ELSE FALSE END AS is_type2_diabetes_code,
+        CASE WHEN obs.cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END AS is_diabetes_resolved_code
         
-    FROM {{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD'") }} obs
+    FROM ({{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 
@@ -62,17 +62,12 @@ person_aggregates AS (
         MIN(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) AS earliest_resolved_date,
         MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
-        -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_general_diabetes_code THEN concept_code END) 
-            FILTER (WHERE is_general_diabetes_code) AS all_diabetes_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_general_diabetes_code THEN concept_display END) 
-            FILTER (WHERE is_general_diabetes_code) AS all_diabetes_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_type1_diabetes_code THEN concept_code END) 
-            FILTER (WHERE is_type1_diabetes_code) AS all_type1_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_type2_diabetes_code THEN concept_code END) 
-            FILTER (WHERE is_type2_diabetes_code) AS all_type2_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_diabetes_resolved_code THEN concept_code END) 
-            FILTER (WHERE is_diabetes_resolved_code) AS all_resolved_concept_codes
+        -- Concept code arrays for traceability (using conditional aggregation for Snowflake compatibility)
+        ARRAY_AGG(DISTINCT CASE WHEN is_general_diabetes_code THEN concept_code ELSE NULL END) AS all_diabetes_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_general_diabetes_code THEN concept_display ELSE NULL END) AS all_diabetes_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_type1_diabetes_code THEN concept_code ELSE NULL END) AS all_type1_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_type2_diabetes_code THEN concept_code ELSE NULL END) AS all_type2_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_diabetes_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
             
     FROM base_observations
     GROUP BY person_id

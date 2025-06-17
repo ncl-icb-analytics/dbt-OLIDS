@@ -41,7 +41,7 @@ models:
         description: "Date of fracture observation (all after 2012-04-01)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: "'2012-04-01'"
               max_value: "current_date()"
 
@@ -83,7 +83,7 @@ models:
         description: "Total number of fracture observations for this person"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50
 
@@ -101,7 +101,7 @@ models:
         description: "Number of distinct fracture sites for this person"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 7
 
@@ -109,7 +109,7 @@ models:
         description: "Number of distinct fracture dates for this person"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50
 
@@ -159,7 +159,7 @@ models:
       - name: months_since_first_fracture
         description: "Months elapsed since person's first fracture to this observation"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 500
 

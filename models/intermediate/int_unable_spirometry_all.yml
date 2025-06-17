@@ -62,7 +62,7 @@ models:
         description: "Total count of unable spirometry records for this person"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 100
               

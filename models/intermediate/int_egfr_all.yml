@@ -23,7 +23,7 @@ models:
         description: "eGFR value in mL/min/1.73m²"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 250
               severity: warn

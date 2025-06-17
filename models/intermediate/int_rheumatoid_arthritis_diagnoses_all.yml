@@ -45,23 +45,17 @@ models:
         description: "Date of first recorded RA diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_ra_date"
-
-      - name: latest_ra_date
+          - name: latest_ra_date
         description: "Date of most recent RA diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_ra_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_ra_episodes
         description: "Total number of distinct RA diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 50
 

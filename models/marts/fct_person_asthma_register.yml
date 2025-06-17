@@ -37,7 +37,7 @@ models:
         description: "Current age of person (≥6 years for asthma register eligibility)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 6
               max_value: 120
 
@@ -82,7 +82,7 @@ models:
       - name: recent_asthma_medication_count
         description: "Count of asthma medication prescriptions in last 12 months"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               severity: warn
 

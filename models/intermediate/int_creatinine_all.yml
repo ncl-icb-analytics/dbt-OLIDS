@@ -23,7 +23,7 @@ models:
         description: "Serum creatinine value in µmol/L"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 10
               max_value: 1500
               severity: warn

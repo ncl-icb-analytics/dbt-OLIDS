@@ -22,7 +22,7 @@ models:
       - name: hba1c_ifcc_value
         description: "HbA1c value in IFCC units (mmol/mol)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 15
               max_value: 200
               severity: warn
@@ -31,7 +31,7 @@ models:
       - name: hba1c_dcct_value
         description: "HbA1c value in DCCT units (%)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 3.5
               max_value: 18
               severity: warn

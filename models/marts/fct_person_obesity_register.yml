@@ -42,7 +42,7 @@ models:
         description: "Person's age at register assessment (must be ≥18 for obesity register)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 18
               max_value: 120
               
@@ -90,7 +90,7 @@ models:
       - name: latest_valid_bmi_value
         description: "Most recent clinically valid BMI value (kg/m²)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 10
               max_value: 100
               severity: warn

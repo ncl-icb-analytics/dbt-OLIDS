@@ -45,23 +45,17 @@ models:
         description: "Date of first recorded PAD diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_pad_date"
-
-      - name: latest_pad_date
+          - name: latest_pad_date
         description: "Date of most recent PAD diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_pad_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_pad_episodes
         description: "Total number of distinct PAD diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 100
 

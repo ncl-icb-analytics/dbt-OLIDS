@@ -35,15 +35,15 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        obs.concept_code,
-        obs.concept_display,
-        obs.source_cluster_id,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
         -- Flag different types of asthma codes following QOF definitions
-        CASE WHEN obs.source_cluster_id = 'AST_COD' THEN TRUE ELSE FALSE END AS is_asthma_diagnosis_code,
-        CASE WHEN obs.source_cluster_id = 'ASTRES_COD' THEN TRUE ELSE FALSE END AS is_asthma_resolved_code
+        CASE WHEN obs.cluster_id = 'AST_COD' THEN TRUE ELSE FALSE END AS is_asthma_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'ASTRES_COD' THEN TRUE ELSE FALSE END AS is_asthma_resolved_code
         
-    FROM {{ get_observations("'AST_COD', 'ASTRES_COD'") }} obs
+    FROM ({{ get_observations("'AST_COD', 'ASTRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 
@@ -60,15 +60,11 @@ person_aggregates AS (
         MIN(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END) AS earliest_resolved_date,
         MAX(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
-        -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_diagnosis_code THEN concept_code END) 
-            FILTER (WHERE is_asthma_diagnosis_code) AS all_asthma_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_diagnosis_code THEN concept_display END) 
-            FILTER (WHERE is_asthma_diagnosis_code) AS all_asthma_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_resolved_code THEN concept_code END) 
-            FILTER (WHERE is_asthma_resolved_code) AS all_resolved_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_resolved_code THEN concept_display END) 
-            FILTER (WHERE is_asthma_resolved_code) AS all_resolved_concept_displays
+        -- Concept code arrays for traceability (using conditional aggregation for Snowflake compatibility)
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_diagnosis_code THEN concept_code ELSE NULL END) AS all_asthma_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_diagnosis_code THEN concept_display ELSE NULL END) AS all_asthma_concept_displays,
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes,
+        ARRAY_AGG(DISTINCT CASE WHEN is_asthma_resolved_code THEN concept_display ELSE NULL END) AS all_resolved_concept_displays
             
     FROM base_observations
     GROUP BY person_id

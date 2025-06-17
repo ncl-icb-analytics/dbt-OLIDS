@@ -43,7 +43,7 @@ models:
         description: "Person's age at register assessment (must be ≥18 for HTN register)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 18
               max_value: 120
               
@@ -73,7 +73,7 @@ models:
       - name: latest_bp_systolic_value
         description: "Systolic value of latest BP reading (mmHg)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 40
               max_value: 350
               severity: warn
@@ -81,7 +81,7 @@ models:
       - name: latest_bp_diastolic_value
         description: "Diastolic value of latest BP reading (mmHg)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 20
               max_value: 200
               severity: warn

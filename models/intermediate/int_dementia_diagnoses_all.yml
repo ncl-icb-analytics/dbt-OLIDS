@@ -76,7 +76,7 @@ models:
       - name: total_dementia_diagnoses
         description: "Total count of dementia diagnoses for this person"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               severity: warn
               
@@ -125,7 +125,7 @@ models:
       - name: days_since_first_diagnosis
         description: "Number of days since first dementia diagnosis (for care planning)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 36500  # 100 years
               severity: warn

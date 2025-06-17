@@ -40,19 +40,19 @@ models:
         description: "Date of most recent blood pressure reading"
         tests:
           - not_null
-          - dbt_utils.not_future_date
+          - test_no_future_dates
       
       - name: latest_systolic_value
         description: "Systolic value of latest BP reading (mmHg)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 50
               max_value: 300
       
       - name: latest_diastolic_value
         description: "Diastolic value of latest BP reading (mmHg)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 30
               max_value: 200
       
@@ -60,7 +60,7 @@ models:
         description: "Current age in years"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 120
       
@@ -88,7 +88,7 @@ models:
       - name: latest_acr_value
         description: "Latest albumin-to-creatinine ratio value (relevant for CKD patients)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 1000
       
@@ -108,7 +108,7 @@ models:
         description: "Systolic BP threshold applied (mmHg)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 120
               max_value: 160
       
@@ -116,7 +116,7 @@ models:
         description: "Diastolic BP threshold applied (mmHg)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 70
               max_value: 100
       
@@ -145,7 +145,7 @@ models:
         description: "Age of latest BP reading in months from current date"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 1200
       

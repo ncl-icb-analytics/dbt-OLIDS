@@ -19,7 +19,7 @@ models:
         description: "Total cholesterol value in mmol/L (valid range only)"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0.5
               max_value: 20
       - name: cholesterol_category

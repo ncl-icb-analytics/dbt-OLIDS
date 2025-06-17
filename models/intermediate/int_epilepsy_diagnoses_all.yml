@@ -145,7 +145,7 @@ models:
       - name: days_since_first_diagnosis
         description: "Number of days since first epilepsy diagnosis (for medication monitoring)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 36500  # 100 years
               severity: warn

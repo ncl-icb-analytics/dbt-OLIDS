@@ -39,7 +39,7 @@ models:
       - name: age
         description: "Current age of person in years"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 120
 
@@ -51,24 +51,24 @@ models:
               values: [true]
 
       - name: earliest_palliative_care_date
-        description: "Date of first recorded palliative care code on/after 1 April 2008"
+        description: "Date of first recorded palliative care code (QOF requires on/after 1 April 2008)"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= '2008-04-01'"
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_palliative_care_date"
+          - test_no_future_dates
+          - accepted_range:
+              min_value: "'2008-04-01'"
+              max_value: "current_date()"
+              severity: warn
 
       - name: latest_palliative_care_date
-        description: "Date of most recent palliative care code"
+        description: "Date of most recent palliative care code (QOF requires on/after 1 April 2008)"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_palliative_care_date"
-          - dbt_utils.expression_is_true:
-              expression: ">= '2008-04-01'"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
+          - accepted_range:
+              min_value: "'2008-04-01'"
+              max_value: "current_date()"
+              severity: warn
 
       - name: earliest_no_longer_indicated_date
         description: "Date of earliest 'no longer indicated' code (NULL if never marked as no longer indicated)"

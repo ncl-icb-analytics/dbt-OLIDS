@@ -43,5 +43,5 @@ models:
         description: "Current number of active patients registered with this organisation"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0 

@@ -23,7 +23,7 @@ models:
         description: "BMI value in kg/m²"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 5
               max_value: 150
               severity: warn

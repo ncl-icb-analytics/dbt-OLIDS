@@ -23,7 +23,7 @@ models:
         description: "Total cholesterol value in mmol/L"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0.1
               max_value: 30
               severity: warn

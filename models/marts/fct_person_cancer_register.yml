@@ -43,7 +43,7 @@ models:
       - name: age
         description: "Current age of person in years"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 120
 
@@ -55,24 +55,24 @@ models:
               values: [true]
 
       - name: earliest_cancer_date
-        description: "Date of first recorded cancer diagnosis"
+        description: "Date of first recorded cancer diagnosis (QOF requires on/after 1 April 2003)"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_cancer_date"
-          - dbt_utils.expression_is_true:
-              expression: ">= '2003-04-01'"
+          - test_no_future_dates
+          - accepted_range:
+              min_value: "'2003-04-01'"
+              max_value: "current_date()"
+              severity: warn
 
       - name: latest_cancer_date
-        description: "Date of most recent cancer diagnosis"
+        description: "Date of most recent cancer diagnosis (QOF requires on/after 1 April 2003)"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_cancer_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
-          - dbt_utils.expression_is_true:
-              expression: ">= '2003-04-01'"
+          - test_no_future_dates
+          - accepted_range:
+              min_value: "'2003-04-01'"
+              max_value: "current_date()"
+              severity: warn
 
       - name: all_cancer_concept_codes
         description: "Array of all distinct cancer concept codes for this person"

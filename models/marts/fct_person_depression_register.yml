@@ -39,7 +39,7 @@ models:
       - name: age
         description: "Current age of person in years"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 18
               max_value: 120
 
@@ -54,19 +54,17 @@ models:
         description: "Date of first recorded depression diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_depression_diagnosis_date"
+          - test_no_future_dates
 
       - name: latest_depression_diagnosis_date
-        description: "Date of most recent depression diagnosis"
+        description: "Date of most recent depression diagnosis (QOF requires on/after 1 April 2006)"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_depression_diagnosis_date"
-          - dbt_utils.expression_is_true:
-              expression: ">= '2006-04-01'"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
+          - accepted_range:
+              min_value: "'2006-04-01'"
+              max_value: "current_date()"
+              severity: warn
 
       - name: latest_depression_resolved_date
         description: "Date of most recent depression resolved code (NULL if never resolved)"

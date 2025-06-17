@@ -40,7 +40,7 @@ models:
       - name: age
         description: "Current age of person in years"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 0
               max_value: 120
 
@@ -55,17 +55,11 @@ models:
         description: "Date of first recorded stroke/TIA diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_stroke_tia_date"
-
-      - name: latest_stroke_tia_date
+          - name: latest_stroke_tia_date
         description: "Date of most recent stroke/TIA diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_stroke_tia_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: all_stroke_tia_concept_codes
         description: "Array of all distinct stroke/TIA concept codes for this person"

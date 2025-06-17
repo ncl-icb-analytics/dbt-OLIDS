@@ -45,23 +45,19 @@ models:
         description: "Date of first recorded gestational diabetes diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "<= latest_gestational_diabetes_date"
+          - test_no_future_dates
 
       - name: latest_gestational_diabetes_date
         description: "Date of most recent gestational diabetes diagnosis"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= earliest_gestational_diabetes_date"
-          - dbt_utils.expression_is_true:
-              expression: "<= current_date()"
+          - test_no_future_dates
 
       - name: total_gestational_diabetes_episodes
         description: "Total number of distinct gestational diabetes diagnosis dates"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 10
 

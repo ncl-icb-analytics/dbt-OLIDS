@@ -77,7 +77,7 @@ models:
         description: "Count of asthma medication orders in last 12 months for this person"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 100
               severity: warn

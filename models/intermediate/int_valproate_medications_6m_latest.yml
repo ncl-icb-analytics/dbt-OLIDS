@@ -89,5 +89,5 @@ models:
         description: "Total count of valproate orders for this person in last 6 months"
         tests:
           - not_null
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1 

@@ -46,12 +46,12 @@ models:
       - name: latest_hba1c_date
         description: "Date of most recent HbA1c test"
         tests:
-          - dbt_utils.not_future_date
+          - test_no_future_dates
       
       - name: latest_hba1c_value
         description: "Most recent HbA1c result value"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 20
               max_value: 200
               severity: warn
@@ -67,12 +67,12 @@ models:
       - name: latest_bp_date
         description: "Date of most recent blood pressure reading"
         tests:
-          - dbt_utils.not_future_date
+          - test_no_future_dates
       
       - name: latest_systolic
         description: "Most recent systolic blood pressure (mmHg)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 40
               max_value: 350
               severity: warn
@@ -80,7 +80,7 @@ models:
       - name: latest_diastolic
         description: "Most recent diastolic blood pressure (mmHg)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 20
               max_value: 200
               severity: warn
@@ -89,12 +89,12 @@ models:
       - name: latest_chol_date
         description: "Date of most recent total cholesterol test"
         tests:
-          - dbt_utils.not_future_date
+          - test_no_future_dates
       
       - name: latest_chol_value
         description: "Most recent total cholesterol level (mmol/L)"
         tests:
-          - dbt_utils.accepted_range:
+          - accepted_range:
               min_value: 1
               max_value: 15
               severity: warn
