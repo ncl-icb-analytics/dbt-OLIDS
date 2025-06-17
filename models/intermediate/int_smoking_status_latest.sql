@@ -24,5 +24,10 @@ SELECT
     is_current_smoker,
     is_ex_smoker
 
-FROM {{ ref('int_smoking_status_all') }}
-{{ get_latest_events(partition_by=['person_id'], order_by='clinical_effective_date') }} 
+FROM (
+    {{ get_latest_events(
+        ref('int_smoking_status_all'), 
+        partition_by=['person_id'],
+        order_by='clinical_effective_date'
+    ) }}
+) latest_smoking_status 

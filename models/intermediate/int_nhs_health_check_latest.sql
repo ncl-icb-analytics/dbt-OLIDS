@@ -23,5 +23,10 @@ SELECT
     health_check_current_5y,
     years_since_health_check
 
-FROM {{ ref('int_nhs_health_check_all') }}
-{{ get_latest_events(partition_by=['person_id'], order_by='clinical_effective_date') }} 
+FROM (
+    {{ get_latest_events(
+        ref('int_nhs_health_check_all'), 
+        partition_by=['person_id'],
+        order_by='clinical_effective_date'
+    ) }}
+) latest_health_check 

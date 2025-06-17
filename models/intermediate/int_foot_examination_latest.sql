@@ -31,5 +31,12 @@ SELECT
     examination_status,
     is_valid_examination
 
-FROM {{ ref('int_foot_examination_all') }}
-{{ get_latest_events(partition_by=['person_id'], order_by='clinical_effective_date') }} 
+FROM (
+    {{ get_latest_events(
+        ref('int_foot_examination_all'), 
+        partition_by=['person_id'],
+        order_by='clinical_effective_date'
+    ) }}
+) latest_foot_examination
+
+WHERE is_valid_examination = TRUE 

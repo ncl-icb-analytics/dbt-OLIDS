@@ -27,37 +27,24 @@ Use this model as input for cancer register.
 
 WITH base_observations AS (
     SELECT
-        person_id,
-        clinical_effective_date,
-        source_cluster_id,
-        concept_code,
-        concept_description,
-        observation_value_text,
-        observation_value_numeric,
-        observation_units,
-        date_recorded
-    FROM ({{ get_observations("'CAN_COD'") }}) obs
-),
-
--- Add person demographics for context
-observations_with_person AS (
-    SELECT
-        obs.*,
-        p.age_years,
-        p.gender,
-        p.is_active
-    FROM base_observations obs
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON obs.person_id = p.person_id
-),
-
--- Person-level aggregation for efficient downstream use
-person_level_aggregates AS (
-    SELECT
-        person_id,
+        obs.observation_id,
+        obs.person_id,
+        obs.clinical_effective_date,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
+        obs.result_value,
         
-        -- Diagnosis flags
-        TRUE AS has_cancer_diagnosis,
+        -- Cancer-specific flags
+        CASE WHEN obs.cluster_id = 'CAN_COD' THEN TRUE ELSE FALSE END AS is_cancer_diagnosis
+        
+    FROM ({{ get_observations("'CAN_COD'") }}) obs
+    WHERE obs.clinical_effective_date IS NOT NULL
+),
+
+person_aggregates AS (
+    SELECT
+        person_id,
         
         -- Date aggregates
         MIN(clinical_effective_date) AS earliest_cancer_date,
@@ -66,31 +53,32 @@ person_level_aggregates AS (
         
         -- Code arrays for detailed analysis
         ARRAY_AGG(DISTINCT concept_code) AS all_cancer_concept_codes,
-        ARRAY_AGG(DISTINCT concept_description) AS all_cancer_concept_displays,
+        ARRAY_AGG(DISTINCT concept_display) AS all_cancer_concept_displays
         
-        -- Latest values for reference
-        FIRST_VALUE(concept_code) OVER (
-            PARTITION BY person_id 
-            ORDER BY clinical_effective_date DESC, date_recorded DESC
-        ) AS latest_cancer_concept_code,
-        
-        FIRST_VALUE(concept_description) OVER (
-            PARTITION BY person_id 
-            ORDER BY clinical_effective_date DESC, date_recorded DESC
-        ) AS latest_cancer_concept_description
-
-    FROM observations_with_person
+    FROM base_observations
     GROUP BY person_id
 )
 
-SELECT
-    person_id,
-    has_cancer_diagnosis,
-    earliest_cancer_date,
-    latest_cancer_date,
-    total_cancer_episodes,
-    all_cancer_concept_codes,
-    all_cancer_concept_displays,
-    latest_cancer_concept_code,
-    latest_cancer_concept_description
-FROM person_level_aggregates 
+SELECT 
+    bo.person_id,
+    bo.observation_id,
+    bo.clinical_effective_date,
+    bo.concept_code,
+    bo.concept_display,
+    bo.source_cluster_id,
+    
+    -- Cancer-specific flags
+    bo.is_cancer_diagnosis,
+    
+    -- Person-level aggregate context
+    pa.earliest_cancer_date,
+    pa.latest_cancer_date,
+    pa.total_cancer_episodes,
+    pa.all_cancer_concept_codes,
+    pa.all_cancer_concept_displays
+
+FROM base_observations bo
+LEFT JOIN person_aggregates pa 
+    ON bo.person_id = pa.person_id
+
+ORDER BY person_id, clinical_effective_date, observation_id 

@@ -22,5 +22,10 @@ SELECT
     screening_current_12m,
     screening_current_24m
 
-FROM {{ ref('int_retinal_screening_all') }}
-{{ get_latest_events(partition_by=['person_id'], order_by='clinical_effective_date') }} 
+FROM (
+    {{ get_latest_events(
+        ref('int_retinal_screening_all'), 
+        partition_by=['person_id'],
+        order_by='clinical_effective_date'
+    ) }}
+) latest_retinal_screening 

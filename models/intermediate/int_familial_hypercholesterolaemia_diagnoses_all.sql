@@ -25,70 +25,57 @@ Use this model as input for FH register.
 
 WITH base_observations AS (
     SELECT
-        person_id,
-        clinical_effective_date,
-        source_cluster_id,
-        concept_code,
-        concept_description,
-        observation_value_text,
-        observation_value_numeric,
-        observation_units,
-        date_recorded
-    FROM ({{ get_observations("'FHYP_COD'") }}) obs
-),
-
--- Add person demographics for context
-observations_with_person AS (
-    SELECT
-        obs.*,
-        p.age_years,
-        p.gender,
-        p.is_active
-    FROM base_observations obs
-    LEFT JOIN {{ ref('dim_person') }} p
-        ON obs.person_id = p.person_id
-),
-
--- Person-level aggregation for efficient downstream use
-person_level_aggregates AS (
-    SELECT
-        person_id,
+        obs.observation_id,
+        obs.person_id,
+        obs.clinical_effective_date,
+        obs.mapped_concept_code AS concept_code,
+        obs.mapped_concept_display AS concept_display,
+        obs.cluster_id AS source_cluster_id,
         
-        -- Diagnosis flags
-        TRUE AS has_fh_diagnosis,
+        -- Familial hypercholesterolaemia-specific flags
+        CASE WHEN obs.cluster_id = 'FHYP_COD' THEN TRUE ELSE FALSE END AS is_fhyp_diagnosis
+        
+    FROM ({{ get_observations("'FHYP_COD'") }}) obs
+    WHERE obs.clinical_effective_date IS NOT NULL
+),
+
+person_aggregates AS (
+    SELECT
+        person_id,
         
         -- Date aggregates
-        MIN(clinical_effective_date) AS earliest_fh_date,
-        MAX(clinical_effective_date) AS latest_fh_date,
-        COUNT(DISTINCT clinical_effective_date) AS total_fh_episodes,
+        MIN(clinical_effective_date) AS earliest_fhyp_date,
+        MAX(clinical_effective_date) AS latest_fhyp_date,
+        COUNT(DISTINCT clinical_effective_date) AS total_fhyp_episodes,
         
         -- Code arrays for detailed analysis
-        ARRAY_AGG(DISTINCT concept_code) AS all_fh_concept_codes,
-        ARRAY_AGG(DISTINCT concept_description) AS all_fh_concept_displays,
+        ARRAY_AGG(DISTINCT concept_code) AS all_fhyp_concept_codes,
+        ARRAY_AGG(DISTINCT concept_display) AS all_fhyp_concept_displays
         
-        -- Latest values for reference
-        FIRST_VALUE(concept_code) OVER (
-            PARTITION BY person_id 
-            ORDER BY clinical_effective_date DESC, date_recorded DESC
-        ) AS latest_fh_concept_code,
-        
-        FIRST_VALUE(concept_description) OVER (
-            PARTITION BY person_id 
-            ORDER BY clinical_effective_date DESC, date_recorded DESC
-        ) AS latest_fh_concept_description
-
-    FROM observations_with_person
+    FROM base_observations
     GROUP BY person_id
 )
 
-SELECT
-    person_id,
-    has_fh_diagnosis,
-    earliest_fh_date,
-    latest_fh_date,
-    total_fh_episodes,
-    all_fh_concept_codes,
-    all_fh_concept_displays,
-    latest_fh_concept_code,
-    latest_fh_concept_description
-FROM person_level_aggregates 
+SELECT 
+    bo.person_id,
+    bo.observation_id,
+    bo.clinical_effective_date,
+    bo.concept_code,
+    bo.concept_display,
+    bo.source_cluster_id,
+    
+    -- Familial hypercholesterolaemia-specific flags
+    bo.is_fhyp_diagnosis,
+    
+    -- Person-level aggregate context
+    pa.earliest_fhyp_date,
+    pa.latest_fhyp_date,
+    pa.total_fhyp_episodes,
+    pa.all_fhyp_concept_codes,
+    pa.all_fhyp_concept_displays
+
+FROM base_observations bo
+LEFT JOIN person_aggregates pa 
+    ON bo.person_id = pa.person_id
+
+ORDER BY person_id, clinical_effective_date, observation_id 
