@@ -62,7 +62,7 @@ unable_spirometry AS (
     -- Get latest unable-to-have-spirometry status for each person - matches legacy UnableSpirometry CTE
     SELECT
         person_id,
-        MAX(latest_unable_spirometry_date) AS latest_unable_spirometry_date,
+        MAX(clinical_effective_date) AS latest_unable_spirometry_date,
         COUNT(*) > 0 AS is_unable_spirometry
     FROM {{ ref('int_unable_spirometry_all') }}
     GROUP BY person_id

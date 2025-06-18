@@ -11,8 +11,7 @@
 WITH valproate_preg_risk_codes AS (
     SELECT 
         code,
-        code_category,
-        lookback_years_offset
+        code_category
     FROM {{ ref('stg_codesets_valproate_prog_codes') }}
     WHERE code_category = 'PREGRISK'
 ),
@@ -25,7 +24,6 @@ preg_risk_observations AS (
         mc.code_description AS concept_display,
         cc.cluster_id AS source_cluster_id,
         vpc.code_category,
-        vpc.lookback_years_offset,
         o.date_recorded,
         o.lds_datetime_data_acquired
     FROM {{ ref('stg_olids_observation') }} o
@@ -40,10 +38,6 @@ preg_risk_observations AS (
     INNER JOIN valproate_preg_risk_codes vpc
         ON cc.code = vpc.code
     WHERE vpc.code_category = 'PREGRISK'
-        AND (
-            vpc.lookback_years_offset IS NULL 
-            OR o.clinical_effective_date >= DATEADD(year, vpc.lookback_years_offset, CURRENT_DATE())
-        )
 )
 
 SELECT
@@ -53,7 +47,6 @@ SELECT
     concept_display,
     source_cluster_id,
     code_category,
-    lookback_years_offset,
     
     -- Standard metadata fields
     date_recorded,

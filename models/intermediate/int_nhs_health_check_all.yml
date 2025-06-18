@@ -3,43 +3,103 @@ version: 2
 models:
   - name: int_nhs_health_check_all
     description: |
-      All NHS Health Check completed events for all persons.
-      Uses a hardcoded list of SNOMED codes to identify completed health checks.
-      Includes ALL persons following intermediate layer principles.
+      All NHS Health Check completed events with enhanced analytics features.
+      Uses NHSHEALTHCHECK_COD cluster with validated SNOMED codes for completed health checks.
+      
+      Enhanced Analytics Features:
+      - Legacy structure alignment with sk_patient_id
+      - Health check type classification and eligibility assessment
+      - Enhanced timeframe analysis and currency tracking
+      - QOF prevention pathway integration support
+      - Risk factor assessment context
+      
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
     columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
       - name: observation_id
         description: "Unique observation identifier"
         tests:
           - not_null
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+      - name: sk_patient_id
+        description: "Surrogate key patient identifier for legacy compatibility"
       - name: clinical_effective_date
-        description: "Date of the NHS Health Check"
+        description: "Date of the NHS health check"
         tests:
           - not_null
       - name: concept_code
-        description: "SNOMED concept code for NHS Health Check"
+        description: "SNOMED concept code for NHS health check"
         tests:
           - not_null
       - name: concept_display
         description: "Description of the health check code"
         tests:
           - not_null
+      - name: source_cluster_id
+        description: "Source cluster ID (NHSHEALTHCHECK_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['NHSHEALTHCHECK_COD']
       - name: is_completed_health_check
         description: "Flag indicating completed health check (always TRUE)"
         tests:
           - not_null
           - accepted_values:
               values: [true]
+      - name: is_nhs_health_check_code
+        description: "Flag indicating NHS health check code (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: health_check_type_classification
+        description: "Enhanced health check type classification based on concept codes"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Standard NHS Health Check', 'Initial NHS Health Check', 'Follow-up NHS Health Check', 'Cardiovascular Risk Assessment', 'Health Check Review', 'NHS Health Check']
+      - name: health_check_clinical_context
+        description: "Clinical context classification for health checks"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CVD Risk Assessment Focus', 'Review and Follow-up', 'Prevention and Early Detection']
+      - name: eligibility_status_by_age
+        description: "Age-based eligibility status for NHS health checks"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Eligible Age Group (40-74)', 'Below Standard Age (Under 40)', 'Above Standard Age (Over 74)', 'Age Assessment Required']
+      - name: includes_cvd_risk_assessment
+        description: "Flag indicating health check includes CVD risk assessment"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: is_follow_up_check
+        description: "Flag indicating follow-up health check"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
       - name: days_since_health_check
         description: "Number of days since health check"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 50000
+              severity: warn
+      - name: years_since_health_check
+        description: "Number of years since health check (decimal)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
               severity: warn
       - name: health_check_current_12m
         description: "Flag indicating health check within 12 months"
@@ -59,11 +119,19 @@ models:
           - not_null
           - accepted_values:
               values: [true, false]
-      - name: years_since_health_check
-        description: "Number of years since health check"
+      - name: meets_qof_prevention_requirement
+        description: "Flag indicating health check meets QOF prevention requirement"
         tests:
           - not_null
-          - accepted_range:
-              min_value: 0
-              max_value: 100
-              severity: warn 
+          - accepted_values:
+              values: [true, false]
+      - name: health_check_status_interpretation
+        description: "Clinical interpretation of health check currency"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Current (within 5 years)', 'Recent (within 7 years)', 'Overdue (>7 years)']
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "NHSHEALTHCHECK_COD" 

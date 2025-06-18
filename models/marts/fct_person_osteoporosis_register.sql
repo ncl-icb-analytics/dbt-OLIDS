@@ -70,13 +70,24 @@ fragility_fractures AS (
     SELECT
         person_id,
         COUNT(*) > 0 AS has_fragility_fracture,
-        earliest_fracture_date AS earliest_fragility_fracture_date,
-        latest_fracture_date AS latest_fragility_fracture_date,
-        all_fracture_concept_codes AS all_fragility_fracture_concept_codes,
-        all_fracture_concept_displays AS all_fragility_fracture_concept_displays,
-        all_fracture_sites
+        MIN(clinical_effective_date) AS earliest_fragility_fracture_date,
+        MAX(clinical_effective_date) AS latest_fragility_fracture_date,
+        COUNT(DISTINCT fracture_site) AS distinct_fracture_sites,
+        COUNT(DISTINCT clinical_effective_date) AS distinct_fracture_dates,
+        
+        -- Aggregate arrays for comprehensive tracking
+        ARRAY_AGG(DISTINCT concept_code) AS all_fragility_fracture_concept_codes,
+        ARRAY_AGG(DISTINCT code_description) AS all_fragility_fracture_concept_displays,
+        ARRAY_AGG(DISTINCT fracture_site) AS all_fracture_sites,
+        
+        -- Fracture site flags
+        MAX(CASE WHEN fracture_site = 'Hip' THEN 1 ELSE 0 END) = 1 AS has_hip_fracture,
+        MAX(CASE WHEN fracture_site = 'Wrist' THEN 1 ELSE 0 END) = 1 AS has_wrist_fracture,
+        MAX(CASE WHEN fracture_site = 'Spine' THEN 1 ELSE 0 END) = 1 AS has_spine_fracture,
+        MAX(CASE WHEN fracture_site = 'Humerus' THEN 1 ELSE 0 END) = 1 AS has_humerus_fracture
+        
     FROM {{ ref('int_fragility_fractures_all') }}
-    GROUP BY person_id, earliest_fracture_date, latest_fracture_date, all_fracture_concept_codes, all_fracture_concept_displays, all_fracture_sites
+    GROUP BY person_id
 ),
 
 register_logic AS (

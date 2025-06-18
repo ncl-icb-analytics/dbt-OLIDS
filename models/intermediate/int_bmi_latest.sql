@@ -19,14 +19,14 @@ SELECT
     concept_display,
     source_cluster_id,
     bmi_category,
-    original_result_value
+    original_result_value,
+    is_valid_bmi
 
 FROM (
     {{ get_latest_events(
         ref('int_bmi_all'), 
         partition_by=['person_id'],
-        order_by='clinical_effective_date'
+        order_by=['clinical_effective_date']
     ) }}
-) latest_bmi
-
+)
 WHERE is_valid_bmi = TRUE 
