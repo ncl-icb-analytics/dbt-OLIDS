@@ -13,7 +13,7 @@ Matches legacy structure with result_unit_display field.
 */
 
 WITH base_observations AS (
-    
+    -- Now using simplified macro that should work without duplicates
     SELECT
         obs.observation_id,
         obs.person_id,
