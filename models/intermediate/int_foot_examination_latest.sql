@@ -28,8 +28,7 @@ SELECT
     all_concept_codes,
     all_concept_displays,
     all_source_cluster_ids,
-    examination_status,
-    is_valid_examination
+    examination_status
 
 FROM (
     {{ get_latest_events(
@@ -39,4 +38,5 @@ FROM (
     ) }}
 ) latest_foot_examination
 
-WHERE is_valid_examination = TRUE 
+-- Note: Validity filtering done at mart layer, not here
+-- This matches legacy INTERMEDIATE_FOOT_CHECK_LATEST pattern 

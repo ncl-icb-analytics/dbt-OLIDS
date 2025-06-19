@@ -11,39 +11,44 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DQ_PATI
     LONGEST_GAP_DAYS NUMBER COMMENT 'Longest gap in days between consecutive practice registrations',
     DQ_ISSUES ARRAY COMMENT 'Array of specific data quality issues identified'
 )
-COMMENT = 'Data quality table identifying potential data quality issues in practice registration data, focusing on multiple registrations, overlaps, and gaps.'
+COMMENT = 'Data quality table identifying potential data quality issues in practice registration data using Episode of Care, focusing on multiple registrations, overlaps, and gaps.'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH registration_periods AS (
-    -- Get all registration periods with lead/lag analysis
+    -- Get all registration periods from Episode of Care with lead/lag analysis
     SELECT 
         pp."person_id" AS PERSON_ID,
         p."sk_patient_id" AS SK_PATIENT_ID,
-        prp."start_date" AS REGISTRATION_START_DATE,
-        prp."end_date" AS REGISTRATION_END_DATE,
+        eoc."episode_of_care_start_date" AS REGISTRATION_START_DATE,
+        eoc."episode_of_care_end_date" AS REGISTRATION_END_DATE,
         -- Get next registration's start date for gap analysis
-        LEAD(prp."start_date") OVER (
+        LEAD(eoc."episode_of_care_start_date") OVER (
             PARTITION BY pp."person_id" 
-            ORDER BY prp."start_date"
+            ORDER BY eoc."episode_of_care_start_date"
         ) AS next_registration_start,
         -- Get previous registration's end date for overlap analysis
-        LAG(prp."end_date") OVER (
+        LAG(eoc."episode_of_care_end_date") OVER (
             PARTITION BY pp."person_id" 
-            ORDER BY prp."start_date"
+            ORDER BY eoc."episode_of_care_start_date"
         ) AS prev_registration_end,
         -- Count registrations per person
         COUNT(*) OVER (PARTITION BY pp."person_id") AS total_registrations,
         -- Count current (non-ended) registrations
-        SUM(CASE WHEN prp."end_date" IS NULL THEN 1 ELSE 0 END) 
+        SUM(CASE WHEN eoc."episode_of_care_end_date" IS NULL THEN 1 ELSE 0 END) 
             OVER (PARTITION BY pp."person_id") AS current_registration_count
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
     JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p 
         ON pp."patient_id" = p."id"
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_REGISTERED_PRACTITIONER_IN_ROLE prp 
-        ON pp."person_id" = prp."person_id"
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.EPISODE_OF_CARE eoc 
+        ON pp."person_id" = eoc."person_id"
+    WHERE eoc."person_id" IS NOT NULL 
+        AND eoc."organisation_id" IS NOT NULL
+        AND eoc."episode_of_care_start_date" IS NOT NULL
+        -- Add episode type filter if needed to identify registration episodes
+        -- AND eoc."episode_type_raw_concept_id" = 'REGISTRATION_TYPE_ID'
 ),
 registration_analysis AS (
     -- Analyse each registration period for overlaps and gaps
@@ -75,7 +80,7 @@ registration_analysis AS (
     FROM registration_periods
 ),
 person_summary AS (
-    -- Summarize issues at person level
+    -- Summarise issues at person level
     SELECT
         PERSON_ID,
         SK_PATIENT_ID,

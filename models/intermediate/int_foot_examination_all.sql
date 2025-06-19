@@ -160,14 +160,7 @@ SELECT
         ELSE 'Not Done'
     END AS examination_status,
     
-    -- Overall examination validity for diabetes care processes
-    CASE
-        WHEN cd.is_unsuitable OR cd.is_declined THEN FALSE
-        WHEN cd.both_feet_checked THEN TRUE
-        WHEN cd.left_foot_checked AND (fs.right_foot_absent OR fs.right_foot_amputated) THEN TRUE
-        WHEN cd.right_foot_checked AND (fs.left_foot_absent OR fs.left_foot_amputated) THEN TRUE
-        ELSE FALSE
-    END AS is_valid_examination,
+
     
     -- Diabetes foot risk classification for analytics
     CASE 

@@ -1,7 +1,7 @@
 -- ==========================================================================
 -- Dimension Dynamic Table holding active patient status at person level.
--- Filters out deceased patients (using death_year) and dummy patients.
--- Links PATIENT_PERSON, PATIENT, PERSON, and ORGANISATION tables.
+-- Uses Episode of Care table for registration periods instead of practitioner roles.
+-- Filters out deceased patients and dummy patients.
 -- ==========================================================================
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_ACTIVE_PATIENTS (
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
@@ -17,7 +17,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     BIRTH_MONTH NUMBER COMMENT 'Month of birth',
     DEATH_YEAR NUMBER COMMENT 'Year of death (NULL if alive)',
     DEATH_MONTH NUMBER COMMENT 'Month of death (NULL if alive)',
-    -- Practice details from DIM_PERSON_HISTORICAL_PRACTICE
+    -- Practice details from Episode of Care and Organisation tables
     REGISTERED_PRACTICE_ID VARCHAR COMMENT 'ID of the practice where the person is currently registered',
     PRACTICE_CODE VARCHAR COMMENT 'Organisation code of the current practice',
     PRACTICE_NAME VARCHAR COMMENT 'Name of the current practice',
@@ -28,10 +28,12 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PER
     PRACTICE_OPEN_DATE DATE COMMENT 'Date when the current practice opened',
     PRACTICE_CLOSE_DATE DATE COMMENT 'Date when the current practice closed/will close (if applicable)',
     PRACTICE_IS_OBSOLETE BOOLEAN COMMENT 'Flag indicating if the current practice is marked as obsolete',
+    REGISTRATION_START_DATE TIMESTAMP_NTZ COMMENT 'Start date of current registration period',
+    REGISTRATION_END_DATE TIMESTAMP_NTZ COMMENT 'End date of current registration period (NULL for active registrations)',
     RECORD_OWNER_ORG_CODE VARCHAR COMMENT 'Organisation code of the record owner',
     LATEST_RECORD_DATE TIMESTAMP_NTZ COMMENT 'Date of the most recent patient record update'
 )
-COMMENT = 'Dimension table providing active patient status at person level. Excludes deceased patients (using death_year) and dummy patients. Uses DIM_PERSON_HISTORICAL_PRACTICE for accurate practice registration details.'
+COMMENT = 'Dimension table providing active patient status at person level using Episode of Care registration periods. Excludes deceased patients and dummy patients. Only includes patients with current active registrations (end date is NULL).'
 TARGET_LAG = '4 hours'
 REFRESH_MODE = auto
 WAREHOUSE = NCL_ANALYTICS_XS
@@ -46,8 +48,28 @@ WITH PatientIdsPerPerson AS (
     GROUP BY
         pp."person_id"
 ),
+CurrentRegistrations AS (
+    -- Get current active registrations from Episode of Care
+    SELECT 
+        eoc."person_id",
+        eoc."organisation_id",
+        eoc."episode_of_care_start_date",
+        eoc."episode_of_care_end_date",
+        -- Rank to get the most recent registration for each person
+        ROW_NUMBER() OVER (
+            PARTITION BY eoc."person_id" 
+            ORDER BY eoc."episode_of_care_start_date" DESC
+        ) AS registration_rank
+    FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.EPISODE_OF_CARE eoc
+    WHERE eoc."person_id" IS NOT NULL 
+        AND eoc."organisation_id" IS NOT NULL
+        AND eoc."episode_of_care_start_date" IS NOT NULL
+        AND eoc."episode_of_care_end_date" IS NULL  -- Only current active registrations
+        -- Add episode type filter if needed to identify registration episodes
+        -- AND eoc."episode_type_raw_concept_id" = 'REGISTRATION_TYPE_ID'
+),
 LatestPatientRecordPerPerson AS (
-    -- Get the latest patient record for each person
+    -- Get the latest patient record for each person with current registration
     SELECT
         pp."person_id" AS PERSON_ID,
         p."sk_patient_id" AS SK_PATIENT_ID,
@@ -57,8 +79,9 @@ LatestPatientRecordPerPerson AS (
         CASE
             WHEN p."death_year" IS NOT NULL THEN FALSE -- Deceased
             WHEN p."is_dummy_patient" THEN FALSE -- Dummy patient
-            WHEN php.PRACTICE_CLOSE_DATE IS NOT NULL THEN FALSE -- Practice closed
-            WHEN php.PRACTICE_IS_OBSOLETE THEN FALSE -- Practice obsolete
+            WHEN cr."person_id" IS NULL THEN FALSE -- No current registration
+            WHEN o."close_date" IS NOT NULL THEN FALSE -- Practice closed
+            WHEN o."is_obsolete" THEN FALSE -- Practice obsolete
             ELSE TRUE
         END AS IS_ACTIVE,
         p."death_year" IS NOT NULL AS IS_DECEASED,
@@ -69,17 +92,19 @@ LatestPatientRecordPerPerson AS (
         p."birth_month" AS BIRTH_MONTH,
         p."death_year" AS DEATH_YEAR,
         p."death_month" AS DEATH_MONTH,
-        -- Practice details from DIM_PERSON_HISTORICAL_PRACTICE
-        php.PRACTICE_ID AS REGISTERED_PRACTICE_ID,
-        php.PRACTICE_CODE,
-        php.PRACTICE_NAME,
-        php.PRACTICE_TYPE_CODE,
-        php.PRACTICE_TYPE_DESC,
-        php.PRACTICE_POSTCODE,
-        php.PRACTICE_PARENT_ORG_ID,
-        php.PRACTICE_OPEN_DATE,
-        php.PRACTICE_CLOSE_DATE,
-        php.PRACTICE_IS_OBSOLETE,
+        -- Practice details from Episode of Care and Organisation
+        cr."organisation_id" AS REGISTERED_PRACTICE_ID,
+        o."organisation_code" AS PRACTICE_CODE,
+        o."name" AS PRACTICE_NAME,
+        o."type_code" AS PRACTICE_TYPE_CODE,
+        o."type_desc" AS PRACTICE_TYPE_DESC,
+        o."postcode" AS PRACTICE_POSTCODE,
+        o."parent_organisation_id" AS PRACTICE_PARENT_ORG_ID,
+        o."open_date" AS PRACTICE_OPEN_DATE,
+        o."close_date" AS PRACTICE_CLOSE_DATE,
+        o."is_obsolete" AS PRACTICE_IS_OBSOLETE,
+        cr."episode_of_care_start_date" AS REGISTRATION_START_DATE,
+        cr."episode_of_care_end_date" AS REGISTRATION_END_DATE,
         p."record_owner_organisation_code" AS RECORD_OWNER_ORG_CODE,
         p."lds_datetime_data_acquired" AS LATEST_RECORD_DATE,
         -- Rank to get the latest record
@@ -101,9 +126,12 @@ LatestPatientRecordPerPerson AS (
         PatientIdsPerPerson pip
         ON pp."person_id" = pip."person_id"
     LEFT JOIN
-        DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_HISTORICAL_PRACTICE php
-        ON pp."person_id" = php.PERSON_ID
-        AND php.IS_CURRENT_PRACTICE = TRUE
+        CurrentRegistrations cr
+        ON pp."person_id" = cr."person_id"
+        AND cr.registration_rank = 1  -- Only most recent registration
+    LEFT JOIN
+        "Data_Store_OLIDS_Dummy".OLIDS_MASKED.ORGANISATION o
+        ON cr."organisation_id" = o."id"
 )
 -- Select only the latest record per person
 SELECT
@@ -130,6 +158,8 @@ SELECT
     PRACTICE_OPEN_DATE,
     PRACTICE_CLOSE_DATE,
     PRACTICE_IS_OBSOLETE,
+    REGISTRATION_START_DATE,
+    REGISTRATION_END_DATE,
     RECORD_OWNER_ORG_CODE,
     LATEST_RECORD_DATE
 FROM

@@ -29,7 +29,6 @@ SELECT
     hba.clinical_effective_date AS latest_hba1c_date,
     hba.hba1c_value AS latest_hba1c_value,
     hba.result_unit_display AS hba1c_unit,
-    hba.hba1c_result_display AS hba1c_display,
     CASE
         WHEN hba.is_ifcc THEN 'IFCC'
         WHEN hba.is_dcct THEN 'DCCT'

@@ -15,6 +15,7 @@ models:
         description: "Date of the latest foot examination"
         tests:
           - not_null
+          - test_no_future_dates
       - name: is_unsuitable
         description: "Flag indicating foot check deemed unsuitable"
         tests:
@@ -74,10 +75,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Unsuitable', 'Declined', 'Complete - Both Feet', 'Complete - Left Only (Right Missing)', 'Complete - Right Only (Left Missing)', 'Partial - Left Only', 'Partial - Right Only', 'Not Done']
-      - name: is_valid_examination
-        description: "Flag indicating valid examination for diabetes care processes"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+              values: ['Unsuitable', 'Declined', 'Complete - Both Feet', 'Complete - Left Only (Right Missing)', 'Complete - Right Only (Left Missing)', 'Partial - Left Only', 'Partial - Right Only', 'Not Done'] 

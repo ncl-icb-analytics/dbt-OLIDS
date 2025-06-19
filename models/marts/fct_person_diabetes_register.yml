@@ -41,7 +41,7 @@ models:
         description: "Current age of person (≥17 years for diabetes register eligibility)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 17
               max_value: 120
 
@@ -59,40 +59,46 @@ models:
           - accepted_values:
               values: ['Type 1', 'Type 2', 'Unknown']
 
-      - name: earliest_diabetes_diagnosis_date
+      - name: earliest_diabetes_date
         description: "Date of first recorded diabetes diagnosis code (any type)"
         tests:
           - dbt_utils.not_accepted_values:
               values: ['1900-01-01']
 
-      - name: latest_diabetes_diagnosis_date
+      - name: latest_diabetes_date
         description: "Date of most recent diabetes diagnosis code (any type)"
         tests:
           - not_null
 
-      - name: latest_diabetes_resolved_date
+      - name: latest_resolved_date
         description: "Date of most recent diabetes resolved code (DMRES_COD) - NULL if never resolved"
 
-      - name: earliest_diabetes_type1_date
+      - name: earliest_type1_date
         description: "Date of first recorded Type 1 diabetes diagnosis code (DMTYPE1_COD)"
 
-      - name: latest_diabetes_type1_date
+      - name: latest_type1_date
         description: "Date of most recent Type 1 diabetes diagnosis code (DMTYPE1_COD)"
 
-      - name: earliest_diabetes_type2_date
+      - name: earliest_type2_date
         description: "Date of first recorded Type 2 diabetes diagnosis code (DMTYPE2_COD)"
 
-      - name: latest_diabetes_type2_date
+      - name: latest_type2_date
         description: "Date of most recent Type 2 diabetes diagnosis code (DMTYPE2_COD)"
 
-      - name: all_diagnosis_concept_codes
-        description: "Array of all diabetes diagnosis and resolution concept codes recorded for this person"
+      - name: all_diabetes_concept_codes
+        description: "Array of all diabetes diagnosis concept codes recorded for this person"
 
-      - name: all_diagnosis_concept_displays
-        description: "Array of all diabetes diagnosis and resolution concept display terms"
+      - name: all_diabetes_concept_displays
+        description: "Array of all diabetes diagnosis concept display terms"
 
-      - name: all_source_cluster_ids
-        description: "Array of source cluster IDs (DM_COD, DMRES_COD, DMTYPE1_COD, DMTYPE2_COD) for traceability"
+      - name: all_type1_concept_codes
+        description: "Array of all Type 1 diabetes concept codes"
+
+      - name: all_type2_concept_codes
+        description: "Array of all Type 2 diabetes concept codes"
+
+      - name: all_resolved_concept_codes
+        description: "Array of all diabetes resolved concept codes"
 
       - name: meets_age_criteria
         description: "Boolean flag: TRUE if person meets age ≥17 requirement"
@@ -101,7 +107,7 @@ models:
           - accepted_values:
               values: [true]
 
-      - name: has_active_diagnosis
+      - name: has_active_diabetes_diagnosis
         description: "Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)"
         tests:
           - not_null

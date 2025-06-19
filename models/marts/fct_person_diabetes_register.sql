@@ -64,12 +64,9 @@ register_logic AS (
             ELSE FALSE
         END AS is_on_diabetes_register,
         
-        -- Type classification logic (only for those on register)
+        -- Type classification logic (only for those on register, following legacy logic)
         CASE
-            WHEN age.age < 17 OR diag.earliest_diabetes_date IS NULL THEN NULL -- Not eligible
-            -- Check if currently resolved
-            WHEN diag.latest_resolved_date IS NOT NULL 
-                AND diag.latest_diabetes_date <= diag.latest_resolved_date THEN NULL -- Currently resolved
+            WHEN NOT is_on_diabetes_register THEN NULL -- Not applicable if not on register
             -- Type 1 precedence: Latest Type 1 >= Latest Type 2 (or no Type 2)
             WHEN diag.latest_type1_date IS NOT NULL 
                 AND (diag.latest_type2_date IS NULL 
