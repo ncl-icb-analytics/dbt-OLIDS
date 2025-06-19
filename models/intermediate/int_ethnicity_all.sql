@@ -13,42 +13,45 @@
 -- Uses broader ethnicity mapping via ETHNICITY_CODES reference table
 -- Includes ALL persons regardless of active status
 
-WITH mapped_observations AS (
-    -- Get all observations with proper concept mapping
+WITH observations_with_concepts AS (
+    -- Join observations directly through concept_map to concept, then filter by ethnicity codes
     SELECT 
         o.id AS observation_id,
         o.patient_id,
         pp.person_id,
         p.sk_patient_id,
         o.clinical_effective_date,
-        o.observation_core_concept_id,
-        mc.concept_id AS mapped_concept_id,
-        mc.concept_code AS mapped_concept_code,
-        mc.code_description AS mapped_concept_display
+        c.code AS concept_code,
+        c.display AS concept_display,
+        c.id AS concept_id
     FROM {{ ref('stg_olids_observation') }} o
     JOIN {{ ref('stg_olids_patient') }} p
         ON o.patient_id = p.id
     JOIN {{ ref('stg_olids_patient_person') }} pp 
         ON p.id = pp.patient_id
-    JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
-        ON o.observation_core_concept_id = mc.source_code_id
+    -- Join through concept_map to concept (vanilla structure)
+    LEFT JOIN {{ ref('stg_olids_term_concept_map') }} cm
+        ON o.observation_core_concept_id = cm.source_code_id
+    LEFT JOIN {{ ref('stg_olids_term_concept') }} c
+        ON cm.target_code_id = c.id
     WHERE o.clinical_effective_date IS NOT NULL
+      AND c.code IS NOT NULL
 ),
 
 ethnicity_observations AS (
     -- Filter observations that match ethnicity codes
     SELECT 
-        mo.person_id,
-        mo.sk_patient_id,
-        mo.clinical_effective_date,
-        mo.mapped_concept_id,
-        mo.mapped_concept_code,
-        mo.mapped_concept_display,
-        mo.observation_id
-    FROM mapped_observations mo
+        owc.person_id,
+        owc.sk_patient_id,
+        owc.clinical_effective_date,
+        owc.concept_id,
+        owc.concept_code,
+        owc.concept_display,
+        owc.observation_id
+    FROM observations_with_concepts owc
     -- Join to ethnicity codes to filter only valid ethnicity observations
     INNER JOIN {{ ref('stg_codesets_ethnicity_codes') }} ec
-        ON mo.mapped_concept_code = ec.code
+        ON owc.concept_code = ec.code
 ),
 
 ethnicity_enriched AS (
@@ -62,7 +65,7 @@ ethnicity_enriched AS (
     FROM ethnicity_observations eo
     -- Join to ethnicity codes to get the detailed categorisation
     LEFT JOIN {{ ref('stg_codesets_ethnicity_codes') }} ec
-        ON eo.mapped_concept_code = ec.code
+        ON eo.concept_code = ec.code
 )
 
 -- Final selection with enriched ethnicity data
@@ -70,9 +73,9 @@ SELECT
     person_id,
     sk_patient_id,
     clinical_effective_date,
-    mapped_concept_id AS concept_id,
-    mapped_concept_code AS snomed_code,
-    COALESCE(term, mapped_concept_display) AS term,
+    concept_id,
+    concept_code AS snomed_code,
+    COALESCE(term, concept_display) AS term,
     COALESCE(ethnicity_category, 'Unknown') AS ethnicity_category,
     COALESCE(ethnicity_subcategory, 'Unknown') AS ethnicity_subcategory,
     COALESCE(ethnicity_granular, 'Unknown') AS ethnicity_granular,

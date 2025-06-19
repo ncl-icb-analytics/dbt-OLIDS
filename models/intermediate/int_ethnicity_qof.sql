@@ -26,8 +26,8 @@ WITH mapped_observations AS (
         mc.concept_id AS mapped_concept_id,
         mc.concept_code AS mapped_concept_code,
         mc.code_description AS mapped_concept_display,
-        cc.cluster_id,
-        cc.cluster_description
+        mc.cluster_id,
+        mc.cluster_description
     FROM {{ ref('stg_olids_observation') }} o
     JOIN {{ ref('stg_olids_patient') }} p
         ON o.patient_id = p.id
@@ -35,10 +35,8 @@ WITH mapped_observations AS (
         ON p.id = pp.patient_id
     JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
         ON o.observation_core_concept_id = mc.source_code_id
-    JOIN {{ ref('stg_codesets_combined_codesets') }} cc
-        ON mc.concept_code = cc.code
+        AND mc.cluster_id LIKE 'ETH2016%_COD'  -- Filter directly on mapped_concepts
     WHERE o.clinical_effective_date IS NOT NULL
-      AND cc.cluster_id LIKE 'ETH2016%_COD'  -- Match the legacy pattern
 ),
 
 qof_ethnicity_enriched AS (

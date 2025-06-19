@@ -22,7 +22,7 @@ preg_risk_observations AS (
         o.clinical_effective_date,
         mc.concept_code,
         mc.code_description AS concept_display,
-        cc.cluster_id AS source_cluster_id,
+        mc.cluster_id AS source_cluster_id,
         vpc.code_category,
         o.date_recorded,
         o.lds_datetime_data_acquired
@@ -33,10 +33,8 @@ preg_risk_observations AS (
         ON p.id = pp.patient_id
     INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
         ON o.observation_core_concept_id = mc.source_code_id
-    INNER JOIN {{ ref('stg_codesets_combined_codesets') }} cc
-        ON mc.concept_code = cc.code
     INNER JOIN valproate_preg_risk_codes vpc
-        ON cc.code = vpc.code
+        ON mc.concept_code = vpc.code
     WHERE vpc.code_category = 'PREGRISK'
 )
 
