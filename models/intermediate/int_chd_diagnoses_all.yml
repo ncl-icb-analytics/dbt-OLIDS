@@ -68,4 +68,17 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "CHD_COD"
+      - dbt_utils.expression_is_true:
+          expression: "count(*) > 0"
+          config:
+            severity: warn
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - observation_id
+            - concept_code
+            - cluster_id 
