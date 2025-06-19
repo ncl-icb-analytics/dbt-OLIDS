@@ -22,10 +22,17 @@ models:
       - Important for secondary prevention medication monitoring
       - No age restrictions for CHD register
       
+      This is OBSERVATION-LEVEL data - one row per CHD observation.
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
       Use this model as input for CHD register and cardiovascular risk models.
       
     columns:
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          - unique
+
       - name: person_id
         description: "Unique person identifier"
         tests:
@@ -34,61 +41,31 @@ models:
               to: ref('dim_person')
               field: person_id
 
-      - name: has_chd_diagnosis
-        description: "Flag indicating person has at least one CHD diagnosis (always TRUE in this model)"
+      - name: clinical_effective_date
+        description: "Date when the CHD diagnosis was recorded"
+        tests:
+          - not_null
+
+      - name: concept_code
+        description: "SNOMED CT concept code for the CHD diagnosis"
+        tests:
+          - not_null
+
+      - name: concept_display
+        description: "Human readable description of the CHD diagnosis"
+        tests:
+          - not_null
+
+      - name: source_cluster_id
+        description: "Source cluster identifier (should be CHD_COD)"
         tests:
           - not_null
           - accepted_values:
-              values: [true]
+              values: ['CHD_COD']
 
-      - name: earliest_chd_date
-        description: "Date of first recorded CHD diagnosis"
-        tests:
-          - not_null
-          - name: latest_chd_date
-        description: "Date of most recent CHD diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: total_chd_episodes
-        description: "Total number of distinct CHD diagnosis dates"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 100
-
-      - name: has_episode_last_12m
-        description: "Boolean flag: has CHD diagnosis in last 12 months"
+      - name: is_chd_diagnosis
+        description: "Flag indicating this is a CHD diagnosis (always TRUE in this model)"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
-
-      - name: has_episode_last_24m
-        description: "Boolean flag: has CHD diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: all_chd_concept_codes
-        description: "Array of all distinct CHD concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_chd_concept_displays
-        description: "Array of all distinct CHD concept descriptions for this person"
-        tests:
-          - not_null
-
-      - name: latest_chd_concept_code
-        description: "Concept code from most recent CHD diagnosis"
-        tests:
-          - not_null
-
-      - name: latest_chd_concept_description
-        description: "Concept description from most recent CHD diagnosis"
-        tests:
-          - not_null 
+              values: [true] 
