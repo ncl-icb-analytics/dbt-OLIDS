@@ -4,7 +4,8 @@
     {%- endif -%}
     -- Simplified macro using direct approach that works
     -- Returns multiple rows per observation if it belongs to multiple clusters (clinically correct)
-    SELECT
+    -- Uses DISTINCT to avoid duplicates from multiple mappings within same cluster
+    SELECT DISTINCT
         o.id AS observation_id,
         o.patient_id,
         pp.person_id,
