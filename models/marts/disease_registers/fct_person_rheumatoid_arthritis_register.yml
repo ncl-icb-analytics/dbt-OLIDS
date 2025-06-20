@@ -15,7 +15,7 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-  - name: is_on_ra_register
+  - name: is_on_register
     description: 'Register flag: has RA diagnosis aged 16+ (always TRUE for this table)'
     tests:
     - not_null

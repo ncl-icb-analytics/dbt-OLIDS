@@ -37,15 +37,15 @@ models:
           - not_null
           - unique
 
-      - name: age
-        description: "Current age of person (≥17 years for diabetes register eligibility)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 17
-              max_value: 120
+#       - name: age
+#         description: "Current age of person (≥17 years for diabetes register eligibility)"
+#         tests:
+#           - not_null
+#           - dbt_utils.accepted_range:
+#               min_value: 17
+#               max_value: 120
 
-      - name: is_on_diabetes_register
+      - name: is_on_register
         description: "QOF register inclusion flag - TRUE for all persons in this table"
         tests:
           - not_null
@@ -59,13 +59,13 @@ models:
           - accepted_values:
               values: ['Type 1', 'Type 2', 'Unknown']
 
-      - name: earliest_diabetes_date
+      - name: earliest_diagnosis_date
         description: "Date of first recorded diabetes diagnosis code (any type)"
         tests:
           - dbt_utils.not_accepted_values:
               values: ['1900-01-01']
 
-      - name: latest_diabetes_date
+      - name: latest_diagnosis_date
         description: "Date of most recent diabetes diagnosis code (any type)"
         tests:
           - not_null

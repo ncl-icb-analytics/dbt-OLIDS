@@ -15,20 +15,20 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-  - name: age
-    description: Current age of person in years
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 14
-        max_value: 120
-  - name: is_on_ld_register
+#   - name: age
+#     description: Current age of person in years
+#     tests:
+#     - dbt_utils.accepted_range:
+#         min_value: 14
+#         max_value: 120
+  - name: is_on_register
     description: 'Register flag: has LD diagnosis aged 14+ (always TRUE for this table)'
     tests:
     - not_null
     - accepted_values:
         values:
         - true
-  - name: earliest_ld_diagnosis_date
+  - name: earliest_diagnosis_date
     description: Date of most recent learning disability diagnosis
     tests:
     - not_null

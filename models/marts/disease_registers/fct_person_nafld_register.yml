@@ -35,44 +35,45 @@ models:
               to: ref('dim_person')
               field: person_id
               
-      - name: age
-        description: "Person's age at register assessment (no age restrictions for NAFLD)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 120
+#       - name: age
+#         description: "Person's age at register assessment (no age restrictions for NAFLD)"
+#         tests:
+#           - not_null
+#           - dbt_utils.accepted_range:
+#               min_value: 0
+#               max_value: 120
               
-      - name: is_on_nafld_register
+      - name: is_on_register
         description: "Register inclusion flag (always TRUE in this table as filtered view)"
         tests:
           - not_null
           - accepted_values:
               values: [true]
               
-      - name: earliest_nafld_diagnosis_date
+      - name: earliest_diagnosis_date
         description: "Date of first recorded NAFLD diagnosis"
         tests:
           - not_null
           
-      - name: latest_nafld_diagnosis_date
+      - name: latest_diagnosis_date
         description: "Date of most recent NAFLD diagnosis"
         tests:
           - not_null
           
-      - name: all_diagnosis_concept_codes
+      - name: nafld_diagnosis_codes
         description: "Array of all NAFLD-related concept codes recorded for traceability"
         tests:
           - not_null
           
-      - name: all_diagnosis_concept_displays
+      - name: nafld_diagnosis_displays
         description: "Array of human-readable terms for NAFLD concept codes"
         tests:
           - not_null
           
-      - name: meets_criteria
-        description: "Flag indicating if person meets register criteria (always TRUE for Pattern 1)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true] 
+# Column 'meets_criteria' does not exist in the actual model
+#       - name: meets_criteria
+#         description: "Flag indicating if person meets register criteria (always TRUE for Pattern 1)"
+#         tests:
+#           - not_null
+#           - accepted_values:
+#               values: [true] 

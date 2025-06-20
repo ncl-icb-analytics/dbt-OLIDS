@@ -20,16 +20,16 @@ models:
     tests:
     - not_null
     - unique
-  - name: is_on_ndh_register
+  - name: is_on_register
     description: QOF register inclusion flag - TRUE for all persons in this table
     tests:
     - not_null
     - accepted_values:
         values:
         - true
-  - name: earliest_ndh_date
+  - name: earliest_diagnosis_date
     description: Date of first recorded specific NDH diagnosis code
-  - name: latest_ndh_date
+  - name: latest_diagnosis_date
     description: Date of most recent specific NDH diagnosis code
   - name: earliest_igt_date
     description: Date of first recorded IGT (Impaired Glucose Tolerance) diagnosis code
@@ -41,9 +41,9 @@ models:
     description: Date of most recent PRD (Pre-diabetes) diagnosis code
   - name: latest_multndh_date
     description: Date of most recent NDH/IGT/PRD diagnosis code (any subtype)
-  - name: earliest_diabetes_date
+  - name: earliest_diagnosis_date
     description: Date of first recorded diabetes diagnosis code - NULL if never had diabetes
-  - name: latest_diabetes_date
+  - name: latest_diagnosis_date
     description: Date of most recent diabetes diagnosis code - NULL if never had diabetes
   - name: latest_diabetes_resolved_date
     description: Date of most recent diabetes resolved code - required if had diabetes

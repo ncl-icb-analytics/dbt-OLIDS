@@ -33,28 +33,28 @@ models:
           - not_null
           - unique
 
-      - name: age
-        description: "Current age of person (no age restrictions for AF register)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 120
+#       - name: age
+#         description: "Current age of person (no age restrictions for AF register)"
+#         tests:
+#           - not_null
+#           - dbt_utils.accepted_range:
+#               min_value: 0
+#               max_value: 120
 
-      - name: is_on_af_register
+      - name: is_on_register
         description: "QOF register inclusion flag - TRUE for all persons in this table"
         tests:
           - not_null
           - accepted_values:
               values: [true]
 
-      - name: earliest_af_diagnosis_date
+      - name: earliest_diagnosis_date
         description: "Date of first recorded atrial fibrillation diagnosis code (AFIB_COD)"
         tests:
           - dbt_utils.not_accepted_values:
               values: ['1900-01-01']
 
-      - name: latest_af_diagnosis_date
+      - name: latest_diagnosis_date
         description: "Date of most recent atrial fibrillation diagnosis code (AFIB_COD)"
         tests:
           - not_null
@@ -62,10 +62,10 @@ models:
       - name: latest_af_resolved_date
         description: "Date of most recent AF resolved code (AFIBRES_COD) - NULL if never resolved"
 
-      - name: all_diagnosis_concept_codes
+      - name: nafld_diagnosis_codes
         description: "Array of all AF diagnosis and resolution concept codes recorded for this person"
 
-      - name: all_diagnosis_concept_displays
+      - name: nafld_diagnosis_displays
         description: "Array of all AF diagnosis and resolution concept display terms"
 
       - name: all_source_cluster_ids

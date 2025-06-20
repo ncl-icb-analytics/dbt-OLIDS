@@ -16,14 +16,14 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-  - name: is_on_pad_register
+  - name: is_on_register
     description: 'Register flag: has PAD diagnosis (always TRUE for this table)'
     tests:
     - not_null
     - accepted_values:
         values:
         - true
-  - name: earliest_pad_date
+  - name: earliest_diagnosis_date
     description: Date of most recent PAD diagnosis
     tests:
     - not_null

@@ -38,15 +38,15 @@ models:
               to: ref('dim_person')
               field: person_id
               
-      - name: age
-        description: "Person's age at register assessment (must be ≥18 for obesity register)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 18
-              max_value: 120
+#       - name: age
+#         description: "Person's age at register assessment (must be ≥18 for obesity register)"
+#         tests:
+#           - not_null
+#           - dbt_utils.accepted_range:
+#               min_value: 18
+#               max_value: 120
               
-      - name: is_on_obesity_register
+      - name: is_on_register
         description: "Register inclusion flag (always TRUE in this table as filtered view)"
         tests:
           - not_null

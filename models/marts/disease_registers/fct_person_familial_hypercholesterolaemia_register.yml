@@ -16,7 +16,7 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-  - name: is_on_fh_register
+  - name: is_on_register
     description: 'Register flag: has FH diagnosis (always TRUE for this table)'
     tests:
     - not_null

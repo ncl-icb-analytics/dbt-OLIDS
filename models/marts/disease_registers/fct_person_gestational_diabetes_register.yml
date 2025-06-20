@@ -17,7 +17,7 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-  - name: is_on_gestational_diabetes_register
+  - name: is_on_register
     description: 'Register flag: has gestational diabetes diagnosis (always TRUE for this table)'
     tests:
     - not_null

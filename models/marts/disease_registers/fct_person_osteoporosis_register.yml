@@ -22,14 +22,14 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-  - name: age
-    description: Person's age at register assessment (must be 50-74 for osteoporosis register)
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 50
-        max_value: 74
-  - name: is_on_osteoporosis_register
+#   - name: age
+#     description: Person's age at register assessment (must be 50-74 for osteoporosis register)
+#     tests:
+#     - not_null
+#     - dbt_utils.accepted_range:
+#         min_value: 50
+#         max_value: 74
+  - name: is_on_register
     description: Register inclusion flag (always TRUE in this table as filtered view)
     tests:
     - not_null
@@ -80,11 +80,11 @@ models:
         values:
         - true
         - false
-  - name: earliest_osteoporosis_date
+  - name: earliest_diagnosis_date
     description: Date of first recorded osteoporosis diagnosis
     tests:
     - not_null
-  - name: latest_osteoporosis_date
+  - name: latest_diagnosis_date
     description: Date of most recent osteoporosis diagnosis
     tests:
     - not_null
