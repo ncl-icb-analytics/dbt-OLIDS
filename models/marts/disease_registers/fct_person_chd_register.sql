@@ -28,8 +28,8 @@ WITH base_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(clinical_effective_date) AS earliest_chd_date,
-        MAX(clinical_effective_date) AS latest_chd_date,
+        MIN(clinical_effective_date) AS earliest_diagnosis_date,
+        MAX(clinical_effective_date) AS latest_diagnosis_date,
         COUNT(DISTINCT clinical_effective_date) AS total_chd_episodes,
         
         -- Traceability arrays
@@ -51,8 +51,8 @@ final AS (
         TRUE AS is_on_chd_register,
         
         -- Diagnosis dates
-        bd.earliest_chd_date,
-        bd.latest_chd_date,
+        bd.earliest_diagnosis_date,
+        bd.latest_diagnosis_date,
         
         -- Code arrays for traceability  
         bd.all_chd_concept_codes,

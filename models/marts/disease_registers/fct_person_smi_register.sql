@@ -31,8 +31,8 @@ WITH smi_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) AS earliest_smi_diagnosis_date,
-        MAX(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) AS latest_smi_diagnosis_date,
+        MIN(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         MAX(CASE WHEN is_smi_resolved_code THEN clinical_effective_date END) AS latest_smi_resolved_date,
         
         -- QOF register logic: active diagnosis required
@@ -76,8 +76,8 @@ combined_smi_eligibility AS (
         age.age,
         
         -- Mental health diagnosis details
-        smi.earliest_smi_diagnosis_date,
-        smi.latest_smi_diagnosis_date,
+        smi.earliest_diagnosis_date,
+        smi.latest_diagnosis_date,
         smi.latest_smi_resolved_date,
         smi.has_active_smi_diagnosis,
         
@@ -93,7 +93,7 @@ combined_smi_eligibility AS (
          ) AS is_on_smi_register,
         
         -- Supporting flags
-        smi.latest_smi_diagnosis_date IS NOT NULL AS has_mh_diagnosis,
+        smi.latest_diagnosis_date IS NOT NULL AS has_mh_diagnosis,
         lith.recent_lithium_orders_count > 0 AS is_on_lithium,
         
         -- Concept arrays
@@ -120,8 +120,8 @@ SELECT
     cse.is_on_lithium,
     cse.has_mh_diagnosis,
     cse.has_active_smi_diagnosis,
-    cse.earliest_smi_diagnosis_date,
-    cse.latest_smi_diagnosis_date,
+    cse.earliest_diagnosis_date,
+    cse.latest_diagnosis_date,
     cse.latest_smi_resolved_date,
     cse.latest_lithium_order_date,
     cse.all_smi_concept_codes AS all_mh_concept_codes,

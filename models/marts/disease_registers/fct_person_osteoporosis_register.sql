@@ -31,8 +31,8 @@ WITH osteoporosis_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_osteoporosis_diagnosis_code THEN clinical_effective_date END) AS earliest_osteoporosis_date,
-        MAX(CASE WHEN is_osteoporosis_diagnosis_code THEN clinical_effective_date END) AS latest_osteoporosis_date,
+        MIN(CASE WHEN is_osteoporosis_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_osteoporosis_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Episode counts
         COUNT(CASE WHEN is_osteoporosis_diagnosis_code THEN 1 END) AS total_osteoporosis_episodes,
@@ -101,7 +101,7 @@ register_logic AS (
         COALESCE(frac.has_fragility_fracture, FALSE) AS has_fragility_fracture,
         
         -- Component 2: Osteoporosis diagnosis requirement
-        CASE WHEN diag.earliest_osteoporosis_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_osteoporosis_diagnosis,
+        CASE WHEN diag.earliest_diagnosis_date IS NOT NULL THEN TRUE ELSE FALSE END AS has_osteoporosis_diagnosis,
         
         -- Component 3: DXA confirmation requirement (scan OR T-score ≤ -2.5)
         CASE
@@ -118,7 +118,7 @@ register_logic AS (
         CASE
             WHEN age.age BETWEEN 50 AND 74
                 AND frac.has_fragility_fracture = TRUE
-                AND diag.earliest_osteoporosis_date IS NOT NULL
+                AND diag.earliest_diagnosis_date IS NOT NULL
                 AND (
                     dxa.has_dxa_scan = TRUE OR 
                     (dxa.has_dxa_t_score = TRUE AND dxa.latest_dxa_t_score <= -2.5)
@@ -128,8 +128,8 @@ register_logic AS (
         END AS is_on_osteoporosis_register,
         
         -- Clinical dates - osteoporosis
-        diag.earliest_osteoporosis_date,
-        diag.latest_osteoporosis_date,
+        diag.earliest_diagnosis_date,
+        diag.latest_diagnosis_date,
         diag.total_osteoporosis_episodes,
         
         -- Clinical dates - DXA
@@ -181,8 +181,8 @@ SELECT
     has_dxa_t_score,
     
     -- Clinical dates - osteoporosis
-    earliest_osteoporosis_date,
-    latest_osteoporosis_date,
+    earliest_diagnosis_date,
+    latest_diagnosis_date,
     total_osteoporosis_episodes,
     
     -- Clinical dates - DXA
@@ -208,4 +208,4 @@ SELECT
 FROM register_logic
 WHERE is_on_osteoporosis_register = TRUE
 
-ORDER BY earliest_osteoporosis_date DESC, person_id 
+ORDER BY earliest_diagnosis_date DESC, person_id 

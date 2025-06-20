@@ -31,8 +31,8 @@ WITH dementia_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS earliest_dementia_diagnosis_date,
-        MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS latest_dementia_diagnosis_date,
+        MIN(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         MAX(CASE WHEN is_dementia_resolved_code THEN clinical_effective_date END) AS latest_dementia_resolved_date,
         
         -- QOF register logic: active diagnosis required (even though dementia is rarely resolved)
@@ -62,8 +62,8 @@ SELECT
     dd.person_id,
     age.age,
     TRUE AS is_on_dementia_register,
-    dd.earliest_dementia_diagnosis_date,
-    dd.latest_dementia_diagnosis_date,
+    dd.earliest_diagnosis_date,
+    dd.latest_diagnosis_date,
     dd.all_dementia_concept_codes,
     dd.all_dementia_concept_displays
 

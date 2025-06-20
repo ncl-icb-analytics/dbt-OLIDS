@@ -31,8 +31,8 @@ WITH fh_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_fh_diagnosis_code THEN clinical_effective_date END) AS earliest_fh_date,
-        MAX(CASE WHEN is_fh_diagnosis_code THEN clinical_effective_date END) AS latest_fh_date,
+        MIN(CASE WHEN is_fh_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_fh_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Episode counts
         COUNT(CASE WHEN is_fh_diagnosis_code THEN 1 END) AS total_fh_episodes,
@@ -56,38 +56,38 @@ register_inclusion AS (
         
         -- Age at first diagnosis calculation using current age (approximation)
         CASE 
-            WHEN earliest_fh_date IS NOT NULL 
-            THEN age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())
         END AS age_at_first_fh_diagnosis,
         
         -- QOF register logic: Include if has diagnosis and estimated age ≥20 at first diagnosis
         CASE 
-            WHEN earliest_fh_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())) >= 20
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 20
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_fh_register,
         
         -- Clinical interpretation
         CASE 
-            WHEN earliest_fh_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())) >= 20
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 20
             THEN 'Active FH diagnosis (age ≥20)'
-            WHEN earliest_fh_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_fh_date, CURRENT_DATE())) < 20
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) < 20
             THEN 'FH diagnosis (age <20 - excluded from QOF)'
             ELSE 'No FH diagnosis'
         END AS fh_status,
         
         -- Days calculations
         CASE 
-            WHEN earliest_fh_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_fh_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_fh,
         
         CASE 
-            WHEN latest_fh_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_fh_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_fh
         
     FROM fh_diagnoses fd
@@ -101,8 +101,8 @@ SELECT
     ri.person_id,
     ri.is_on_fh_register,
     ri.fh_status,
-    ri.earliest_fh_date,
-    ri.latest_fh_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.age_at_first_fh_diagnosis,
     ri.total_fh_episodes,
     ri.days_since_first_fh,
@@ -114,4 +114,4 @@ SELECT
 FROM register_inclusion ri
 WHERE ri.is_on_fh_register = TRUE
 
-ORDER BY ri.earliest_fh_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

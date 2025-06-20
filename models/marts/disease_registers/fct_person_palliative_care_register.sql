@@ -33,10 +33,10 @@ WITH palliative_care_diagnoses AS (
         -- Register inclusion dates (after QOF start date)  
         MIN(CASE WHEN is_palliative_care_code 
                       AND clinical_effective_date >= DATE '2008-04-01' 
-                 THEN clinical_effective_date END) AS earliest_palliative_care_date,
+                 THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_palliative_care_code 
                       AND clinical_effective_date >= DATE '2008-04-01' 
-                 THEN clinical_effective_date END) AS latest_palliative_care_date,
+                 THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Exclusion dates ("no longer indicated")
         MIN(CASE WHEN is_palliative_care_not_indicated_code 
@@ -74,37 +74,37 @@ register_inclusion AS (
         
         -- QOF register logic: Palliative care after April 2008 + not marked as no longer indicated
         CASE 
-            WHEN latest_palliative_care_date IS NOT NULL 
+            WHEN latest_diagnosis_date IS NOT NULL 
                  AND (latest_no_longer_indicated_date IS NULL 
-                      OR latest_no_longer_indicated_date <= latest_palliative_care_date)
+                      OR latest_no_longer_indicated_date <= latest_diagnosis_date)
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_palliative_care_register,
         
         -- Clinical interpretation
         CASE 
-            WHEN latest_palliative_care_date IS NOT NULL 
+            WHEN latest_diagnosis_date IS NOT NULL 
                  AND (latest_no_longer_indicated_date IS NULL 
-                      OR latest_no_longer_indicated_date <= latest_palliative_care_date)
+                      OR latest_no_longer_indicated_date <= latest_diagnosis_date)
             THEN 'Active palliative care'
-            WHEN latest_palliative_care_date IS NOT NULL 
-                 AND latest_no_longer_indicated_date > latest_palliative_care_date
+            WHEN latest_diagnosis_date IS NOT NULL 
+                 AND latest_no_longer_indicated_date > latest_diagnosis_date
             THEN 'Palliative care - no longer indicated'
-            WHEN earliest_palliative_care_date IS NOT NULL 
-                 AND latest_palliative_care_date IS NULL
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND latest_diagnosis_date IS NULL
             THEN 'Palliative care before QOF date (pre-2008)'
             ELSE 'No palliative care diagnosis'
         END AS palliative_care_status,
         
         -- Days calculations
         CASE 
-            WHEN earliest_palliative_care_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_palliative_care_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_palliative_care,
         
         CASE 
-            WHEN latest_palliative_care_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_palliative_care_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_palliative_care
         
     FROM palliative_care_diagnoses pc
@@ -116,8 +116,8 @@ SELECT
     ri.person_id,
     ri.is_on_palliative_care_register,
     ri.palliative_care_status,
-    ri.earliest_palliative_care_date,
-    ri.latest_palliative_care_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.earliest_no_longer_indicated_date,
     ri.latest_no_longer_indicated_date,
     ri.total_palliative_care_episodes,
@@ -133,4 +133,4 @@ SELECT
 FROM register_inclusion ri
 WHERE ri.is_on_palliative_care_register = TRUE
 
-ORDER BY ri.earliest_palliative_care_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

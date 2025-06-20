@@ -39,8 +39,8 @@ WITH ndh_diagnoses AS (
         MAX(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) AS latest_prd_date,
         
         -- Overall NDH dates (any type)
-        MIN(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS earliest_any_ndh_date,
-        MAX(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS latest_any_ndh_date,
+        MIN(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Episode counts
         COUNT(CASE WHEN is_ndh_diagnosis_code THEN 1 END) AS total_ndh_episodes,
@@ -75,7 +75,7 @@ diabetes_status AS (
         person_id,
         
         -- Diabetes history for exclusion logic
-        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diabetes_date,
+        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- Diabetes flags
@@ -94,19 +94,19 @@ register_inclusion AS (
         nd.*,
         ds.has_diabetes_diagnosis,
         ds.is_diabetes_resolved,
-        ds.earliest_diabetes_date,
+        ds.earliest_diagnosis_date,
         ds.latest_resolved_date,
         
         -- Age at first NDH diagnosis calculation using current age (approximation)
         CASE 
-            WHEN earliest_any_ndh_date IS NOT NULL 
-            THEN age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())
         END AS age_at_first_ndh_diagnosis,
         
         -- QOF register logic: Age ≥18 + NDH + (never diabetes OR diabetes resolved)
         CASE 
-            WHEN earliest_any_ndh_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())) >= 18
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 18
                  AND (COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE 
                       OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
             THEN TRUE 
@@ -115,15 +115,15 @@ register_inclusion AS (
         
         -- Clinical interpretation
         CASE 
-            WHEN earliest_any_ndh_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())) >= 18
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 18
                  AND (COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE 
                       OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
             THEN 'Active NDH - eligible for diabetes prevention'
-            WHEN earliest_any_ndh_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_any_ndh_date, CURRENT_DATE())) < 18
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) < 18
             THEN 'NDH diagnosis (age <18 - excluded from QOF)'
-            WHEN earliest_any_ndh_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
                  AND COALESCE(ds.has_diabetes_diagnosis, FALSE) = TRUE
                  AND COALESCE(ds.is_diabetes_resolved, FALSE) = FALSE
             THEN 'NDH diagnosis (excluded - unresolved diabetes)'
@@ -132,13 +132,13 @@ register_inclusion AS (
         
         -- Days calculations
         CASE 
-            WHEN earliest_any_ndh_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_any_ndh_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_ndh,
         
         CASE 
-            WHEN latest_any_ndh_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_any_ndh_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_ndh
         
     FROM ndh_diagnoses nd
@@ -154,8 +154,8 @@ SELECT
     ri.person_id,
     ri.is_on_ndh_register,
     ri.ndh_status,
-    ri.earliest_any_ndh_date,
-    ri.latest_any_ndh_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.earliest_ndh_date,
     ri.latest_ndh_date,
     ri.earliest_igt_date,
@@ -171,7 +171,7 @@ SELECT
     ri.has_prd_diagnosis,
     ri.has_diabetes_diagnosis,
     ri.is_diabetes_resolved,
-    ri.earliest_diabetes_date,
+    ri.earliest_diagnosis_date,
     ri.latest_resolved_date,
     ri.days_since_first_ndh,
     ri.days_since_latest_ndh,
@@ -186,4 +186,4 @@ SELECT
 FROM register_inclusion ri
 WHERE ri.is_on_ndh_register = TRUE
 
-ORDER BY ri.earliest_any_ndh_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

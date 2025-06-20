@@ -14,8 +14,8 @@ WITH hypertension_person_aggregates AS (
         person_id,
         
         -- Hypertension diagnosis dates
-        MIN(CASE WHEN is_hypertension_diagnosis_code THEN clinical_effective_date END) AS earliest_htn_diagnosis_date,
-        MAX(CASE WHEN is_hypertension_diagnosis_code THEN clinical_effective_date END) AS latest_htn_diagnosis_date,
+        MIN(CASE WHEN is_hypertension_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_hypertension_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Resolution dates
         MIN(CASE WHEN is_hypertension_resolved_code THEN clinical_effective_date END) AS earliest_resolved_date,
@@ -61,25 +61,25 @@ register_logic AS (
         -- QOF register logic: active hypertension diagnosis required
         CASE 
             WHEN diag.latest_resolved_date IS NULL THEN TRUE -- Never resolved
-            WHEN diag.latest_htn_diagnosis_date > diag.latest_resolved_date THEN TRUE -- Re-diagnosed after resolution
+            WHEN diag.latest_diagnosis_date > diag.latest_resolved_date THEN TRUE -- Re-diagnosed after resolution
             ELSE FALSE -- Currently resolved
         END AS has_active_htn_diagnosis,
         
         -- Final register inclusion: Age + Active diagnosis required
         CASE
             WHEN age.age >= 18
-                AND diag.earliest_htn_diagnosis_date IS NOT NULL -- Has HTN diagnosis
+                AND diag.earliest_diagnosis_date IS NOT NULL -- Has HTN diagnosis
                 AND (
                     diag.latest_resolved_date IS NULL -- Never resolved
-                    OR diag.latest_htn_diagnosis_date > diag.latest_resolved_date -- Re-diagnosed after resolution
+                    OR diag.latest_diagnosis_date > diag.latest_resolved_date -- Re-diagnosed after resolution
                 )
             THEN TRUE
             ELSE FALSE
         END AS is_on_htn_register,
         
         -- Clinical dates
-        diag.earliest_htn_diagnosis_date,
-        diag.latest_htn_diagnosis_date,
+        diag.earliest_diagnosis_date,
+        diag.latest_diagnosis_date,
         diag.latest_resolved_date,
         
         -- Latest BP data from event-based structure
@@ -137,8 +137,8 @@ SELECT
     is_on_htn_register,
     
     -- Clinical diagnosis dates
-    earliest_htn_diagnosis_date,
-    latest_htn_diagnosis_date,
+    earliest_diagnosis_date,
+    latest_diagnosis_date,
     latest_resolved_date,
     
     -- Latest BP data and staging

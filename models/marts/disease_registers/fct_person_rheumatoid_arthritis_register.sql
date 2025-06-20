@@ -30,8 +30,8 @@ WITH ra_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_ra_diagnosis_code THEN clinical_effective_date END) AS earliest_ra_date,
-        MAX(CASE WHEN is_ra_diagnosis_code THEN clinical_effective_date END) AS latest_ra_date,
+        MIN(CASE WHEN is_ra_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_ra_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Episode counts
         COUNT(CASE WHEN is_ra_diagnosis_code THEN 1 END) AS total_ra_episodes,
@@ -55,38 +55,38 @@ register_inclusion AS (
         
         -- Age at first diagnosis calculation using current age (approximation)
         CASE 
-            WHEN earliest_ra_date IS NOT NULL 
-            THEN age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())
         END AS age_at_first_ra_diagnosis,
         
         -- QOF register logic: Include if has diagnosis and estimated age ≥16 at first diagnosis
         CASE 
-            WHEN earliest_ra_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())) >= 16
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 16
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_ra_register,
         
         -- Clinical interpretation
         CASE 
-            WHEN earliest_ra_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())) >= 16
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 16
             THEN 'Active RA diagnosis (age ≥16)'
-            WHEN earliest_ra_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, earliest_ra_date, CURRENT_DATE())) < 16
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) < 16
             THEN 'RA diagnosis (age <16 - excluded from QOF)'
             ELSE 'No RA diagnosis'
         END AS ra_status,
         
         -- Days calculations
         CASE 
-            WHEN earliest_ra_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_ra_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_ra,
         
         CASE 
-            WHEN latest_ra_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_ra_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_ra
         
     FROM ra_diagnoses rd
@@ -100,8 +100,8 @@ SELECT
     ri.person_id,
     ri.is_on_ra_register,
     ri.ra_status,
-    ri.earliest_ra_date,
-    ri.latest_ra_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.age_at_first_ra_diagnosis,
     ri.total_ra_episodes,
     ri.days_since_first_ra,
@@ -113,4 +113,4 @@ SELECT
 FROM register_inclusion ri
 WHERE ri.is_on_ra_register = TRUE
 
-ORDER BY ri.earliest_ra_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

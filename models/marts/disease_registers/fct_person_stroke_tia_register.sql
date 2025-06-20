@@ -30,8 +30,8 @@ WITH stroke_tia_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS earliest_stroke_tia_date,
-        MAX(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS latest_stroke_tia_date,
+        MIN(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Resolution dates
         MIN(CASE WHEN is_stroke_tia_resolved_code THEN clinical_effective_date END) AS earliest_resolution_date,
@@ -59,36 +59,36 @@ register_inclusion AS (
         
         -- QOF register logic: Include if has diagnosis and not resolved
         CASE 
-            WHEN earliest_stroke_tia_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
                  AND (earliest_resolution_date IS NULL 
-                      OR earliest_resolution_date > latest_stroke_tia_date)
+                      OR earliest_resolution_date > latest_diagnosis_date)
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_stroke_tia_register,
         
         -- Clinical interpretation
         CASE 
-            WHEN earliest_stroke_tia_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
                  AND earliest_resolution_date IS NULL
             THEN 'Active stroke/TIA - never resolved'
-            WHEN earliest_stroke_tia_date IS NOT NULL 
-                 AND earliest_resolution_date > latest_stroke_tia_date
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND earliest_resolution_date > latest_diagnosis_date
             THEN 'Active stroke/TIA - resolved before last diagnosis'
-            WHEN earliest_stroke_tia_date IS NOT NULL 
-                 AND earliest_resolution_date <= latest_stroke_tia_date  
+            WHEN earliest_diagnosis_date IS NOT NULL 
+                 AND earliest_resolution_date <= latest_diagnosis_date  
             THEN 'Resolved stroke/TIA'
             ELSE 'No stroke/TIA diagnosis'
         END AS stroke_tia_status,
         
         -- Days calculations
         CASE 
-            WHEN earliest_stroke_tia_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_stroke_tia_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_stroke_tia,
         
         CASE 
-            WHEN latest_stroke_tia_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_stroke_tia_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_stroke_tia
         
     FROM stroke_tia_diagnoses std
@@ -98,8 +98,8 @@ SELECT
     ri.person_id,
     ri.is_on_stroke_tia_register,
     ri.stroke_tia_status,
-    ri.earliest_stroke_tia_date,
-    ri.latest_stroke_tia_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.earliest_resolution_date,
     ri.latest_resolution_date,
     ri.total_stroke_tia_episodes,
@@ -115,4 +115,4 @@ INNER JOIN {{ ref('dim_person_active_patients') }} ap
     ON ri.person_id = ap.person_id
 WHERE ri.is_on_stroke_tia_register = TRUE
 
-ORDER BY ri.earliest_stroke_tia_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

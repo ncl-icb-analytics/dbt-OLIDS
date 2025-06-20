@@ -14,8 +14,8 @@ WITH epilepsy_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) AS earliest_epilepsy_diagnosis_date,
-        MAX(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) AS latest_epilepsy_diagnosis_date,
+        MIN(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_epilepsy_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         MAX(CASE WHEN is_epilepsy_resolved_code THEN clinical_effective_date END) AS latest_epilepsy_resolved_date,
         
         -- QOF register logic: active diagnosis required
@@ -72,8 +72,8 @@ register_logic AS (
         END AS is_on_epilepsy_register,
         
         -- Clinical dates
-        diag.earliest_epilepsy_diagnosis_date,
-        diag.latest_epilepsy_diagnosis_date,
+        diag.earliest_diagnosis_date,
+        diag.latest_diagnosis_date,
         diag.latest_epilepsy_resolved_date,
         
         -- Medication details
@@ -103,8 +103,8 @@ SELECT
     is_on_epilepsy_register,
     
     -- Clinical diagnosis dates
-    earliest_epilepsy_diagnosis_date,
-    latest_epilepsy_diagnosis_date,
+    earliest_diagnosis_date,
+    latest_diagnosis_date,
     latest_epilepsy_resolved_date,
     
     -- Medication validation details  

@@ -30,8 +30,8 @@ WITH pad_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_pad_diagnosis_code THEN clinical_effective_date END) AS earliest_pad_date,
-        MAX(CASE WHEN is_pad_diagnosis_code THEN clinical_effective_date END) AS latest_pad_date,
+        MIN(CASE WHEN is_pad_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_pad_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Episode counts
         COUNT(CASE WHEN is_pad_diagnosis_code THEN 1 END) AS total_pad_episodes,
@@ -55,27 +55,27 @@ register_inclusion AS (
         
         -- Simple register logic: Include if has diagnosis
         CASE 
-            WHEN earliest_pad_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_pad_register,
         
         -- Clinical interpretation
         CASE 
-            WHEN earliest_pad_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
             THEN 'Active PAD diagnosis'
             ELSE 'No PAD diagnosis'
         END AS pad_status,
         
         -- Days calculations
         CASE 
-            WHEN earliest_pad_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_pad_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_pad,
         
         CASE 
-            WHEN latest_pad_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_pad_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_pad
         
     FROM pad_diagnoses pd
@@ -85,8 +85,8 @@ SELECT
     ri.person_id,
     ri.is_on_pad_register,
     ri.pad_status,
-    ri.earliest_pad_date,
-    ri.latest_pad_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.total_pad_episodes,
     ri.days_since_first_pad,
     ri.days_since_latest_pad,
@@ -99,4 +99,4 @@ INNER JOIN {{ ref('dim_person_active_patients') }} ap
     ON ri.person_id = ap.person_id
 WHERE ri.is_on_pad_register = TRUE
 
-ORDER BY ri.earliest_pad_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

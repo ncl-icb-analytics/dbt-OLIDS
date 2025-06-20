@@ -31,8 +31,8 @@ WITH gestational_diabetes_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_gestational_diabetes_diagnosis_code THEN clinical_effective_date END) AS earliest_gestational_diabetes_date,
-        MAX(CASE WHEN is_gestational_diabetes_diagnosis_code THEN clinical_effective_date END) AS latest_gestational_diabetes_date,
+        MIN(CASE WHEN is_gestational_diabetes_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_gestational_diabetes_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Episode counts
         COUNT(CASE WHEN is_gestational_diabetes_diagnosis_code THEN 1 END) AS total_gestational_diabetes_episodes,
@@ -56,27 +56,27 @@ register_inclusion AS (
         
         -- QOF register logic: Include if has gestational diabetes diagnosis
         CASE 
-            WHEN earliest_gestational_diabetes_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_gestational_diabetes_register,
         
         -- Clinical interpretation
         CASE 
-            WHEN earliest_gestational_diabetes_date IS NOT NULL 
+            WHEN earliest_diagnosis_date IS NOT NULL 
             THEN 'Gestational diabetes history'
             ELSE 'No gestational diabetes diagnosis'
         END AS gestational_diabetes_status,
         
         -- Days calculations
         CASE 
-            WHEN earliest_gestational_diabetes_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_gestational_diabetes_date, CURRENT_DATE()) 
+            WHEN earliest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_first_gestational_diabetes,
         
         CASE 
-            WHEN latest_gestational_diabetes_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_gestational_diabetes_date, CURRENT_DATE()) 
+            WHEN latest_diagnosis_date IS NOT NULL 
+            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
         END AS days_since_latest_gestational_diabetes
         
     FROM gestational_diabetes_diagnoses gd
@@ -88,8 +88,8 @@ SELECT
     ri.person_id,
     ri.is_on_gestational_diabetes_register,
     ri.gestational_diabetes_status,
-    ri.earliest_gestational_diabetes_date,
-    ri.latest_gestational_diabetes_date,
+    ri.earliest_diagnosis_date,
+    ri.latest_diagnosis_date,
     ri.total_gestational_diabetes_episodes,
     ri.days_since_first_gestational_diabetes,
     ri.days_since_latest_gestational_diabetes,
@@ -100,4 +100,4 @@ SELECT
 FROM register_inclusion ri
 WHERE ri.is_on_gestational_diabetes_register = TRUE
 
-ORDER BY ri.earliest_gestational_diabetes_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

@@ -31,8 +31,8 @@ WITH learning_disability_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS earliest_ld_diagnosis_date,
-        MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS latest_ld_diagnosis_date,
+        MIN(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END) AS latest_ld_resolved_date,
         
         -- QOF register logic: active diagnosis required
@@ -75,8 +75,8 @@ SELECT
     rl.person_id,
     rl.age,
     rl.is_on_ld_register,
-    rl.earliest_ld_diagnosis_date,
-    rl.latest_ld_diagnosis_date,
+    rl.earliest_diagnosis_date,
+    rl.latest_diagnosis_date,
     rl.all_ld_concept_codes,
     rl.all_ld_concept_displays
 

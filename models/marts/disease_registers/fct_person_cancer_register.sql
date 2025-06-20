@@ -31,8 +31,8 @@ WITH cancer_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS earliest_cancer_diagnosis_date,
-        MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS latest_cancer_diagnosis_date,
+        MIN(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         MAX(CASE WHEN is_cancer_resolved_code THEN clinical_effective_date END) AS latest_cancer_resolved_date,
         
         -- QOF register logic: active diagnosis required since April 2003
@@ -68,8 +68,8 @@ final AS (
         cd.has_active_cancer_diagnosis AS is_on_cancer_register,
         
         -- Diagnosis dates
-        cd.earliest_cancer_diagnosis_date,
-        cd.latest_cancer_diagnosis_date,
+        cd.earliest_diagnosis_date,
+        cd.latest_diagnosis_date,
         cd.latest_cancer_resolved_date,
         
         -- Code arrays for traceability  
@@ -87,8 +87,8 @@ SELECT
     person_id,
     age,
     is_on_cancer_register,
-    earliest_cancer_diagnosis_date,
-    latest_cancer_diagnosis_date,
+    earliest_diagnosis_date,
+    latest_diagnosis_date,
     latest_cancer_resolved_date,
     all_cancer_concept_codes,
     all_cancer_concept_displays,

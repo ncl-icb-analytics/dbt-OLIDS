@@ -14,8 +14,8 @@ WITH heart_failure_diagnoses AS (
         person_id,
         
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) AS earliest_hf_diagnosis_date,
-        MAX(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) AS latest_hf_diagnosis_date,
+        MIN(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_heart_failure_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         MAX(CASE WHEN is_heart_failure_resolved_code THEN clinical_effective_date END) AS latest_hf_resolved_date,
         
         -- LVSD-specific dates
@@ -86,8 +86,8 @@ register_logic AS (
         END AS is_on_hf_lvsd_reduced_ef_register,
         
         -- Clinical dates
-        diag.earliest_hf_diagnosis_date,
-        diag.latest_hf_diagnosis_date,
+        diag.earliest_diagnosis_date,
+        diag.latest_diagnosis_date,
         diag.latest_hf_resolved_date,
         diag.earliest_hf_lvsd_diagnosis_date,
         diag.latest_hf_lvsd_diagnosis_date,
@@ -115,8 +115,8 @@ SELECT
     is_on_hf_lvsd_reduced_ef_register,
     
     -- Clinical diagnosis dates
-    earliest_hf_diagnosis_date,
-    latest_hf_diagnosis_date,
+    earliest_diagnosis_date,
+    latest_diagnosis_date,
     latest_hf_resolved_date,
     
     -- LVSD/Reduced EF specific dates

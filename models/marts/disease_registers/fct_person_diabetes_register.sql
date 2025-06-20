@@ -14,8 +14,8 @@ WITH diabetes_person_aggregates AS (
         person_id,
         
         -- General diabetes dates
-        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diabetes_date,
-        MAX(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS latest_diabetes_date,
+        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS latest_diagnosis_date,
         
         -- Type-specific dates
         MIN(CASE WHEN is_type1_diabetes_code THEN clinical_effective_date END) AS earliest_type1_date,
@@ -48,17 +48,17 @@ register_logic AS (
         -- QOF register logic: active diabetes diagnosis required
         CASE 
             WHEN diag.latest_resolved_date IS NULL THEN TRUE -- Never resolved
-            WHEN diag.latest_diabetes_date > diag.latest_resolved_date THEN TRUE -- Re-diagnosed after resolution
+            WHEN diag.latest_diagnosis_date > diag.latest_resolved_date THEN TRUE -- Re-diagnosed after resolution
             ELSE FALSE -- Currently resolved
         END AS has_active_diabetes_diagnosis,
         
         -- Final register inclusion: Age ≥17 + Active diabetes
         CASE
             WHEN age.age >= 17
-                AND diag.earliest_diabetes_date IS NOT NULL -- Has diabetes diagnosis
+                AND diag.earliest_diagnosis_date IS NOT NULL -- Has diabetes diagnosis
                 AND (
                     diag.latest_resolved_date IS NULL -- Never resolved
-                    OR diag.latest_diabetes_date > diag.latest_resolved_date -- Re-diagnosed after resolution
+                    OR diag.latest_diagnosis_date > diag.latest_resolved_date -- Re-diagnosed after resolution
                 )
             THEN TRUE
             ELSE FALSE
@@ -82,8 +82,8 @@ register_logic AS (
         END AS diabetes_type,
         
         -- Clinical dates
-        diag.earliest_diabetes_date,
-        diag.latest_diabetes_date,
+        diag.earliest_diagnosis_date,
+        diag.latest_diagnosis_date,
         diag.earliest_type1_date,
         diag.latest_type1_date,
         diag.earliest_type2_date,
@@ -113,8 +113,8 @@ SELECT
     diabetes_type,
     
     -- Clinical diagnosis dates
-    earliest_diabetes_date,
-    latest_diabetes_date,
+    earliest_diagnosis_date,
+    latest_diagnosis_date,
     latest_resolved_date,
     
     -- Type-specific dates for clinical audit
