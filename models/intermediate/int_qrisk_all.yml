@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_qrisk_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "QRISKSCORE_COD"
     description: |
       All QRISK cardiovascular risk assessment scores from observations.
       Includes QRISK, QRISK2, and QRISK3 scores with clinical validation and risk categorisation.

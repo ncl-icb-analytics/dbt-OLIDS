@@ -46,7 +46,7 @@ models:
       - name: latest_hba1c_date
         description: "Date of most recent HbA1c test"
         tests:
-          - test_no_future_dates
+      - test_no_future_dates
       
       - name: latest_hba1c_value
         description: "Most recent HbA1c result value"
@@ -67,7 +67,7 @@ models:
       - name: latest_bp_date
         description: "Date of most recent blood pressure reading"
         tests:
-          - test_no_future_dates
+      - test_no_future_dates
       
       - name: latest_systolic
         description: "Most recent systolic blood pressure (mmHg)"
@@ -89,7 +89,7 @@ models:
       - name: latest_chol_date
         description: "Date of most recent total cholesterol test"
         tests:
-          - test_no_future_dates
+      - test_no_future_dates
       
       - name: latest_chol_value
         description: "Most recent total cholesterol level (mmol/L)"

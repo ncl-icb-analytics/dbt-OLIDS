@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_ckd_diagnoses_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "CKDRES_COD, CKD_COD"
     description: |
       All chronic kidney disease (CKD) diagnosis observations from clinical records using QOF cluster IDs.
       Provides comprehensive data collection for CKD register and kidney function monitoring.

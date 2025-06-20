@@ -129,4 +129,7 @@ models:
 
     tests:
       - test_cluster_ids_exist:
-          cluster_ids: "RETSCREN_COD" 
+          cluster_ids: "RETSCREN_COD"
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "RETSCREN_COD"

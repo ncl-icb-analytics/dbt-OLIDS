@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_gestational_diabetes_diagnoses_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "GESTDIAB_COD"
     description: |
       All gestational diabetes diagnoses from clinical records.
       Uses QOF cluster ID GESTDM_COD for gestational diabetes diagnosis codes.

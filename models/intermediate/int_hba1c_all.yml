@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_hba1c_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "DCCTHBA1C_COD, IFCCHBAM_COD"
     description: |
       All HbA1c measurements from observations.
       Handles both IFCC (mmol/mol) and DCCT (%) measurement types with clinical validation.

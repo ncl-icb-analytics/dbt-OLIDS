@@ -77,7 +77,7 @@ models:
           - name: latest_mh_diagnosis_date
         description: "Date of most recent mental health diagnosis"
         tests:
-          - test_no_future_dates
+      - test_no_future_dates
 
       - name: latest_remission_date
         description: "Date of most recent mental health remission code (NULL if never in remission)"

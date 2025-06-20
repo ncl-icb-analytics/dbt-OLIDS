@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_egfr_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "EGFR_COD"
     description: |
       All estimated Glomerular Filtration Rate (eGFR) measurements from observations.
       Simple pattern using EGFR_COD with clinical validation and CKD staging.

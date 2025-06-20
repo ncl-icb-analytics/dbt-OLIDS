@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_atrial_fibrillation_diagnoses_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "AFIBRES_COD, AFIB_COD"
     description: |
       All atrial fibrillation diagnosis observations from clinical records using QOF cluster IDs.
       Provides comprehensive data collection for AF register and arrhythmia management.

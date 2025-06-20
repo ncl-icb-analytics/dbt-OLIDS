@@ -50,7 +50,7 @@ models:
       - name: latest_foot_check_date
         description: "Date of most recent foot examination"
         tests:
-          - test_no_future_dates
+      - test_no_future_dates
       
       - name: foot_check_completed_in_last_12m
         description: "Flag indicating valid foot check completed within last 12 months"

@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_learning_disability_diagnoses_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "LDRES_COD, LD_COD"
     description: |
       All learning disability diagnosis observations from clinical records using QOF cluster ID.
       Provides comprehensive data collection for learning disability register and special needs service planning.

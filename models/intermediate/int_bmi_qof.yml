@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_bmi_qof
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "BMI30_COD, BMIVAL_COD"
     description: |
       QOF-specific BMI measurements with obesity register business logic.
       Follows the legacy intermediate_bmi_values.sql patterns with age validation

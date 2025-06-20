@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_pad_diagnoses_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "PAD_COD"
     description: |
       All peripheral arterial disease (PAD) diagnoses from clinical records.
       Uses QOF cluster ID PAD_COD for all forms of PAD diagnosis.

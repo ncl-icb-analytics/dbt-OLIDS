@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_smoking_status_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "EXSMOK_COD, LSMOK_COD, NSMOK_COD, SMOK_COD"
     description: |
       All smoking status observations from clinical records using QOF definitions.
       Enhanced with analytics-ready flags and legacy structure alignment.

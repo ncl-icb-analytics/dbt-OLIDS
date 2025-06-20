@@ -134,4 +134,7 @@ models:
 
     tests:
       - test_cluster_ids_exist:
-          cluster_ids: "NHSHEALTHCHECK_COD" 
+          cluster_ids: "NHSHEALTHCHECK_COD"
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "NHSHEALTHCHECK_COD"

@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_asthma_diagnoses_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "ASTRES_COD, AST_COD"
     description: |
       All asthma diagnosis observations from clinical records using QOF cluster IDs.
       Provides comprehensive data collection for asthma register and respiratory management.

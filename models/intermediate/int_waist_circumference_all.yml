@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_waist_circumference_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "WAIST_COD"
     description: |
       All waist circumference measurements from observations.
       Simple pattern using WAIST_COD with clinical validation and risk categorisation.

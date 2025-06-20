@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: int_pregnancy_status_all
+
+    tests:
+      - test_cluster_ids_exist:
+          cluster_ids: "PREGDEL_COD, PREG_COD"
     description: |
       Pregnancy status intermediate model collecting ALL pregnancy-related observations.
       
