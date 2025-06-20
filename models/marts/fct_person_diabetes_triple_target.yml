@@ -1,164 +1,171 @@
 version: 2
-
 models:
-  - name: fct_person_diabetes_triple_target
-    description: |
-      Fact table for diabetes triple target achievement tracking for people on the diabetes register.
-      
-      **Triple Target Goals:**
-      1. **HbA1c**: < 58 mmol/mol (IFCC) or < 7.5% (DCCT)
-      2. **Blood Pressure**: Systolic < 140 mmHg AND Diastolic < 80 mmHg
-      3. **Total Cholesterol**: < 5 mmol/L
-      
-      **Business Logic:**
-      - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
-      - Uses latest available values for each measurement
-      - HbA1c type detection: IFCC (mmol/mol) vs DCCT (%)
-      - Tracks both target achievement and measurement recency (last 12 months)
-      - Includes flags for recent measurements that are out of target range
-      
-      **Clinical Context:**
-      Essential for diabetes outcome monitoring and quality improvement initiatives.
-      Based on NICE diabetes guidelines for optimal diabetes management targets.
-    
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('int_diabetes_diagnoses_all')
-              field: person_id
-      
-      - name: sk_patient_id
-        description: "Surrogate key for the patient"
-        tests:
-          - not_null
-      
-      - name: diabetes_type
-        description: "Type of diabetes (Type 1, Type 2, or determined type)"
-        tests:
-          - accepted_values:
-              values: ['Type 1', 'Type 2', 'Unknown']
-              severity: warn
-      
-      # HbA1c measurements
-      - name: latest_hba1c_date
-        description: "Date of most recent HbA1c test"
-        tests:
-          - test_no_future_dates
-      
-      - name: latest_hba1c_value
-        description: "Most recent HbA1c result value"
-        tests:
-          - accepted_range:
-              min_value: 20
-              max_value: 200
-              severity: warn
-      
-      - name: hba1c_type
-        description: "HbA1c measurement type: 'IFCC' (mmol/mol) or 'DCCT' (%)"
-        tests:
-          - accepted_values:
-              values: ['IFCC', 'DCCT']
-              severity: warn
-      
-      # Blood pressure measurements
-      - name: latest_bp_date
-        description: "Date of most recent blood pressure reading"
-        tests:
-          - test_no_future_dates
-      
-      - name: latest_systolic
-        description: "Most recent systolic blood pressure (mmHg)"
-        tests:
-          - accepted_range:
-              min_value: 40
-              max_value: 350
-              severity: warn
-      
-      - name: latest_diastolic
-        description: "Most recent diastolic blood pressure (mmHg)"
-        tests:
-          - accepted_range:
-              min_value: 20
-              max_value: 200
-              severity: warn
-      
-      # Cholesterol measurements
-      - name: latest_chol_date
-        description: "Date of most recent total cholesterol test"
-        tests:
-          - test_no_future_dates
-      
-      - name: latest_chol_value
-        description: "Most recent total cholesterol level (mmol/L)"
-        tests:
-          - accepted_range:
-              min_value: 1
-              max_value: 15
-              severity: warn
-      
-      # Target achievement flags
-      - name: hba1c_in_target_range
-        description: "TRUE if latest HbA1c is in target range (< 58 mmol/mol or < 7.5%)"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: bp_in_target_range
-        description: "TRUE if latest BP is in target range (Systolic < 140 AND Diastolic < 80)"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: cholesterol_in_target_range
-        description: "TRUE if latest cholesterol is in target range (< 5 mmol/L)"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: all_three_targets_met
-        description: "TRUE if all three targets (HbA1c, BP, cholesterol) are achieved"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      # Measurement recency flags
-      - name: hba1c_measured_in_last_12m
-        description: "TRUE if HbA1c measured within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: bp_measured_in_last_12m
-        description: "TRUE if blood pressure measured within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: cholesterol_measured_in_last_12m
-        description: "TRUE if cholesterol measured within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      # Recent but out of range flags
-      - name: hba1c_recent_but_out_of_range
-        description: "TRUE if HbA1c measured recently (last 12m) but not in target range"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: bp_recent_but_out_of_range
-        description: "TRUE if BP measured recently (last 12m) but not in target range"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: cholesterol_recent_but_out_of_range
-        description: "TRUE if cholesterol measured recently (last 12m) but not in target range"
-        tests:
-          - accepted_values:
-              values: [true, false] 
+- name: fct_person_diabetes_triple_target
+  description: 'Fact table for diabetes triple target achievement tracking for people on the diabetes register.
+
+
+    **Triple Target Goals:**
+
+    1. **HbA1c**: < 58 mmol/mol (IFCC) or < 7.5% (DCCT)
+
+    2. **Blood Pressure**: Systolic < 140 mmHg AND Diastolic < 80 mmHg
+
+    3. **Total Cholesterol**: < 5 mmol/L
+
+
+    **Business Logic:**
+
+    - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
+
+    - Uses latest available values for each measurement
+
+    - HbA1c type detection: IFCC (mmol/mol) vs DCCT (%)
+
+    - Tracks both target achievement and measurement recency (last 12 months)
+
+    - Includes flags for recent measurements that are out of target range
+
+
+    **Clinical Context:**
+
+    Essential for diabetes outcome monitoring and quality improvement initiatives.
+
+    Based on NICE diabetes guidelines for optimal diabetes management targets.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('int_diabetes_diagnoses_all')
+        field: person_id
+  - name: diabetes_type
+    description: Type of diabetes (Type 1, Type 2, or determined type)
+    tests:
+    - accepted_values:
+        values:
+        - Type 1
+        - Type 2
+        - Unknown
+        severity: warn
+  - name: latest_hba1c_date
+    description: Date of most recent HbA1c test
+    tests:
+    - test_no_future_dates
+  - name: latest_hba1c_value
+    description: Most recent HbA1c result value
+    tests:
+    - accepted_range:
+        min_value: 20
+        max_value: 200
+        severity: warn
+  - name: hba1c_type
+    description: 'HbA1c measurement type: ''IFCC'' (mmol/mol) or ''DCCT'' (%)'
+    tests:
+    - accepted_values:
+        values:
+        - IFCC
+        - DCCT
+        severity: warn
+  - name: latest_bp_date
+    description: Date of most recent blood pressure reading
+    tests:
+    - test_no_future_dates
+  - name: latest_systolic
+    description: Most recent systolic blood pressure (mmHg)
+    tests:
+    - accepted_range:
+        min_value: 40
+        max_value: 350
+        severity: warn
+  - name: latest_diastolic
+    description: Most recent diastolic blood pressure (mmHg)
+    tests:
+    - accepted_range:
+        min_value: 20
+        max_value: 200
+        severity: warn
+  - name: latest_chol_date
+    description: Date of most recent total cholesterol test
+    tests:
+    - test_no_future_dates
+  - name: latest_chol_value
+    description: Most recent total cholesterol level (mmol/L)
+    tests:
+    - accepted_range:
+        min_value: 1
+        max_value: 15
+        severity: warn
+  - name: hba1c_in_target_range
+    description: TRUE if latest HbA1c is in target range (< 58 mmol/mol or < 7.5%)
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: bp_in_target_range
+    description: TRUE if latest BP is in target range (Systolic < 140 AND Diastolic < 80)
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: cholesterol_in_target_range
+    description: TRUE if latest cholesterol is in target range (< 5 mmol/L)
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: all_three_targets_met
+    description: TRUE if all three targets (HbA1c, BP, cholesterol) are achieved
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: hba1c_measured_in_last_12m
+    description: TRUE if HbA1c measured within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: bp_measured_in_last_12m
+    description: TRUE if blood pressure measured within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: cholesterol_measured_in_last_12m
+    description: TRUE if cholesterol measured within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: hba1c_recent_but_out_of_range
+    description: TRUE if HbA1c measured recently (last 12m) but not in target range
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: bp_recent_but_out_of_range
+    description: TRUE if BP measured recently (last 12m) but not in target range
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: cholesterol_recent_but_out_of_range
+    description: TRUE if cholesterol measured recently (last 12m) but not in target range
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false

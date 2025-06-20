@@ -1,217 +1,61 @@
 version: 2
-
 models:
-  - name: int_smi_diagnoses_all
-
+- name: int_smi_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: SMIRES_COD, SMI_COD
+  description: "All serious mental illness diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive\
+    \ data collection for SMI register and mental health care monitoring.\n\nQOF Cluster IDs Used:\n- MH_COD: Mental health\
+    \ diagnoses\n- MHREM_COD: Mental health remission codes\n\nClinical Purpose:\n- QOF SMI register data collection (mental\
+    \ health diagnosis not in remission OR recent lithium therapy)\n- Mental health care pathway monitoring\n- Treatment response\
+    \ tracking\n- Lithium therapy integration support\n\nKey QOF Requirements:\n- Register inclusion: Mental health diagnosis\
+    \ (MH_COD) not in remission (latest MH_COD > latest MHREM_COD)\n- OR recent lithium therapy (handled separately in medication\
+    \ models)\n- No age restrictions for SMI register\n- Requires integration with lithium medication orders for complete\
+    \ register\n\nNote: This model provides diagnosis codes only. Lithium therapy integration is handled \nin the corresponding\
+    \ fact table which joins to int_lithium_medications_all.\n\nIncludes ALL persons following intermediate layer principles.\n\
+    Use as input for fct_person_smi_register.sql which applies QOF business rules and medication integration.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "SMIRES_COD, SMI_COD"
-    description: |
-      All serious mental illness diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for SMI register and mental health care monitoring.
-      
-      QOF Cluster IDs Used:
-      - MH_COD: Mental health diagnoses
-      - MHREM_COD: Mental health remission codes
-      
-      Clinical Purpose:
-      - QOF SMI register data collection (mental health diagnosis not in remission OR recent lithium therapy)
-      - Mental health care pathway monitoring
-      - Treatment response tracking
-      - Lithium therapy integration support
-      
-      Key QOF Requirements:
-      - Register inclusion: Mental health diagnosis (MH_COD) not in remission (latest MH_COD > latest MHREM_COD)
-      - OR recent lithium therapy (handled separately in medication models)
-      - No age restrictions for SMI register
-      - Requires integration with lithium medication orders for complete register
-      
-      Note: This model provides diagnosis codes only. Lithium therapy integration is handled 
-      in the corresponding fact table which joins to int_lithium_medications_all.
-      
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_smi_register.sql which applies QOF business rules and medication integration.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the mental health diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for mental health diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the mental health diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (MH_COD, MHREM_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['MH_COD', 'MHREM_COD']
-              
-      - name: is_mental_health_diagnosis_code
-        description: "Flag indicating mental health diagnosis (MH_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_mental_health_remission_code
-        description: "Flag indicating mental health remission (MHREM_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_mh_diagnosis_date
-        description: "Earliest mental health diagnosis date for this person"
-        
-      - name: latest_mh_diagnosis_date
-        description: "Latest mental health diagnosis date for this person"
-        
-      - name: earliest_remission_date
-        description: "Earliest mental health remission date for this person"
-        
-      - name: latest_remission_date
-        description: "Latest mental health remission date for this person"
-        
-      - name: total_mh_diagnoses
-        description: "Total count of mental health diagnoses for this person"
-        tests:
-          - accepted_range:
-              min_value: 0
-              severity: warn
-              
-      - name: total_remission_codes
-        description: "Total count of mental health remission codes for this person"
-        tests:
-          - accepted_range:
-              min_value: 0
-              severity: warn
-              
-      - name: is_mental_health_currently_in_remission
-        description: "QOF indicator: mental health is currently in remission (latest remission > latest diagnosis)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: mental_health_observation_type
-        description: "Classification of this specific observation (Mental Health Diagnosis, Mental Health Remission, Unknown)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Mental Health Diagnosis', 'Mental Health Remission', 'Unknown']
-              
-      - name: has_mental_health_diagnosis
-        description: "QOF context: person has mental health diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_mental_health_remission_code
-        description: "Clinical flag: person has mental health remission code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_recent_mh_diagnosis
-        description: "Clinical flag: mental health diagnosis in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_mh_diagnosis_last_24m
-        description: "Clinical flag: mental health diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_recent_remission_code
-        description: "Clinical flag: remission code in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_single_mh_diagnosis
-        description: "Clinical indicator: only one mental health diagnosis recorded"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_multiple_mh_diagnoses
-        description: "Clinical indicator: multiple mental health diagnoses recorded"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_any_remission_codes
-        description: "Clinical indicator: has any remission codes recorded"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: days_since_first_mh_diagnosis
-        description: "Number of days since first mental health diagnosis (for care planning)"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 36500  # 100 years
-              severity: warn
-              
-      - name: is_newly_diagnosed_mh
-        description: "Clinical flag: mental health diagnosed in last 2 years"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_established_mh
-        description: "Clinical flag: mental health diagnosed more than 2 years ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_long_term_mh_management
-        description: "Clinical indicator: mental health management spanning >6 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: all_mh_diagnosis_concept_codes
-        description: "Array of all mental health diagnosis concept codes for this person"
-        
-      - name: all_mh_diagnosis_concept_displays
-        description: "Array of all mental health diagnosis concept displays for this person"
-        
-      - name: all_remission_concept_codes
-        description: "Array of all mental health remission concept codes for this person"
-        
-      - name: all_remission_concept_displays
-        description: "Array of all mental health remission concept displays for this person" 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the mental health diagnosis observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for mental health diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the mental health diagnosis code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID (MH_COD, MHREM_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - MH_COD
+        - MHREM_COD
+  - name: earliest_mh_diagnosis_date
+    description: Earliest mental health diagnosis date for this person
+  - name: latest_mh_diagnosis_date
+    description: Latest mental health diagnosis date for this person
+  - name: earliest_remission_date
+    description: Earliest mental health remission date for this person
+  - name: latest_remission_date
+    description: Latest mental health remission date for this person
+  - name: all_mh_diagnosis_concept_codes
+    description: Array of all mental health diagnosis concept codes for this person
+  - name: all_mh_diagnosis_concept_displays
+    description: Array of all mental health diagnosis concept displays for this person
+  - name: all_remission_concept_codes
+    description: Array of all mental health remission concept codes for this person
+  - name: all_remission_concept_displays
+    description: Array of all mental health remission concept displays for this person

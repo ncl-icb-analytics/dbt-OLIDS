@@ -1,71 +1,86 @@
 version: 2
-
 models:
-  - name: int_smoking_status_latest
-    description: |
-      Latest smoking status per person based on most recent smoking-related observation.
-      Uses QOF definitions and prioritises specific status codes over general smoking codes.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - unique
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the latest smoking status observation"
-        tests:
-          - not_null
-      - name: concept_code
-        description: "SNOMED concept code for smoking status"
-        tests:
-          - not_null
-      - name: concept_display
-        description: "Description of the smoking status code"
-        tests:
-          - not_null
-      - name: source_cluster_id
-        description: "Source cluster ID"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD']
-      - name: is_smoker_code
-        description: "Flag indicating current smoker code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_ex_smoker_code
-        description: "Flag indicating ex-smoker code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_never_smoked_code
-        description: "Flag indicating never smoked code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: smoking_status
-        description: "Latest smoking status category"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'Unknown']
-      - name: is_current_smoker
-        description: "Flag indicating current smoking status"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_ex_smoker
-        description: "Flag indicating ex-smoker status"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+- name: int_smoking_status_latest
+  description: 'Latest smoking status per person based on most recent smoking-related observation.
+
+    Uses QOF definitions and prioritises specific status codes over general smoking codes.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - unique
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the latest smoking status observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for smoking status
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: Source cluster ID
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - SMOK_COD
+        - LSMOK_COD
+        - EXSMOK_COD
+        - NSMOK_COD
+  - name: is_smoker_code
+    description: Flag indicating current smoker code
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_ex_smoker_code
+    description: Flag indicating ex-smoker code
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_never_smoked_code
+    description: Flag indicating never smoked code
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: smoking_status
+    description: Latest smoking status category
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Current Smoker
+        - Ex-Smoker
+        - Never Smoked
+        - Unknown
+  - name: is_current_smoker
+    description: Flag indicating current smoking status
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_ex_smoker
+    description: Flag indicating ex-smoker status
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

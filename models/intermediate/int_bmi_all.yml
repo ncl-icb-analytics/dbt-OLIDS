@@ -1,61 +1,60 @@
 version: 2
-
 models:
-  - name: int_bmi_all
+- name: int_bmi_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: BMIVAL_COD
+  description: 'All BMI measurements from observations.
 
+    Simple pattern using BMIVAL_COD with clinical validation and obesity classification.
+
+    Includes ALL persons following intermediate layer principles.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "BMIVAL_COD"
-    description: |
-      All BMI measurements from observations.
-      Simple pattern using BMIVAL_COD with clinical validation and obesity classification.
-      Includes ALL persons following intermediate layer principles.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the BMI measurement"
-        tests:
-          - not_null
-      - name: bmi_value
-        description: "BMI value in kg/m²"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 5
-              max_value: 150
-              severity: warn
-      - name: original_result_value
-        description: "Original BMI value as recorded"
-        tests:
-          - not_null
-      - name: is_valid_bmi
-        description: "Flag indicating if BMI is within valid range (10-80)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: bmi_category
-        description: "Clinical BMI category"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Invalid', 'Underweight', 'Normal Weight', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III', 'Unknown']
-      - name: is_overweight_or_obese
-        description: "Flag indicating BMI ≥25 kg/m²"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_obese
-        description: "Flag indicating BMI ≥30 kg/m²"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the BMI measurement
+    tests:
+    - not_null
+  - name: bmi_value
+    description: "BMI value in kg/m\xB2"
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 5
+        max_value: 150
+        severity: warn
+  - name: original_result_value
+    description: Original BMI value as recorded
+    tests:
+    - not_null
+  - name: is_valid_bmi
+    description: Flag indicating if BMI is within valid range (10-80)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: bmi_category
+    description: Clinical BMI category
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Invalid
+        - Underweight
+        - Normal Weight
+        - Overweight
+        - Obese Class I
+        - Obese Class II
+        - Obese Class III
+        - Unknown

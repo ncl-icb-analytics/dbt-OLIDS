@@ -1,163 +1,104 @@
 models:
-  - name: fct_person_ndh_register
-    description: |
-      QOF Non-Diabetic Hyperglycaemia (NDH) Register - Complex type classification register with diabetes exclusion logic.
-      
-      **Business Logic (Pattern 4):**
-      - Age ≥18 years (adult hyperglycaemia monitoring)
-      - NDH diagnosis: Any of NDH, IGT (Impaired Glucose Tolerance), or PRD (Pre-diabetes) codes
-      - Complex diabetes exclusion: Has NDH AND (never had diabetes OR diabetes is resolved)
-      - Multi-condition tracking: NDH subtypes and diabetes status interaction
-      
-      **Clinical Context:**
-      This register identifies patients with non-diabetic hyperglycaemia who require monitoring
-      and lifestyle intervention to prevent progression to Type 2 diabetes. The complex logic
-      ensures patients are removed from the NDH register if they develop diabetes, but can
-      return if diabetes is subsequently resolved.
-      
-      **QOF Requirements:**
-      - NDH001: Practice can produce a register of patients with non-diabetic hyperglycaemia
-      - Supports diabetes prevention and lifestyle intervention indicators
-      - Links to HbA1c monitoring and cardiovascular risk assessment
-      
-      **Exclusion Logic:**
-      - Rule 1: Age ≥18 years (rejects patients under 18)
-      - Rule 2: Has NDH diagnosis AND never had diabetes
-      - Rule 3: Has NDH diagnosis AND diabetes is resolved
-      
-      **Data Sources:**
-      - NDH codes: int_ndh_diagnoses_all (NDH_COD, IGT_COD, PRD_COD cluster IDs)
-      - Diabetes exclusion: int_diabetes_diagnoses_all (DM_COD, DMRES_COD cluster IDs)
-      - Age filtering: dim_person_age (≥18 years requirement)
-      
-      Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
-
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
-          - unique
-
-      - name: age
-        description: "Current age of person (≥18 years for NDH register eligibility)"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 18
-              max_value: 120
-
-      - name: is_on_ndh_register
-        description: "QOF register inclusion flag - TRUE for all persons in this table"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_ndh_date
-        description: "Date of first recorded specific NDH diagnosis code"
-
-      - name: latest_ndh_date
-        description: "Date of most recent specific NDH diagnosis code"
-
-      - name: earliest_igt_date
-        description: "Date of first recorded IGT (Impaired Glucose Tolerance) diagnosis code"
-
-      - name: latest_igt_date
-        description: "Date of most recent IGT (Impaired Glucose Tolerance) diagnosis code"
-
-      - name: earliest_prd_date
-        description: "Date of first recorded PRD (Pre-diabetes) diagnosis code"
-
-      - name: latest_prd_date
-        description: "Date of most recent PRD (Pre-diabetes) diagnosis code"
-
-      - name: earliest_multndh_date
-        description: "Date of first recorded NDH/IGT/PRD diagnosis code (any subtype)"
-        tests:
-          - not_null
-
-      - name: latest_multndh_date
-        description: "Date of most recent NDH/IGT/PRD diagnosis code (any subtype)"
-
-      - name: earliest_diabetes_date
-        description: "Date of first recorded diabetes diagnosis code - NULL if never had diabetes"
-
-      - name: latest_diabetes_date
-        description: "Date of most recent diabetes diagnosis code - NULL if never had diabetes"
-
-      - name: latest_diabetes_resolved_date
-        description: "Date of most recent diabetes resolved code - required if had diabetes"
-
-      - name: has_specific_ndh_diagnosis
-        description: "Boolean flag: TRUE if person has specific NDH diagnosis code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: has_igt_diagnosis
-        description: "Boolean flag: TRUE if person has IGT (Impaired Glucose Tolerance) diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: has_prd_diagnosis
-        description: "Boolean flag: TRUE if person has PRD (Pre-diabetes) diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: has_diabetes_diagnosis
-        description: "Boolean flag: TRUE if person has ever had diabetes diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_diabetes_resolved
-        description: "Boolean flag: TRUE if person's diabetes is resolved (required for register inclusion if ever had diabetes)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: all_ndh_concept_codes
-        description: "Array of all specific NDH diagnosis concept codes recorded for this person"
-
-      - name: all_ndh_concept_displays
-        description: "Array of all specific NDH diagnosis concept display terms"
-
-      - name: all_igt_concept_codes
-        description: "Array of all IGT diagnosis concept codes recorded for this person"
-
-      - name: all_igt_concept_displays
-        description: "Array of all IGT diagnosis concept display terms"
-
-      - name: all_prd_concept_codes
-        description: "Array of all PRD diagnosis concept codes recorded for this person"
-
-      - name: all_prd_concept_displays
-        description: "Array of all PRD diagnosis concept display terms"
-
-      - name: all_diabetes_concept_codes
-        description: "Array of all diabetes diagnosis concept codes recorded for this person"
-
-      - name: all_diabetes_concept_displays
-        description: "Array of all diabetes diagnosis concept display terms"
-
-      - name: meets_age_criteria
-        description: "Boolean flag: TRUE if person meets age ≥18 requirement"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: has_ndh_diagnosis
-        description: "Boolean flag: TRUE if person has any NDH/IGT/PRD diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true] 
+- name: fct_person_ndh_register
+  description: "QOF Non-Diabetic Hyperglycaemia (NDH) Register - Complex type classification register with diabetes exclusion\
+    \ logic.\n\n**Business Logic (Pattern 4):**\n- Age \u226518 years (adult hyperglycaemia monitoring)\n- NDH diagnosis:\
+    \ Any of NDH, IGT (Impaired Glucose Tolerance), or PRD (Pre-diabetes) codes\n- Complex diabetes exclusion: Has NDH AND\
+    \ (never had diabetes OR diabetes is resolved)\n- Multi-condition tracking: NDH subtypes and diabetes status interaction\n\
+    \n**Clinical Context:**\nThis register identifies patients with non-diabetic hyperglycaemia who require monitoring\nand\
+    \ lifestyle intervention to prevent progression to Type 2 diabetes. The complex logic\nensures patients are removed from\
+    \ the NDH register if they develop diabetes, but can\nreturn if diabetes is subsequently resolved.\n\n**QOF Requirements:**\n\
+    - NDH001: Practice can produce a register of patients with non-diabetic hyperglycaemia\n- Supports diabetes prevention\
+    \ and lifestyle intervention indicators\n- Links to HbA1c monitoring and cardiovascular risk assessment\n\n**Exclusion\
+    \ Logic:**\n- Rule 1: Age \u226518 years (rejects patients under 18)\n- Rule 2: Has NDH diagnosis AND never had diabetes\n\
+    - Rule 3: Has NDH diagnosis AND diabetes is resolved\n\n**Data Sources:**\n- NDH codes: int_ndh_diagnoses_all (NDH_COD,\
+    \ IGT_COD, PRD_COD cluster IDs)\n- Diabetes exclusion: int_diabetes_diagnoses_all (DM_COD, DMRES_COD cluster IDs)\n- Age\
+    \ filtering: dim_person_age (\u226518 years requirement)\n\nIncludes ALL persons (active, inactive, deceased) for comprehensive\
+    \ reporting.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
+    tests:
+    - not_null
+    - unique
+  - name: is_on_ndh_register
+    description: QOF register inclusion flag - TRUE for all persons in this table
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: earliest_ndh_date
+    description: Date of first recorded specific NDH diagnosis code
+  - name: latest_ndh_date
+    description: Date of most recent specific NDH diagnosis code
+  - name: earliest_igt_date
+    description: Date of first recorded IGT (Impaired Glucose Tolerance) diagnosis code
+  - name: latest_igt_date
+    description: Date of most recent IGT (Impaired Glucose Tolerance) diagnosis code
+  - name: earliest_prd_date
+    description: Date of first recorded PRD (Pre-diabetes) diagnosis code
+  - name: latest_prd_date
+    description: Date of most recent PRD (Pre-diabetes) diagnosis code
+  - name: latest_multndh_date
+    description: Date of most recent NDH/IGT/PRD diagnosis code (any subtype)
+  - name: earliest_diabetes_date
+    description: Date of first recorded diabetes diagnosis code - NULL if never had diabetes
+  - name: latest_diabetes_date
+    description: Date of most recent diabetes diagnosis code - NULL if never had diabetes
+  - name: latest_diabetes_resolved_date
+    description: Date of most recent diabetes resolved code - required if had diabetes
+  - name: has_igt_diagnosis
+    description: 'Boolean flag: TRUE if person has IGT (Impaired Glucose Tolerance) diagnosis'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: has_prd_diagnosis
+    description: 'Boolean flag: TRUE if person has PRD (Pre-diabetes) diagnosis'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: has_diabetes_diagnosis
+    description: 'Boolean flag: TRUE if person has ever had diabetes diagnosis'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_diabetes_resolved
+    description: 'Boolean flag: TRUE if person''s diabetes is resolved (required for register inclusion if ever had diabetes)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: all_ndh_concept_codes
+    description: Array of all specific NDH diagnosis concept codes recorded for this person
+  - name: all_ndh_concept_displays
+    description: Array of all specific NDH diagnosis concept display terms
+  - name: all_igt_concept_codes
+    description: Array of all IGT diagnosis concept codes recorded for this person
+  - name: all_igt_concept_displays
+    description: Array of all IGT diagnosis concept display terms
+  - name: all_prd_concept_codes
+    description: Array of all PRD diagnosis concept codes recorded for this person
+  - name: all_prd_concept_displays
+    description: Array of all PRD diagnosis concept display terms
+  - name: all_diabetes_concept_codes
+    description: Array of all diabetes diagnosis concept codes recorded for this person
+  - name: all_diabetes_concept_displays
+    description: Array of all diabetes diagnosis concept display terms
+  - name: has_ndh_diagnosis
+    description: 'Boolean flag: TRUE if person has any NDH/IGT/PRD diagnosis'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true

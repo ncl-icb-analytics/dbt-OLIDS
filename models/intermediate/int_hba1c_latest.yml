@@ -1,57 +1,18 @@
 version: 2
-
 models:
-  - name: int_hba1c_latest
-    description: |
-      Latest valid HbA1c measurement per person.
-      Filters to most recent valid HbA1c in appropriate ranges.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - unique
-      - name: clinical_effective_date
-        description: "Date of the HbA1c measurement"
-        tests:
-          - not_null
-      - name: hba1c_ifcc_value
-        description: "HbA1c value in IFCC units (mmol/mol)"
-        tests:
-          - accepted_range:
-              min_value: 15
-              max_value: 200
-              config:
-                where: "hba1c_ifcc_value IS NOT NULL"
-      - name: hba1c_dcct_value
-        description: "HbA1c value in DCCT units (%)"
-        tests:
-          - accepted_range:
-              min_value: 3.5
-              max_value: 18
-              config:
-                where: "hba1c_dcct_value IS NOT NULL"
-      - name: measurement_type
-        description: "Type of HbA1c measurement"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['IFCC (mmol/mol)', 'DCCT (%)']
-      - name: diabetes_control_category
-        description: "Diabetes control category (excludes 'Invalid')"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Normal (<42 mmol/mol)', 'Pre-diabetes (42-47)', 'Diabetes (≥48)', 'Poor Control (≥58)', 'Very Poor Control (≥75)']
-      - name: is_diabetes_range
-        description: "Flag indicating HbA1c ≥48 mmol/mol (6.5%)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_prediabetes_range
-        description: "Flag indicating HbA1c 42-47 mmol/mol (6.0-6.4%)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+- name: int_hba1c_latest
+  description: 'Latest valid HbA1c measurement per person.
+
+    Filters to most recent valid HbA1c in appropriate ranges.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - unique
+  - name: clinical_effective_date
+    description: Date of the HbA1c measurement
+    tests:
+    - not_null

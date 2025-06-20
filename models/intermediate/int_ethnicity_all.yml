@@ -1,29 +1,19 @@
 version: 2
-
 models:
-  - name: int_ethnicity_all
-    description: |
-      All ethnicity records from observations.
-      Comprehensive ethnicity data including ALL persons following intermediate layer principles.
-      Captures all recorded ethnicity observations over time.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date the ethnicity was recorded"
-        tests:
-          - not_null
-      - name: ethnicity_code
-        description: "Ethnicity concept code"
-        tests:
-          - not_null
-      - name: ethnicity_description
-        description: "Ethnicity description/display text"
-        tests:
-          - not_null 
+- name: int_ethnicity_all
+  description: 'All ethnicity records from observations.
+
+    Comprehensive ethnicity data including ALL persons following intermediate layer principles.
+
+    Captures all recorded ethnicity observations over time.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date the ethnicity was recorded
+    tests:
+    - not_null

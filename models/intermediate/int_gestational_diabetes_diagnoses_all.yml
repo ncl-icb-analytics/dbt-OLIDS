@@ -1,86 +1,23 @@
 version: 2
-
 models:
-  - name: int_gestational_diabetes_diagnoses_all
-
+- name: int_gestational_diabetes_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: GESTDIAB_COD
+  description: "All gestational diabetes diagnoses from clinical records.\nUses QOF cluster ID GESTDM_COD for gestational\
+    \ diabetes diagnosis codes.\n\nClinical Purpose:\n- Gestational diabetes register inclusion for QOF quality measures\n\
+    - Pregnancy diabetes management monitoring\n- Future diabetes risk assessment\n\nQOF Context:\nGestational diabetes register\
+    \ follows simple diagnosis-only pattern - any gestational \ndiabetes diagnosis qualifies for register inclusion. No resolution\
+    \ codes.\nThis supports pregnancy care quality measures and future diabetes risk monitoring.\n\nKey Clinical Notes:\n\
+    - Gestational diabetes records are permanent for future risk assessment\n- Register inclusion based purely on presence\
+    \ of diagnostic codes\n- Important for pregnancy care quality measures\n- Critical for future diabetes risk monitoring\
+    \ and prevention\n\nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this\
+    \ model as input for gestational diabetes register.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "GESTDIAB_COD"
-    description: |
-      All gestational diabetes diagnoses from clinical records.
-      Uses QOF cluster ID GESTDM_COD for gestational diabetes diagnosis codes.
-      
-      Clinical Purpose:
-      - Gestational diabetes register inclusion for QOF quality measures
-      - Pregnancy diabetes management monitoring
-      - Future diabetes risk assessment
-      
-      QOF Context:
-      Gestational diabetes register follows simple diagnosis-only pattern - any gestational 
-      diabetes diagnosis qualifies for register inclusion. No resolution codes.
-      This supports pregnancy care quality measures and future diabetes risk monitoring.
-      
-      Key Clinical Notes:
-      - Gestational diabetes records are permanent for future risk assessment
-      - Register inclusion based purely on presence of diagnostic codes
-      - Important for pregnancy care quality measures
-      - Critical for future diabetes risk monitoring and prevention
-      
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      Use this model as input for gestational diabetes register.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: has_gestational_diabetes_diagnosis
-        description: "Flag indicating person has at least one gestational diabetes diagnosis (always TRUE in this model)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_gestational_diabetes_date
-        description: "Date of first recorded gestational diabetes diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: latest_gestational_diabetes_date
-        description: "Date of most recent gestational diabetes diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: total_gestational_diabetes_episodes
-        description: "Total number of distinct gestational diabetes diagnosis dates"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 10
-
-      - name: all_gestational_diabetes_concept_codes
-        description: "Array of all distinct gestational diabetes concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_gestational_diabetes_concept_displays
-        description: "Array of all distinct gestational diabetes concept descriptions for this person"
-        tests:
-          - not_null
-
-      - name: latest_gestational_diabetes_concept_code
-        description: "Concept code from most recent gestational diabetes diagnosis"
-        tests:
-          - not_null
-
-      - name: latest_gestational_diabetes_concept_description
-        description: "Concept description from most recent gestational diabetes diagnosis"
-        tests:
-          - not_null 
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id

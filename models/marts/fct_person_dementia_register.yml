@@ -1,71 +1,43 @@
 version: 2
-
 models:
-  - name: fct_person_dementia_register
-    description: |
-      **Dementia Register - QOF Mental Health Quality Measures**
-      
-      Pattern 1: Simple Register with diagnosis only.
-      
-      QOF Business Logic:
-      - Presence of dementia diagnosis (DEM_COD) = on register
-      - No resolution codes (dementia is permanent condition)  
-      - No age restrictions for dementia register
-      - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
-      
-      QOF Context:
-      Used for dementia quality measures including:
-      - Dementia care pathway monitoring
-      - Cognitive health assessment support
-      - Memory service referral tracking
-      - Early detection and ongoing care
-      
-      Matches legacy fct_person_dx_dementia business logic and field structure.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: sk_patient_id
-        description: "Surrogate key for the patient (from EMIS system)"
-        tests:
-          - not_null
-
-      - name: age
-        description: "Current age of person in years"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 120
-
-      - name: is_on_dementia_register
-        description: "Register flag: has dementia diagnosis (always TRUE for this table)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_dementia_diagnosis_date
-        description: "Date of first recorded dementia diagnosis"
-        tests:
-          - not_null
-          - name: latest_dementia_diagnosis_date
-        description: "Date of most recent dementia diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: all_dementia_concept_codes
-        description: "Array of all distinct dementia concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_dementia_concept_displays
-        description: "Array of all distinct dementia concept display terms for this person"
-        tests:
-          - not_null 
+- name: fct_person_dementia_register
+  description: "**Dementia Register - QOF Mental Health Quality Measures**\n\nPattern 1: Simple Register with diagnosis only.\n\
+    \nQOF Business Logic:\n- Presence of dementia diagnosis (DEM_COD) = on register\n- No resolution codes (dementia is permanent\
+    \ condition)  \n- No age restrictions for dementia register\n- Includes ALL persons (active, inactive, deceased) for comprehensive\
+    \ reporting\n\nQOF Context:\nUsed for dementia quality measures including:\n- Dementia care pathway monitoring\n- Cognitive\
+    \ health assessment support\n- Memory service referral tracking\n- Early detection and ongoing care\n\nMatches legacy\
+    \ fct_person_dx_dementia business logic and field structure.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: age
+    description: Current age of person in years
+    tests:
+    - accepted_range:
+        min_value: 0
+        max_value: 120
+  - name: is_on_dementia_register
+    description: 'Register flag: has dementia diagnosis (always TRUE for this table)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: earliest_dementia_diagnosis_date
+    description: Date of most recent dementia diagnosis
+    tests:
+    - not_null
+    - test_no_future_dates
+  - name: all_dementia_concept_codes
+    description: Array of all distinct dementia concept codes for this person
+    tests:
+    - not_null
+  - name: all_dementia_concept_displays
+    description: Array of all distinct dementia concept display terms for this person
+    tests:
+    - not_null

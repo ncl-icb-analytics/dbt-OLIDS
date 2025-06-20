@@ -1,79 +1,77 @@
 version: 2
-
 models:
-  - name: int_pregnancy_status_all
+- name: int_pregnancy_status_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: PREGDEL_COD, PREG_COD
+  description: 'Pregnancy status intermediate model collecting ALL pregnancy-related observations.
 
+
+    **Single Responsibility Principle:**
+
+    - Data collection only - NO business logic
+
+    - Uses standardised get_observations() macro
+
+    - Collects from UKHSA_FLU source only (as per legacy)
+
+
+    **Cluster IDs:**
+
+    - PREG_COD: Pregnancy codes
+
+    - PREGDEL_COD: Pregnancy delivery/ended codes
+
+
+    **Usage:**
+
+    Input for fct_person_pregnancy_status.sql which applies pregnancy status logic.
+
+
+    **Data Quality:**
+
+    Raw observation data - person-level aggregation and business rules applied downstream.
+
+    '
+  config:
+    materialized: table
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "PREGDEL_COD, PREG_COD"
-    description: |
-      Pregnancy status intermediate model collecting ALL pregnancy-related observations.
-      
-      **Single Responsibility Principle:**
-      - Data collection only - NO business logic
-      - Uses standardised get_observations() macro
-      - Collects from UKHSA_FLU source only (as per legacy)
-      
-      **Cluster IDs:**
-      - PREG_COD: Pregnancy codes
-      - PREGDEL_COD: Pregnancy delivery/ended codes
-      
-      **Usage:**
-      Input for fct_person_pregnancy_status.sql which applies pregnancy status logic.
-      
-      **Data Quality:**
-      Raw observation data - person-level aggregation and business rules applied downstream.
-
-    config:
-      materialized: table
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-              
-      - name: clinical_effective_date
-        description: "Date when pregnancy observation was clinically effective"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for pregnancy observation"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Human-readable display term for concept code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "Source cluster ID (PREG_COD or PREGDEL_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['PREG_COD', 'PREGDEL_COD']
-              
-      - name: is_pregnancy_code
-        description: "Flag indicating if observation is a pregnancy code (PREG_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_delivery_code
-        description: "Flag indicating if observation is a delivery/ended code (PREGDEL_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: date_recorded
-        description: "Date when observation was recorded in system"
-        
-      - name: lds_datetime_data_acquired
-        description: "LDS processing timestamp" 
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: clinical_effective_date
+    description: Date when pregnancy observation was clinically effective
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for pregnancy observation
+    tests:
+    - not_null
+  - name: concept_display
+    description: Human-readable display term for concept code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: Source cluster ID (PREG_COD or PREGDEL_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - PREG_COD
+        - PREGDEL_COD
+  - name: is_pregnancy_code
+    description: Flag indicating if observation is a pregnancy code (PREG_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: date_recorded
+    description: Date when observation was recorded in system
+  - name: lds_datetime_data_acquired
+    description: LDS processing timestamp

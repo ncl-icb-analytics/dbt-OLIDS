@@ -1,98 +1,23 @@
 version: 2
-
 models:
-  - name: int_pad_diagnoses_all
-
+- name: int_pad_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: PAD_COD
+  description: "All peripheral arterial disease (PAD) diagnoses from clinical records.\nUses QOF cluster ID PAD_COD for all\
+    \ forms of PAD diagnosis.\n\nClinical Purpose:\n- PAD register inclusion for QOF cardiovascular disease management\n-\
+    \ Cardiovascular risk stratification and monitoring  \n- Secondary prevention pathway identification\n\nQOF Context:\n\
+    PAD register follows simple diagnosis-only pattern - any PAD diagnosis code qualifies \nfor register inclusion. No resolution\
+    \ codes or complex criteria. This is a lifelong \ncondition register for cardiovascular secondary prevention.\n\nKey Clinical\
+    \ Notes:\n- PAD is considered a permanent condition (no resolution codes)\n- Register inclusion based purely on presence\
+    \ of diagnostic codes\n- Important for secondary prevention medication monitoring\n- No age restrictions for PAD register\n\
+    \nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model as input\
+    \ for PAD register and cardiovascular risk models.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "PAD_COD"
-    description: |
-      All peripheral arterial disease (PAD) diagnoses from clinical records.
-      Uses QOF cluster ID PAD_COD for all forms of PAD diagnosis.
-      
-      Clinical Purpose:
-      - PAD register inclusion for QOF cardiovascular disease management
-      - Cardiovascular risk stratification and monitoring  
-      - Secondary prevention pathway identification
-      
-      QOF Context:
-      PAD register follows simple diagnosis-only pattern - any PAD diagnosis code qualifies 
-      for register inclusion. No resolution codes or complex criteria. This is a lifelong 
-      condition register for cardiovascular secondary prevention.
-      
-      Key Clinical Notes:
-      - PAD is considered a permanent condition (no resolution codes)
-      - Register inclusion based purely on presence of diagnostic codes
-      - Important for secondary prevention medication monitoring
-      - No age restrictions for PAD register
-      
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      Use this model as input for PAD register and cardiovascular risk models.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: has_pad_diagnosis
-        description: "Flag indicating person has at least one PAD diagnosis (always TRUE in this model)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_pad_date
-        description: "Date of first recorded PAD diagnosis"
-        tests:
-          - not_null
-          - name: latest_pad_date
-        description: "Date of most recent PAD diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: total_pad_episodes
-        description: "Total number of distinct PAD diagnosis dates"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 100
-
-      - name: has_episode_last_12m
-        description: "Boolean flag: has PAD diagnosis in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: has_episode_last_24m
-        description: "Boolean flag: has PAD diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: all_pad_concept_codes
-        description: "Array of all distinct PAD concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_pad_concept_displays
-        description: "Array of all distinct PAD concept descriptions for this person"
-        tests:
-          - not_null
-
-      - name: latest_pad_concept_code
-        description: "Concept code from most recent PAD diagnosis"
-        tests:
-          - not_null
-
-      - name: latest_pad_concept_description
-        description: "Concept description from most recent PAD diagnosis"
-        tests:
-          - not_null 
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id

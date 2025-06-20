@@ -1,85 +1,40 @@
 version: 2
-
 models:
-  - name: fct_person_cancer_register
-    description: |
-      **Cancer Register - QOF Quality Measures**
-      
-      Fact table for cancer register with date filter. All patients with cancer diagnosis 
-      on/after April 1, 2003 are included on the register.
-      
-      Simple Register Business Logic with Date Filter:
-      - Cancer diagnosis on/after 1 April 2003 = on register
-      - No resolution codes (cancer is permanent)
-      - No age restrictions
-      - Excludes non-melanotic skin cancers (handled in cluster definition)
-      
-      QOF Context:
-      Used for cancer care quality measures including:
-      - Survivorship care and follow-up monitoring
-      - Cancer care pathway tracking
-      - Treatment outcome monitoring
-      - Care coordination quality measures
-      
-      Note: Legacy includes episode timing flags, but keeping this model simple 
-      per architectural guidance. Episode analysis can be done separately if needed.
-      
-      Matches legacy fct_person_dx_cancer business logic and field structure.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: sk_patient_id
-        description: "Surrogate key for the patient (from EMIS system)"
-        tests:
-          - not_null
-
-      - name: age
-        description: "Current age of person in years"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 120
-
-      - name: is_on_cancer_register
-        description: "Register flag: has cancer diagnosis on/after 1 April 2003 (always TRUE for this table)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_cancer_date
-        description: "Date of first recorded cancer diagnosis (QOF requires on/after 1 April 2003)"
-        tests:
-          - not_null
-          - test_no_future_dates
-          - accepted_range:
-              min_value: "'2003-04-01'"
-              max_value: "current_date()"
-              severity: warn
-
-      - name: latest_cancer_date
-        description: "Date of most recent cancer diagnosis (QOF requires on/after 1 April 2003)"
-        tests:
-          - not_null
-          - test_no_future_dates
-          - accepted_range:
-              min_value: "'2003-04-01'"
-              max_value: "current_date()"
-              severity: warn
-
-      - name: all_cancer_concept_codes
-        description: "Array of all distinct cancer concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_cancer_concept_displays
-        description: "Array of all distinct cancer concept display terms for this person"
-        tests:
-          - not_null 
+- name: fct_person_cancer_register
+  description: "**Cancer Register - QOF Quality Measures**\n\nFact table for cancer register with date filter. All patients\
+    \ with cancer diagnosis \non/after April 1, 2003 are included on the register.\n\nSimple Register Business Logic with\
+    \ Date Filter:\n- Cancer diagnosis on/after 1 April 2003 = on register\n- No resolution codes (cancer is permanent)\n\
+    - No age restrictions\n- Excludes non-melanotic skin cancers (handled in cluster definition)\n\nQOF Context:\nUsed for\
+    \ cancer care quality measures including:\n- Survivorship care and follow-up monitoring\n- Cancer care pathway tracking\n\
+    - Treatment outcome monitoring\n- Care coordination quality measures\n\nNote: Legacy includes episode timing flags, but\
+    \ keeping this model simple \nper architectural guidance. Episode analysis can be done separately if needed.\n\nMatches\
+    \ legacy fct_person_dx_cancer business logic and field structure.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: age
+    description: Current age of person in years
+    tests:
+    - accepted_range:
+        min_value: 0
+        max_value: 120
+  - name: is_on_cancer_register
+    description: 'Register flag: has cancer diagnosis on/after 1 April 2003 (always TRUE for this table)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: all_cancer_concept_codes
+    description: Array of all distinct cancer concept codes for this person
+    tests:
+    - not_null
+  - name: all_cancer_concept_displays
+    description: Array of all distinct cancer concept display terms for this person
+    tests:
+    - not_null

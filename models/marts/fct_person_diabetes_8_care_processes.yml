@@ -1,154 +1,167 @@
 version: 2
-
 models:
-  - name: fct_person_diabetes_8_care_processes
-    description: |
-      Fact table tracking completion of the 8 diabetes care processes for people on the diabetes register.
-      
-      **8 Care Processes:**
-      1. HbA1c test
-      2. Blood pressure check
-      3. Cholesterol test
-      4. Serum creatinine test
-      5. Urine ACR test
-      6. Foot examination
-      7. BMI recording
-      8. Smoking status recording
-      
-      **Business Logic:**
-      - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
-      - Completion timeframe: Within last 12 months from current date
-      - Foot check logic: Requires both feet checked OR one foot checked with other absent/amputated, AND not declined/unsuitable
-      - Overall completion: Count of completed processes (0-8) and flag for all 8 completed
-      
-      **Clinical Context:**
-      Essential for diabetes quality of care monitoring and QOF reporting. Based on NICE diabetes guidelines
-      requiring regular monitoring of these key clinical parameters.
-    
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('int_diabetes_diagnoses_all')
-              field: person_id
-      
-      - name: sk_patient_id
-        description: "Surrogate key for the patient"
-        tests:
-          - not_null
-      
-      - name: latest_hba1c_date
-        description: "Date of most recent HbA1c test"
-        tests:
-          - test_no_future_dates
-      
-      - name: hba1c_completed_in_last_12m
-        description: "TRUE if HbA1c test completed within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_hba1c_value
-        description: "Most recent HbA1c result value (mmol/mol or %)"
-        tests:
-          - accepted_range:
-              min_value: 20
-              max_value: 200
-              severity: warn
-      
-      - name: latest_bp_date
-        description: "Date of most recent blood pressure reading"
-        tests:
-          - test_no_future_dates
-      
-      - name: bp_completed_in_last_12m
-        description: "TRUE if blood pressure check completed within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_cholesterol_date
-        description: "Date of most recent total cholesterol test"
-        tests:
-          - test_no_future_dates
-      
-      - name: cholesterol_completed_in_last_12m
-        description: "TRUE if cholesterol test completed within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_creatinine_date
-        description: "Date of most recent serum creatinine test"
-        tests:
-          - test_no_future_dates
-      
-      - name: creatinine_completed_in_last_12m
-        description: "TRUE if serum creatinine test completed within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_acr_date
-        description: "Date of most recent urine ACR test"
-        tests:
-          - test_no_future_dates
-      
-      - name: acr_completed_in_last_12m
-        description: "TRUE if urine ACR test completed within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_foot_check_date
-        description: "Date of most recent foot examination"
-        tests:
-          - test_no_future_dates
-      
-      - name: foot_check_completed_in_last_12m
-        description: |
-          TRUE if foot examination completed within last 12 months AND meets quality criteria:
-          - Both feet checked OR one foot checked with other absent/amputated
-          - NOT declined by patient or deemed unsuitable
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_bmi_date
-        description: "Date of most recent BMI recording"
-        tests:
-          - test_no_future_dates
-      
-      - name: bmi_completed_in_last_12m
-        description: "TRUE if BMI recorded within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_smoking_date
-        description: "Date of most recent smoking status recording"
-        tests:
-          - test_no_future_dates
-      
-      - name: smoking_completed_in_last_12m
-        description: "TRUE if smoking status recorded within last 12 months"
-        tests:
-          - accepted_values:
-              values: [true, false]
-      
-      - name: care_processes_completed
-        description: "Count of care processes completed within last 12 months (0-8)"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 0
-              max_value: 8
-      
-      - name: all_processes_completed
-        description: "TRUE if all 8 care processes completed within last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+- name: fct_person_diabetes_8_care_processes
+  description: 'Fact table tracking completion of the 8 diabetes care processes for people on the diabetes register.
+
+
+    **8 Care Processes:**
+
+    1. HbA1c test
+
+    2. Blood pressure check
+
+    3. Cholesterol test
+
+    4. Serum creatinine test
+
+    5. Urine ACR test
+
+    6. Foot examination
+
+    7. BMI recording
+
+    8. Smoking status recording
+
+
+    **Business Logic:**
+
+    - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
+
+    - Completion timeframe: Within last 12 months from current date
+
+    - Foot check logic: Requires both feet checked OR one foot checked with other absent/amputated, AND not declined/unsuitable
+
+    - Overall completion: Count of completed processes (0-8) and flag for all 8 completed
+
+
+    **Clinical Context:**
+
+    Essential for diabetes quality of care monitoring and QOF reporting. Based on NICE diabetes guidelines
+
+    requiring regular monitoring of these key clinical parameters.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('int_diabetes_diagnoses_all')
+        field: person_id
+  - name: latest_hba1c_date
+    description: Date of most recent HbA1c test
+    tests:
+    - test_no_future_dates
+  - name: hba1c_completed_in_last_12m
+    description: TRUE if HbA1c test completed within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_hba1c_value
+    description: Most recent HbA1c result value (mmol/mol or %)
+    tests:
+    - accepted_range:
+        min_value: 20
+        max_value: 200
+        severity: warn
+  - name: latest_bp_date
+    description: Date of most recent blood pressure reading
+    tests:
+    - test_no_future_dates
+  - name: bp_completed_in_last_12m
+    description: TRUE if blood pressure check completed within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_cholesterol_date
+    description: Date of most recent total cholesterol test
+    tests:
+    - test_no_future_dates
+  - name: cholesterol_completed_in_last_12m
+    description: TRUE if cholesterol test completed within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_creatinine_date
+    description: Date of most recent serum creatinine test
+    tests:
+    - test_no_future_dates
+  - name: creatinine_completed_in_last_12m
+    description: TRUE if serum creatinine test completed within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_acr_date
+    description: Date of most recent urine ACR test
+    tests:
+    - test_no_future_dates
+  - name: acr_completed_in_last_12m
+    description: TRUE if urine ACR test completed within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_foot_check_date
+    description: Date of most recent foot examination
+    tests:
+    - test_no_future_dates
+  - name: foot_check_completed_in_last_12m
+    description: 'TRUE if foot examination completed within last 12 months AND meets quality criteria:
+
+      - Both feet checked OR one foot checked with other absent/amputated
+
+      - NOT declined by patient or deemed unsuitable
+
+      '
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_bmi_date
+    description: Date of most recent BMI recording
+    tests:
+    - test_no_future_dates
+  - name: bmi_completed_in_last_12m
+    description: TRUE if BMI recorded within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_smoking_date
+    description: Date of most recent smoking status recording
+    tests:
+    - test_no_future_dates
+  - name: smoking_completed_in_last_12m
+    description: TRUE if smoking status recorded within last 12 months
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: care_processes_completed
+    description: Count of care processes completed within last 12 months (0-8)
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 0
+        max_value: 8
+  - name: all_processes_completed
+    description: TRUE if all 8 care processes completed within last 12 months
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

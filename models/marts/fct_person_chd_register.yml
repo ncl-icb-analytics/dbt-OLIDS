@@ -1,86 +1,44 @@
 version: 2
-
 models:
-  - name: fct_person_chd_register
-    description: |
-      **CHD Register - QOF Cardiovascular Disease Quality Measures**
-      
-      Fact table for CHD register following simple register pattern. All patients with any CHD 
-      diagnosis are included on the register as CHD is considered a permanent condition.
-      
-      Simple Register Business Logic:
-      - Presence of CHD diagnosis = on register (lifelong condition)
-      - No resolution codes (CHD is permanent)
-      - No age restrictions
-      - Important for secondary prevention monitoring
-      
-      QOF Context:
-      Used for cardiovascular disease secondary prevention quality measures including:
-      - Medication monitoring (statins, antiplatelets, ACE inhibitors)
-      - Blood pressure management targets
-      - Cholesterol management
-      - Lifestyle intervention tracking
-      
-      Matches legacy fct_person_dx_chd business logic and field structure.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: sk_patient_id
-        description: "Surrogate key for the patient (from EMIS system)"
-        tests:
-          - not_null
-
-      - name: age
-        description: "Current age of person in years"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 120
-
-      - name: is_on_chd_register
-        description: "Register flag: has CHD diagnosis (always TRUE for this table)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: has_episode_last_24m
-        description: "Flag: CHD episode recorded in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: has_episode_last_12m
-        description: "Flag: CHD episode recorded in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: earliest_chd_date
-        description: "Date of first recorded CHD diagnosis"
-        tests:
-          - not_null
-          - name: latest_chd_date
-        description: "Date of most recent CHD diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: all_chd_concept_codes
-        description: "Array of all distinct CHD concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_chd_concept_displays
-        description: "Array of all distinct CHD concept display terms for this person"
-        tests:
-          - not_null 
+- name: fct_person_chd_register
+  description: "**CHD Register - QOF Cardiovascular Disease Quality Measures**\n\nFact table for CHD register following simple\
+    \ register pattern. All patients with any CHD \ndiagnosis are included on the register as CHD is considered a permanent\
+    \ condition.\n\nSimple Register Business Logic:\n- Presence of CHD diagnosis = on register (lifelong condition)\n- No\
+    \ resolution codes (CHD is permanent)\n- No age restrictions\n- Important for secondary prevention monitoring\n\nQOF Context:\n\
+    Used for cardiovascular disease secondary prevention quality measures including:\n- Medication monitoring (statins, antiplatelets,\
+    \ ACE inhibitors)\n- Blood pressure management targets\n- Cholesterol management\n- Lifestyle intervention tracking\n\n\
+    Matches legacy fct_person_dx_chd business logic and field structure.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: age
+    description: Current age of person in years
+    tests:
+    - accepted_range:
+        min_value: 0
+        max_value: 120
+  - name: is_on_chd_register
+    description: 'Register flag: has CHD diagnosis (always TRUE for this table)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: earliest_chd_date
+    description: Date of most recent CHD diagnosis
+    tests:
+    - not_null
+    - test_no_future_dates
+  - name: all_chd_concept_codes
+    description: Array of all distinct CHD concept codes for this person
+    tests:
+    - not_null
+  - name: all_chd_concept_displays
+    description: Array of all distinct CHD concept display terms for this person
+    tests:
+    - not_null

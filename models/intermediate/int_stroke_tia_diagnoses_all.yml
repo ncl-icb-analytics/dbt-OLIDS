@@ -1,84 +1,23 @@
 version: 2
-
 models:
-  - name: int_stroke_tia_diagnoses_all
-
+- name: int_stroke_tia_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: STIARES_COD, STIA_COD
+  description: "All stroke and transient ischaemic attack (TIA) diagnoses from clinical records.\nUses QOF cluster ID STIA_COD\
+    \ for stroke and TIA diagnosis codes.\n\nClinical Purpose:\n- Stroke/TIA register inclusion for QOF quality measures\n\
+    - Stroke secondary prevention monitoring\n- Cardiovascular risk management post-stroke\n\nQOF Context:\nStroke/TIA register\
+    \ follows simple diagnosis-only pattern - any stroke or TIA diagnosis \nqualifies for register inclusion. No resolution\
+    \ codes or complex criteria.\nThis is a lifelong condition register for stroke secondary prevention.\n\nKey Clinical Notes:\n\
+    - Stroke/TIA are considered permanent conditions (no resolution codes)\n- Register inclusion based purely on presence\
+    \ of diagnostic codes\n- Critical for secondary prevention and anticoagulation decisions\n- No age restrictions for stroke/TIA\
+    \ register\n\nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model\
+    \ as input for stroke/TIA register.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "STIARES_COD, STIA_COD"
-    description: |
-      All stroke and transient ischaemic attack (TIA) diagnoses from clinical records.
-      Uses QOF cluster ID STIA_COD for stroke and TIA diagnosis codes.
-      
-      Clinical Purpose:
-      - Stroke/TIA register inclusion for QOF quality measures
-      - Stroke secondary prevention monitoring
-      - Cardiovascular risk management post-stroke
-      
-      QOF Context:
-      Stroke/TIA register follows simple diagnosis-only pattern - any stroke or TIA diagnosis 
-      qualifies for register inclusion. No resolution codes or complex criteria.
-      This is a lifelong condition register for stroke secondary prevention.
-      
-      Key Clinical Notes:
-      - Stroke/TIA are considered permanent conditions (no resolution codes)
-      - Register inclusion based purely on presence of diagnostic codes
-      - Critical for secondary prevention and anticoagulation decisions
-      - No age restrictions for stroke/TIA register
-      
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      Use this model as input for stroke/TIA register.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: has_stroke_tia_diagnosis
-        description: "Flag indicating person has at least one stroke/TIA diagnosis (always TRUE in this model)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_stroke_tia_date
-        description: "Date of first recorded stroke/TIA diagnosis"
-        tests:
-          - not_null
-          - name: latest_stroke_tia_date
-        description: "Date of most recent stroke/TIA diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: total_stroke_tia_episodes
-        description: "Total number of distinct stroke/TIA diagnosis dates"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 50
-
-      - name: all_stroke_tia_concept_codes
-        description: "Array of all distinct stroke/TIA concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_stroke_tia_concept_displays
-        description: "Array of all distinct stroke/TIA concept descriptions for this person"
-        tests:
-          - not_null
-
-      - name: latest_stroke_tia_concept_code
-        description: "Concept code from most recent stroke/TIA diagnosis"
-        tests:
-          - not_null
-
-      - name: latest_stroke_tia_concept_description
-        description: "Concept description from most recent stroke/TIA diagnosis"
-        tests:
-          - not_null 
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id

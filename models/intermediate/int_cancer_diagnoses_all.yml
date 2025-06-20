@@ -1,84 +1,23 @@
 version: 2
-
 models:
-  - name: int_cancer_diagnoses_all
-
+- name: int_cancer_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: CANRES_COD, CAN_COD
+  description: "All cancer diagnoses from clinical records.\nUses QOF cluster ID CAN_COD for cancer diagnosis codes (excluding\
+    \ non-melanotic skin cancers).\n\nClinical Purpose:\n- Cancer register inclusion for QOF quality measures\n- Cancer care\
+    \ pathway tracking\n- Survivorship care planning\n\nQOF Context:\nCancer register follows simple diagnosis-only pattern\
+    \ with date restriction - any cancer \ndiagnosis on/after April 1, 2003 qualifies for register inclusion. No resolution\
+    \ codes.\nThis supports cancer care quality measures and survivorship monitoring.\n\nKey Clinical Notes:\n- Excludes non-melanotic\
+    \ skin cancers as per QOF guidelines\n- Register eligibility requires diagnosis on/after 1 April 2003\n- Cancer is considered\
+    \ a permanent condition (no resolution codes)\n- Important for survivorship care and follow-up monitoring\n\nIncludes\
+    \ ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model as input for cancer\
+    \ register.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "CANRES_COD, CAN_COD"
-    description: |
-      All cancer diagnoses from clinical records.
-      Uses QOF cluster ID CAN_COD for cancer diagnosis codes (excluding non-melanotic skin cancers).
-      
-      Clinical Purpose:
-      - Cancer register inclusion for QOF quality measures
-      - Cancer care pathway tracking
-      - Survivorship care planning
-      
-      QOF Context:
-      Cancer register follows simple diagnosis-only pattern with date restriction - any cancer 
-      diagnosis on/after April 1, 2003 qualifies for register inclusion. No resolution codes.
-      This supports cancer care quality measures and survivorship monitoring.
-      
-      Key Clinical Notes:
-      - Excludes non-melanotic skin cancers as per QOF guidelines
-      - Register eligibility requires diagnosis on/after 1 April 2003
-      - Cancer is considered a permanent condition (no resolution codes)
-      - Important for survivorship care and follow-up monitoring
-      
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      Use this model as input for cancer register.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: has_cancer_diagnosis
-        description: "Flag indicating person has at least one cancer diagnosis (always TRUE in this model)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_cancer_date
-        description: "Date of first recorded cancer diagnosis"
-        tests:
-          - not_null
-          - name: latest_cancer_date
-        description: "Date of most recent cancer diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: total_cancer_episodes
-        description: "Total number of distinct cancer diagnosis dates"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 50
-
-      - name: all_cancer_concept_codes
-        description: "Array of all distinct cancer concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_cancer_concept_displays
-        description: "Array of all distinct cancer concept descriptions for this person"
-        tests:
-          - not_null
-
-      - name: latest_cancer_concept_code
-        description: "Concept code from most recent cancer diagnosis"
-        tests:
-          - not_null
-
-      - name: latest_cancer_concept_description
-        description: "Concept description from most recent cancer diagnosis"
-        tests:
-          - not_null 
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id

@@ -1,90 +1,75 @@
 version: 2
-
 models:
-  - name: fct_person_palliative_care_register
-    description: |
-      **Palliative Care Register - QOF End-of-Life Quality Measures**
-      
-      Pattern 2: Standard QOF Register with diagnosis + exclusion + date filter logic.
-      
-      QOF Business Logic:
-      - Palliative care code (PALCARE_COD) on/after 1 April 2008 (QOF date threshold)
-      - NOT marked as "no longer indicated" (PALCARENI_COD) after latest palliative care code
-      - No age restrictions for palliative care register
-      - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
-      
-      QOF Context:
-      Used for palliative care quality measures including:
-      - End-of-life care coordination and monitoring
-      - Palliative care pathway assessment
-      - Appropriate care targeting and service provision
-      - Quality of life measurement and improvement
-      
-      Matches legacy fct_person_dx_palliative_care business logic and field structure.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
+- name: fct_person_palliative_care_register
+  description: '**Palliative Care Register - QOF End-of-Life Quality Measures**
 
-      - name: sk_patient_id
-        description: "Surrogate key for the patient (from EMIS system)"
-        tests:
-          - not_null
 
-      - name: age
-        description: "Current age of person in years"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 120
+    Pattern 2: Standard QOF Register with diagnosis + exclusion + date filter logic.
 
-      - name: is_on_palliative_care_register
-        description: "Register flag: meets QOF palliative care criteria (always TRUE for this table)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
 
-      - name: earliest_palliative_care_date
-        description: "Date of first recorded palliative care code (QOF requires on/after 1 April 2008)"
-        tests:
-          - not_null
-          - test_no_future_dates
-          - accepted_range:
-              min_value: "'2008-04-01'"
-              max_value: "current_date()"
-              severity: warn
+    QOF Business Logic:
 
-      - name: latest_palliative_care_date
-        description: "Date of most recent palliative care code (QOF requires on/after 1 April 2008)"
-        tests:
-          - not_null
-          - test_no_future_dates
-          - accepted_range:
-              min_value: "'2008-04-01'"
-              max_value: "current_date()"
-              severity: warn
+    - Palliative care code (PALCARE_COD) on/after 1 April 2008 (QOF date threshold)
 
-      - name: earliest_no_longer_indicated_date
-        description: "Date of earliest 'no longer indicated' code (NULL if never marked as no longer indicated)"
+    - NOT marked as "no longer indicated" (PALCARENI_COD) after latest palliative care code
 
-      - name: all_palliative_care_concept_codes
-        description: "Array of all distinct palliative care concept codes for this person"
-        tests:
-          - not_null
+    - No age restrictions for palliative care register
 
-      - name: all_palliative_care_concept_displays
-        description: "Array of all distinct palliative care concept display terms for this person"
-        tests:
-          - not_null
+    - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
 
-      - name: all_no_longer_indicated_concept_codes
-        description: "Array of all distinct 'no longer indicated' concept codes for this person"
 
-      - name: all_no_longer_indicated_concept_displays
-        description: "Array of all distinct 'no longer indicated' concept display terms for this person" 
+    QOF Context:
+
+    Used for palliative care quality measures including:
+
+    - End-of-life care coordination and monitoring
+
+    - Palliative care pathway assessment
+
+    - Appropriate care targeting and service provision
+
+    - Quality of life measurement and improvement
+
+
+    Matches legacy fct_person_dx_palliative_care business logic and field structure.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: is_on_palliative_care_register
+    description: 'Register flag: meets QOF palliative care criteria (always TRUE for this table)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: earliest_palliative_care_date
+    description: Date of first recorded palliative care code (QOF requires on/after 1 April 2008)
+    tests:
+    - not_null
+    - test_no_future_dates
+    - accepted_range:
+        min_value: '''2008-04-01'''
+        max_value: current_date()
+        severity: warn
+  - name: latest_palliative_care_date
+    description: Date of most recent palliative care code (QOF requires on/after 1 April 2008)
+    tests:
+    - not_null
+    - test_no_future_dates
+    - accepted_range:
+        min_value: '''2008-04-01'''
+        max_value: current_date()
+        severity: warn
+  - name: earliest_no_longer_indicated_date
+    description: Date of earliest 'no longer indicated' code (NULL if never marked as no longer indicated)
+  - name: all_no_longer_indicated_concept_codes
+    description: Array of all distinct 'no longer indicated' concept codes for this person
+  - name: all_no_longer_indicated_concept_displays
+    description: Array of all distinct 'no longer indicated' concept display terms for this person

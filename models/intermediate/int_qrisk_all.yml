@@ -1,56 +1,53 @@
 version: 2
-
 models:
-  - name: int_qrisk_all
+- name: int_qrisk_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: QRISKSCORE_COD
+  description: 'All QRISK cardiovascular risk assessment scores from observations.
 
+    Includes QRISK, QRISK2, and QRISK3 scores with clinical validation and risk categorisation.
+
+    Includes ALL persons following intermediate layer principles.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "QRISKSCORE_COD"
-    description: |
-      All QRISK cardiovascular risk assessment scores from observations.
-      Includes QRISK, QRISK2, and QRISK3 scores with clinical validation and risk categorisation.
-      Includes ALL persons following intermediate layer principles.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the QRISK assessment"
-        tests:
-          - not_null
-      - name: qrisk_value
-        description: "QRISK score as percentage (0-100%)"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 0
-              max_value: 100
-      - name: is_valid_qrisk
-        description: "Flag indicating if QRISK is within valid range (0-100)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: cvd_risk_category
-        description: "CVD risk category based on QRISK score"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Invalid', 'Low Risk (<10%)', 'Moderate Risk (10-20%)', 'High Risk (≥20%)', 'Unknown']
-      - name: is_high_cvd_risk
-        description: "Flag indicating QRISK ≥20% (high risk)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: consider_statin
-        description: "Flag indicating consideration for statin therapy (≥10%)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the QRISK assessment
+    tests:
+    - not_null
+  - name: is_valid_qrisk
+    description: Flag indicating if QRISK is within valid range (0-100)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: cvd_risk_category
+    description: CVD risk category based on QRISK score
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Invalid
+        - Low Risk (<10%)
+        - Moderate Risk (10-20%)
+        - "High Risk (\u226520%)"
+        - Unknown
+  - name: is_high_cvd_risk
+    description: "Flag indicating QRISK \u226520% (high risk)"
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

@@ -1,167 +1,76 @@
 version: 2
-
 models:
-  - name: int_asthma_diagnoses_all
-
+- name: int_asthma_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: ASTRES_COD, AST_COD
+  description: "All asthma diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive data\
+    \ collection for asthma register and respiratory management.\n\nQOF Cluster IDs Used:\n- AST_COD: Asthma diagnoses\n-\
+    \ ASTRES_COD: Asthma resolved/remission codes\n\nClinical Purpose:\n- QOF asthma register data collection (aged 6+, active\
+    \ asthma diagnosis + recent medication)\n- Asthma care pathway monitoring\n- Resolution status tracking\n- Medication\
+    \ therapy integration support\n\nKey QOF Requirements:\n- Register inclusion: Age \u22656, active asthma diagnosis (latest\
+    \ AST_COD > latest ASTRES_COD)\n- AND recent asthma medication order (within last 12 months)\n- Pediatric and adult asthma\
+    \ management differentiation\n\nNote: This model provides diagnosis codes only. Medication integration is handled \nin\
+    \ the corresponding fact table which joins to intermediate_asthma_orders_12m.\n\nIncludes ALL persons following intermediate\
+    \ layer principles.\nUse as input for fct_person_asthma_register.sql which applies QOF business rules and medication integration.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "ASTRES_COD, AST_COD"
-    description: |
-      All asthma diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for asthma register and respiratory management.
-      
-      QOF Cluster IDs Used:
-      - AST_COD: Asthma diagnoses
-      - ASTRES_COD: Asthma resolved/remission codes
-      
-      Clinical Purpose:
-      - QOF asthma register data collection (aged 6+, active asthma diagnosis + recent medication)
-      - Asthma care pathway monitoring
-      - Resolution status tracking
-      - Medication therapy integration support
-      
-      Key QOF Requirements:
-      - Register inclusion: Age ≥6, active asthma diagnosis (latest AST_COD > latest ASTRES_COD)
-      - AND recent asthma medication order (within last 12 months)
-      - Pediatric and adult asthma management differentiation
-      
-      Note: This model provides diagnosis codes only. Medication integration is handled 
-      in the corresponding fact table which joins to intermediate_asthma_orders_12m.
-      
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_asthma_register.sql which applies QOF business rules and medication integration.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the asthma diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for asthma diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the asthma diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (AST_COD, ASTRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['AST_COD', 'ASTRES_COD']
-              
-      - name: is_asthma_diagnosis_code
-        description: "Flag indicating asthma diagnosis (AST_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_asthma_resolved_code
-        description: "Flag indicating asthma resolved/remission (ASTRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_asthma_date
-        description: "Earliest asthma diagnosis date for this person"
-        
-      - name: latest_asthma_date
-        description: "Latest asthma diagnosis date for this person"
-        
-      - name: earliest_resolved_date
-        description: "Earliest asthma resolved date for this person"
-        
-      - name: latest_resolved_date
-        description: "Latest asthma resolved date for this person"
-        
-      - name: is_asthma_currently_resolved
-        description: "QOF indicator: asthma is currently resolved (latest resolved > latest diagnosis)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: asthma_observation_type
-        description: "Classification of this specific observation (Asthma Diagnosis, Asthma Resolved, Unknown)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Asthma Diagnosis', 'Asthma Resolved', 'Unknown']
-              
-      - name: has_active_asthma_diagnosis
-        description: "QOF context: person has active asthma diagnosis (unresolved)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_recent_asthma_diagnosis
-        description: "Clinical flag: asthma diagnosis in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_asthma_diagnosis_last_24m
-        description: "Clinical flag: asthma diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_asthma_diagnosis_last_5y
-        description: "Clinical flag: asthma diagnosis in last 5 years (for pediatric consideration)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_single_asthma_diagnosis
-        description: "Clinical indicator: only one asthma diagnosis recorded"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_multiple_asthma_diagnoses
-        description: "Clinical indicator: multiple asthma diagnoses recorded"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: days_since_first_diagnosis
-        description: "Number of days since first asthma diagnosis (for disease duration tracking)"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 36500  # 100 years
-              severity: warn
-              
-      - name: all_asthma_concept_codes
-        description: "Array of all asthma diagnosis concept codes for this person"
-        
-      - name: all_asthma_concept_displays
-        description: "Array of all asthma diagnosis concept displays for this person"
-        
-      - name: all_resolved_concept_codes
-        description: "Array of all asthma resolved concept codes for this person"
-        
-      - name: all_resolved_concept_displays
-        description: "Array of all asthma resolved concept displays for this person" 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the asthma diagnosis observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for asthma diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the asthma diagnosis code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID (AST_COD, ASTRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - AST_COD
+        - ASTRES_COD
+  - name: is_asthma_diagnosis_code
+    description: Flag indicating asthma diagnosis (AST_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_asthma_resolved_code
+    description: Flag indicating asthma resolved/remission (ASTRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: earliest_asthma_date
+    description: Earliest asthma diagnosis date for this person
+  - name: latest_asthma_date
+    description: Latest asthma diagnosis date for this person
+  - name: earliest_resolved_date
+    description: Earliest asthma resolved date for this person
+  - name: latest_resolved_date
+    description: Latest asthma resolved date for this person
+  - name: all_asthma_concept_codes
+    description: Array of all asthma diagnosis concept codes for this person
+  - name: all_asthma_concept_displays
+    description: Array of all asthma diagnosis concept displays for this person
+  - name: all_resolved_concept_codes
+    description: Array of all asthma resolved concept codes for this person
+  - name: all_resolved_concept_displays
+    description: Array of all asthma resolved concept displays for this person

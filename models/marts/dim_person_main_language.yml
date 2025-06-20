@@ -1,33 +1,23 @@
 version: 2
-
 models:
-  - name: dim_person_main_language
+- name: dim_person_main_language
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: PREFLANG_COD, REQINTERPRETER_COD
+  description: 'Person main language dimension for cultural competency and communication
 
+    planning in healthcare delivery.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier - primary key
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "PREFLANG_COD, REQINTERPRETER_COD"
-    description: |
-      Person main language dimension for cultural competency and communication
-      planning in healthcare delivery.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier - primary key"
-        tests:
-          - not_null
-          - unique
-
-      - name: main_language_code
-        description: "ISO language code for main language"
-
-      - name: main_language_name
-        description: "Full name of main language"
-
-      - name: requires_interpreter
-        description: "Boolean flag indicating if interpreter services may be needed"
-        tests:
-          - accepted_values:
-              values: [true, false]
-
-      - name: language_family
-        description: "Language family grouping for resource planning" 
+    - not_null
+    - unique
+  - name: main_language_code
+    description: ISO language code for main language
+  - name: main_language_name
+    description: Full name of main language
+  - name: language_family
+    description: Language family grouping for resource planning

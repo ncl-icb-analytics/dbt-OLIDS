@@ -1,72 +1,25 @@
 version: 2
-
 models:
-  - name: fct_person_familial_hypercholesterolaemia_register
-    description: |
-      **Familial Hypercholesterolaemia Register - QOF Cardiovascular Quality Measures**
-      
-      Fact table for FH register following simple register pattern. All patients with any FH 
-      diagnosis are included on the register.
-      
-      Simple Register Business Logic:
-      - Presence of FH diagnosis = on register (genetic condition - lifelong)
-      - No resolution codes (FH is permanent genetic condition)
-      - No age restrictions for diagnosis inclusion
-      - Important for high-intensity statin therapy and cascade screening
-      
-      QOF Context:
-      Used for familial hypercholesterolaemia quality measures including:
-      - High-intensity statin therapy monitoring
-      - Family cascade screening programmes
-      - Cardiovascular risk management
-      - Genetic counselling support
-      
-      Matches legacy fct_person_dx_fhyp business logic and field structure.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: sk_patient_id
-        description: "Surrogate key for the patient (from EMIS system)"
-        tests:
-          - not_null
-
-      - name: age
-        description: "Current age of person in years"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 120
-
-      - name: is_on_fh_register
-        description: "Register flag: has FH diagnosis (always TRUE for this table)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_fh_diagnosis_date
-        description: "Date of first recorded FH diagnosis"
-        tests:
-          - not_null
-          - name: latest_fh_diagnosis_date
-        description: "Date of most recent FH diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: all_fh_concept_codes
-        description: "Array of all distinct FH concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_fh_concept_displays
-        description: "Array of all distinct FH concept display terms for this person"
-        tests:
-          - not_null 
+- name: fct_person_familial_hypercholesterolaemia_register
+  description: "**Familial Hypercholesterolaemia Register - QOF Cardiovascular Quality Measures**\n\nFact table for FH register\
+    \ following simple register pattern. All patients with any FH \ndiagnosis are included on the register.\n\nSimple Register\
+    \ Business Logic:\n- Presence of FH diagnosis = on register (genetic condition - lifelong)\n- No resolution codes (FH\
+    \ is permanent genetic condition)\n- No age restrictions for diagnosis inclusion\n- Important for high-intensity statin\
+    \ therapy and cascade screening\n\nQOF Context:\nUsed for familial hypercholesterolaemia quality measures including:\n\
+    - High-intensity statin therapy monitoring\n- Family cascade screening programmes\n- Cardiovascular risk management\n\
+    - Genetic counselling support\n\nMatches legacy fct_person_dx_fhyp business logic and field structure.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: is_on_fh_register
+    description: 'Register flag: has FH diagnosis (always TRUE for this table)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true

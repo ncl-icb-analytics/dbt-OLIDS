@@ -1,157 +1,140 @@
 version: 2
-
 models:
-  - name: fct_person_bp_control
-    description: |
-      Fact table for blood pressure control status applying patient-specific thresholds based on NICE NG136 guidelines.
-      
-      **BP Threshold Logic (Priority Order):**
-      1. **CKD with ACR ≥70**: Most stringent thresholds for high-risk CKD patients
-      2. **Type 2 Diabetes**: Specific thresholds for T2DM patients under 80
-      3. **CKD (general)**: Thresholds for CKD patients under 80
-      4. **Age ≥80**: Age-specific thresholds for elderly patients
-      5. **Age <80**: Default thresholds for general population
-      
-      **Monitoring Intervals (Risk-Based):**
-      - **High Risk** (T2DM OR CKD OR diagnosed HTN): Every 12 months
-      - **Medium Risk** (Age ≥40, no high-risk conditions): Every 24 months
-      - **Low Risk** (Age <40, no high-risk conditions): Every 60 months
-      
-      **Business Logic:**
-      - Uses latest BP reading for each person
-      - Applies highest priority applicable threshold
-      - Calculates systolic, diastolic, and overall control
-      - Assesses timeliness based on risk factors
-      - References BP thresholds ruleset for clinical accuracy
-    
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - unique
-      
-      - name: sk_patient_id
-        description: "Surrogate key for patient dimension"
-        tests:
-          - not_null
-      
-      - name: latest_bp_date
-        description: "Date of most recent blood pressure reading"
-        tests:
-          - not_null
-          - test_no_future_dates
-      
-      - name: latest_systolic_value
-        description: "Systolic value of latest BP reading (mmHg)"
-        tests:
-          - accepted_range:
-              min_value: 50
-              max_value: 300
-      
-      - name: latest_diastolic_value
-        description: "Diastolic value of latest BP reading (mmHg)"
-        tests:
-          - accepted_range:
-              min_value: 30
-              max_value: 200
-      
-      - name: age
-        description: "Current age in years"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 0
-              max_value: 120
-      
-      - name: has_t2dm
-        description: "Flag indicating Type 2 diabetes diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      - name: has_ckd
-        description: "Flag indicating chronic kidney disease diagnosis"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      - name: is_diagnosed_htn
-        description: "Flag indicating diagnosed hypertension"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_acr_value
-        description: "Latest albumin-to-creatinine ratio value (relevant for CKD patients)"
-        tests:
-          - accepted_range:
-              min_value: 0
-              max_value: 1000
-      
-      - name: applied_threshold_rule_id
-        description: "Identifier of the BP threshold rule applied"
-        tests:
-          - not_null
-      
-      - name: applied_patient_group
-        description: "Patient group for applied threshold (e.g., 'T2DM', 'CKD_ACR_GE_70')"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['AGE_LT_80', 'AGE_GE_80', 'T2DM', 'CKD', 'CKD_ACR_GE_70']
-      
-      - name: applied_systolic_threshold
-        description: "Systolic BP threshold applied (mmHg)"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 120
-              max_value: 160
-      
-      - name: applied_diastolic_threshold
-        description: "Diastolic BP threshold applied (mmHg)"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 70
-              max_value: 100
-      
-      - name: is_systolic_controlled
-        description: "Flag indicating systolic BP is below threshold"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      - name: is_diastolic_controlled
-        description: "Flag indicating diastolic BP is below threshold"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      - name: is_overall_bp_controlled
-        description: "Flag indicating both systolic and diastolic BP are controlled"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      
-      - name: latest_bp_reading_age_months
-        description: "Age of latest BP reading in months from current date"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 0
-              max_value: 1200
-      
-      - name: is_latest_bp_within_recommended_interval
-        description: "Flag indicating BP reading is within recommended monitoring interval"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+- name: fct_person_bp_control
+  description: "Fact table for blood pressure control status applying patient-specific thresholds based on NICE NG136 guidelines.\n\
+    \n**BP Threshold Logic (Priority Order):**\n1. **CKD with ACR \u226570**: Most stringent thresholds for high-risk CKD\
+    \ patients\n2. **Type 2 Diabetes**: Specific thresholds for T2DM patients under 80\n3. **CKD (general)**: Thresholds for\
+    \ CKD patients under 80\n4. **Age \u226580**: Age-specific thresholds for elderly patients\n5. **Age <80**: Default thresholds\
+    \ for general population\n\n**Monitoring Intervals (Risk-Based):**\n- **High Risk** (T2DM OR CKD OR diagnosed HTN): Every\
+    \ 12 months\n- **Medium Risk** (Age \u226540, no high-risk conditions): Every 24 months\n- **Low Risk** (Age <40, no high-risk\
+    \ conditions): Every 60 months\n\n**Business Logic:**\n- Uses latest BP reading for each person\n- Applies highest priority\
+    \ applicable threshold\n- Calculates systolic, diastolic, and overall control\n- Assesses timeliness based on risk factors\n\
+    - References BP thresholds ruleset for clinical accuracy\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - unique
+  - name: latest_bp_date
+    description: Date of most recent blood pressure reading
+    tests:
+    - not_null
+    - test_no_future_dates
+  - name: latest_systolic_value
+    description: Systolic value of latest BP reading (mmHg)
+    tests:
+    - accepted_range:
+        min_value: 50
+        max_value: 300
+  - name: latest_diastolic_value
+    description: Diastolic value of latest BP reading (mmHg)
+    tests:
+    - accepted_range:
+        min_value: 30
+        max_value: 200
+  - name: age
+    description: Current age in years
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 0
+        max_value: 120
+  - name: has_t2dm
+    description: Flag indicating Type 2 diabetes diagnosis
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: has_ckd
+    description: Flag indicating chronic kidney disease diagnosis
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_diagnosed_htn
+    description: Flag indicating diagnosed hypertension
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_acr_value
+    description: Latest albumin-to-creatinine ratio value (relevant for CKD patients)
+    tests:
+    - accepted_range:
+        min_value: 0
+        max_value: 1000
+  - name: applied_threshold_rule_id
+    description: Identifier of the BP threshold rule applied
+    tests:
+    - not_null
+  - name: applied_patient_group
+    description: Patient group for applied threshold (e.g., 'T2DM', 'CKD_ACR_GE_70')
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - AGE_LT_80
+        - AGE_GE_80
+        - T2DM
+        - CKD
+        - CKD_ACR_GE_70
+  - name: applied_systolic_threshold
+    description: Systolic BP threshold applied (mmHg)
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 120
+        max_value: 160
+  - name: applied_diastolic_threshold
+    description: Diastolic BP threshold applied (mmHg)
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 70
+        max_value: 100
+  - name: is_systolic_controlled
+    description: Flag indicating systolic BP is below threshold
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_diastolic_controlled
+    description: Flag indicating diastolic BP is below threshold
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_overall_bp_controlled
+    description: Flag indicating both systolic and diastolic BP are controlled
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_bp_reading_age_months
+    description: Age of latest BP reading in months from current date
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 0
+        max_value: 1200
+  - name: is_latest_bp_within_recommended_interval
+    description: Flag indicating BP reading is within recommended monitoring interval
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

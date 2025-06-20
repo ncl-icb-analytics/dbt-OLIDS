@@ -1,195 +1,117 @@
 version: 2
-
 models:
-  - name: int_atrial_fibrillation_diagnoses_all
+- name: int_atrial_fibrillation_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: AFIBRES_COD, AFIB_COD
+  description: 'All atrial fibrillation diagnosis observations from clinical records using QOF cluster IDs.
 
+    Provides comprehensive data collection for AF register and arrhythmia management.
+
+
+    QOF Cluster IDs Used:
+
+    - AFIB_COD: Atrial fibrillation diagnoses
+
+    - AFIBRES_COD: Atrial fibrillation resolved/remission codes
+
+
+    Clinical Purpose:
+
+    - QOF atrial fibrillation register data collection
+
+    - Arrhythmia management monitoring
+
+    - Anticoagulation therapy planning
+
+    - Stroke prevention assessment
+
+
+    Key QOF Requirements:
+
+    - Register inclusion: Atrial fibrillation diagnosis (AFIB_COD) not in remission (latest AFIB_COD > latest AFIBRES_COD)
+
+    - No age restrictions for AF register
+
+    - Resolution status tracking important for anticoagulation decisions
+
+    - Critical for stroke prevention planning
+
+
+    Includes ALL persons following intermediate layer principles.
+
+    Use as input for fct_person_atrial_fibrillation_register.sql which applies QOF business rules.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "AFIBRES_COD, AFIB_COD"
-    description: |
-      All atrial fibrillation diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for AF register and arrhythmia management.
-      
-      QOF Cluster IDs Used:
-      - AFIB_COD: Atrial fibrillation diagnoses
-      - AFIBRES_COD: Atrial fibrillation resolved/remission codes
-      
-      Clinical Purpose:
-      - QOF atrial fibrillation register data collection
-      - Arrhythmia management monitoring
-      - Anticoagulation therapy planning
-      - Stroke prevention assessment
-      
-      Key QOF Requirements:
-      - Register inclusion: Atrial fibrillation diagnosis (AFIB_COD) not in remission (latest AFIB_COD > latest AFIBRES_COD)
-      - No age restrictions for AF register
-      - Resolution status tracking important for anticoagulation decisions
-      - Critical for stroke prevention planning
-      
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_atrial_fibrillation_register.sql which applies QOF business rules.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the AF diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for AF diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the AF diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (AFIB_COD, AFIBRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['AFIB_COD', 'AFIBRES_COD']
-              
-      - name: is_af_diagnosis_code
-        description: "Flag indicating AF diagnosis (AFIB_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_af_resolved_code
-        description: "Flag indicating AF resolved/remission (AFIBRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_af_diagnosis_date
-        description: "Earliest AF diagnosis date for this person"
-        
-      - name: latest_af_diagnosis_date
-        description: "Latest AF diagnosis date for this person"
-        
-      - name: total_af_diagnoses
-        description: "Total number of AF diagnosis codes for this person"
-        
-      - name: earliest_af_resolved_date
-        description: "Earliest AF resolved date for this person"
-        
-      - name: latest_af_resolved_date
-        description: "Latest AF resolved date for this person"
-        
-      - name: total_af_resolved
-        description: "Total number of AF resolved codes for this person"
-        
-      - name: af_observation_type
-        description: "Classification of this observation"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['AF Diagnosis', 'AF Resolved', 'Unknown']
-              
-      - name: has_active_af_diagnosis
-        description: "Flag indicating active AF (latest diagnosis > latest resolved)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: af_status
-        description: "Current AF status based on diagnosis/resolution dates"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['No AF Diagnosis', 'Active AF', 'Resolved AF', 'Unknown AF Status']
-              
-      - name: has_recent_af_diagnosis
-        description: "Flag indicating AF diagnosis in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_af_diagnosis_last_24m
-        description: "Flag indicating AF diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_af_resolved_codes
-        description: "Flag indicating presence of any AF resolved codes"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_single_af_diagnosis
-        description: "Flag indicating only one AF diagnosis code"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_multiple_af_diagnoses
-        description: "Flag indicating multiple AF diagnosis codes"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: days_since_first_af_diagnosis
-        description: "Number of days since first AF diagnosis"
-        
-      - name: is_newly_diagnosed_af
-        description: "Flag indicating AF diagnosed within last year"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_established_af
-        description: "Flag indicating AF diagnosed over a year ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_long_term_af
-        description: "Flag indicating AF diagnosed over 5 years ago"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_recent_af_resolution
-        description: "Flag indicating AF resolved in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_af_recurrence_codes
-        description: "Flag indicating multiple AF codes over time suggesting recurrence"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: all_af_concept_codes
-        description: "Array of all AF concept codes for this person"
-        
-      - name: all_af_concept_displays
-        description: "Array of all AF concept displays for this person" 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the AF diagnosis observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for AF diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the AF diagnosis code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID (AFIB_COD, AFIBRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - AFIB_COD
+        - AFIBRES_COD
+  - name: is_af_diagnosis_code
+    description: Flag indicating AF diagnosis (AFIB_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_af_resolved_code
+    description: Flag indicating AF resolved/remission (AFIBRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: earliest_af_diagnosis_date
+    description: Earliest AF diagnosis date for this person
+  - name: latest_af_diagnosis_date
+    description: Latest AF diagnosis date for this person
+  - name: total_af_diagnoses
+    description: Total number of AF diagnosis codes for this person
+  - name: earliest_af_resolved_date
+    description: Earliest AF resolved date for this person
+  - name: latest_af_resolved_date
+    description: Latest AF resolved date for this person
+  - name: total_af_resolved
+    description: Total number of AF resolved codes for this person
+  - name: af_observation_type
+    description: Classification of this observation
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - AF Diagnosis
+        - AF Resolved
+        - Unknown
+  - name: days_since_first_af_diagnosis
+    description: Number of days since first AF diagnosis
+  - name: all_af_concept_codes
+    description: Array of all AF concept codes for this person
+  - name: all_af_concept_displays
+    description: Array of all AF concept displays for this person

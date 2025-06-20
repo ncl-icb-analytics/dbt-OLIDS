@@ -1,139 +1,150 @@
 version: 2
-
 models:
-  - name: int_allergy_medications_all
+- name: int_allergy_medications_all
+  tests:
+  - test_bnf_codes_exist:
+      bnf_codes: '0304'
+  description: 'All allergy medication orders including antihistamines and allergy treatments.
 
+    Uses BNF classification (3.4) for antihistamines and related allergy medications.
+
+    Includes ALL persons following intermediate layer principles.
+
+
+    Clinical Purpose:
+
+    - Allergy symptom management
+
+    - Allergic rhinitis treatment
+
+    - Urticaria and dermatitis care
+
+    - Chronic allergy monitoring
+
+
+    Key Features:
+
+    - Antihistamine type classification
+
+    - Sedation profile identification (sedating vs non-sedating)
+
+    - Route of administration tracking
+
+    - Clinical indication classification
+
+    - Paediatric formulation identification
+
+    - Over-the-counter availability flags
+
+    - Chronic allergy treatment detection
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
     tests:
-      - test_bnf_codes_exist:
-          bnf_codes: "0304"
-    description: |
-      All allergy medication orders including antihistamines and allergy treatments.
-      Uses BNF classification (3.4) for antihistamines and related allergy medications.
-      Includes ALL persons following intermediate layer principles.
-      
-      Clinical Purpose:
-      - Allergy symptom management
-      - Allergic rhinitis treatment
-      - Urticaria and dermatitis care
-      - Chronic allergy monitoring
-      
-      Key Features:
-      - Antihistamine type classification
-      - Sedation profile identification (sedating vs non-sedating)
-      - Route of administration tracking
-      - Clinical indication classification
-      - Paediatric formulation identification
-      - Over-the-counter availability flags
-      - Chronic allergy treatment detection
-    
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
-          
-      - name: medication_order_id
-        description: "Unique identifier for the medication order record"
-        tests:
-          - not_null
-          - unique
-          
-      - name: order_date
-        description: "Date the allergy medication was ordered"
-        tests:
-          - not_null
-          
-      - name: antihistamine_type
-        description: "Specific antihistamine medication type"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CETIRIZINE', 'LORATADINE', 'FEXOFENADINE', 'CHLORPHENAMINE', 'PROMETHAZINE', 'HYDROXYZINE', 'DESLORATADINE', 'LEVOCETIRIZINE', 'BILASTINE', 'ACRIVASTINE', 'OTHER_ANTIHISTAMINE']
-              
-      - name: sedation_profile
-        description: "Sedation characteristics of the antihistamine"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['NON_SEDATING', 'SEDATING', 'UNKNOWN_SEDATION']
-              
-      - name: route_of_administration
-        description: "Route of administration for the medication"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['ORAL', 'ORAL_LIQUID', 'INJECTION', 'TOPICAL', 'UNKNOWN_ROUTE']
-              
-      - name: clinical_indication
-        description: "Primary clinical indication for allergy treatment"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['ALLERGIC_RHINITIS', 'URTICARIA', 'ECZEMA_DERMATITIS', 'GENERAL_ALLERGY']
-              
-      - name: is_paediatric_formulation
-        description: "Boolean flag indicating paediatric-specific formulation"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_otc_available
-        description: "Boolean flag indicating over-the-counter availability"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: requires_drowsiness_warning
-        description: "Boolean flag indicating drowsiness warning requirement"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: total_allergy_orders
-        description: "Total count of allergy medication orders for this person"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 100
-              severity: warn
-              
-      - name: is_chronic_allergy_treatment
-        description: "Boolean flag indicating chronic allergy treatment (≥3 orders)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: unique_antihistamine_types
-        description: "Number of unique antihistamine types used by person"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 10
-              severity: warn
-              
-      - name: is_recent_3m
-        description: "Boolean flag indicating order within last 3 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_recent_6m
-        description: "Boolean flag indicating order within last 6 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_recent_12m
-        description: "Boolean flag indicating order within last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+    - not_null
+  - name: medication_order_id
+    description: Unique identifier for the medication order record
+    tests:
+    - not_null
+    - unique
+  - name: order_date
+    description: Date the allergy medication was ordered
+    tests:
+    - not_null
+  - name: antihistamine_type
+    description: Specific antihistamine medication type
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - CETIRIZINE
+        - LORATADINE
+        - FEXOFENADINE
+        - CHLORPHENAMINE
+        - PROMETHAZINE
+        - HYDROXYZINE
+        - DESLORATADINE
+        - LEVOCETIRIZINE
+        - BILASTINE
+        - ACRIVASTINE
+        - OTHER_ANTIHISTAMINE
+  - name: sedation_profile
+    description: Sedation characteristics of the antihistamine
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - NON_SEDATING
+        - SEDATING
+        - UNKNOWN_SEDATION
+  - name: route_of_administration
+    description: Route of administration for the medication
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - ORAL
+        - ORAL_LIQUID
+        - INJECTION
+        - TOPICAL
+        - UNKNOWN_ROUTE
+  - name: clinical_indication
+    description: Primary clinical indication for allergy treatment
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - ALLERGIC_RHINITIS
+        - URTICARIA
+        - ECZEMA_DERMATITIS
+        - GENERAL_ALLERGY
+  - name: is_paediatric_formulation
+    description: Boolean flag indicating paediatric-specific formulation
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_otc_available
+    description: Boolean flag indicating over-the-counter availability
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: requires_drowsiness_warning
+    description: Boolean flag indicating drowsiness warning requirement
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_recent_3m
+    description: Boolean flag indicating order within last 3 months
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_recent_6m
+    description: Boolean flag indicating order within last 6 months
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_recent_12m
+    description: Boolean flag indicating order within last 12 months
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

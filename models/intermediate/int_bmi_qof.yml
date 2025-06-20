@@ -1,74 +1,46 @@
 version: 2
-
 models:
-  - name: int_bmi_qof
+- name: int_bmi_qof
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: BMI30_COD, BMIVAL_COD
+  description: 'QOF-specific BMI measurements with obesity register business logic.
 
+    Follows the legacy intermediate_bmi_values.sql patterns with age validation
+
+    and QOF obesity register rules. Includes ALL persons following intermediate layer principles.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "BMI30_COD, BMIVAL_COD"
-    description: |
-      QOF-specific BMI measurements with obesity register business logic.
-      Follows the legacy intermediate_bmi_values.sql patterns with age validation
-      and QOF obesity register rules. Includes ALL persons following intermediate layer principles.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the BMI measurement"
-        tests:
-          - not_null
-      - name: age_at_event
-        description: "Age at time of BMI measurement"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 0
-              max_value: 120
-      - name: bmi_value
-        description: "BMI value in kg/m²"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 5
-              max_value: 150
-              severity: warn
-      - name: original_result_value
-        description: "Original BMI value as recorded"
-        tests:
-          - not_null
-      - name: is_valid_bmi
-        description: "Flag indicating if BMI is within valid range (10-80)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_qof_age_eligible
-        description: "Flag indicating age eligibility for QOF obesity register (≥16)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: bmi_category
-        description: "Clinical BMI category"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Invalid', 'Underweight', 'Normal Weight', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III', 'Unknown']
-      - name: is_obese
-        description: "Flag indicating BMI ≥30 kg/m² (obesity threshold)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_qof_obesity_eligible
-        description: "Flag indicating QOF obesity register eligibility (age ≥16 AND BMI ≥30)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the BMI measurement
+    tests:
+    - not_null
+  - name: bmi_value
+    description: "BMI value in kg/m\xB2"
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 5
+        max_value: 150
+        severity: warn
+  - name: original_result_value
+    description: Original BMI value as recorded
+    tests:
+    - not_null
+  - name: is_valid_bmi
+    description: Flag indicating if BMI is within valid range (10-80)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

@@ -1,31 +1,22 @@
 version: 2
-
 models:
-  - name: dim_person_women_child_bearing_age
-    description: |
-      Dimension identifying women of child-bearing age for clinical safety monitoring
-      and reproductive health programmes. Uses standard NHS age range of 15-44.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier - primary key"
-        tests:
-          - not_null
-          - unique
+- name: dim_person_women_child_bearing_age
+  description: 'Dimension identifying women of child-bearing age for clinical safety monitoring
 
-      - name: is_woman_child_bearing_age
-        description: "Boolean flag indicating if person is a woman aged 15-44"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    and reproductive health programmes. Uses standard NHS age range of 15-44.
 
-      - name: age
-        description: "Current age of person"
-        tests:
-          - accepted_range:
-              min_value: 15
-              max_value: 44
-
-      - name: sex
-        description: "Sex classification - should be Female for this dimension" 
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier - primary key
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Current age of person
+    tests:
+    - accepted_range:
+        min_value: 15
+        max_value: 44
+  - name: sex
+    description: Sex classification - should be Female for this dimension

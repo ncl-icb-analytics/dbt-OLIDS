@@ -1,84 +1,23 @@
 version: 2
-
 models:
-  - name: int_familial_hypercholesterolaemia_diagnoses_all
-
+- name: int_familial_hypercholesterolaemia_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: FHYP_COD
+  description: "All familial hypercholesterolaemia (FH) diagnoses from clinical records.\nUses QOF cluster ID FHYP_COD for\
+    \ familial hypercholesterolaemia diagnosis codes.\n\nClinical Purpose:\n- FH register inclusion for QOF quality measures\n\
+    - Familial hypercholesterolaemia cascade screening\n- High-intensity statin therapy monitoring\n\nQOF Context:\nFH register\
+    \ follows simple diagnosis-only pattern - any FH diagnosis qualifies for \nregister inclusion. No resolution codes or\
+    \ complex criteria.\nThis supports FH quality measures and cascade family screening programmes.\n\nKey Clinical Notes:\n\
+    - FH is considered a permanent genetic condition (no resolution codes)\n- Register inclusion based purely on presence\
+    \ of diagnostic codes\n- Important for cascade family screening programmes\n- Critical for high-intensity statin therapy\
+    \ decisions\n\nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model\
+    \ as input for FH register.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "FHYP_COD"
-    description: |
-      All familial hypercholesterolaemia (FH) diagnoses from clinical records.
-      Uses QOF cluster ID FHYP_COD for familial hypercholesterolaemia diagnosis codes.
-      
-      Clinical Purpose:
-      - FH register inclusion for QOF quality measures
-      - Familial hypercholesterolaemia cascade screening
-      - High-intensity statin therapy monitoring
-      
-      QOF Context:
-      FH register follows simple diagnosis-only pattern - any FH diagnosis qualifies for 
-      register inclusion. No resolution codes or complex criteria.
-      This supports FH quality measures and cascade family screening programmes.
-      
-      Key Clinical Notes:
-      - FH is considered a permanent genetic condition (no resolution codes)
-      - Register inclusion based purely on presence of diagnostic codes
-      - Important for cascade family screening programmes
-      - Critical for high-intensity statin therapy decisions
-      
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      Use this model as input for FH register.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-
-      - name: has_fh_diagnosis
-        description: "Flag indicating person has at least one FH diagnosis (always TRUE in this model)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: earliest_fh_date
-        description: "Date of first recorded FH diagnosis"
-        tests:
-          - not_null
-          - name: latest_fh_date
-        description: "Date of most recent FH diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
-
-      - name: total_fh_episodes
-        description: "Total number of distinct FH diagnosis dates"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 1
-              max_value: 20
-
-      - name: all_fh_concept_codes
-        description: "Array of all distinct FH concept codes for this person"
-        tests:
-          - not_null
-
-      - name: all_fh_concept_displays
-        description: "Array of all distinct FH concept descriptions for this person"
-        tests:
-          - not_null
-
-      - name: latest_fh_concept_code
-        description: "Concept code from most recent FH diagnosis"
-        tests:
-          - not_null
-
-      - name: latest_fh_concept_description
-        description: "Concept description from most recent FH diagnosis"
-        tests:
-          - not_null 
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id

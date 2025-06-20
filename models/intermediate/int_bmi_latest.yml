@@ -1,46 +1,37 @@
 version: 2
-
 models:
-  - name: int_bmi_latest
-    description: |
-      Latest valid BMI measurement per person.
-      Filters to most recent valid BMI (10-80 kg/m² range).
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - unique
-      - name: clinical_effective_date
-        description: "Date of the BMI measurement"
-        tests:
-          - not_null
-      - name: bmi_value
-        description: "BMI value in kg/m² (valid range only)"
-        tests:
-          - not_null
-          - accepted_range:
-              min_value: 10
-              max_value: 80
-      - name: original_result_value
-        description: "Original BMI value as recorded"
-        tests:
-          - not_null
-      - name: bmi_category
-        description: "Clinical BMI category (excludes 'Invalid')"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Underweight', 'Normal Weight', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
-      - name: is_overweight_or_obese
-        description: "Flag indicating BMI ≥25 kg/m²"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_obese
-        description: "Flag indicating BMI ≥30 kg/m²"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false] 
+- name: int_bmi_latest
+  description: "Latest valid BMI measurement per person.\nFilters to most recent valid BMI (10-80 kg/m\xB2 range).\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - unique
+  - name: clinical_effective_date
+    description: Date of the BMI measurement
+    tests:
+    - not_null
+  - name: bmi_value
+    description: "BMI value in kg/m\xB2 (valid range only)"
+    tests:
+    - not_null
+    - accepted_range:
+        min_value: 10
+        max_value: 80
+  - name: original_result_value
+    description: Original BMI value as recorded
+    tests:
+    - not_null
+  - name: bmi_category
+    description: Clinical BMI category (excludes 'Invalid')
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Underweight
+        - Normal Weight
+        - Overweight
+        - Obese Class I
+        - Obese Class II
+        - Obese Class III

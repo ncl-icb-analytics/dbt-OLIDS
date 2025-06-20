@@ -1,139 +1,85 @@
 version: 2
-
 models:
-  - name: int_ckd_diagnoses_all
-
+- name: int_ckd_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: CKDRES_COD, CKD_COD
+  description: "All chronic kidney disease (CKD) diagnosis observations from clinical records using QOF cluster IDs.\nProvides\
+    \ comprehensive data collection for CKD register and kidney function monitoring.\n\nQOF Cluster IDs Used:\n- CKD_COD:\
+    \ CKD diagnoses\n- CKDRES_COD: CKD resolved/remission codes\n\nClinical Purpose:\n- QOF CKD register data collection (aged\
+    \ 18+, unresolved CKD diagnosis)\n- CKD staging and classification support\n- Kidney function monitoring\n- Resolution\
+    \ status tracking\n\nKey QOF Requirements:\n- Register inclusion: Age \u226518, latest unresolved CKD diagnosis\n- Lab\
+    \ correlation with eGFR and ACR values\n- CKD stage determination support\n- Laboratory confirmation tracking\n\nNote:\
+    \ This model provides diagnosis codes only. Lab-based CKD inference \n(eGFR/ACR staging) is handled separately in intermediate_ckd_lab_inference.\n\
+    \nIncludes ALL persons following intermediate layer principles.\nUse as input for fct_person_ckd_register.sql which applies\
+    \ QOF business rules and lab integration.\n"
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "CKDRES_COD, CKD_COD"
-    description: |
-      All chronic kidney disease (CKD) diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for CKD register and kidney function monitoring.
-      
-      QOF Cluster IDs Used:
-      - CKD_COD: CKD diagnoses
-      - CKDRES_COD: CKD resolved/remission codes
-      
-      Clinical Purpose:
-      - QOF CKD register data collection (aged 18+, unresolved CKD diagnosis)
-      - CKD staging and classification support
-      - Kidney function monitoring
-      - Resolution status tracking
-      
-      Key QOF Requirements:
-      - Register inclusion: Age ≥18, latest unresolved CKD diagnosis
-      - Lab correlation with eGFR and ACR values
-      - CKD stage determination support
-      - Laboratory confirmation tracking
-      
-      Note: This model provides diagnosis codes only. Lab-based CKD inference 
-      (eGFR/ACR staging) is handled separately in intermediate_ckd_lab_inference.
-      
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_ckd_register.sql which applies QOF business rules and lab integration.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the CKD diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for CKD diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the CKD diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (CKD_COD, CKDRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CKD_COD', 'CKDRES_COD']
-              
-      - name: is_ckd_diagnosis_code
-        description: "Flag indicating CKD diagnosis (CKD_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_ckd_resolved_code
-        description: "Flag indicating CKD resolved/remission (CKDRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_ckd_date
-        description: "Earliest CKD diagnosis date for this person"
-        
-      - name: latest_ckd_date
-        description: "Latest CKD diagnosis date for this person"
-        
-      - name: earliest_resolved_date
-        description: "Earliest CKD resolved date for this person"
-        
-      - name: latest_resolved_date
-        description: "Latest CKD resolved date for this person"
-        
-      - name: is_ckd_currently_resolved
-        description: "QOF indicator: CKD is currently resolved (latest resolved > latest diagnosis)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: ckd_observation_type
-        description: "Classification of this specific observation (CKD Diagnosis, CKD Resolved, Unknown)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CKD Diagnosis', 'CKD Resolved', 'Unknown']
-              
-      - name: has_active_ckd_diagnosis
-        description: "QOF context: person has active CKD diagnosis (unresolved)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_recent_ckd_diagnosis
-        description: "Clinical flag: CKD diagnosis in last 12 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: has_ckd_diagnosis_last_24m
-        description: "Clinical flag: CKD diagnosis in last 24 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: all_ckd_concept_codes
-        description: "Array of all CKD diagnosis concept codes for this person"
-        
-      - name: all_ckd_concept_displays
-        description: "Array of all CKD diagnosis concept displays for this person"
-        
-      - name: all_resolved_concept_codes
-        description: "Array of all CKD resolved concept codes for this person"
-        
-      - name: all_resolved_concept_displays
-        description: "Array of all CKD resolved concept displays for this person" 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the CKD diagnosis observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for CKD diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the CKD diagnosis code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID (CKD_COD, CKDRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - CKD_COD
+        - CKDRES_COD
+  - name: is_ckd_diagnosis_code
+    description: Flag indicating CKD diagnosis (CKD_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_ckd_resolved_code
+    description: Flag indicating CKD resolved/remission (CKDRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: earliest_ckd_date
+    description: Earliest CKD diagnosis date for this person
+  - name: latest_ckd_date
+    description: Latest CKD diagnosis date for this person
+  - name: earliest_resolved_date
+    description: Earliest CKD resolved date for this person
+  - name: latest_resolved_date
+    description: Latest CKD resolved date for this person
+  - name: ckd_observation_type
+    description: Classification of this specific observation (CKD Diagnosis, CKD Resolved, Unknown)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - CKD Diagnosis
+        - CKD Resolved
+        - Unknown
+  - name: all_ckd_concept_codes
+    description: Array of all CKD diagnosis concept codes for this person
+  - name: all_ckd_concept_displays
+    description: Array of all CKD diagnosis concept displays for this person
+  - name: all_resolved_concept_codes
+    description: Array of all CKD resolved concept codes for this person
+  - name: all_resolved_concept_displays
+    description: Array of all CKD resolved concept displays for this person

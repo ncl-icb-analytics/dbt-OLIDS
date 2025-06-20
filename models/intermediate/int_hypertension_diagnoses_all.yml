@@ -1,116 +1,104 @@
 version: 2
-
 models:
-  - name: int_hypertension_diagnoses_all
+- name: int_hypertension_diagnoses_all
+  tests:
+  - test_cluster_ids_exist:
+      cluster_ids: HYPRES_COD, HYP_COD
+  description: 'All hypertension diagnosis observations from clinical records using QOF cluster IDs.
 
+    Provides comprehensive data collection for hypertension register and blood pressure management.
+
+
+    QOF Cluster IDs Used:
+
+    - HYP_COD: Hypertension diagnoses
+
+    - HYPRES_COD: Hypertension resolved/remission codes
+
+
+    Clinical Purpose:
+
+    - QOF hypertension register data collection
+
+    - Blood pressure management monitoring
+
+    - Cardiovascular risk assessment support
+
+    - Resolution status tracking
+
+
+    Includes ALL persons following intermediate layer principles.
+
+    Use as input for fct_person_hypertension_register.sql which applies QOF business rules.
+
+    '
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - test_cluster_ids_exist:
-          cluster_ids: "HYPRES_COD, HYP_COD"
-    description: |
-      All hypertension diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for hypertension register and blood pressure management.
-      
-      QOF Cluster IDs Used:
-      - HYP_COD: Hypertension diagnoses
-      - HYPRES_COD: Hypertension resolved/remission codes
-      
-      Clinical Purpose:
-      - QOF hypertension register data collection
-      - Blood pressure management monitoring
-      - Cardiovascular risk assessment support
-      - Resolution status tracking
-      
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_hypertension_register.sql which applies QOF business rules.
-      
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          
-      - name: clinical_effective_date
-        description: "Date of the hypertension diagnosis observation"
-        tests:
-          - not_null
-          
-      - name: concept_code
-        description: "SNOMED concept code for hypertension diagnosis"
-        tests:
-          - not_null
-          
-      - name: concept_display
-        description: "Description of the hypertension diagnosis code"
-        tests:
-          - not_null
-          
-      - name: source_cluster_id
-        description: "QOF cluster ID (HYP_COD, HYPRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['HYP_COD', 'HYPRES_COD']
-              
-      - name: is_hypertension_diagnosis_code
-        description: "Flag indicating hypertension diagnosis (HYP_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: is_hypertension_resolved_code
-        description: "Flag indicating hypertension resolved/remission (HYPRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: earliest_hypertension_date
-        description: "Earliest hypertension diagnosis date for this person"
-        
-      - name: latest_hypertension_date
-        description: "Latest hypertension diagnosis date for this person"
-        
-      - name: earliest_resolved_date
-        description: "Earliest hypertension resolved date for this person"
-        
-      - name: latest_resolved_date
-        description: "Latest hypertension resolved date for this person"
-        
-      - name: is_hypertension_currently_resolved
-        description: "QOF indicator: hypertension is currently resolved (latest resolved > latest diagnosis)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: hypertension_observation_type
-        description: "Classification of this specific observation (Hypertension Diagnosis, Hypertension Resolved, Unknown)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Hypertension Diagnosis', 'Hypertension Resolved', 'Unknown']
-              
-      - name: has_active_hypertension_diagnosis
-        description: "QOF context: person has active hypertension diagnosis (unresolved)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              
-      - name: all_hypertension_concept_codes
-        description: "Array of all hypertension diagnosis concept codes for this person"
-        
-      - name: all_hypertension_concept_displays
-        description: "Array of all hypertension diagnosis concept displays for this person"
-        
-      - name: all_resolved_concept_codes
-        description: "Array of all hypertension resolved concept codes for this person"
-        
-      - name: all_resolved_concept_displays
-        description: "Array of all hypertension resolved concept displays for this person" 
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the hypertension diagnosis observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for hypertension diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the hypertension diagnosis code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID (HYP_COD, HYPRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - HYP_COD
+        - HYPRES_COD
+  - name: is_hypertension_diagnosis_code
+    description: Flag indicating hypertension diagnosis (HYP_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_hypertension_resolved_code
+    description: Flag indicating hypertension resolved/remission (HYPRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: earliest_hypertension_date
+    description: Earliest hypertension diagnosis date for this person
+  - name: latest_hypertension_date
+    description: Latest hypertension diagnosis date for this person
+  - name: earliest_resolved_date
+    description: Earliest hypertension resolved date for this person
+  - name: latest_resolved_date
+    description: Latest hypertension resolved date for this person
+  - name: hypertension_observation_type
+    description: Classification of this specific observation (Hypertension Diagnosis, Hypertension Resolved, Unknown)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Hypertension Diagnosis
+        - Hypertension Resolved
+        - Unknown
+  - name: all_hypertension_concept_codes
+    description: Array of all hypertension diagnosis concept codes for this person
+  - name: all_hypertension_concept_displays
+    description: Array of all hypertension diagnosis concept displays for this person
+  - name: all_resolved_concept_codes
+    description: Array of all hypertension resolved concept codes for this person
+  - name: all_resolved_concept_displays
+    description: Array of all hypertension resolved concept displays for this person
