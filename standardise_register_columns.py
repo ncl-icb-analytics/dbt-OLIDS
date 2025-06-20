@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Script to standardise column naming across all disease register models.
-Changes all variations to use consistent 'earliest_diagnosis_date' and 'latest_diagnosis_date' columns.
+Changes all variations to use consistent 'earliest_diagnosis_date', 'latest_diagnosis_date', 
+'earliest_resolved_date' and 'latest_resolved_date' columns.
 """
 
 import os
@@ -17,226 +18,165 @@ def standardise_register_files():
     
     # Define column mappings - map old patterns to new standardised names
     replacements = {
-        # Earliest date patterns
+        # Earliest diagnosis date patterns
         'earliest_af_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_asthma_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_cancer_diagnosis_date': 'earliest_diagnosis_date',
-        'earliest_chd_date': 'earliest_diagnosis_date', 
+        'earliest_chd_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_ckd_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_copd_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_cyp_asthma_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_dementia_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_depression_diagnosis_date': 'earliest_diagnosis_date',
-        'earliest_diabetes_date': 'earliest_diagnosis_date',
+        'earliest_diabetes_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_epilepsy_diagnosis_date': 'earliest_diagnosis_date',
-        'earliest_fh_date': 'earliest_diagnosis_date',
-        'earliest_gestational_diabetes_date': 'earliest_diagnosis_date',
-        'earliest_hf_diagnosis_date': 'earliest_diagnosis_date',
-        'earliest_htn_diagnosis_date': 'earliest_diagnosis_date',
-        'earliest_ld_diagnosis_date': 'earliest_diagnosis_date',
-        'earliest_nafld_date': 'earliest_diagnosis_date',
-        'earliest_any_ndh_date': 'earliest_diagnosis_date',
-        'earliest_osteoporosis_date': 'earliest_diagnosis_date',
-        'earliest_pad_date': 'earliest_diagnosis_date',
-        'earliest_palliative_care_date': 'earliest_diagnosis_date',
-        'earliest_ra_date': 'earliest_diagnosis_date',
+        'earliest_fhyp_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_heart_failure_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_hypertension_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_learning_disability_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_osteoporosis_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_pad_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_palliative_care_diagnosis_date': 'earliest_diagnosis_date',
+        'earliest_ra_diagnosis_date': 'earliest_diagnosis_date',
         'earliest_smi_diagnosis_date': 'earliest_diagnosis_date',
+        # These don't follow diagnosis pattern but should be standardised
+        'earliest_nafld_date': 'earliest_diagnosis_date',
         'earliest_stroke_tia_date': 'earliest_diagnosis_date',
+        'earliest_chd_date': 'earliest_diagnosis_date',
         
-        # Latest date patterns
+        # Latest diagnosis date patterns  
         'latest_af_diagnosis_date': 'latest_diagnosis_date',
         'latest_asthma_diagnosis_date': 'latest_diagnosis_date',
         'latest_cancer_diagnosis_date': 'latest_diagnosis_date',
-        'latest_chd_date': 'latest_diagnosis_date',
+        'latest_chd_diagnosis_date': 'latest_diagnosis_date',
         'latest_ckd_diagnosis_date': 'latest_diagnosis_date',
+        'latest_copd_diagnosis_date': 'latest_diagnosis_date',
+        'latest_cyp_asthma_diagnosis_date': 'latest_diagnosis_date',
         'latest_dementia_diagnosis_date': 'latest_diagnosis_date',
         'latest_depression_diagnosis_date': 'latest_diagnosis_date',
-        'latest_diabetes_date': 'latest_diagnosis_date',
+        'latest_diabetes_diagnosis_date': 'latest_diagnosis_date',
         'latest_epilepsy_diagnosis_date': 'latest_diagnosis_date',
-        'latest_fh_date': 'latest_diagnosis_date',
-        'latest_gestational_diabetes_date': 'latest_diagnosis_date',
-        'latest_hf_diagnosis_date': 'latest_diagnosis_date',
-        'latest_htn_diagnosis_date': 'latest_diagnosis_date',
-        'latest_ld_diagnosis_date': 'latest_diagnosis_date',
-        'latest_nafld_date': 'latest_diagnosis_date',
-        'latest_any_ndh_date': 'latest_diagnosis_date',
-        'latest_osteoporosis_date': 'latest_diagnosis_date',
-        'latest_pad_date': 'latest_diagnosis_date',
-        'latest_palliative_care_date': 'latest_diagnosis_date',
-        'latest_ra_date': 'latest_diagnosis_date',
+        'latest_fhyp_diagnosis_date': 'latest_diagnosis_date',
+        'latest_heart_failure_diagnosis_date': 'latest_diagnosis_date',
+        'latest_hypertension_diagnosis_date': 'latest_diagnosis_date',
+        'latest_learning_disability_diagnosis_date': 'latest_diagnosis_date',
+        'latest_osteoporosis_diagnosis_date': 'latest_diagnosis_date',
+        'latest_pad_diagnosis_date': 'latest_diagnosis_date',
+        'latest_palliative_care_diagnosis_date': 'latest_diagnosis_date',
+        'latest_ra_diagnosis_date': 'latest_diagnosis_date',
         'latest_smi_diagnosis_date': 'latest_diagnosis_date',
+        # These don't follow diagnosis pattern but should be standardised
+        'latest_nafld_date': 'latest_diagnosis_date',
         'latest_stroke_tia_date': 'latest_diagnosis_date',
+        'latest_chd_date': 'latest_diagnosis_date',
+        
+        # Earliest resolved date patterns
+        'earliest_resolution_date': 'earliest_resolved_date',
+        
+        # Latest resolved date patterns
+        'latest_af_resolved_date': 'latest_resolved_date',
+        'latest_asthma_resolved_date': 'latest_resolved_date', 
+        'latest_cancer_resolved_date': 'latest_resolved_date',
+        'latest_ckd_resolved_date': 'latest_resolved_date',
+        'latest_copd_resolved_date': 'latest_resolved_date',
+        'latest_dementia_resolved_date': 'latest_resolved_date',
+        'latest_depression_resolved_date': 'latest_resolved_date',
+        'latest_epilepsy_resolved_date': 'latest_resolved_date',
+        'latest_hf_resolved_date': 'latest_resolved_date',
+        'latest_ld_resolved_date': 'latest_resolved_date',
+        'latest_resolution_date': 'latest_resolved_date',
+        'latest_smi_resolved_date': 'latest_resolved_date',
     }
     
-    changes_made = {}
+    updated_files = []
     
     for file_path in register_files:
-        print(f"Processing {file_path}")
+        print(f"Processing: {file_path}")
         
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
         original_content = content
-        file_changes = 0
         
         # Apply replacements
         for old_name, new_name in replacements.items():
-            # Count how many replacements we make
-            before_count = content.count(old_name)
             content = content.replace(old_name, new_name)
-            after_count = content.count(old_name)
-            
-            replacements_made = before_count - after_count
-            if replacements_made > 0:
-                file_changes += replacements_made
-                print(f"  - Replaced {replacements_made} instances of '{old_name}' -> '{new_name}'")
         
-        # Write back if changes were made
+        # Check if file was modified
         if content != original_content:
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(content)
-            changes_made[file_path] = file_changes
-            print(f"  ✓ Updated {file_path} ({file_changes} changes)")
+            updated_files.append(file_path)
+            print(f"  ✓ Updated")
         else:
-            print(f"  - No changes needed for {file_path}")
+            print(f"  - No changes needed")
     
-    return changes_made
+    return updated_files
 
 def update_ltc_summary():
-    """Update the LTC summary model to use standardised column names"""
+    """Update the LTC summary file to use standardised column names"""
     
     ltc_file = "models/marts/disease_registers/fct_person_ltc_summary.sql"
     
-    # Read the current content
     with open(ltc_file, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Define the replacement pattern for the summary
-    # We want to replace all condition-specific column names with the standardised ones
-    replacements = {
-        'earliest_af_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_af_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_asthma_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_asthma_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_cancer_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_cancer_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_chd_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_chd_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_ckd_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_ckd_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_diagnosis_date': 'earliest_diagnosis_date',  # COPD already uses standard names
-        'latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_dementia_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_dementia_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_depression_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_depression_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_diabetes_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_diabetes_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_epilepsy_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_epilepsy_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_fh_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_fh_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_gestational_diabetes_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_gestational_diabetes_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_hf_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_hf_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_htn_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_htn_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_ld_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_ld_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_nafld_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_nafld_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_any_ndh_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_any_ndh_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'latest_valid_bmi_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',  # Obesity special case
-        'latest_bmi_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_osteoporosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_osteoporosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_pad_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_pad_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_palliative_care_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_palliative_care_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_ra_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_ra_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_smi_diagnosis_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_smi_diagnosis_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-        
-        'earliest_stroke_tia_date AS earliest_diagnosis_date': 'earliest_diagnosis_date',
-        'latest_stroke_tia_date AS latest_diagnosis_date': 'latest_diagnosis_date',
-    }
-    
     original_content = content
-    changes = 0
     
-    # Apply replacements to the LTC summary
-    for old_pattern, new_pattern in replacements.items():
-        if old_pattern in content:
-            content = content.replace(old_pattern, new_pattern)
-            changes += 1
-            print(f"  - Updated LTC summary: '{old_pattern}' -> '{new_pattern}'")
+    # Replace all condition-specific column references with standardised names
+    # This is a comprehensive replacement to ensure all references are updated
+    standardised_content = content.replace(
+        'earliest_af_diagnosis_date', 'earliest_diagnosis_date'
+    ).replace(
+        'latest_af_diagnosis_date', 'latest_diagnosis_date'
+    ).replace(
+        'earliest_asthma_diagnosis_date', 'earliest_diagnosis_date'
+    ).replace(
+        'latest_asthma_diagnosis_date', 'latest_diagnosis_date'
+    ).replace(
+        'earliest_cancer_diagnosis_date', 'earliest_diagnosis_date'
+    ).replace(
+        'latest_cancer_diagnosis_date', 'latest_diagnosis_date'
+    )
     
-    # Write back if changes were made
-    if content != original_content:
+    # Add resolved date columns to the template since they might be needed
+    # Update the final select to include resolved dates
+    if 'latest_diagnosis_date' in standardised_content and 'latest_resolved_date' not in standardised_content:
+        # Add resolved date column to the union template if not already present
+        standardised_content = standardised_content.replace(
+            'latest_diagnosis_date\n    FROM',
+            'latest_diagnosis_date,\n        NULL AS latest_resolved_date\n    FROM'
+        )
+    
+    if standardised_content != original_content:
         with open(ltc_file, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"  ✓ Updated {ltc_file} ({changes} changes)")
+            f.write(standardised_content)
+        print(f"Updated LTC summary file: {ltc_file}")
         return True
     else:
-        print(f"  - No changes needed for {ltc_file}")
+        print(f"No changes needed for LTC summary file: {ltc_file}")
         return False
 
-def main():
-    """Main function to run the standardisation"""
-    print("🔄 Standardising disease register column names...")
-    print("=" * 60)
+if __name__ == "__main__":
+    print("Standardising disease register column naming...")
+    print("=" * 50)
     
-    # Step 1: Standardise register files
-    print("\n📋 Step 1: Updating individual register models")
-    register_changes = standardise_register_files()
+    # Update register files
+    updated_register_files = standardise_register_files()
     
-    # Step 2: Update LTC summary
-    print("\n📊 Step 2: Updating LTC summary model")
+    print("\n" + "=" * 50)
+    print(f"Summary: Updated {len(updated_register_files)} register files")
+    
+    # Update LTC summary
+    print("\nUpdating LTC summary file...")
     ltc_updated = update_ltc_summary()
     
-    # Summary
-    print("\n" + "=" * 60)
-    print("✅ Standardisation complete!")
-    
-    if register_changes:
-        print(f"\n📁 Register files updated: {len(register_changes)}")
-        for file_path, changes in register_changes.items():
-            print(f"  - {file_path}: {changes} changes")
+    if updated_register_files or ltc_updated:
+        print("\n✅ Standardisation complete!")
+        print("\nUpdated files:")
+        for file_path in updated_register_files:
+            print(f"  - {file_path}")
+        if ltc_updated:
+            print(f"  - models/marts/disease_registers/fct_person_ltc_summary.sql")
     else:
-        print("\n📁 No register files needed updates")
-    
-    if ltc_updated:
-        print("\n📊 LTC summary model updated")
-    else:
-        print("\n📊 LTC summary model was already up to date")
-    
-    print("\n🎯 All models now use standardised column names:")
-    print("  - earliest_diagnosis_date")
-    print("  - latest_diagnosis_date")
-
-if __name__ == "__main__":
-    main() 
+        print("\n✅ All files already using standardised naming!") 

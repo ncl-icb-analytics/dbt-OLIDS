@@ -33,7 +33,7 @@ WITH base_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN d.is_copd_diagnosis_code THEN d.clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN d.is_copd_diagnosis_code THEN d.clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN d.is_copd_resolved_code THEN d.clinical_effective_date END) AS latest_resolution_date,
+        MAX(CASE WHEN d.is_copd_resolved_code THEN d.clinical_effective_date END) AS latest_resolved_date,
         
         -- Calculate earliest unresolved diagnosis date (key for QOF logic)
         MIN(CASE WHEN d.is_copd_diagnosis_code THEN d.clinical_effective_date END) AS earliest_unresolved_diagnosis_date
@@ -100,7 +100,7 @@ SELECT
     
     f.earliest_diagnosis_date,
     f.latest_diagnosis_date,
-    f.latest_resolution_date,
+    f.latest_resolved_date,
     f.earliest_unresolved_diagnosis_date,
     
     COALESCE(s.has_spirometry_confirmation, FALSE) AS has_spirometry_confirmation,

@@ -33,7 +33,7 @@ WITH depression_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END) AS latest_depression_resolved_date,
+        MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- QOF register logic: active diagnosis required since April 2006
         CASE
@@ -101,7 +101,7 @@ SELECT
     rl.is_on_depression_register,
     rl.earliest_diagnosis_date,
     rl.latest_diagnosis_date,
-    rl.latest_depression_resolved_date,
+    rl.latest_resolved_date,
     rl.all_depression_concept_codes,
     rl.all_depression_concept_displays,
     rl.all_resolved_concept_codes AS all_depression_resolved_concept_codes

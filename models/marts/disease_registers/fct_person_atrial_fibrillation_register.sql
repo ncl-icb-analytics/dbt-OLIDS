@@ -16,7 +16,7 @@ WITH af_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_af_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_af_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_af_resolved_code THEN clinical_effective_date END) AS latest_af_resolved_date,
+        MAX(CASE WHEN is_af_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- QOF register logic: active diagnosis required
         CASE
@@ -57,7 +57,7 @@ register_logic AS (
         -- Clinical dates
         diag.earliest_diagnosis_date,
         diag.latest_diagnosis_date,
-        diag.latest_af_resolved_date,
+        diag.latest_resolved_date,
         
         -- Traceability
         diag.all_af_concept_codes,
@@ -76,7 +76,7 @@ SELECT
     -- Clinical diagnosis dates
     earliest_diagnosis_date,
     latest_diagnosis_date,
-    latest_af_resolved_date,
+    latest_resolved_date,
     
     -- Traceability for audit
     all_af_concept_codes,

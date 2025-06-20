@@ -17,7 +17,8 @@ WITH condition_union AS (
         'Atrial Fibrillation' AS condition_name,
         is_on_af_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_atrial_fibrillation_register') }}
     WHERE is_on_af_register = TRUE
 
@@ -30,7 +31,8 @@ WITH condition_union AS (
         'Asthma' AS condition_name,
         is_on_asthma_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_asthma_register') }}
     WHERE is_on_asthma_register = TRUE
 
@@ -43,7 +45,8 @@ WITH condition_union AS (
         'Children and Young People Asthma' AS condition_name,
         is_on_asthma_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_cyp_asthma_register') }}
     WHERE is_on_asthma_register = TRUE
 
@@ -56,7 +59,8 @@ WITH condition_union AS (
         'Cancer' AS condition_name,
         is_on_cancer_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_cancer_register') }}
     WHERE is_on_cancer_register = TRUE
 
@@ -69,7 +73,8 @@ WITH condition_union AS (
         'Coronary Heart Disease' AS condition_name,
         is_on_chd_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_chd_register') }}
     WHERE is_on_chd_register = TRUE
 
@@ -82,7 +87,8 @@ WITH condition_union AS (
         'Chronic Kidney Disease' AS condition_name,
         is_on_ckd_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_ckd_register') }}
     WHERE is_on_ckd_register = TRUE
 
@@ -95,7 +101,8 @@ WITH condition_union AS (
         'Chronic Obstructive Pulmonary Disease' AS condition_name,
         is_on_copd_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_copd_register') }}
     WHERE is_on_copd_register = TRUE
 
@@ -108,7 +115,8 @@ WITH condition_union AS (
         'Dementia' AS condition_name,
         is_on_dementia_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_dementia_register') }}
     WHERE is_on_dementia_register = TRUE
 
@@ -121,7 +129,8 @@ WITH condition_union AS (
         'Depression' AS condition_name,
         is_on_depression_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_depression_register') }}
     WHERE is_on_depression_register = TRUE
 
@@ -134,7 +143,8 @@ WITH condition_union AS (
         'Diabetes' AS condition_name,
         is_on_diabetes_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_diabetes_register') }}
     WHERE is_on_diabetes_register = TRUE
 
@@ -147,7 +157,8 @@ WITH condition_union AS (
         'Epilepsy' AS condition_name,
         is_on_epilepsy_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_epilepsy_register') }}
     WHERE is_on_epilepsy_register = TRUE
 
@@ -160,7 +171,8 @@ WITH condition_union AS (
         'Familial Hypercholesterolaemia' AS condition_name,
         is_on_fh_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_familial_hypercholesterolaemia_register') }}
     WHERE is_on_fh_register = TRUE
 
@@ -173,7 +185,8 @@ WITH condition_union AS (
         'Gestational Diabetes' AS condition_name,
         is_on_gestational_diabetes_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_gestational_diabetes_register') }}
     WHERE is_on_gestational_diabetes_register = TRUE
 
@@ -186,7 +199,8 @@ WITH condition_union AS (
         'Heart Failure' AS condition_name,
         is_on_hf_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_heart_failure_register') }}
     WHERE is_on_hf_register = TRUE
 
@@ -199,7 +213,8 @@ WITH condition_union AS (
         'Hypertension' AS condition_name,
         is_on_htn_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_hypertension_register') }}
     WHERE is_on_htn_register = TRUE
 
@@ -212,7 +227,8 @@ WITH condition_union AS (
         'Learning Disability' AS condition_name,
         is_on_ld_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_learning_disability_register') }}
     WHERE is_on_ld_register = TRUE
 
@@ -225,7 +241,8 @@ WITH condition_union AS (
         'Non-Alcoholic Fatty Liver Disease' AS condition_name,
         is_on_nafld_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_nafld_register') }}
     WHERE is_on_nafld_register = TRUE
 
@@ -238,7 +255,8 @@ WITH condition_union AS (
         'Non-Diabetic Hyperglycaemia' AS condition_name,
         is_on_ndh_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_ndh_register') }}
     WHERE is_on_ndh_register = TRUE
 
@@ -251,7 +269,8 @@ WITH condition_union AS (
         'Obesity' AS condition_name,
         is_on_obesity_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_obesity_register') }}
     WHERE is_on_obesity_register = TRUE
 
@@ -264,7 +283,8 @@ WITH condition_union AS (
         'Osteoporosis' AS condition_name,
         is_on_osteoporosis_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_osteoporosis_register') }}
     WHERE is_on_osteoporosis_register = TRUE
 
@@ -277,7 +297,8 @@ WITH condition_union AS (
         'Peripheral Arterial Disease' AS condition_name,
         is_on_pad_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_pad_register') }}
     WHERE is_on_pad_register = TRUE
 
@@ -290,7 +311,8 @@ WITH condition_union AS (
         'Palliative Care' AS condition_name,
         is_on_palliative_care_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_palliative_care_register') }}
     WHERE is_on_palliative_care_register = TRUE
 
@@ -303,7 +325,8 @@ WITH condition_union AS (
         'Rheumatoid Arthritis' AS condition_name,
         is_on_ra_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_rheumatoid_arthritis_register') }}
     WHERE is_on_ra_register = TRUE
 
@@ -316,7 +339,8 @@ WITH condition_union AS (
         'Serious Mental Illness' AS condition_name,
         is_on_smi_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_smi_register') }}
     WHERE is_on_smi_register = TRUE
 
@@ -329,7 +353,8 @@ WITH condition_union AS (
         'Stroke or Transient Ischaemic Attack' AS condition_name,
         is_on_stroke_tia_register AS is_on_register,
         earliest_diagnosis_date,
-        latest_diagnosis_date
+        latest_diagnosis_date,
+        NULL AS latest_resolved_date
     FROM {{ ref('fct_person_stroke_tia_register') }}
     WHERE is_on_stroke_tia_register = TRUE
 )

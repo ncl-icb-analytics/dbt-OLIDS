@@ -16,7 +16,7 @@ WITH asthma_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_asthma_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_asthma_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END) AS latest_asthma_resolved_date,
+        MAX(CASE WHEN is_asthma_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- QOF register logic: active diagnosis required
         CASE
@@ -75,7 +75,7 @@ register_logic AS (
         -- Clinical dates
         diag.earliest_diagnosis_date,
         diag.latest_diagnosis_date,
-        diag.latest_asthma_resolved_date,
+        diag.latest_resolved_date,
         
         -- Medication details
         med.latest_asthma_medication_date,
@@ -107,7 +107,7 @@ SELECT
     -- Clinical diagnosis dates
     earliest_diagnosis_date,
     latest_diagnosis_date,
-    latest_asthma_resolved_date,
+    latest_resolved_date,
     
     -- Medication validation details
     latest_asthma_medication_date,

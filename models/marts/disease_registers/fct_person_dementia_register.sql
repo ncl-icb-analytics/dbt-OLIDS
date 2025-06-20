@@ -33,7 +33,7 @@ WITH dementia_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_dementia_resolved_code THEN clinical_effective_date END) AS latest_dementia_resolved_date,
+        MAX(CASE WHEN is_dementia_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
         -- QOF register logic: active diagnosis required (even though dementia is rarely resolved)
         CASE
