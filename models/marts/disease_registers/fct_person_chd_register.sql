@@ -48,7 +48,7 @@ final AS (
         age.age,
         
         -- Register flag (always true for simple register pattern)
-        TRUE AS is_on_chd_register,
+        TRUE AS is_on_register,
         
         -- Diagnosis dates
         bd.earliest_diagnosis_date,

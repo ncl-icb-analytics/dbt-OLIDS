@@ -90,7 +90,7 @@ combined_smi_eligibility AS (
              smi.has_active_smi_diagnosis = TRUE
              OR
              (lith.recent_lithium_orders_count > 0)
-         ) AS is_on_smi_register,
+         ) AS is_on_register,
         
         -- Supporting flags
         smi.latest_diagnosis_date IS NOT NULL AS has_mh_diagnosis,
@@ -116,7 +116,7 @@ combined_smi_eligibility AS (
 SELECT
     cse.person_id,
     cse.age,
-    cse.is_on_smi_register,
+    cse.is_on_register,
     cse.is_on_lithium,
     cse.has_mh_diagnosis,
     cse.has_active_smi_diagnosis,
@@ -131,4 +131,4 @@ SELECT
     cse.all_lithium_concept_displays
 
 FROM combined_smi_eligibility cse
-WHERE cse.is_on_smi_register = TRUE 
+WHERE cse.is_on_register = TRUE 

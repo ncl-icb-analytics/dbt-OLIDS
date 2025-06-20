@@ -61,7 +61,7 @@ WITH dementia_diagnoses AS (
 SELECT
     dd.person_id,
     age.age,
-    TRUE AS is_on_dementia_register,
+    TRUE AS is_on_register,
     dd.earliest_diagnosis_date,
     dd.latest_diagnosis_date,
     dd.all_dementia_concept_codes,

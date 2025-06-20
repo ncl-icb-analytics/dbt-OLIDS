@@ -75,7 +75,7 @@ diabetes_status AS (
         person_id,
         
         -- Diabetes history for exclusion logic
-        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diabetes_diagnosis_date,
+        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) AS latest_diabetes_resolved_date,
         
         -- Diabetes flags
@@ -94,7 +94,7 @@ register_inclusion AS (
         nd.*,
         ds.has_diabetes_diagnosis,
         ds.is_diabetes_resolved,
-        ds.earliest_diabetes_diagnosis_date,
+        ds.earliest_diagnosis_date,
         ds.latest_diabetes_resolved_date,
         
         -- Age at first NDH diagnosis calculation using current age (approximation)
@@ -111,7 +111,7 @@ register_inclusion AS (
                       OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
             THEN TRUE 
             ELSE FALSE 
-        END AS is_on_ndh_register,
+        END AS is_on_register,
         
         -- Clinical interpretation
         CASE 
@@ -152,7 +152,7 @@ register_inclusion AS (
 
 SELECT
     ri.person_id,
-    ri.is_on_ndh_register,
+    ri.is_on_register,
     ri.ndh_status,
     ri.earliest_diagnosis_date,
     ri.latest_diagnosis_date,
@@ -171,7 +171,7 @@ SELECT
     ri.has_prd_diagnosis,
     ri.has_diabetes_diagnosis,
     ri.is_diabetes_resolved,
-    ri.earliest_diabetes_diagnosis_date,
+    ri.earliest_diagnosis_date,
     ri.latest_diabetes_resolved_date,
     ri.days_since_first_ndh,
     ri.days_since_latest_ndh,
@@ -184,6 +184,6 @@ SELECT
     ri.all_observation_ids
     
 FROM register_inclusion ri
-WHERE ri.is_on_ndh_register = TRUE
+WHERE ri.is_on_register = TRUE
 
 ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

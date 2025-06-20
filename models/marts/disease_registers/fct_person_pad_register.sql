@@ -58,7 +58,7 @@ register_inclusion AS (
             WHEN earliest_diagnosis_date IS NOT NULL 
             THEN TRUE 
             ELSE FALSE 
-        END AS is_on_pad_register,
+        END AS is_on_register,
         
         -- Clinical interpretation
         CASE 
@@ -83,7 +83,7 @@ register_inclusion AS (
 
 SELECT
     ri.person_id,
-    ri.is_on_pad_register,
+    ri.is_on_register,
     ri.pad_status,
     ri.earliest_diagnosis_date,
     ri.latest_diagnosis_date,
@@ -97,6 +97,6 @@ SELECT
 FROM register_inclusion ri
 INNER JOIN {{ ref('dim_person_active_patients') }} ap
     ON ri.person_id = ap.person_id
-WHERE ri.is_on_pad_register = TRUE
+WHERE ri.is_on_register = TRUE
 
 ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

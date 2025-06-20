@@ -52,7 +52,7 @@ register_logic AS (
                 AND diag.has_active_ckd_diagnosis = TRUE
             THEN TRUE
             ELSE FALSE
-        END AS is_on_ckd_register,
+        END AS is_on_register,
         
         -- Clinical dates
         diag.earliest_diagnosis_date,
@@ -74,7 +74,7 @@ register_logic AS (
 SELECT
     person_id,
     age,
-    is_on_ckd_register,
+    is_on_register,
     
     -- Clinical diagnosis dates
     earliest_diagnosis_date,
@@ -89,4 +89,4 @@ SELECT
     meets_age_criteria,
     has_active_diagnosis
 FROM register_logic
-WHERE is_on_ckd_register = TRUE 
+WHERE is_on_register = TRUE 

@@ -3,7 +3,7 @@
         materialized='table',
         indexes=[
             {'columns': ['person_id'], 'unique': false},
-            {'columns': ['is_on_copd_register'], 'unique': false},
+            {'columns': ['is_on_register'], 'unique': false},
             {'columns': ['is_pre_april_2023_diagnosis'], 'unique': false},
             {'columns': ['is_post_april_2023_diagnosis'], 'unique': false}
         ]
@@ -96,7 +96,7 @@ SELECT
             AND (COALESCE(s.has_spirometry_confirmation, FALSE) 
                  OR COALESCE(u.is_unable_spirometry, FALSE)) THEN TRUE
         ELSE FALSE
-    END AS is_on_copd_register,
+    END AS is_on_register,
     
     f.earliest_diagnosis_date,
     f.latest_diagnosis_date,

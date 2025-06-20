@@ -53,7 +53,7 @@ register_logic AS (
             )
             THEN TRUE
             ELSE FALSE
-        END AS is_on_obesity_register,
+        END AS is_on_register,
         
         -- BMI data
         bmi.latest_bmi_date,
@@ -80,7 +80,7 @@ register_logic AS (
 SELECT
     person_id,
     age,
-    is_on_obesity_register,
+    is_on_register,
     
     -- Clinical criteria flags
     meets_age_criteria,
@@ -103,4 +103,4 @@ SELECT
     all_ethnicity_concept_codes,
     all_ethnicity_concept_displays
 FROM register_logic
-WHERE is_on_obesity_register = TRUE 
+WHERE is_on_register = TRUE 

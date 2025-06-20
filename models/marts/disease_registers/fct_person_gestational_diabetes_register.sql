@@ -59,7 +59,7 @@ register_inclusion AS (
             WHEN earliest_diagnosis_date IS NOT NULL 
             THEN TRUE 
             ELSE FALSE 
-        END AS is_on_gestational_diabetes_register,
+        END AS is_on_register,
         
         -- Clinical interpretation
         CASE 
@@ -86,7 +86,7 @@ register_inclusion AS (
 
 SELECT
     ri.person_id,
-    ri.is_on_gestational_diabetes_register,
+    ri.is_on_register,
     ri.gestational_diabetes_status,
     ri.earliest_diagnosis_date,
     ri.latest_diagnosis_date,
@@ -98,6 +98,6 @@ SELECT
     ri.all_observation_ids
     
 FROM register_inclusion ri
-WHERE ri.is_on_gestational_diabetes_register = TRUE
+WHERE ri.is_on_register = TRUE
 
 ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

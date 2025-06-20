@@ -62,11 +62,11 @@ register_logic AS (
                 )
             THEN TRUE
             ELSE FALSE
-        END AS is_on_diabetes_register,
+        END AS is_on_register,
         
         -- Type classification logic (only for those on register, following legacy logic)
         CASE
-            WHEN NOT is_on_diabetes_register THEN NULL -- Not applicable if not on register
+            WHEN NOT is_on_register THEN NULL -- Not applicable if not on register
             -- Type 1 precedence: Latest Type 1 >= Latest Type 2 (or no Type 2)
             WHEN diag.latest_type1_date IS NOT NULL 
                 AND (diag.latest_type2_date IS NULL 
@@ -109,7 +109,7 @@ register_logic AS (
 SELECT
     person_id,
     age,
-    is_on_diabetes_register,
+    is_on_register,
     diabetes_type,
     
     -- Clinical diagnosis dates
@@ -134,4 +134,4 @@ SELECT
     meets_age_criteria,
     has_active_diabetes_diagnosis
 FROM register_logic
-WHERE is_on_diabetes_register = TRUE 
+WHERE is_on_register = TRUE 

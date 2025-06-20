@@ -84,7 +84,7 @@ register_logic AS (
         (
             age.age >= 18
             AND dd.has_active_depression_diagnosis = TRUE
-        ) AS is_on_depression_register
+        ) AS is_on_register
         
     FROM depression_diagnoses dd
     INNER JOIN {{ ref('dim_person') }} p
@@ -98,7 +98,7 @@ register_logic AS (
 SELECT
     rl.person_id,
     rl.age,
-    rl.is_on_depression_register,
+    rl.is_on_register,
     rl.earliest_diagnosis_date,
     rl.latest_diagnosis_date,
     rl.latest_resolved_date,
@@ -107,4 +107,4 @@ SELECT
     rl.all_resolved_concept_codes AS all_depression_resolved_concept_codes
 
 FROM register_logic rl
-WHERE rl.is_on_depression_register = TRUE 
+WHERE rl.is_on_register = TRUE 

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
 Script to standardise column naming across all disease register models.
-Changes all variations to use consistent 'earliest_diagnosis_date', 'latest_diagnosis_date', 
-'earliest_resolved_date' and 'latest_resolved_date' columns.
+Changes all variations to use consistent naming patterns:
+- 'earliest_diagnosis_date', 'latest_diagnosis_date' 
+- 'earliest_resolved_date', 'latest_resolved_date'
+- 'is_on_register' for all register flags
 """
 
 import os
@@ -86,6 +88,37 @@ def standardise_register_files():
         'latest_ld_resolved_date': 'latest_resolved_date',
         'latest_resolution_date': 'latest_resolved_date',
         'latest_smi_resolved_date': 'latest_resolved_date',
+        
+        # Register flag patterns - standardise all to 'is_on_register'
+        'is_on_af_register': 'is_on_register',
+        'is_on_asthma_register': 'is_on_register', 
+        'is_on_cancer_register': 'is_on_register',
+        'is_on_chd_register': 'is_on_register',
+        'is_on_ckd_register': 'is_on_register',
+        'is_on_copd_register': 'is_on_register',
+        'is_on_cyp_asthma_register': 'is_on_register',
+        'is_on_dementia_register': 'is_on_register',
+        'is_on_depression_register': 'is_on_register',
+        'is_on_diabetes_register': 'is_on_register',
+        'is_on_epilepsy_register': 'is_on_register',
+        'is_on_fh_register': 'is_on_register',
+        'is_on_fhyp_register': 'is_on_register',
+        'is_on_gestational_diabetes_register': 'is_on_register',
+        'is_on_hf_register': 'is_on_register',
+        'is_on_heart_failure_register': 'is_on_register',
+        'is_on_htn_register': 'is_on_register',
+        'is_on_hypertension_register': 'is_on_register',
+        'is_on_ld_register': 'is_on_register',
+        'is_on_learning_disability_register': 'is_on_register',
+        'is_on_nafld_register': 'is_on_register',
+        'is_on_ndh_register': 'is_on_register',
+        'is_on_obesity_register': 'is_on_register',
+        'is_on_osteoporosis_register': 'is_on_register',
+        'is_on_pad_register': 'is_on_register',
+        'is_on_palliative_care_register': 'is_on_register',
+        'is_on_ra_register': 'is_on_register',
+        'is_on_smi_register': 'is_on_register',
+        'is_on_stroke_tia_register': 'is_on_register',
     }
     
     updated_files = []
@@ -124,29 +157,43 @@ def update_ltc_summary():
     original_content = content
     
     # Replace all condition-specific column references with standardised names
-    # This is a comprehensive replacement to ensure all references are updated
-    standardised_content = content.replace(
-        'earliest_af_diagnosis_date', 'earliest_diagnosis_date'
-    ).replace(
-        'latest_af_diagnosis_date', 'latest_diagnosis_date'
-    ).replace(
-        'earliest_asthma_diagnosis_date', 'earliest_diagnosis_date'
-    ).replace(
-        'latest_asthma_diagnosis_date', 'latest_diagnosis_date'
-    ).replace(
-        'earliest_cancer_diagnosis_date', 'earliest_diagnosis_date'
-    ).replace(
-        'latest_cancer_diagnosis_date', 'latest_diagnosis_date'
-    )
+    standardised_content = content
     
-    # Add resolved date columns to the template since they might be needed
-    # Update the final select to include resolved dates
-    if 'latest_diagnosis_date' in standardised_content and 'latest_resolved_date' not in standardised_content:
-        # Add resolved date column to the union template if not already present
-        standardised_content = standardised_content.replace(
-            'latest_diagnosis_date\n    FROM',
-            'latest_diagnosis_date,\n        NULL AS latest_resolved_date\n    FROM'
-        )
+    # Replace register flag patterns
+    register_flag_replacements = [
+        ('is_on_af_register', 'is_on_register'),
+        ('is_on_asthma_register', 'is_on_register'),
+        ('is_on_cancer_register', 'is_on_register'),
+        ('is_on_chd_register', 'is_on_register'),
+        ('is_on_ckd_register', 'is_on_register'),
+        ('is_on_copd_register', 'is_on_register'),
+        ('is_on_cyp_asthma_register', 'is_on_register'),
+        ('is_on_dementia_register', 'is_on_register'),
+        ('is_on_depression_register', 'is_on_register'),
+        ('is_on_diabetes_register', 'is_on_register'),
+        ('is_on_epilepsy_register', 'is_on_register'),
+        ('is_on_fh_register', 'is_on_register'),
+        ('is_on_fhyp_register', 'is_on_register'),
+        ('is_on_gestational_diabetes_register', 'is_on_register'),
+        ('is_on_hf_register', 'is_on_register'),
+        ('is_on_heart_failure_register', 'is_on_register'),
+        ('is_on_htn_register', 'is_on_register'),
+        ('is_on_hypertension_register', 'is_on_register'),
+        ('is_on_ld_register', 'is_on_register'),
+        ('is_on_learning_disability_register', 'is_on_register'),
+        ('is_on_nafld_register', 'is_on_register'),
+        ('is_on_ndh_register', 'is_on_register'),
+        ('is_on_obesity_register', 'is_on_register'),
+        ('is_on_osteoporosis_register', 'is_on_register'),
+        ('is_on_pad_register', 'is_on_register'),
+        ('is_on_palliative_care_register', 'is_on_register'),
+        ('is_on_ra_register', 'is_on_register'),
+        ('is_on_smi_register', 'is_on_register'),
+        ('is_on_stroke_tia_register', 'is_on_register'),
+    ]
+    
+    for old_flag, new_flag in register_flag_replacements:
+        standardised_content = standardised_content.replace(old_flag, new_flag)
     
     if standardised_content != original_content:
         with open(ltc_file, 'w', encoding='utf-8') as f:
@@ -178,5 +225,12 @@ if __name__ == "__main__":
             print(f"  - {file_path}")
         if ltc_updated:
             print(f"  - models/marts/disease_registers/fct_person_ltc_summary.sql")
+        
+        print("\n🎯 All models now use standardised column names:")
+        print("  - earliest_diagnosis_date")
+        print("  - latest_diagnosis_date")
+        print("  - earliest_resolved_date")
+        print("  - latest_resolved_date")
+        print("  - is_on_register")
     else:
         print("\n✅ All files already using standardised naming!") 

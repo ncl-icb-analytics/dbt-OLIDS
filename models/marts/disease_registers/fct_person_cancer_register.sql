@@ -65,7 +65,7 @@ final AS (
         age.age,
         
         -- Register flag (always true after date filtering)
-        cd.has_active_cancer_diagnosis AS is_on_cancer_register,
+        cd.has_active_cancer_diagnosis AS is_on_register,
         
         -- Diagnosis dates
         cd.earliest_diagnosis_date,
@@ -86,7 +86,7 @@ final AS (
 SELECT 
     person_id,
     age,
-    is_on_cancer_register,
+    is_on_register,
     earliest_diagnosis_date,
     latest_diagnosis_date,
     latest_resolved_date,

@@ -70,7 +70,7 @@ register_logic AS (
                 AND med.latest_asthma_medication_date IS NOT NULL
             THEN TRUE
             ELSE FALSE
-        END AS is_on_asthma_register,
+        END AS is_on_register,
         
         -- Clinical dates
         diag.earliest_diagnosis_date,
@@ -102,7 +102,7 @@ register_logic AS (
 SELECT
     person_id,
     age,
-    is_on_asthma_register,
+    is_on_register,
     
     -- Clinical diagnosis dates
     earliest_diagnosis_date,
@@ -127,4 +127,4 @@ SELECT
     has_active_diagnosis,
     has_recent_medication
 FROM register_logic
-WHERE is_on_asthma_register = TRUE 
+WHERE is_on_register = TRUE 

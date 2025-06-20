@@ -125,7 +125,7 @@ register_logic AS (
                 )
             THEN TRUE
             ELSE FALSE
-        END AS is_on_osteoporosis_register,
+        END AS is_on_register,
         
         -- Clinical dates - osteoporosis
         diag.earliest_diagnosis_date,
@@ -170,7 +170,7 @@ register_logic AS (
 SELECT
     person_id,
     age,
-    is_on_osteoporosis_register,
+    is_on_register,
     
     -- Component criteria flags
     meets_age_criteria,
@@ -206,6 +206,6 @@ SELECT
     all_fragility_fracture_concept_displays,
     all_fracture_sites
 FROM register_logic
-WHERE is_on_osteoporosis_register = TRUE
+WHERE is_on_register = TRUE
 
 ORDER BY earliest_diagnosis_date DESC, person_id 

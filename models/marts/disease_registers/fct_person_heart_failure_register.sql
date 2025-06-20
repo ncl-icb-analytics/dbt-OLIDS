@@ -75,7 +75,7 @@ register_logic AS (
             WHEN diag.has_active_hf_diagnosis = TRUE
             THEN TRUE
             ELSE FALSE
-        END AS is_on_hf_register,
+        END AS is_on_register,
         
         -- LVSD/Reduced EF register inclusion (subset of general HF register)
         CASE
@@ -111,7 +111,7 @@ register_logic AS (
 SELECT
     person_id,
     age,
-    is_on_hf_register,
+    is_on_register,
     is_on_hf_lvsd_reduced_ef_register,
     
     -- Clinical diagnosis dates
@@ -138,4 +138,4 @@ SELECT
     meets_age_criteria,
     has_active_diagnosis
 FROM register_logic
-WHERE is_on_hf_register = TRUE 
+WHERE is_on_register = TRUE 

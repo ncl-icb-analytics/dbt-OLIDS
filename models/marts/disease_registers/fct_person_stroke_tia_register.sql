@@ -64,7 +64,7 @@ register_inclusion AS (
                       OR earliest_resolved_date > latest_diagnosis_date)
             THEN TRUE 
             ELSE FALSE 
-        END AS is_on_stroke_tia_register,
+        END AS is_on_register,
         
         -- Clinical interpretation
         CASE 
@@ -96,7 +96,7 @@ register_inclusion AS (
 
 SELECT
     ri.person_id,
-    ri.is_on_stroke_tia_register,
+    ri.is_on_register,
     ri.stroke_tia_status,
     ri.earliest_diagnosis_date,
     ri.latest_diagnosis_date,
@@ -113,6 +113,6 @@ SELECT
 FROM register_inclusion ri
 INNER JOIN {{ ref('dim_person_active_patients') }} ap
     ON ri.person_id = ap.person_id
-WHERE ri.is_on_stroke_tia_register = TRUE
+WHERE ri.is_on_register = TRUE
 
 ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 

@@ -60,7 +60,7 @@ register_logic AS (
         age.age,
         
         -- QOF Register Logic: Active LD diagnosis + age ≥14
-        (ld.has_active_ld_diagnosis = TRUE AND age.age >= 14) AS is_on_ld_register
+        (ld.has_active_ld_diagnosis = TRUE AND age.age >= 14) AS is_on_register
         
     FROM learning_disability_diagnoses ld
     INNER JOIN {{ ref('dim_person') }} p
@@ -74,11 +74,11 @@ register_logic AS (
 SELECT
     rl.person_id,
     rl.age,
-    rl.is_on_ld_register,
+    rl.is_on_register,
     rl.earliest_diagnosis_date,
     rl.latest_diagnosis_date,
     rl.all_ld_concept_codes,
     rl.all_ld_concept_displays
 
 FROM register_logic rl
-WHERE rl.is_on_ld_register = TRUE 
+WHERE rl.is_on_register = TRUE 
