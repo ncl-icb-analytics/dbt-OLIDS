@@ -5,7 +5,7 @@
     )
 }}
 
--- CYP Asthma Register (QOF Pattern 3: Complex QOF Register with External Validation)
+-- CYP Asthma Register (Clinical Register - NOT part of QOF)
 -- Business Logic: Age <18 + Active asthma diagnosis (latest AST_COD > latest ASTRES_COD) + Recent asthma medication (last 12 months)
 -- External Validation: Requires medication confirmation for children/young people with asthma
 

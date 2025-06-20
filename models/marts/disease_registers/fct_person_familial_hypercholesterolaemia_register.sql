@@ -8,21 +8,22 @@
 
 /*
 Familial Hypercholesterolaemia (FH) register fact table - one row per person.
-Applies QOF FH register inclusion criteria.
+Applies clinical FH register inclusion criteria.
 
 Clinical Purpose:
-- QOF FH register for genetic cardiovascular risk management  
+- Clinical FH register for genetic cardiovascular risk management
+- Clinical register (NOT part of QOF)  
 - Familial hypercholesterolaemia cascade screening
 - High-intensity statin therapy monitoring
 - Family screening pathway identification
 
-QOF Register Criteria:
+Register Criteria:
 - Any FH diagnosis code (FHYP_COD)
 - Age ≥20 years (applied in this fact table)
 - No resolution codes (genetic condition)
 - Important for cascade family screening programmes
 
-Includes only active patients as per QOF population requirements.
+Includes only active patients as per standard population requirements.
 This table provides one row per person for analytical use.
 */
 
@@ -60,7 +61,7 @@ register_inclusion AS (
             THEN age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())
         END AS age_at_first_fh_diagnosis,
         
-        -- QOF register logic: Include if has diagnosis and estimated age ≥20 at first diagnosis
+        -- Register logic: Include if has diagnosis and estimated age ≥20 at first diagnosis
         CASE 
             WHEN earliest_diagnosis_date IS NOT NULL 
                  AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) >= 20
@@ -75,7 +76,7 @@ register_inclusion AS (
             THEN 'Active FH diagnosis (age ≥20)'
             WHEN earliest_diagnosis_date IS NOT NULL 
                  AND (age.age - DATEDIFF(year, earliest_diagnosis_date, CURRENT_DATE())) < 20
-            THEN 'FH diagnosis (age <20 - excluded from QOF)'
+            THEN 'FH diagnosis (age <20 - excluded from register)'
             ELSE 'No FH diagnosis'
         END AS fh_status,
         

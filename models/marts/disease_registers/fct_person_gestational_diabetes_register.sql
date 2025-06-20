@@ -11,18 +11,19 @@ Gestational Diabetes register fact table - one row per person.
 Applies QOF gestational diabetes register inclusion criteria.
 
 Clinical Purpose:
-- QOF gestational diabetes register for pregnancy care and future diabetes risk
+- Clinical gestational diabetes register for pregnancy care and future diabetes risk
 - Pregnancy-related diabetes monitoring
 - Postpartum diabetes risk assessment  
 - Future type 2 diabetes prevention planning
+- Clinical register (NOT part of QOF)
 
-QOF Register Criteria (Simple Pattern):
+Register Criteria (Simple Pattern):
 - Any gestational diabetes diagnosis code (GESTDIAB_COD)
 - No age restrictions (pregnancy-related)
 - No resolution codes (permanent record for risk assessment)
 - Important for ongoing diabetes risk monitoring
 
-Includes only active patients as per QOF population requirements.
+Includes only active patients as per standard population requirements.
 This table provides one row per person for analytical use.
 */
 
@@ -54,7 +55,7 @@ register_inclusion AS (
     SELECT
         gd.*,
         
-        -- QOF register logic: Include if has gestational diabetes diagnosis
+        -- Register logic: Include if has gestational diabetes diagnosis
         CASE 
             WHEN earliest_diagnosis_date IS NOT NULL 
             THEN TRUE 

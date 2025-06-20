@@ -13,7 +13,7 @@ Applies NAFLD register inclusion criteria.
 Clinical Purpose:
 - NAFLD diagnosis tracking and monitoring
 - Liver health assessment
-- Potential QOF register development
+- Clinical register (NOT part of QOF)
 
 Register Criteria (Simple Pattern):
 - Any NAFLD diagnosis code (hardcoded SNOMED concepts)
