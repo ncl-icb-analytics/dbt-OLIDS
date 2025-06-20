@@ -9,7 +9,7 @@
 # sensitive connection information.
 
 snowflake_hei_migration:
-  target: dev
+  target: dev  # Default target - use wrapper scripts or --target for other environments
   outputs:
     dev:
       type: snowflake
@@ -18,11 +18,24 @@ snowflake_hei_migration:
       authenticator: externalbrowser
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
       database: DATA_LAB_NCL_TRAINING_TEMP
-      schema: DBT
+      schema: "DBT_{{ env_var('DBT_BRANCH', 'dev') | replace('/', '_') | replace('-', '_') | upper }}"  # Branch-based dev schema
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
       threads: 4
       client_session_keep_alive: true
-      query_tag: "dbt_hei_migration"
+      query_tag: "dbt_hei_migration_dev"
+    
+    staging:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      authenticator: externalbrowser
+      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+      database: DATA_LAB_NCL_TRAINING_TEMP
+      schema: DBT_STAGING
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      threads: 6
+      client_session_keep_alive: true
+      query_tag: "dbt_hei_migration_staging"
     
     prod:
       type: snowflake
