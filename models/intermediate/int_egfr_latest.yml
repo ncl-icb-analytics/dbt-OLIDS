@@ -19,7 +19,7 @@ models:
         description: "eGFR value in mL/min/1.73m² (valid range only)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               max_value: 200
       - name: ckd_stage

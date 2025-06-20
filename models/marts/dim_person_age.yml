@@ -35,14 +35,14 @@ models:
       - name: birth_year
         description: "Year of birth (YYYY format)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1900
               max_value: 2030
 
       - name: birth_month
         description: "Month of birth (1-12)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               max_value: 12
 
@@ -54,14 +54,14 @@ models:
       - name: death_year
         description: "Year of death (YYYY format, NULL if alive)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1900
               max_value: 2030
 
       - name: death_month
         description: "Month of death (1-12, NULL if alive)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               max_value: 12
 
@@ -79,7 +79,7 @@ models:
         description: "Age in completed years (age at death for deceased, current age for living)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 120
 
@@ -87,7 +87,7 @@ models:
         description: "Age in completed months"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1440
 

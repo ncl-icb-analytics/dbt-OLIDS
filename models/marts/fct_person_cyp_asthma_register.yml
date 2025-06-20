@@ -37,7 +37,7 @@ models:
         description: "Current age of person (<18 years for CYP asthma register eligibility)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 17
 
@@ -82,7 +82,7 @@ models:
       - name: recent_asthma_medication_count
         description: "Count of asthma medication prescriptions in last 12 months"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               severity: warn
 

@@ -53,7 +53,7 @@ models:
     description: Date of fracture observation (all after 2012-04-01)
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: '''2012-04-01'''
         max_value: current_date()
   - name: source_cluster_id

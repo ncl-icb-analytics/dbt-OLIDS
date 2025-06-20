@@ -19,7 +19,7 @@ models:
         description: "Waist circumference value in cm (valid range only)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 30
               max_value: 250
       - name: waist_risk_category

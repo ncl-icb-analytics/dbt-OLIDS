@@ -27,7 +27,7 @@ models:
   - name: fev1_fvc_ratio
     description: FEV1/FVC ratio value (NULL for pre-coded values)
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 0.1
         max_value: 2.0
         severity: warn

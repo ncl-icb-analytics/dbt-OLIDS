@@ -26,7 +26,7 @@ models:
     description: Person's age at register assessment (must be 50-74 for osteoporosis register)
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 50
         max_value: 74
   - name: is_on_osteoporosis_register
@@ -99,7 +99,7 @@ models:
   - name: latest_dxa_t_score
     description: Most recent DXA T-score value (standard deviations from young adult mean)
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: -10
         max_value: 5
         severity: warn

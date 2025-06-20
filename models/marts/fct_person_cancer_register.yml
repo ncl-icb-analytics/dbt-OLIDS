@@ -20,7 +20,7 @@ models:
   - name: age
     description: Current age of person in years
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 0
         max_value: 120
   - name: is_on_cancer_register

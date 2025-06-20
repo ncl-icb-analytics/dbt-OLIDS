@@ -37,7 +37,7 @@ models:
         description: "Current age of person (≥18 years for epilepsy register eligibility)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 18
               max_value: 120
 
@@ -82,7 +82,7 @@ models:
       - name: recent_epilepsy_medication_count
         description: "Count of epilepsy medication prescriptions in last 6 months"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               severity: warn
 

@@ -23,7 +23,7 @@ models:
     description: "Person's age at register assessment (must be \u226518 for CKD register)"
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 18
         max_value: 120
   - name: is_on_ckd_register

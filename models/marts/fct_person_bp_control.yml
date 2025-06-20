@@ -24,20 +24,20 @@ models:
   - name: latest_systolic_value
     description: Systolic value of latest BP reading (mmHg)
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 50
         max_value: 300
   - name: latest_diastolic_value
     description: Diastolic value of latest BP reading (mmHg)
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 30
         max_value: 200
   - name: age
     description: Current age in years
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 0
         max_value: 120
   - name: has_t2dm
@@ -67,7 +67,7 @@ models:
   - name: latest_acr_value
     description: Latest albumin-to-creatinine ratio value (relevant for CKD patients)
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 0
         max_value: 1000
   - name: applied_threshold_rule_id
@@ -89,14 +89,14 @@ models:
     description: Systolic BP threshold applied (mmHg)
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 120
         max_value: 160
   - name: applied_diastolic_threshold
     description: Diastolic BP threshold applied (mmHg)
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 70
         max_value: 100
   - name: is_systolic_controlled
@@ -127,7 +127,7 @@ models:
     description: Age of latest BP reading in months from current date
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 0
         max_value: 1200
   - name: is_latest_bp_within_recommended_interval

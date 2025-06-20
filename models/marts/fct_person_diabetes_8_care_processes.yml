@@ -63,7 +63,7 @@ models:
   - name: latest_hba1c_value
     description: Most recent HbA1c result value (mmol/mol or %)
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 20
         max_value: 200
         severity: warn
@@ -154,7 +154,7 @@ models:
     description: Count of care processes completed within last 12 months (0-8)
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 0
         max_value: 8
   - name: all_processes_completed

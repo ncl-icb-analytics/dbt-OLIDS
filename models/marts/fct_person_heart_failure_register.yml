@@ -41,7 +41,7 @@ models:
         description: "Current age of person (no age restrictions for HF register)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 120
 

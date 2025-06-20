@@ -35,7 +35,7 @@ models:
         description: "Person's current age in years"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 120
               
@@ -59,7 +59,7 @@ models:
       - name: days_since_last_health_check
         description: "Number of days since last health check (NULL if never had one)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 50000
               severity: warn

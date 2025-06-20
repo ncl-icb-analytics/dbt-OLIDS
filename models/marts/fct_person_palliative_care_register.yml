@@ -54,7 +54,7 @@ models:
     tests:
     - not_null
     - test_no_future_dates
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: '''2008-04-01'''
         max_value: current_date()
         severity: warn
@@ -63,7 +63,7 @@ models:
     tests:
     - not_null
     - test_no_future_dates
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: '''2008-04-01'''
         max_value: current_date()
         severity: warn

@@ -16,7 +16,7 @@ models:
     description: "BMI value in kg/m\xB2 (valid range only)"
     tests:
     - not_null
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 10
         max_value: 80
   - name: original_result_value

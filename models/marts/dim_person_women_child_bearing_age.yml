@@ -15,7 +15,7 @@ models:
   - name: age
     description: Current age of person
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 15
         max_value: 44
   - name: sex

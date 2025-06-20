@@ -50,7 +50,7 @@ models:
       - name: order_quantity_value
         description: "Numeric quantity prescribed"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 10000
               severity: warn
@@ -61,7 +61,7 @@ models:
       - name: order_duration_days
         description: "Duration of treatment in days"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 3650
               severity: warn
@@ -150,7 +150,7 @@ models:
         description: "Number of days between order date and current date"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 36500
               severity: warn

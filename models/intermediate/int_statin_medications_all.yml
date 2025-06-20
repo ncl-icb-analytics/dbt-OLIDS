@@ -83,7 +83,7 @@ models:
         description: "Number of days between order date and current date"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 36500
               severity: warn

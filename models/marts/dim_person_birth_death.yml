@@ -32,7 +32,7 @@ models:
         description: "Year of birth (YYYY format)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1900
               max_value: 2030
 
@@ -40,7 +40,7 @@ models:
         description: "Month of birth (1-12)"
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               max_value: 12
 
@@ -52,14 +52,14 @@ models:
       - name: death_year
         description: "Year of death (YYYY format, NULL if alive)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1900
               max_value: 2030
 
       - name: death_month
         description: "Month of death (1-12, NULL if alive)"
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 1
               max_value: 12
 

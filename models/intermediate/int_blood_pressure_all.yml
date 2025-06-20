@@ -21,14 +21,14 @@ models:
   - name: systolic_value
     description: Systolic blood pressure value in mmHg
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 40
         max_value: 350
         where: systolic_value is not null
   - name: diastolic_value
     description: Diastolic blood pressure value in mmHg
     tests:
-    - accepted_range:
+    - dbt_utils.accepted_range:
         min_value: 20
         max_value: 200
         where: diastolic_value is not null
