@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 """
-Fix accepted_range test syntax in YAML files.
+Fix cluster_ids_exist test syntax in YAML files.
 
-This script replaces instances of `- accepted_range:` with `- dbt_utils.accepted_range:`
-to use the correct dbt-utils syntax.
+This script replaces instances of `- test_cluster_ids_exist:` with `- cluster_ids_exist:`
+to use the correct generic test syntax.
 """
 
 import os
 import re
 import argparse
 
-def fix_accepted_range_in_file(file_path):
-    """Fix accepted_range syntax in a single YAML file."""
+def fix_cluster_test_in_file(file_path):
+    """Fix cluster_ids_exist test syntax in a single YAML file."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Pattern to match `- accepted_range:` (with any amount of leading whitespace)
-        # but NOT `- dbt_utils.accepted_range:` (already correct)
-        pattern = r'^(\s*)- (?!dbt_utils\.)accepted_range:'
-        replacement = r'\1- dbt_utils.accepted_range:'
+        # Pattern to match `- test_cluster_ids_exist:` (with any amount of leading whitespace)
+        pattern = r'^(\s*)- test_cluster_ids_exist:'
+        replacement = r'\1- cluster_ids_exist:'
         
         # Count matches before replacement
         matches = re.findall(pattern, content, re.MULTILINE)
@@ -50,7 +49,7 @@ def find_yaml_files(directory):
     return yaml_files
 
 def main():
-    parser = argparse.ArgumentParser(description='Fix accepted_range test syntax in YAML files')
+    parser = argparse.ArgumentParser(description='Fix cluster_ids_exist test syntax in YAML files')
     parser.add_argument('directory', nargs='?', default='models', 
                        help='Directory to search for YAML files (default: models)')
     parser.add_argument('--dry-run', action='store_true',
@@ -75,7 +74,7 @@ def main():
                 with open(file_path, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
-                pattern = r'^(\s*)- (?!dbt_utils\.)accepted_range:'
+                pattern = r'^(\s*)- test_cluster_ids_exist:'
                 matches = re.findall(pattern, content, re.MULTILINE)
                 
                 if matches:
@@ -88,7 +87,7 @@ def main():
                 print(f"Error reading {file_path}: {e}")
         else:
             # Actually fix the file
-            fixes_made = fix_accepted_range_in_file(file_path)
+            fixes_made = fix_cluster_test_in_file(file_path)
             if fixes_made > 0:
                 rel_path = os.path.relpath(file_path)
                 print(f"Fixed {fixes_made} instances in: {rel_path}")
@@ -96,7 +95,7 @@ def main():
                 files_fixed += 1
     
     action = "Would fix" if args.dry_run else "Fixed"
-    print(f"\n{action} {total_fixes} accepted_range instances across {files_fixed} files")
+    print(f"\n{action} {total_fixes} test_cluster_ids_exist instances across {files_fixed} files")
     
     if args.dry_run:
         print("\nRun without --dry-run to apply the changes")

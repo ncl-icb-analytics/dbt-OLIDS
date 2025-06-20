@@ -4,7 +4,7 @@ models:
   - name: int_urine_acr_all
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "ACR_COD"
     description: |
       All urine Albumin-to-Creatinine Ratio (ACR) measurements from observations.

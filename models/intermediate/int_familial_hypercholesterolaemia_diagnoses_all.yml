@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_familial_hypercholesterolaemia_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: FHYP_COD
   description: "All familial hypercholesterolaemia (FH) diagnoses from clinical records.\nUses QOF cluster ID FHYP_COD for\
     \ familial hypercholesterolaemia diagnosis codes.\n\nClinical Purpose:\n- FH register inclusion for QOF quality measures\n\

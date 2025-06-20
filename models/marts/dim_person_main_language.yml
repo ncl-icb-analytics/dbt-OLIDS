@@ -2,7 +2,7 @@ version: 2
 models:
 - name: dim_person_main_language
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: PREFLANG_COD, REQINTERPRETER_COD
   description: 'Person main language dimension for cultural competency and communication
 

@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_fragility_fractures_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: FF_COD
   description: 'Intermediate model collecting all fragility fracture observations using QOF cluster FF_COD.
 

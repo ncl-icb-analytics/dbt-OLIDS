@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_smi_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: SMIRES_COD, SMI_COD
   description: "All serious mental illness diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive\
     \ data collection for SMI register and mental health care monitoring.\n\nQOF Cluster IDs Used:\n- MH_COD: Mental health\

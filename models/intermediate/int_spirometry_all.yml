@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_spirometry_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: FEV1FVCL70_COD, FEV1FVC_COD
   description: 'All spirometry test results for COPD diagnosis (FEV1/FVC ratios).
 

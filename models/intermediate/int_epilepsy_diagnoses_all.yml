@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_epilepsy_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: EPIRES_COD, EPI_COD
   description: "All epilepsy diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive data\
     \ collection for epilepsy register and neurological management.\n\nQOF Cluster IDs Used:\n- EPIL_COD: Epilepsy diagnoses\n\

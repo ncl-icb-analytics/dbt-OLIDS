@@ -4,7 +4,7 @@ models:
   - name: int_foot_examination_all
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "AMPL_COD, AMPR_COD, CONABL_COD, CONABR_COD, FEDEC_COD, FEPU_COD, FRC_COD"
     description: |
       All foot examination records and related observations.

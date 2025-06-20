@@ -4,7 +4,7 @@ models:
   - name: dim_person_care_home
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "CAREHOME_COD, NURSEHOME_COD, TEMPCARHOME_COD"
     description: |
       Dimension identifying patients residing in care homes for enhanced care

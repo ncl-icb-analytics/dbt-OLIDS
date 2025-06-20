@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_heart_failure_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: HFLVSD_COD, HFRES_COD, HF_COD, REDEJCFRAC_COD
   description: 'All heart failure diagnosis observations from clinical records using QOF cluster IDs.
 

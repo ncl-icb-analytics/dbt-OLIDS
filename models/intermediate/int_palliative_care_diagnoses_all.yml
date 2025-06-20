@@ -4,7 +4,7 @@ models:
   - name: int_palliative_care_diagnoses_all
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "PALCARENI_COD, PALCARE_COD"
     description: |
       All palliative care pathway observations from clinical records.

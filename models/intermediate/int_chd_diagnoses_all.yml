@@ -71,10 +71,10 @@ models:
               values: [true]
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "CHD_COD"
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "CHD_COD"
       - dbt_utils.expression_is_true:
           expression: "count(*) > 0"

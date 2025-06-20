@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_bmi_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: BMIVAL_COD
   description: 'All BMI measurements from observations.
 

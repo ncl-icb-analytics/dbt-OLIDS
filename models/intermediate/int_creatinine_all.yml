@@ -4,7 +4,7 @@ models:
   - name: int_creatinine_all
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "CRE_COD"
     description: |
       All serum creatinine measurements from observations.

@@ -4,7 +4,7 @@ models:
   - name: int_osteoporosis_diagnoses_all
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "OSTEO_COD"
     description: |
       All osteoporosis diagnosis observations from clinical records.

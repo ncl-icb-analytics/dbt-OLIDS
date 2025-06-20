@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_copd_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: COPDRES_COD, COPD_COD
   description: 'All COPD diagnosis observations from clinical records using QOF cluster IDs.
 

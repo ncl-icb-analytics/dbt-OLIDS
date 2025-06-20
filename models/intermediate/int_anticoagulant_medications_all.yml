@@ -102,12 +102,12 @@ models:
               values: [true, false]
 
     tests:
-      - test_bnf_codes_exist:
+      - bnf_codes_exist:
           bnf_codes: "020802"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - person_id
             - medication_order_id
-      - test_bnf_codes_exist:
+      - bnf_codes_exist:
           bnf_codes: "020802" 

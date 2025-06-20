@@ -4,7 +4,7 @@ models:
   - name: int_asthma_medications_12m
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "ASTTRT_COD"
     description: |
       Asthma medication orders from the last 12 months for QOF asthma care monitoring.

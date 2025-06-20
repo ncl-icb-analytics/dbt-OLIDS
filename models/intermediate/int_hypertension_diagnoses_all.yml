@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_hypertension_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: HYPRES_COD, HYP_COD
   description: 'All hypertension diagnosis observations from clinical records using QOF cluster IDs.
 

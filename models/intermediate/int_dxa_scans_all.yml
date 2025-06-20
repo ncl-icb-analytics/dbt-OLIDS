@@ -4,7 +4,7 @@ models:
   - name: int_dxa_scans_all
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "DXA2_COD, DXA_COD"
     description: |
       All DXA scan observations from clinical records.

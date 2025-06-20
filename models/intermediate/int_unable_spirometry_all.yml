@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_unable_spirometry_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: UNABLESPI_COD
   description: 'All unable-to-have-spirometry observations from clinical records.
 

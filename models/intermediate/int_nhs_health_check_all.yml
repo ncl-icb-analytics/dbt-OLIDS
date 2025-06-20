@@ -133,8 +133,8 @@ models:
               values: ['Current (within 5 years)', 'Recent (within 7 years)', 'Overdue (>7 years)']
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "NHSHEALTHCHECK_COD"
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "NHSHEALTHCHECK_COD"

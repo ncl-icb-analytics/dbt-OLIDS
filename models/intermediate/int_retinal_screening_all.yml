@@ -128,8 +128,8 @@ models:
               values: ['Current (within 12 months)', 'Recent (within 24 months)', 'Overdue (>24 months)']
 
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "RETSCREN_COD"
     tests:
-      - test_cluster_ids_exist:
+      - cluster_ids_exist:
           cluster_ids: "RETSCREN_COD"

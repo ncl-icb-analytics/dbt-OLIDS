@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_cancer_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: CANRES_COD, CAN_COD
   description: "All cancer diagnoses from clinical records.\nUses QOF cluster ID CAN_COD for cancer diagnosis codes (excluding\
     \ non-melanotic skin cancers).\n\nClinical Purpose:\n- Cancer register inclusion for QOF quality measures\n- Cancer care\

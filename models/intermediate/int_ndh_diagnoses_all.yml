@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_ndh_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: IGT_COD, NDH_COD, PRD_COD
   description: 'All non-diabetic hyperglycaemia (NDH) diagnosis observations from clinical records.
 

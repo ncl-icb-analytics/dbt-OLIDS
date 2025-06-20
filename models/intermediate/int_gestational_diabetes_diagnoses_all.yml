@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_gestational_diabetes_diagnoses_all
   tests:
-  - test_cluster_ids_exist:
+  - cluster_ids_exist:
       cluster_ids: GESTDIAB_COD
   description: "All gestational diabetes diagnoses from clinical records.\nUses QOF cluster ID GESTDM_COD for gestational\
     \ diabetes diagnosis codes.\n\nClinical Purpose:\n- Gestational diabetes register inclusion for QOF quality measures\n\

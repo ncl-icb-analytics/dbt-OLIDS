@@ -2,7 +2,7 @@ version: 2
 models:
 - name: int_allergy_medications_all
   tests:
-  - test_bnf_codes_exist:
+  - bnf_codes_exist:
       bnf_codes: '0304'
   description: 'All allergy medication orders including antihistamines and allergy treatments.
 
