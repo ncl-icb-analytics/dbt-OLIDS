@@ -55,8 +55,8 @@ WITH condition_union AS (
         'CA' AS condition_code,
         'Cancer' AS condition_name,
         is_on_cancer_register AS is_on_register,
-        earliest_cancer_date AS earliest_diagnosis_date,
-        latest_cancer_date AS latest_diagnosis_date
+        earliest_cancer_diagnosis_date AS earliest_diagnosis_date,
+        latest_cancer_diagnosis_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_cancer_register') }}
     WHERE is_on_cancer_register = TRUE
 
@@ -133,8 +133,8 @@ WITH condition_union AS (
         'DM' AS condition_code,
         'Diabetes' AS condition_name,
         is_on_diabetes_register AS is_on_register,
-        earliest_diabetes_diagnosis_date AS earliest_diagnosis_date,
-        latest_diabetes_diagnosis_date AS latest_diagnosis_date
+        earliest_diabetes_date AS earliest_diagnosis_date,
+        latest_diabetes_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_diabetes_register') }}
     WHERE is_on_diabetes_register = TRUE
 
@@ -158,11 +158,11 @@ WITH condition_union AS (
         person_id,
         'FHYP' AS condition_code,
         'Familial Hypercholesterolaemia' AS condition_name,
-        is_on_fhyp_register AS is_on_register,
-        earliest_fhyp_date AS earliest_diagnosis_date,
-        latest_fhyp_date AS latest_diagnosis_date
+        is_on_fh_register AS is_on_register,
+        earliest_fh_date AS earliest_diagnosis_date,
+        latest_fh_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_familial_hypercholesterolaemia_register') }}
-    WHERE is_on_fhyp_register = TRUE
+    WHERE is_on_fh_register = TRUE
 
     UNION ALL
 
@@ -224,8 +224,8 @@ WITH condition_union AS (
         'NAF' AS condition_code,
         'Non-Alcoholic Fatty Liver Disease' AS condition_name,
         is_on_nafld_register AS is_on_register,
-        earliest_nafld_diagnosis_date AS earliest_diagnosis_date,
-        latest_nafld_diagnosis_date AS latest_diagnosis_date
+        earliest_nafld_date AS earliest_diagnosis_date,
+        latest_nafld_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_nafld_register') }}
     WHERE is_on_nafld_register = TRUE
 
@@ -237,8 +237,8 @@ WITH condition_union AS (
         'NDH' AS condition_code,
         'Non-Diabetic Hyperglycaemia' AS condition_name,
         is_on_ndh_register AS is_on_register,
-        earliest_ndh_date AS earliest_diagnosis_date,
-        latest_ndh_date AS latest_diagnosis_date
+        earliest_any_ndh_date AS earliest_diagnosis_date,
+        latest_any_ndh_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_ndh_register') }}
     WHERE is_on_ndh_register = TRUE
 
@@ -302,8 +302,8 @@ WITH condition_union AS (
         'RA' AS condition_code,
         'Rheumatoid Arthritis' AS condition_name,
         is_on_ra_register AS is_on_register,
-        earliest_ra_diagnosis_date AS earliest_diagnosis_date,
-        latest_ra_diagnosis_date AS latest_diagnosis_date
+        earliest_ra_date AS earliest_diagnosis_date,
+        latest_ra_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_rheumatoid_arthritis_register') }}
     WHERE is_on_ra_register = TRUE
 
@@ -315,8 +315,8 @@ WITH condition_union AS (
         'SMI' AS condition_code,
         'Serious Mental Illness' AS condition_name,
         is_on_smi_register AS is_on_register,
-        earliest_mh_diagnosis_date AS earliest_diagnosis_date,
-        latest_mh_diagnosis_date AS latest_diagnosis_date
+        earliest_smi_diagnosis_date AS earliest_diagnosis_date,
+        latest_smi_diagnosis_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_smi_register') }}
     WHERE is_on_smi_register = TRUE
 
@@ -327,11 +327,11 @@ WITH condition_union AS (
         person_id,
         'STIA' AS condition_code,
         'Stroke or Transient Ischaemic Attack' AS condition_name,
-        is_on_stia_register AS is_on_register,
+        is_on_stroke_tia_register AS is_on_register,
         earliest_stroke_tia_date AS earliest_diagnosis_date,
         latest_stroke_tia_date AS latest_diagnosis_date
     FROM {{ ref('fct_person_stroke_tia_register') }}
-    WHERE is_on_stia_register = TRUE
+    WHERE is_on_stroke_tia_register = TRUE
 )
 
 SELECT 

@@ -41,10 +41,7 @@ WITH nafld_diagnoses AS (
         ARRAY_AGG(DISTINCT CASE WHEN is_nafld_diagnosis_code THEN concept_code END) 
             AS nafld_diagnosis_codes,
         ARRAY_AGG(DISTINCT CASE WHEN is_nafld_diagnosis_code THEN concept_display END) 
-            AS nafld_diagnosis_displays,
-        
-        -- Latest observation details
-        ARRAY_AGG(observation_id ORDER BY clinical_effective_date DESC) AS all_observation_ids
+            AS nafld_diagnosis_displays
             
     FROM {{ ref('int_nafld_diagnoses_all') }}
     GROUP BY person_id
@@ -92,8 +89,7 @@ SELECT
     ri.days_since_first_nafld,
     ri.days_since_latest_nafld,
     ri.nafld_diagnosis_codes,
-    ri.nafld_diagnosis_displays,
-    ri.all_observation_ids
+    ri.nafld_diagnosis_displays
     
 FROM register_inclusion ri
 INNER JOIN {{ ref('dim_person_active_patients') }} ap

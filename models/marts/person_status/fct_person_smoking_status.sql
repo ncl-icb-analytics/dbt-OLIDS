@@ -13,7 +13,7 @@ WITH smoking_history AS (
         person_id,
         MIN(clinical_effective_date) AS earliest_smoking_date,
         ARRAY_AGG(DISTINCT concept_code) AS all_smoking_concept_codes,
-        ARRAY_AGG(DISTINCT concept_display) AS all_smoking_concept_displays
+        ARRAY_AGG(DISTINCT code_description) AS all_smoking_concept_displays
     FROM {{ ref('int_smoking_status_all') }}
     GROUP BY person_id
 ),
@@ -23,7 +23,7 @@ current_smoking_status AS (
         p.person_id,
         latest.clinical_effective_date AS latest_smoking_date,
         latest.concept_code AS latest_concept_code,
-        latest.concept_display AS latest_code_description,
+        latest.code_description AS latest_code_description,
         latest.source_cluster_id AS latest_cluster_id,
         
         -- Determine smoking status based on latest record (use existing column)

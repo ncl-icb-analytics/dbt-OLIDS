@@ -47,10 +47,7 @@ WITH stroke_tia_diagnoses AS (
         ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_resolved_code THEN concept_code END) 
             AS stroke_tia_resolution_codes,
         ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_diagnosis_code THEN concept_display END) 
-            AS stroke_tia_diagnosis_displays,
-        
-        -- Latest observation details
-        ARRAY_AGG(observation_id ORDER BY clinical_effective_date DESC) AS all_observation_ids
+            AS stroke_tia_diagnosis_displays
             
     FROM {{ ref('int_stroke_tia_diagnoses_all') }}
     GROUP BY person_id
@@ -111,8 +108,7 @@ SELECT
     ri.days_since_latest_stroke_tia,
     ri.stroke_tia_diagnosis_codes,
     ri.stroke_tia_resolution_codes,
-    ri.stroke_tia_diagnosis_displays,
-    ri.all_observation_ids
+    ri.stroke_tia_diagnosis_displays
     
 FROM register_inclusion ri
 INNER JOIN {{ ref('dim_person_active_patients') }} ap

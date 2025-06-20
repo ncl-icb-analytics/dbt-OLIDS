@@ -13,7 +13,7 @@ WITH pregnancy_aggregated AS (
     SELECT
         person_id,
         MAX(CASE WHEN is_pregnancy_code = TRUE THEN clinical_effective_date ELSE NULL END) AS latest_preg_date,
-        MAX(CASE WHEN is_delivery_code = TRUE THEN clinical_effective_date ELSE NULL END) AS latest_delivery_date,
+        MAX(CASE WHEN is_pregnancy_outcome_code = TRUE THEN clinical_effective_date ELSE NULL END) AS latest_delivery_date,
         ARRAY_AGG(DISTINCT concept_code) AS all_preg_concept_codes,
         ARRAY_AGG(DISTINCT concept_display) AS all_preg_concept_displays,
         ARRAY_AGG(DISTINCT source_cluster_id) AS all_preg_source_cluster_ids
