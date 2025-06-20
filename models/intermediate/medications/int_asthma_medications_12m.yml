@@ -1,4 +1,4 @@
-version: 2
+bversion: 2
 
 models:
   - name: int_asthma_medications_12m
