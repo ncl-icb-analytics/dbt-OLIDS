@@ -1500,3 +1500,20 @@ sources:
       data_type: VARCHAR
     - name: lds_start_date_time
       data_type: TIMESTAMP_NTZ(9)
+
+- name: POPULATION_HEALTH
+  database: '"DATA_LAB_NCL_TRAINING_TEMP"'
+  schema: POPULATION_HEALTH
+  tables:
+  - name: PRACTICE_NEIGHBOURHOOD_LOOKUP
+    columns:
+    - name: PRACTICECODE
+      data_type: VARCHAR
+    - name: PRACTICENAME
+      data_type: VARCHAR
+    - name: LOCALAUTHORITY
+      data_type: VARCHAR
+    - name: PRACTICENEIGHBOURHOOD
+      data_type: VARCHAR
+    - name: PCNCODE
+      data_type: VARCHAR

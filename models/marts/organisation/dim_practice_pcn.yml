@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: dim_practice_pcn
+    description: |
+      Dimension table providing current practice to PCN mapping for NCL practices. 
+      Sources from PRACTICE_NEIGHBOURHOOD_LOOKUP which contains PCN codes.
+      
+      Provides practice to PCN mapping for organisational hierarchy.
+      Note: In dummy data environment, PCN names may be placeholder values (using PCN code as name).
+    
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "count(*) >= 1"
+    
+    columns:
+      - name: practice_code
+        description: "GP practice code (ServiceProviderCode)"
+        tests:
+          - not_null
+          - unique
+      
+      - name: practice_name
+        description: "GP practice name (ServiceProviderName)"
+        tests:
+          - not_null
+      
+      - name: pcn_code
+        description: "Primary Care Network code"
+        tests:
+          - not_null
+      
+      - name: pcn_name
+        description: "Primary Care Network name (uses PCN code as fallback in dummy data)"
+        tests:
+          - not_null 

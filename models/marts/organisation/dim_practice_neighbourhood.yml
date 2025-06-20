@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: dim_practice_neighbourhood
+    description: |
+      Dimension table providing practice neighbourhood information. 
+      Sources from PRACTICE_NEIGHBOURHOOD_LOOKUP in the POPULATION_HEALTH schema. 
+      PCN information is available separately in DIM_PRACTICE_PCN.
+      
+      Provides geographic context for GP practices including local authority and neighbourhood classification.
+      Note: Working with dummy data so geographic information may be limited/placeholder.
+    
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "count(*) >= 1"
+    
+    columns:
+      - name: practice_code
+        description: "Practice organisation code"
+        tests:
+          - not_null
+          - unique
+      
+      - name: practice_name
+        description: "Name of the practice"
+        tests:
+          - not_null
+      
+      - name: local_authority
+        description: "Local authority area"
+        tests:
+          - not_null
+      
+      - name: practice_neighbourhood
+        description: "Practice neighbourhood classification"
+        tests:
+          - not_null 
