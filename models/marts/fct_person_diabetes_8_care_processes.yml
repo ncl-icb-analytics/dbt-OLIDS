@@ -42,7 +42,7 @@ models:
       - name: latest_hba1c_date
         description: "Date of most recent HbA1c test"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: hba1c_completed_in_last_12m
         description: "TRUE if HbA1c test completed within last 12 months"
@@ -61,7 +61,7 @@ models:
       - name: latest_bp_date
         description: "Date of most recent blood pressure reading"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: bp_completed_in_last_12m
         description: "TRUE if blood pressure check completed within last 12 months"
@@ -72,7 +72,7 @@ models:
       - name: latest_cholesterol_date
         description: "Date of most recent total cholesterol test"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: cholesterol_completed_in_last_12m
         description: "TRUE if cholesterol test completed within last 12 months"
@@ -83,7 +83,7 @@ models:
       - name: latest_creatinine_date
         description: "Date of most recent serum creatinine test"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: creatinine_completed_in_last_12m
         description: "TRUE if serum creatinine test completed within last 12 months"
@@ -94,7 +94,7 @@ models:
       - name: latest_acr_date
         description: "Date of most recent urine ACR test"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: acr_completed_in_last_12m
         description: "TRUE if urine ACR test completed within last 12 months"
@@ -105,7 +105,7 @@ models:
       - name: latest_foot_check_date
         description: "Date of most recent foot examination"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: foot_check_completed_in_last_12m
         description: |
@@ -119,7 +119,7 @@ models:
       - name: latest_bmi_date
         description: "Date of most recent BMI recording"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: bmi_completed_in_last_12m
         description: "TRUE if BMI recorded within last 12 months"
@@ -130,7 +130,7 @@ models:
       - name: latest_smoking_date
         description: "Date of most recent smoking status recording"
         tests:
-      - test_no_future_dates
+          - test_no_future_dates
       
       - name: smoking_completed_in_last_12m
         description: "TRUE if smoking status recorded within last 12 months"
