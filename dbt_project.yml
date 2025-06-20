@@ -11,6 +11,10 @@ clean-targets:
 
 model-paths: ["models"]
 
+# Configure dbt audit schema naming
+vars:
+  dbt_audit_schema: "dbt_test_audit"  # Cleaner name instead of dbt_dbt_test_audit
+
 models:
   snowflake_hei_migration:
     +materialized: table
