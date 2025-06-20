@@ -18,7 +18,7 @@ snowflake_hei_migration:
       authenticator: externalbrowser
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
       database: DATA_LAB_NCL_TRAINING_TEMP
-      schema: "DBT_{{ env_var('DBT_BRANCH', 'dev') | replace('/', '_') | replace('-', '_') | upper }}"  # Branch-based dev schema
+      schema: DBT_DEV  # Simple dev schema
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
       threads: 4
       client_session_keep_alive: true

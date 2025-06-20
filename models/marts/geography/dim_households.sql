@@ -16,8 +16,8 @@ with household_base as (
     max(imd_quintile_19) as imd_quintile_19,
     
     -- Dwelling metadata
-    min(date_registered_at_practice) as first_known_occupation_date,
-    max(date_registered_at_practice) as last_known_activity_date
+    min(registration_start_date) as first_known_occupation_date,
+    max(registration_start_date) as last_known_activity_date
     
   from {{ ref('dim_person_demographics') }}
   where uprn_hash is not null

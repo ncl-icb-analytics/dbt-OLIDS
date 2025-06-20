@@ -148,23 +148,20 @@ dbt run --target prod      # Production (with safety confirmation)
 ```
 
 **Environment Details:**
-- **`dev`** (default): Branch-based schemas (`DBT_{BRANCH_NAME}`) - feature isolation
-- **`staging`**: Shared `DBT_STAGING` schema for integration testing  
+- **`dev`** (default): `DBT_DEV` schema - simple development environment
+- **`staging`**: `DBT_STAGING` schema for integration testing  
 - **`prod`**: Production database with explicit confirmation prompts
 
 **Key Benefits:**
 - ✅ **No accidental production deployments** - requires explicit `--target prod`
 - ✅ **No environment variable caching issues** - uses dbt's native `--target` flag
-- ✅ **Feature-based isolation** - each Git branch gets its own schema
+- ✅ **Simple and predictable** - consistent dev environment for all developers
 
 ### Running the Project
 
 ```bash
 # Install dependencies
 dbt deps
-
-# Set branch-based schema (run once per branch)
-python scripts/set_branch_env.py
 
 # Run all models (safe default - goes to dev)
 dbt run --full-refresh
