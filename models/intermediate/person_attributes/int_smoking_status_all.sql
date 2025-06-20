@@ -18,7 +18,6 @@ WITH base_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
-        obs.sk_patient_id,
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS code_description,
@@ -36,7 +35,6 @@ WITH base_observations AS (
 
 SELECT
     person_id,
-    sk_patient_id,
     observation_id,
     clinical_effective_date,
     concept_code,

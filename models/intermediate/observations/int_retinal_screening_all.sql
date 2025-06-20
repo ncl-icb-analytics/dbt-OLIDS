@@ -11,7 +11,6 @@ Uses RETSCREN_COD cluster which only includes completed screenings
 (excludes declined, unsuitable, or referral codes).
 
 Enhanced Analytics Features:
-- Legacy structure alignment with sk_patient_id
 - Comprehensive screening result categorisation
 - Diabetes eye risk assessment and interpretation
 - Enhanced clinical context and timeframe analysis
@@ -23,7 +22,6 @@ Includes ALL persons (active, inactive, deceased) following intermediate layer p
 SELECT
     obs.observation_id,
     obs.person_id,
-    ap.sk_patient_id,
     obs.clinical_effective_date,
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,

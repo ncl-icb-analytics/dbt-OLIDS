@@ -10,7 +10,6 @@ All NHS Health Check completed events with enhanced analytics features.
 Uses NHSHEALTHCHECK_COD cluster with validated SNOMED codes for completed health checks.
 
 Enhanced Analytics Features:
-- Legacy structure alignment with sk_patient_id
 - Health check type classification and eligibility assessment
 - Enhanced timeframe analysis and currency tracking
 - QOF prevention pathway integration support
@@ -22,7 +21,6 @@ Includes ALL persons (active, inactive, deceased) following intermediate layer p
 SELECT
     obs.observation_id,
     obs.person_id,
-    ap.sk_patient_id,
     obs.clinical_effective_date,
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,

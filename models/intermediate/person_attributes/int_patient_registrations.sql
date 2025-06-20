@@ -30,7 +30,6 @@ WITH raw_registrations AS (
         o.name AS practice_name,
         o.organisation_code AS practice_ods_code,
         -- Get patient details
-        p.sk_patient_id
     FROM {{ ref('stg_olids_episode_of_care') }} eoc
     LEFT JOIN {{ ref('stg_olids_organisation') }} o
         ON eoc.organisation_id = o.id
@@ -112,7 +111,6 @@ SELECT
     prs.episode_of_care_id,
     prs.patient_id,
     prs.person_id,
-    prs.sk_patient_id,
     prs.organisation_id,
     prs.practice_name,
     prs.practice_ods_code,

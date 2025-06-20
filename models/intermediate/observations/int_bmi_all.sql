@@ -17,7 +17,6 @@ WITH base_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
-        obs.sk_patient_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(10,2)) AS bmi_value,
         obs.result_unit_display,
@@ -33,7 +32,6 @@ WITH base_observations AS (
 
 SELECT
     person_id,
-    sk_patient_id,
     observation_id,
     clinical_effective_date,
     bmi_value,

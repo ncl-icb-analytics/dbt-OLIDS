@@ -17,7 +17,6 @@ WITH asthma_orders_base AS (
     -- Get all medication orders using ASTTRT_COD cluster for asthma treatments
     SELECT 
         mo.person_id,
-        mo.sk_patient_id,
         mo.medication_order_id,
         mo.order_date,
         mo.order_medication_name,

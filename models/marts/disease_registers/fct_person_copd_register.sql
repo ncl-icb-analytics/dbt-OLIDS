@@ -27,7 +27,6 @@ WITH base_diagnoses AS (
     -- Get all COPD diagnoses - matches legacy BaseDiagnoses CTE
     SELECT 
         d.person_id,
-        age.sk_patient_id,
         age.age,
         
         -- Person-level aggregation from observation-level data
@@ -43,7 +42,6 @@ WITH base_diagnoses AS (
         ON d.person_id = age.person_id
     GROUP BY 
         d.person_id,
-        age.sk_patient_id,
         age.age
 ),
 
@@ -82,7 +80,6 @@ person_level_coding_aggregation AS (
 -- Final selection implementing business rules - matches legacy exactly
 SELECT
     f.person_id,
-    f.sk_patient_id,
     f.age,
     
     -- Business rules for register inclusion - matches legacy logic exactly:

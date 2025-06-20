@@ -16,8 +16,6 @@ models:
         description: "Unique person identifier"
         tests:
           - not_null
-      - name: sk_patient_id
-        description: "Surrogate key for the patient (NULL in dummy data, populated in live data)"
       - name: observation_id
         description: "Unique observation identifier"
         tests:

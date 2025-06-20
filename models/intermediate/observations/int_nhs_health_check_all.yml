@@ -23,8 +23,6 @@ models:
         description: "Unique person identifier"
         tests:
           - not_null
-      - name: sk_patient_id
-        description: "Surrogate key patient identifier for legacy compatibility"
       - name: clinical_effective_date
         description: "Date of the NHS health check"
         tests:

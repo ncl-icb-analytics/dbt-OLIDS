@@ -10,7 +10,6 @@ All pregnancy-related observations with enhanced analytics features.
 Uses QOF pregnancy cluster IDs: PREG_COD (pregnancy status), PREGDEL_COD (delivery events).
 
 Enhanced Analytics Features:
-- Legacy structure alignment with sk_patient_id
 - Pregnancy status categorisation and clinical context
 - Enhanced timeframe analysis for maternity care
 - Clinical safety integration support (e.g., medication contraindications)
@@ -22,7 +21,6 @@ Includes ALL persons following intermediate layer principles.
 SELECT 
     obs.observation_id,
     obs.person_id,
-    ap.sk_patient_id,
     obs.clinical_effective_date,
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,

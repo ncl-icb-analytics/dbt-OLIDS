@@ -17,7 +17,6 @@ WITH base_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
-        obs.sk_patient_id,
         obs.clinical_effective_date,
         CAST(obs.result_value AS NUMBER(6,2)) AS qrisk_score,
         obs.result_unit_display,
@@ -41,7 +40,6 @@ WITH base_observations AS (
 
 SELECT
     person_id,
-    sk_patient_id,
     observation_id,
     clinical_effective_date,
     qrisk_score,

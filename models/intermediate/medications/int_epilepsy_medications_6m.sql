@@ -19,7 +19,6 @@ WITH epilepsy_orders_base AS (
         mo.id AS medication_order_id,
         ms.id AS medication_statement_id,
         pp.person_id,
-        p.sk_patient_id,
         mo.clinical_effective_date::DATE AS order_date,
         mo.medication_name AS order_medication_name,
         mo.dose AS order_dose,

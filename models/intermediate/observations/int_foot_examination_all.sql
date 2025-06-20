@@ -18,7 +18,6 @@ WITH foot_observations AS (
     SELECT
         obs.observation_id,
         obs.person_id,
-        obs.sk_patient_id,
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
@@ -73,8 +72,6 @@ foot_status AS (
 check_details AS (
     SELECT 
         person_id,
-        -- Get sk_patient_id (all should be same for person+date, so MAX is fine)
-        MAX(sk_patient_id) AS sk_patient_id,
         clinical_effective_date,
         
         -- Check status
@@ -128,7 +125,6 @@ check_details AS (
 -- Final selection combining check details with foot status
 SELECT 
     cd.person_id,
-    cd.sk_patient_id,
     cd.clinical_effective_date,
     cd.is_unsuitable,
     cd.is_declined,
