@@ -95,9 +95,6 @@ models:
               values: [true, false]
 
     tests:
-      - bnf_codes_exist:
-          bnf_codes: "0209"
-    tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - person_id

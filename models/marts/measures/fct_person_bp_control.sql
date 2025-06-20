@@ -36,7 +36,7 @@ patient_characteristics AS (
         age.age,
         
         -- Diabetes status (Type 2 specifically for BP thresholds)
-        COALESCE(dm.is_on_diabetes_register, FALSE) AS is_on_dm_register,
+        COALESCE(dm.is_on_register, FALSE) AS is_on_dm_register,
         dm.diabetes_type,
         
         -- CKD status and latest ACR for threshold determination
@@ -44,7 +44,7 @@ patient_characteristics AS (
         acr.acr_value AS latest_acr_value,
         
         -- Hypertension diagnosis status
-        COALESCE(htn.is_on_htn_register, FALSE) AS is_diagnosed_htn
+        COALESCE(htn.is_on_register, FALSE) AS is_diagnosed_htn
         
     FROM latest_bp bp
     JOIN {{ ref('dim_person_age') }} age ON bp.person_id = age.person_id

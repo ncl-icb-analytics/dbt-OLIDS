@@ -55,7 +55,8 @@ models:
         description: "Date of first recorded stroke/TIA diagnosis"
         tests:
           - not_null
-          - name: latest_stroke_tia_date
+          
+      - name: latest_stroke_tia_date
         description: "Date of most recent stroke/TIA diagnosis"
         tests:
           - not_null

@@ -49,3 +49,4 @@ ENV/
 logs/
 temp/
 *.log
+dbt_internal_packages/

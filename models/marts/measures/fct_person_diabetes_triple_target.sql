@@ -18,7 +18,7 @@ diabetes_register AS (
         person_id,
         diabetes_type
     FROM {{ ref('fct_person_diabetes_register') }}
-    WHERE is_on_diabetes_register = TRUE
+    WHERE is_on_register = TRUE
 )
 
 SELECT
