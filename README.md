@@ -2,292 +2,154 @@
 
 ## Overview
 
-A comprehensive dbt project for migrating healthcare data models from HealtheIntent (Vertica) to Snowflake. This project implements a modern dimensional modeling approach with robust data quality testing, automated workflows, and a clean separation of concerns across staging, intermediate, and mart layers.
+A comprehensive dbt project for migrating healthcare data models from HealtheIntent (Vertica) to Snowflake. Implements modern dimensional modeling with robust data quality testing for NHS primary care analytics.
 
 ## 🏗️ Architecture
 
-### Data Flow
-
 ```
-Raw Snowflake Tables → Staging → Intermediate → Marts
-                                      ↓
-                              Data Quality & Tests
+Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
+                              ↓
+                      Data Quality & Tests
 ```
 
-### Key Design Principles
+## 🚀 Quick Start
 
-- **Dimensional Modeling**: Star schema with conformed dimensions
-- **Separation of Concerns**: Clean layering between staging, intermediate, and marts
-- **Data Quality First**: Comprehensive testing at every layer
-- **Maintainability**: Standardised patterns and reusable macros
-- **Privacy**: Hashed identifiers for sensitive data (UPRN, postcodes)
+```bash
+# Setup
+git clone <repository-url>
+cd snowflake-hei-migration-dbt
+python -m venv venv && venv\Scripts\activate
+pip install -r requirements.txt
+
+# Configure (copy templates and edit .env)
+cp profiles.yml.template profiles.yml
+cp env.example .env
+
+# Run
+dbt deps
+dbt run         # Safe - always dev environment
+dbt test
+```
+
+## 🎯 Environment Management
+
+**Simple Three-Environment Setup:**
+
+- **`dbt run`** or `dbt build` → `DBT_DEV` schema (safe default)
+- **`dbt build --target qa`** → `DBT_QA` schema (quality assurance)
+- **`dbt build --target prod`** → Production database (explicit confirmation)
 
 ## 📁 Project Structure
 
-### Models
-
 ```
 models/
-├── staging/          # Source system interface layer
-│   ├── stg_*.sql     # Cleaned, typed source tables
-│   └── schema.yml    # Source definitions and tests
-├── intermediate/     # Business logic and transformations
-│   ├── diagnoses/    # Diagnosis-related transformations
-│   ├── medications/  # Medication orders and prescribing
-│   ├── observations/ # Clinical observations (BP, BMI, etc.)
-│   ├── person_attributes/ # Person characteristics
-│   └── programme/    # Programme-specific logic
-└── marts/           # Business-ready dimensional models
-    ├── person_demographics/  # Person dimensions
-    ├── person_status/       # Patient status dimensions
-    ├── organisation/        # Practice and organisational hierarchy
-    ├── geography/          # Households and geographic dimensions
-    ├── disease_registers/  # Disease register fact tables
-    ├── measures/          # Healthcare measures and quality indicators
-    ├── clinical_safety/   # Clinical safety monitoring
-    ├── data_quality/     # Data quality monitoring
-    └── programme/        # Programme-specific fact tables
+├── staging/          # 1:1 source mappings (views)
+├── intermediate/     # Business logic & consolidation (tables)
+│   ├── diagnoses/    # Clinical observations (observation-level)
+│   ├── medications/  # Medication orders
+│   ├── observations/ # Clinical measurements
+│   └── person_attributes/  # Demographics & characteristics
+└── marts/           # Analytics-ready models (tables)
+    ├── clinical_safety/     # Safety monitoring & alerts
+    ├── data_quality/        # Data quality reports
+    ├── disease_registers/   # Person-level clinical registers
+    ├── geography/           # Households & geographic analytics
+    ├── measures/            # Healthcare quality indicators
+    ├── organisation/        # Practice & organisational data
+    ├── person_demographics/ # Demographics with households
+    ├── person_status/       # Patient activity & status
+    └── programme/           # NHS programmes (health checks, etc.)
 ```
 
-### Supporting Infrastructure
+## 🔧 Development Commands
 
-```
-macros/              # Reusable SQL functions
-├── get_observations.sql      # Clinical observations macro
-├── get_medication_orders.sql # Medication orders macro
-├── get_latest_events.sql     # Event deduplication
-└── filter_by_date.sql       # Date filtering utilities
+### **Core Commands**
 
-scripts/             # Automation and utilities
-├── check_yaml_column_tests.py    # Test validation
-├── flag_macro_models.py          # Macro usage analysis
-├── build_dependency_graph.py     # Dependency visualization
-├── metadata_to_dbt_yaml.py      # YAML generation
-└── generate_staging_models.py   # Staging model creation
+- **`dbt deps`** - Install package dependencies (run first!)
+- **`dbt parse`** - Parse project files and check for syntax errors
+- **`dbt compile`** - Compile models to SQL (useful for debugging)
+- **`dbt run`** - Runs models only (faster for development iteration)
+- **`dbt test`** - Runs tests only
+- **`dbt build`** - Runs models + tests in dependency order (recommended for qa and prod)
 
-legacy/              # Original Vertica models (reference)
-```
-
-## 🎯 Key Features
-
-### Dimensional Model Highlights
-
-- **`dim_person_demographics`**: Comprehensive person dimension with age bands, ethnicity, language, and geographic context
-- **`dim_households`**: Physical dwelling dimension using deterministic UPRN hashing
-- **`fct_household_members`**: Bridge table linking people to households with practice registrations
-- **Disease Registers**: Standardised fact tables for 25+ clinical conditions
-- **Geographic Hierarchy**: Practice → PCN → Neighbourhood → Local Authority
-
-### Data Quality Framework
-
-- **645+ Data Type Corrections**: Automated Snowflake type mapping
-- **Comprehensive Testing**: YAML-defined tests for every model
-- **Referential Integrity**: Foreign key relationships validated
-- **Business Logic Tests**: Clinical rules and constraints enforced
-
-### Healthcare-Specific Features
-
-- **Clinical Coding**: BNF, Read codes, and concept mapping
-- **Programme Support**: NHS Health Checks, Immunisations, LTC management
-- **Quality Indicators**: Diabetes care processes, BP control, screening rates
-- **Clinical Safety**: Valproate pregnancy monitoring, drug interactions
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- Snowflake account with appropriate permissions
-- Git
-
-### Installation
-
-1. **Clone and setup environment**:
-
-   ```bash
-   git clone <repository-url>
-   cd snowflake-hei-migration-dbt
-   python -m venv venv
-   venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-2. **Configure connection**:
-
-   ```bash
-   # Copy templates
-   cp profiles.yml.template profiles.yml
-   cp env.example .env
-   ```
-3. **Environment variables** (`.env` file):
-
-   ```env
-   SNOWFLAKE_ACCOUNT=your_account
-   SNOWFLAKE_USER=your_username
-   SNOWFLAKE_ROLE=your_role
-   SNOWFLAKE_WAREHOUSE=your_warehouse
-   # Note: Database and schema are configured in dbt_project.yml and profiles.yml
-   ```
-4. **Test connection**:
-
-   ```bash
-   dbt debug
-   ```
-
-### Environment Management
-
-**Safe by Default:** All standard `dbt` commands run in development environment with personal schemas.
+### **Common Workflows**
 
 ```bash
-# Safe default - always goes to dev environment
-dbt run
-dbt test
-
-# Explicit targeting for other environments  
-dbt run --target staging    # Shared testing environment
-dbt run --target prod      # Production (with safety confirmation)
-```
-
-**Environment Details:**
-- **`dev`** (default): `DBT_DEV` schema - simple development environment
-- **`staging`**: `DBT_STAGING` schema for integration testing  
-- **`prod`**: Production database with explicit confirmation prompts
-
-**Key Benefits:**
-- ✅ **No accidental production deployments** - requires explicit `--target prod`
-- ✅ **No environment variable caching issues** - uses dbt's native `--target` flag
-- ✅ **Simple and predictable** - consistent dev environment for all developers
-
-### Running the Project
-
-```bash
-# Install dependencies
+# First time setup
 dbt deps
+dbt parse  # Check for syntax errors
 
-# Run all models (safe default - goes to dev)
-dbt run --full-refresh
+# Debugging a model
+dbt compile --select dim_person_demographics
+# Check target/compiled/ folder for generated SQL
 
-# Target other environments explicitly
-dbt run --target staging --full-refresh
-dbt run --target prod --full-refresh
+# Daily development (fast iteration)
+dbt run
+dbt run --select +dim_person_demographics  # Model + upstream dependencies
 
-# Run specific layer (dev environment)
-dbt run --select staging
-dbt run --select intermediate
-dbt run --select marts
+# Quality assurance (recommended for qa/prod)
+dbt build
+dbt build --target qa  # Quality assurance testing with tests
 
-# Run tests (dev environment)
-dbt test
+# Specific selections
+dbt run --select staging    # All staging models
+dbt test --select marts     # All mart tests
+dbt build --select +fct_person_diabetes_register  # Model + dependencies + tests
 
-# Generate and serve documentation
-dbt docs generate
-dbt docs serve
+# Documentation
+dbt docs generate && dbt docs serve
+
+# For dbt Fusion users
+dbtf docs generate && dbtf docs serve
 ```
 
-## 🧪 Testing Strategy
+## 📋 Development Patterns
 
-### Test Coverage
+### **Macro Usage**
 
-- **Source Tests**: Data freshness and volume checks
-- **Staging Tests**: Data type validation and not-null constraints
-- **Intermediate Tests**: Business logic and transformation validation
-- **Mart Tests**: Referential integrity and business rules
-- **Cross-Model Tests**: Relationship validation between dimensions and facts
+```sql
+-- Direct FROM clause usage (most common)
+FROM ({{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMRES_COD'") }}) obs
+FROM ({{ get_medication_orders(bnf_code='02050501') }}) meds
 
-### Key Test Patterns
+-- In subqueries for complex logic
+WITH prioritized_observations AS (
+    SELECT observation_id, person_id, clinical_effective_date
+    FROM ({{ get_observations("'HTN_COD', 'HTNRES_COD'") }}) obs
+    WHERE obs.clinical_effective_date IS NOT NULL
+)
+
+-- Multiple parameters for observations
+{{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD'") }}
+
+-- BNF code filtering for medications
+{{ get_medication_orders(bnf_code='02050501') }}  -- ACE inhibitors (BNF Chapter 2.5.5.1)
+{{ get_medication_orders(bnf_code='0304') }}      -- Asthma medications (BNF Chapter 3.4)
+```
+
+### **YAML Structure**
 
 ```yaml
-# Data quality tests
-- dbt_utils.expression_is_true:
-    expression: "active_patients_have_practice_registration"
-
-# Referential integrity
-- relationships:
-    to: ref('dim_households')
-    field: household_id
-
-# Business logic validation
-- accepted_values:
-    values: ['Recently active', 'Previously active', 'Historically active only']
+models:
+  - name: int_diabetes_diagnoses_all
+    description: "Clinical diabetes observations (observation-level)"
+    columns:
+      - name: observation_id
+        tests: 
+          - not_null
+          - unique
+      - name: person_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD"
+      - dbt_utils.expression_is_true:
+          expression: "count(*) >= 1"
 ```
-
-## 🔧 Development Workflow
-
-### Adding New Models
-
-1. Create staging model in `models/staging/`
-2. Add intermediate transformations in appropriate subfolder
-3. Build mart model following dimensional patterns
-4. Add comprehensive YAML documentation and tests
-5. Update this README if introducing new concepts
-
-### Useful Commands
-
-```bash
-# Environment management (safe by default)
-dbt run                                        # Always dev environment
-dbt run --target staging                      # Explicit staging
-dbt run --target prod                         # Explicit production
-
-# Development workflow
-dbt parse                                      # Check model syntax
-dbt compile --select dim_person_demographics   # Compile specific model
-dbt test --select dim_person_demographics      # Test specific model
-dbt run --select +dim_person_demographics      # Run model and dependencies
-
-# Quality assurance
-python scripts/check_yaml_column_tests.py      # Validate YAML tests
-python scripts/build_dependency_graph.py       # Visualise dependencies
-dbt test --store-failures                      # Store test failures for analysis
-```
-
-## 📊 Data Sources
-
-### Primary Sources
-
-- **OLIDS**: Patient demographics, appointments, clinical data
-- **CODESETS**: Clinical coding and reference data
-- **RULESETS**: Clinical decision rules and algorithms
-- **POPULATION_HEALTH**: Geographic and organisational hierarchies
-
-### Key Staging Models
-
-- `stg_olids_patient_*`: Patient core data
-- `stg_olids_clinical_*`: Clinical events and observations
-- `stg_codesets_*`: Reference data and code mappings
-- `stg_population_health_*`: Geographic lookups
-
-## 🏥 Healthcare Context
-
-This project supports NHS primary care analytics including:
-
-- **Population Health Management**: Patient demographics, registration patterns
-- **Quality Improvement**: Clinical indicators, screening rates, care processes
-- **Programme Delivery**: Immunisations, health checks, disease management
-- **Clinical Safety**: Medication monitoring, safety alerts
-- **Health Inequalities**: Geographic and demographic analysis
-
-## 📈 Monitoring & Maintenance
-
-### Key Metrics to Monitor
-
-- Model build times and success rates
-- Test pass rates across layers
-- Data freshness and volume trends
-- Query performance on mart tables
-
-### Regular Maintenance Tasks
-
-- Review test failures and data quality issues
-- Update business logic as clinical guidelines change
-- Refresh geographic and organisational hierarchies
-- Archive historical data following retention policies
-
-## 🤝 Contributing
-
-1. Add comprehensive tests for new models
-3. Document business logic clearly
-4. Use established patterns and macros
-5. Update README for architectural changes
 
 ## 📄 License
 

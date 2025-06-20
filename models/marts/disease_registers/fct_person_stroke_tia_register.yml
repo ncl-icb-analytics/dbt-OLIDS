@@ -32,18 +32,6 @@ models:
               to: ref('dim_person')
               field: person_id
 
-      - name: person_id
-        description: "Surrogate key for the patient (from EMIS system)"
-        tests:
-          - not_null
-
-#       - name: age
-#         description: "Current age of person in years"
-#         tests:
-#           - dbt_utils.accepted_range:
-#               min_value: 0
-#               max_value: 120
-
       - name: is_on_register
         description: "Register flag: has stroke or TIA diagnosis (always TRUE for this table)"
         tests:

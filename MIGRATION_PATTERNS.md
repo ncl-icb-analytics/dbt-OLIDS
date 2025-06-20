@@ -20,22 +20,19 @@ models/
 - **Transformed Schema**: `DBT`
 - **Materialisation**: Views for staging, tables for intermediate/marts
 
-## Critical Macro Usage Patterns
+## Macro Usage Patterns
 
-### ⚠️ ALWAYS Use Subquery Pattern
+### ✅ Direct CTE Usage (Current Pattern)
 
-**❌ INCORRECT (Causes recursive CTE errors):**
+**✅ CORRECT (Macros now return clean SELECT statements):**
 ```sql
-WITH base_orders AS (
-    SELECT * FROM {{ get_medication_orders(bnf_code='0304') }}
+-- Direct usage in CTEs
+WITH observations AS (
+    {{ get_observations("'AST_COD', 'ASTRES_COD'") }}
+),
+medication_orders AS (
+    {{ get_medication_orders(bnf_code='0304') }}
 )
-```
-
-**✅ CORRECT (Use subquery wrapper):**
-```sql
--- For all macro usage
-FROM ({{ get_medication_orders(bnf_code='0304') }}) base_orders
-FROM ({{ get_observations("'AST_COD', 'ASTRES_COD'") }}) obs
 ```
 
 ### Column Mapping for get_observations() Macro

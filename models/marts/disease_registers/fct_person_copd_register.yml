@@ -23,21 +23,6 @@ models:
           - not_null
           - unique
 
-      - name: person_id
-        description: "Surrogate key for the patient"
-        data_type: string
-        tests:
-          - not_null
-
-#       - name: age
-#         description: "Age of the person"
-#         data_type: number
-#         tests:
-#           - not_null
-#           - dbt_utils.accepted_range:
-#               min_value: 0
-#               max_value: 120
-
       - name: is_on_register
         description: "Flag indicating if person is on the COPD register"
         data_type: boolean

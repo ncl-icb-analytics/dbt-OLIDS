@@ -24,18 +24,18 @@ snowflake_hei_migration:
       client_session_keep_alive: true
       query_tag: "dbt_hei_migration_dev"
     
-    staging:
+    qa:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
       user: "{{ env_var('SNOWFLAKE_USER') }}"
       authenticator: externalbrowser
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
       database: DATA_LAB_NCL_TRAINING_TEMP
-      schema: DBT_STAGING
+      schema: DBT_QA
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
       threads: 6
       client_session_keep_alive: true
-      query_tag: "dbt_hei_migration_staging"
+      query_tag: "dbt_hei_migration_qa"
     
     prod:
       type: snowflake
