@@ -5,7 +5,7 @@
 -- Mart model for LTC LCS Case Finding: AF_61
 -- Patients on digoxin, flecainide, propafenone or anticoagulants who might have undiagnosed AF.
 
-SELECT
+SELECT DISTINCT
     bp.person_id,
     ms.has_active_anticoagulant,
     ms.has_active_digoxin,
