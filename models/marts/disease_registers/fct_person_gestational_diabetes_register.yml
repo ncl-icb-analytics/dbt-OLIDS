@@ -1,7 +1,7 @@
 version: 2
 models:
 - name: fct_person_gestational_diabetes_register
-  description: "**Gestational Diabetes Register - QOF Pregnancy Quality Measures**\n\nFact table for gestational diabetes\
+  description: "**Gestational Diabetes Register - Pregnancy Quality Measures**\n\nFact table for gestational diabetes\
     \ register following simple register pattern. All patients \nwith any gestational diabetes diagnosis are included on the\
     \ register.\n\nSimple Register Business Logic:\n- Presence of gestational diabetes diagnosis = on register\n- No resolution\
     \ codes (retained for future diabetes risk assessment)\n- No age restrictions for diagnosis inclusion\n- Important for\

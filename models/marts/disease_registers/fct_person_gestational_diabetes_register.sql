@@ -8,7 +8,7 @@
 
 /*
 Gestational Diabetes register fact table - one row per person.
-Applies QOF gestational diabetes register inclusion criteria.
+Applies gestational diabetes register inclusion criteria.
 
 Clinical Purpose:
 - Clinical gestational diabetes register for pregnancy care and future diabetes risk

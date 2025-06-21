@@ -5,7 +5,7 @@ models:
     description: |
       Non-Alcoholic Fatty Liver Disease (NAFLD) register fact table identifying individuals with NAFLD diagnosis.
       
-      **QOF Business Logic (Pattern 1: Simple Register):**
+      **Business Logic (Pattern 1: Simple Register):**
       - Simple presence of NAFLD diagnosis code = on register
       - No age restrictions or complex criteria
       
