@@ -1,0 +1,17 @@
+version: 2
+models:
+  - name: int_ltc_lcs_cf_base_population
+    description: "Reusable base population for LTC LCS case finding indicators. Excludes patients already in LTC programmes and those with NHS health checks in the last 24 months."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
+        tests:
+          - not_null
+      - name: condition_code
+        description: "Condition code for LTC/LCS grouping"
+      - name: is_on_register
+        description: "Flag indicating if person is on LTC/LCS register"
