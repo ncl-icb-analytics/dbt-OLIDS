@@ -1,3 +1,7 @@
+{{ config(
+    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'AF_61 case finding dimension table for LTC/LCS programme. Identifies patients on specific cardiac medications (digoxin, flecainide, propafenone, or anticoagulants) who might have undiagnosed atrial fibrillation. These patients require clinical assessment to confirm or rule out AF diagnosis and ensure appropriate management. Used to prioritise patients for ECG monitoring and cardiology review.'"
+) }}
+
 -- Mart model for LTC LCS Case Finding: AF_61
 -- Patients on digoxin, flecainide, propafenone or anticoagulants who might have undiagnosed AF.
 

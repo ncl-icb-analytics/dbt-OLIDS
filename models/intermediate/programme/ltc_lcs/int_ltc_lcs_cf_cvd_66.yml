@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_cf_cvd_66
+    description: "CVD_66 case finding intermediate model. Identifies patients aged 75-83 who need statin review (no recent QRISK2 assessment)."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age (75-83)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 75
+              max_value: 83
+      - name: needs_statin_review
+        description: "Whether patient needs statin review (TRUE for all)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_qrisk2_date
+        description: "Date of latest QRISK2 assessment (should be NULL for all)"
+      - name: latest_qrisk2_value
+        description: "Latest QRISK2 value (should be NULL for all)"
+      - name: latest_qrisk2_code
+        description: "Concept code of latest QRISK2 (should be NULL for all)"
+      - name: latest_qrisk2_display
+        description: "Concept display of latest QRISK2 (should be NULL for all)"
+      - name: all_qrisk2_codes
+        description: "Array of all QRISK2 concept codes for patient (should be NULL for all)"
+      - name: all_qrisk2_displays
+        description: "Array of all QRISK2 concept displays for patient (should be NULL for all)" 

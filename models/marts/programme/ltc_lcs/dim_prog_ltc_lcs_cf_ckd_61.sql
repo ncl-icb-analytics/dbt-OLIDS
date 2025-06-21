@@ -1,7 +1,10 @@
 -- Mart model for LTC LCS Case Finding CKD_61
 -- Identifies patients with two consecutive eGFR readings below 60 (case finding for undiagnosed CKD)
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_61 case finding dimension table for LTC/LCS programme. Identifies patients aged 17+ with two consecutive eGFR readings below 60 mL/min/1.73m², indicating possible undiagnosed chronic kidney disease (CKD stage 3 or worse). These patients require clinical assessment for CKD diagnosis, staging, and management initiation. Used to prioritise patients for nephrology review and CKD care pathway entry.'"
+) }}
 
 select
     person_id,

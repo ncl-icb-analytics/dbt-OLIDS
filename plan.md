@@ -134,11 +134,47 @@
 
 ## Current Goal
 
-- ✅ **COMPLETED**: Implement CKD intermediate and mart models (CORRECTED)
+- ✅ **COMPLETED**: Implement all CVD intermediate and mart models (CVD_61 through CVD_66)
 
 ## Recent Progress
 
-### 🚨 CRITICAL BUSINESS LOGIC CORRECTIONS (Current Session)
+### ✅ CVD MODELS IMPLEMENTATION COMPLETED (Current Session)
+**SUCCESS**: All 6 CVD case finding models successfully implemented and tested!
+
+#### CVD Models Completed:
+1. **CVD_61** ✅ - QRISK2 ≥ 20% case finding (previously completed)
+2. **CVD_62** ✅ - QRISK2 15-19.99% case finding (previously completed)  
+3. **CVD_63** ✅ - Statin review for patients on statins with non-HDL cholesterol > 2.5 (previously completed)
+4. **CVD_64** ✅ - High-dose statin case finding (NEW - completed this session)
+5. **CVD_65** ✅ - Moderate-dose statin case finding for QRISK2 ≥ 10 (NEW - completed this session)
+6. **CVD_66** ✅ - Statin review for patients aged 75-83 with no recent QRISK2 (NEW - completed this session)
+
+#### Key Features Implemented:
+- **Base Population Models**: Created specialized base populations for different CVD indicators
+  - General CVD base (age 40-83, no statins/allergies/decisions) for CVD_64
+  - CVD_65 base (QRISK2 ≥ 10, no moderate-dose statins/allergies/decisions)
+  - CVD_66 base (age 75-83, no statins/allergies/decisions/health checks)
+- **Business Logic Patterns**: 
+  - QRISK2-based case finding (CVD_61, CVD_62, CVD_65, CVD_66)
+  - Statin medication review (CVD_63, CVD_64)
+  - Age-specific filtering (CVD_66: 75-83, others: 40-83)
+- **Data Quality**: Comprehensive YAML schemas with 18/18 tests passing
+- **Column Mapping Fix**: Corrected `concept_code`/`concept_display` to `mapped_concept_code`/`mapped_concept_display`
+
+#### Models Successfully Built and Tested:
+- **Intermediate Models**: All ephemeral for performance
+  - `int_ltc_lcs_cf_cvd_base_population` ✅
+  - `int_ltc_lcs_cf_cvd_65_base_population` ✅  
+  - `int_ltc_lcs_cf_cvd_66_base_population` ✅
+  - `int_ltc_lcs_cf_cvd_64` ✅
+  - `int_ltc_lcs_cf_cvd_65` ✅
+  - `int_ltc_lcs_cf_cvd_66` ✅
+- **Mart Models**: All materialized as tables
+  - `dim_prog_ltc_lcs_cf_cvd_64` ✅
+  - `dim_prog_ltc_lcs_cf_cvd_65` ✅  
+  - `dim_prog_ltc_lcs_cf_cvd_66` ✅
+
+### 🚨 CRITICAL BUSINESS LOGIC CORRECTIONS (Previous Session)
 **MAJOR DISCOVERY**: The initial CKD models had completely wrong business logic compared to legacy!
 
 #### Issues Found and Fixed:
@@ -204,9 +240,10 @@
 
 ## Next Steps
 
-With CKD models correctly implemented, the next priorities for LTC/LCS migration are:
-- CVD (Cardiovascular Disease) case finding models
+With CVD models successfully completed, the next priorities for LTC/LCS migration are:
 - Diabetes case finding models  
 - Hypertension case finding models
 - CYP Asthma case finding models
 - LTC/LCS summary and MOC (Model of Care) models
+
+**CVD Migration Status**: ✅ **COMPLETE** - All 6 CVD case finding models implemented and tested successfully!

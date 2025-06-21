@@ -2,7 +2,10 @@
 -- Identifies patients with specific conditions requiring eGFR monitoring
 -- (AKI, BPH/Gout, Lithium, Microhaematuria) who have not had eGFR in last 12 months
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_64 case finding dimension table for LTC/LCS programme. Identifies patients aged 17+ with specific conditions requiring eGFR monitoring (acute kidney injury, BPH/gout, lithium medication, or microhaematuria) who have not had eGFR testing in the last 12 months. These patients require kidney function monitoring due to their risk factors for chronic kidney disease. Used to prioritise patients for eGFR testing and nephrology assessment.'"
+) }}
 
 select
     person_id,

@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_cvd_64
+    description: "CVD_64 case finding dimension table for LTC/LCS programme. Identifies patients aged 40-83 who need high-dose statins for cardiovascular disease prevention. These are patients not currently on statins, with no statin allergies or contraindications, and no recent statin clinical decisions. Used to prioritise patients for clinical review and statin initiation to reduce cardiovascular risk."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age at time of assessment"
+        tests:
+          - not_null
+      - name: needs_high_dose_statin
+        description: "Whether patient needs high-dose statin treatment"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_statin_date
+        description: "Date of most recent high-dose statin medication"
+      - name: latest_statin_code
+        description: "Concept code of most recent high-dose statin"
+      - name: latest_statin_display
+        description: "Concept display of most recent high-dose statin"
+      - name: all_statin_codes
+        description: "Array of all high-dose statin concept codes for patient"
+      - name: all_statin_displays
+        description: "Array of all high-dose statin concept displays for patient" 

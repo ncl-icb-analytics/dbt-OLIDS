@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_cf_cvd_base_population
+    description: "General CVD base population for case finding indicators. Includes patients aged 40-83 who are not on statins, have no statin allergies/contraindications, and no recent statin decisions."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age (40-83)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 40
+              max_value: 83
+      - name: has_statin
+        description: "Whether patient has statin medication in last 12 months (should be FALSE for all)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [false]
+      - name: has_statin_allergy
+        description: "Whether patient has statin allergy/contraindication (should be FALSE for all)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [false]
+      - name: has_statin_decision
+        description: "Whether patient has statin decision in last 60 months (should be FALSE for all)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [false]
+      - name: latest_statin_date
+        description: "Latest statin medication date (should be NULL for all)"
+      - name: latest_statin_allergy_date
+        description: "Latest statin allergy/contraindication date (should be NULL for all)"
+      - name: latest_statin_decision_date
+        description: "Latest statin decision date (should be NULL for all)" 

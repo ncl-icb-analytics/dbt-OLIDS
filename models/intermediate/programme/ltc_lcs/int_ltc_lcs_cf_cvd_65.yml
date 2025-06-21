@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_cf_cvd_65
+    description: "CVD_65 case finding intermediate model. Identifies patients with QRISK2 ≥ 10 who need moderate-dose statins."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age"
+        tests:
+          - not_null
+      - name: needs_moderate_dose_statin
+        description: "Whether patient needs moderate-dose statin (TRUE for all)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_qrisk2_date
+        description: "Date of latest QRISK2 ≥ 10 assessment"
+        tests:
+          - not_null
+      - name: latest_qrisk2_value
+        description: "Latest QRISK2 value (≥ 10)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 10
+      - name: all_qrisk2_codes
+        description: "Array of all QRISK2 concept codes for patient"
+      - name: all_qrisk2_displays
+        description: "Array of all QRISK2 concept displays for patient" 

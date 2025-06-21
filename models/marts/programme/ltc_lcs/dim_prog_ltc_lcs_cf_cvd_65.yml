@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_cvd_65
+    description: "CVD_65 case finding dimension table for LTC/LCS programme. Identifies patients with QRISK2 cardiovascular risk score ≥ 10% who need moderate-dose statins for cardiovascular disease prevention. These are patients not currently on moderate-dose statins, with no statin allergies or contraindications, and no recent statin clinical decisions. Used to prioritise patients for clinical review and statin therapy optimisation based on their elevated cardiovascular risk."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age at time of assessment"
+        tests:
+          - not_null
+      - name: needs_moderate_dose_statin
+        description: "Whether patient needs moderate-dose statin treatment"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_qrisk2_date
+        description: "Date of most recent QRISK2 ≥ 10 assessment"
+        tests:
+          - not_null
+      - name: latest_qrisk2_value
+        description: "Most recent QRISK2 value (≥ 10)"
+        tests:
+          - not_null
+      - name: all_qrisk2_codes
+        description: "Array of all QRISK2 concept codes for patient"
+      - name: all_qrisk2_displays
+        description: "Array of all QRISK2 concept displays for patient" 

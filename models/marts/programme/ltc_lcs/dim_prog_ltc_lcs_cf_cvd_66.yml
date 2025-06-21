@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_cvd_66
+    description: "CVD_66 case finding dimension table for LTC/LCS programme. Identifies patients aged 75-83 who need statin review due to lack of recent QRISK2 cardiovascular risk assessment. These are patients not currently on statins, with no statin allergies or contraindications, no recent statin clinical decisions, and no NHS health checks in the last 24 months. Used to prioritise elderly patients for cardiovascular risk assessment and potential statin therapy initiation."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age at time of assessment (75-83)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 75
+              max_value: 83
+      - name: needs_statin_review
+        description: "Whether patient needs statin review"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_qrisk2_date
+        description: "Date of most recent QRISK2 assessment (NULL for patients needing review)"
+      - name: latest_qrisk2_value
+        description: "Most recent QRISK2 value (NULL for patients needing review)"
+      - name: latest_qrisk2_code
+        description: "Concept code of most recent QRISK2 (NULL for patients needing review)"
+      - name: latest_qrisk2_display
+        description: "Concept display of most recent QRISK2 (NULL for patients needing review)"
+      - name: all_qrisk2_codes
+        description: "Array of all QRISK2 concept codes for patient (NULL for patients needing review)"
+      - name: all_qrisk2_displays
+        description: "Array of all QRISK2 concept displays for patient (NULL for patients needing review)" 
