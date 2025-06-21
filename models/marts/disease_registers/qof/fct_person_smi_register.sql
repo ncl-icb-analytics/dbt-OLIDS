@@ -8,8 +8,6 @@
 /*
 **Serious Mental Illness (SMI) Register - QOF Mental Health Quality Measures**
 
-Pattern 2: Standard QOF Register (Diagnosis + Resolution + Medication Integration)
-
 Business Logic:
 - Mental health diagnosis (MH_COD) NOT in remission (latest_diagnosis > latest_remission OR no remission)
 - OR lithium therapy in last 6 months and not stopped
@@ -23,7 +21,6 @@ Used for serious mental illness quality measures including:
 - Specialist mental health service coordination
 - Recovery and rehabilitation planning
 
-Matches legacy business logic and field structure with simplification.
 */
 
 WITH smi_diagnoses AS (

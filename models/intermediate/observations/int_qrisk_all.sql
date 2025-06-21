@@ -7,9 +7,6 @@
 
 /*
 All QRISK cardiovascular risk scores from observations.
-Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Captures QRISK, QRISK2, and QRISK3 scores with clinical risk categorisation.
-Matches legacy structure with result_unit_display field.
 */
 
 WITH base_observations AS (

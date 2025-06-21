@@ -1,13 +1,12 @@
 version: 2
 models:
 - name: fct_person_depression_register
-  description: "**Depression Register - QOF Mental Health Quality Measures**\n\nPattern 2: Standard QOF Register with diagnosis\
+  description: "**Depression Register - QOF Mental Health Quality Measures**\n
     \ + resolution logic.\n\nQOF Business Logic:\n- Age \u226518 years (QOF requirement)\n- Latest depression episode on/after\
     \ 1 April 2006 (QOF date threshold)\n- Unresolved: latest_diagnosis_date > latest_resolved_date OR no resolved code\n\
     - Includes ALL persons (active, inactive, deceased) for comprehensive reporting\n\nQOF Context:\nUsed for depression quality\
     \ measures including:\n- Depression care pathways and treatment monitoring\n- Recovery planning and review scheduling\n\
-    - Psychological therapy access monitoring\n- Medication management and compliance\n\nMatches legacy fct_person_dx_depression\
-    \ business logic and field structure.\n"
+    - Psychological therapy access monitoring\n- Medication management and compliance"
   columns:
   - name: person_id
     description: Unique person identifier

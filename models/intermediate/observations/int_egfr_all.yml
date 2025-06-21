@@ -8,9 +8,6 @@ models:
           cluster_ids: "EGFR_COD"
     description: |
       All estimated Glomerular Filtration Rate (eGFR) measurements from observations.
-      Simple pattern using EGFR_COD with clinical validation and CKD staging.
-      Includes ALL persons following intermediate layer principles.
-      Matches legacy structure with result_unit_display field.
     columns:
       - name: person_id
         description: "Unique person identifier"

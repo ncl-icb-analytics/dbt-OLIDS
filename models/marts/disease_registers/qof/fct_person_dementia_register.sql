@@ -8,22 +8,22 @@
 /*
 **Dementia Register - QOF Mental Health Quality Measures**
 
-Pattern 1: Simple Register (Diagnosis Only)
+Simple Register
 
 Business Logic:
 - Presence of dementia diagnosis (DEM_COD) = on register
-- No resolution codes (dementia is permanent condition)
-- No age restrictions for dementia register
-- Based on legacy fct_person_dx_dementia.sql
 
-QOF Context:
+Note:
+- There are no resolved codes for dementia (dementia is permanent condition)
+- There are no age restrictions for dementia register
+
+Clinical Context:
 Used for dementia quality measures including:
 - Dementia care pathway monitoring
 - Cognitive health assessment support
 - Memory service referral tracking
 - Early detection and ongoing care
 
-Matches legacy business logic and field structure with simplification.
 */
 
 WITH dementia_diagnoses AS (

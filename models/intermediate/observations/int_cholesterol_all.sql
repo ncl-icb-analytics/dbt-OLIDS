@@ -7,9 +7,7 @@
 
 /*
 All total cholesterol measurements from observations.
-Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Simple pattern using CHOL2_COD with basic validation.
-Matches legacy structure with result_unit_display field.
+Includes ALL persons (active, inactive, deceased).
 */
 
 WITH base_observations AS (

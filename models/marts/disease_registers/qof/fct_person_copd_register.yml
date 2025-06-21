@@ -13,8 +13,6 @@ models:
       
       Tracks diagnosis dates, spirometry results, and resolution status.
       
-      Matches legacy fct_person_dx_copd business logic and field structure exactly.
-      
     columns:
       - name: person_id
         description: "Unique identifier for the person"

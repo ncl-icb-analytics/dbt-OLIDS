@@ -8,9 +8,6 @@ models:
           cluster_ids: "CRE_COD"
     description: |
       All serum creatinine measurements from observations.
-      Simple pattern using CRE_COD with clinical validation and reference ranges.
-      Includes ALL persons following intermediate layer principles.
-      Matches legacy structure with result_unit_display field.
     columns:
       - name: person_id
         description: "Unique person identifier"

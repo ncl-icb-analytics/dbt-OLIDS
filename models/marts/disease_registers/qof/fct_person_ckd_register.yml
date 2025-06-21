@@ -2,7 +2,7 @@ version: 2
 models:
 - name: fct_person_ckd_register
   description: "Chronic Kidney Disease (CKD) register fact table identifying individuals aged 18 and over currently on the\
-    \ CKD register.\n\n**QOF Business Logic (Pattern 2):**\n- Age \u226518 years (QOF requirement)\n- Active CKD diagnosis:\
+    \ CKD register.\n\n**QOF Business Logic**\n- Age \u226518 years (QOF requirement)\n- Active CKD diagnosis:\
     \ latest CKD_COD > latest CKDRES_COD OR no resolution recorded\n- Uses cluster IDs: CKD_COD (diagnosis), CKDRES_COD (resolution)\n\
     \n**Lab Data Separation:**\nLab results (eGFR, creatinine, ACR) available separately in intermediate tables:\n- int_egfr_all/int_egfr_latest\
     \ for eGFR monitoring\n- int_creatinine_all/int_creatinine_latest for creatinine levels\n- int_urine_acr_all/int_urine_acr_latest\

@@ -7,9 +7,7 @@
 
 /*
 All serum creatinine measurements from observations.
-Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Simple pattern using CRE_COD with clinical validation and reference ranges.
-Matches legacy structure with result_unit_display field.
+Includes ALL persons (active, inactive, deceased).
 */
 
 WITH base_observations AS (

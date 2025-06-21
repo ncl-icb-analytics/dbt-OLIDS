@@ -10,7 +10,6 @@
 }}
 
 -- Blood Pressure Events - Event-based consolidation (one row per person per date)
--- Matches legacy structure with paired systolic/diastolic values and clinical context
 -- Superior design for clinical analysis and BP control assessment
 
 WITH base_observations_and_clusters AS (

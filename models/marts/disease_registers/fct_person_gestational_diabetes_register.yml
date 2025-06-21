@@ -7,8 +7,7 @@ models:
     \ codes (retained for future diabetes risk assessment)\n- No age restrictions for diagnosis inclusion\n- Important for\
     \ pregnancy care and future diabetes prevention\n\nQOF Context:\nUsed for pregnancy diabetes quality measures including:\n\
     - Pregnancy diabetes management and monitoring\n- Postpartum diabetes screening and prevention\n- Future diabetes risk\
-    \ assessment\n- Pregnancy care quality improvement\n\nMatches legacy fct_person_dx_gestational_diabetes business logic\
-    \ and field structure.\n"
+    \ assessment\n- Pregnancy care quality improvement"
   columns:
   - name: person_id
     description: Unique person identifier
@@ -20,7 +19,7 @@ models:
   - name: is_on_register
     description: 'Register flag: has gestational diabetes diagnosis (always TRUE for this table)'
     tests:
-    - not_null
-    - accepted_values:
-        values:
-        - true
+      - not_null
+      - accepted_values:
+          values:
+          - true

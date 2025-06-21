@@ -8,11 +8,13 @@
 CHD Register - QOF Cardiovascular Disease Quality Measures
 Tracks all patients with coronary heart disease diagnoses.
 
-Simple Register Pattern:
+Business Logic:
 - Presence of CHD diagnosis = on register (lifelong condition)
 - No resolution codes (CHD is permanent)
 - No age restrictions
-- Important for secondary prevention monitoring
+
+Clinical Context:
+- Used for secondary prevention and cardiovascular risk management
 
 QOF Business Rules:
 1. Any CHD diagnosis code qualifies for register inclusion
@@ -20,7 +22,6 @@ QOF Business Rules:
 3. Used for secondary prevention medication monitoring
 4. Cardiovascular risk management
 
-Matches legacy fct_person_dx_chd business logic and field structure.
 */
 
 WITH base_diagnoses AS (

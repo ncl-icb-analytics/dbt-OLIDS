@@ -5,7 +5,7 @@ models:
     description: |
       Non-Alcoholic Fatty Liver Disease (NAFLD) register fact table identifying individuals with NAFLD diagnosis.
       
-      **Business Logic (Pattern 1: Simple Register):**
+      **Business Logic:**
       - Simple presence of NAFLD diagnosis code = on register
       - No age restrictions or complex criteria
       
@@ -72,7 +72,7 @@ models:
           
 # Column 'meets_criteria' does not exist in the actual model
 #       - name: meets_criteria
-#         description: "Flag indicating if person meets register criteria (always TRUE for Pattern 1)"
+#         description: "Flag indicating if person meets register criteria"
 #         tests:
 #           - not_null
 #           - accepted_values:

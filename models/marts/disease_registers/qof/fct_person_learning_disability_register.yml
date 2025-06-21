@@ -1,12 +1,12 @@
 version: 2
 models:
 - name: fct_person_learning_disability_register
-  description: "**Learning Disability Register - QOF Quality Measures**\n\nPattern 1: Simple Register with age filter.\n\n\
+  description: "**Learning Disability Register - QOF Quality Measures**\n
     QOF Business Logic:\n- Learning disability diagnosis (LD_DIAGNOSIS_COD) for age \u226514 years\n- No resolution codes\
     \ (LD is permanent condition)\n- Age restriction: patients must be 14+ years\n- Includes ALL persons (active, inactive,\
     \ deceased) for comprehensive reporting\n\nQOF Context:\nUsed for learning disability quality measures including:\n- Learning\
     \ disability care pathway monitoring\n- Health equity assessment and improvement\n- Special needs service coordination\n\
-    - Annual health checks\n\nMatches legacy fct_person_dx_ld business logic and field structure.\n"
+    - Annual health checks\n"
   columns:
   - name: person_id
     description: Unique person identifier

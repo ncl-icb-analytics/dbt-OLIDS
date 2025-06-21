@@ -7,9 +7,6 @@
 
 /*
 All waist circumference measurements from observations.
-Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Simple pattern using WAIST_COD with clinical validation and risk categorisation.
-Matches legacy structure with result_unit_display field.
 */
 
 WITH base_observations AS (

@@ -7,9 +7,8 @@
 
 /*
 All numeric BMI measurements from observations.
-Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Simple pattern using only BMIVAL_COD with basic validation (5-400 range).
-Matches legacy structure with result_unit_display field.
+Includes ALL persons (active, inactive, deceased)
+using BMIVAL_COD with basic validation (5-400 range).
 */
 
 WITH base_observations AS (

@@ -37,6 +37,3 @@ FROM (
         order_by='clinical_effective_date'
     ) }}
 ) latest_foot_examination
-
--- Note: Validity filtering done at mart layer, not here
--- This matches legacy INTERMEDIATE_FOOT_CHECK_LATEST pattern 

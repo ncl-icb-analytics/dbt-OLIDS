@@ -7,9 +7,6 @@
 
 /*
 All estimated Glomerular Filtration Rate (eGFR) measurements from observations.
-Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-Simple pattern using EGFR_COD with clinical validation and CKD staging.
-Matches legacy structure with result_unit_display field.
 */
 
 WITH base_observations AS (

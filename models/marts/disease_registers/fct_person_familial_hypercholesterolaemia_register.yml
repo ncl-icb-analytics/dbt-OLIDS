@@ -7,7 +7,7 @@ models:
     \ is permanent genetic condition)\n- No age restrictions for diagnosis inclusion\n- Important for high-intensity statin\
     \ therapy and cascade screening\n\nQOF Context:\nUsed for familial hypercholesterolaemia quality measures including:\n\
     - High-intensity statin therapy monitoring\n- Family cascade screening programmes\n- Cardiovascular risk management\n\
-    - Genetic counselling support\n\nMatches legacy fct_person_dx_fhyp business logic and field structure.\n"
+    - Genetic counselling support"
   columns:
   - name: person_id
     description: Unique person identifier

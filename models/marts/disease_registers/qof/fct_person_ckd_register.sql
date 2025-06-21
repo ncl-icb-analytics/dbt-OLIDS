@@ -5,7 +5,7 @@
     )
 }}
 
--- Chronic Kidney Disease (CKD) Register (QOF Pattern 2: Standard QOF Register with Resolution Logic)
+-- Chronic Kidney Disease (CKD) Register
 -- Business Logic: Age ≥18 + Active CKD diagnosis (latest CKD_COD > latest CKDRES_COD OR no resolution recorded)
 -- Lab data available separately in intermediate tables for clinical monitoring
 

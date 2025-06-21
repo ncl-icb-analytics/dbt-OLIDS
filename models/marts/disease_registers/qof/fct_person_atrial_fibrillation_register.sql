@@ -5,7 +5,7 @@
     )
 }}
 
--- Atrial Fibrillation Register (QOF Pattern 2: Standard QOF Register with Resolution Logic)  
+-- Atrial Fibrillation Register
 -- Business Logic: Active AF diagnosis (latest AFIB_COD > latest AFIBRES_COD OR no resolution recorded)
 -- No age restrictions or medication validation requirements
 

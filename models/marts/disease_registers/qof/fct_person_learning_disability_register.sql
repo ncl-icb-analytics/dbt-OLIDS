@@ -8,8 +8,6 @@
 /*
 **Learning Disability Register - QOF Quality Measures**
 
-Pattern 1: Simple Register with Age Filter
-
 Business Logic:
 - Learning disability diagnosis (LD_DIAGNOSIS_COD) for age ≥14 years
 - No resolution codes (LD is permanent condition)
@@ -23,7 +21,6 @@ Used for learning disability quality measures including:
 - Special needs service coordination
 - Annual health checks
 
-Matches legacy business logic and field structure with simplification.
 */
 
 WITH learning_disability_diagnoses AS (

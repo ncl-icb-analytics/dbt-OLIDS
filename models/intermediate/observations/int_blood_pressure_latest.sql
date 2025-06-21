@@ -10,8 +10,6 @@
 }}
 
 -- Latest Blood Pressure Event per person
--- Matches legacy structure: paired systolic/diastolic with clinical context
--- Perfect for BP control analysis and clinical decision making
 
 SELECT
     person_id,

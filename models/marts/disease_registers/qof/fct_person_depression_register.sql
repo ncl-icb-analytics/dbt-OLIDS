@@ -8,13 +8,10 @@
 /*
 **Depression Register - QOF Mental Health Quality Measures**
 
-Pattern 2: Standard QOF Register (Diagnosis + Resolution + Age + Date Filter)
-
 Business Logic:
 - Age ≥18 years (QOF requirement)
 - Latest depression episode on/after 1 April 2006 (QOF date threshold)
 - Unresolved: latest_depression_date > latest_resolved_date OR no resolved code
-- Based on legacy fct_person_dx_depression.sql
 
 QOF Context:
 Used for depression quality measures including:
@@ -22,8 +19,6 @@ Used for depression quality measures including:
 - Recovery planning and review scheduling
 - Psychological therapy access
 - Medication management and monitoring
-
-Matches legacy business logic and field structure with simplification (no episode timing flags).
 */
 
 WITH depression_diagnoses AS (

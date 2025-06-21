@@ -12,7 +12,6 @@
 -- Person Dimension Table - Simplified
 -- Aggregates person-to-patient relationships and practice associations
 -- Uses arrays to store multiple patient IDs and practice information per person
--- EXACTLY MATCHES LEGACY: DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON
 
 WITH person_patients AS (
     -- Get all patient relationships for each person

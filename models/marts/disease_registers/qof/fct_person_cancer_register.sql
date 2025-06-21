@@ -20,10 +20,6 @@ QOF Business Rules:
 3. Used for survivorship care and follow-up monitoring
 4. Supports cancer care quality measures
 
-Note: Legacy includes episode timing flags, but keeping this model simple 
-per architectural guidance. Episode analysis can be done separately if needed.
-
-Matches legacy fct_person_dx_cancer business logic and field structure.
 */
 
 WITH cancer_diagnoses AS (

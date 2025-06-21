@@ -19,12 +19,10 @@ QOF Business Rules:
 1. Must have an unresolved diagnosis
 2. Pre-April 2023: COPD diagnosis alone sufficient for register  
 3. Post-April 2023: Requires spirometry confirmation (FEV1/FVC <0.7) OR unable-to-have-spirometry status
-
-Matches legacy fct_person_dx_copd business logic and field structure exactly.
 */
 
 WITH base_diagnoses AS (
-    -- Get all COPD diagnoses - matches legacy BaseDiagnoses CTE
+    -- Get all COPD diagnoses
     SELECT 
         d.person_id,
         age.age,
@@ -46,7 +44,7 @@ WITH base_diagnoses AS (
 ),
 
 latest_spirometry AS (
-    -- Get latest spirometry results for each person - matches legacy LatestSpirometry CTE
+    -- Get latest spirometry results for each person
     SELECT
         person_id,
         MAX(clinical_effective_date) AS latest_spirometry_date,
@@ -57,7 +55,7 @@ latest_spirometry AS (
 ),
 
 unable_spirometry AS (
-    -- Get latest unable-to-have-spirometry status for each person - matches legacy UnableSpirometry CTE
+    -- Get latest unable-to-have-spirometry status for each person
     SELECT
         person_id,
         MAX(clinical_effective_date) AS latest_unable_spirometry_date,
@@ -67,7 +65,7 @@ unable_spirometry AS (
 ),
 
 person_level_coding_aggregation AS (
-    -- Aggregate all COPD concept codes and displays into arrays - matches legacy PersonLevelCodingAggregation CTE
+    -- Aggregate all COPD concept codes and displays into arrays
     SELECT
         person_id,
         ARRAY_AGG(DISTINCT concept_code) AS all_copd_concept_codes,
@@ -77,12 +75,12 @@ person_level_coding_aggregation AS (
     GROUP BY person_id
 )
 
--- Final selection implementing business rules - matches legacy exactly
+-- Final selection implementing business rules
 SELECT
     f.person_id,
     f.age,
     
-    -- Business rules for register inclusion - matches legacy logic exactly:
+    -- Business rules for register inclusion:
     -- 1. Must have an unresolved diagnosis
     -- 2. For pre-April 2023: Just need the diagnosis
     -- 3. For post-April 2023: Need either spirometry confirmation or unable-to-have-spirometry status
@@ -107,7 +105,7 @@ SELECT
     COALESCE(u.is_unable_spirometry, FALSE) AS is_unable_spirometry,
     u.latest_unable_spirometry_date,
     
-    -- QOF temporal flags - matches legacy exactly
+    -- QOF temporal flags
     CASE WHEN f.earliest_unresolved_diagnosis_date < '2023-04-01' THEN TRUE ELSE FALSE END AS is_pre_april_2023_diagnosis,
     CASE WHEN f.earliest_unresolved_diagnosis_date >= '2023-04-01' THEN TRUE ELSE FALSE END AS is_post_april_2023_diagnosis,
     

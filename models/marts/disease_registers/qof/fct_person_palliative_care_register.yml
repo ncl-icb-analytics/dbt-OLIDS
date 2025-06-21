@@ -3,35 +3,19 @@ models:
 - name: fct_person_palliative_care_register
   description: '**Palliative Care Register - QOF End-of-Life Quality Measures**
 
-
-    Pattern 2: Standard QOF Register with diagnosis + exclusion + date filter logic.
-
-
     QOF Business Logic:
 
     - Palliative care code (PALCARE_COD) on/after 1 April 2008 (QOF date threshold)
-
     - NOT marked as "no longer indicated" (PALCARENI_COD) after latest palliative care code
-
     - No age restrictions for palliative care register
-
     - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
 
-
     QOF Context:
-
     Used for palliative care quality measures including:
-
     - End-of-life care coordination and monitoring
-
     - Palliative care pathway assessment
-
     - Appropriate care targeting and service provision
-
     - Quality of life measurement and improvement
-
-
-    Matches legacy fct_person_dx_palliative_care business logic and field structure.
 
     '
   columns:

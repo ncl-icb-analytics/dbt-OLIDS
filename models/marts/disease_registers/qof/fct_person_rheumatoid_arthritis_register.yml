@@ -6,7 +6,7 @@ models:
     - RA diagnosis for age \u226516 = on register\n- No resolution codes (RA is permanent)\n- Age restriction: patients must\
     \ be 16+ years\n- Important for DMARDs monitoring\n\nQOF Context:\nUsed for rheumatoid arthritis quality measures including:\n\
     - DMARDs therapy monitoring and joint health assessment\n- Disease progression monitoring\n- Specialist rheumatology care\
-    \ coordination\n- Treatment response evaluation\n\nMatches legacy fct_person_dx_ra business logic and field structure.\n"
+    \ coordination\n- Treatment response evaluation\n"
   columns:
   - name: person_id
     description: Unique person identifier
