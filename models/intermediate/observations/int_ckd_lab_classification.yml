@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: int_ckd_lab_classification
+    description: |
+      Classifies each person’s latest eGFR and ACR lab results according to CKD thresholds and staging criteria. Supports case finding and audit by identifying people whose labs are consistent with CKD, regardless of clinical diagnosis. Mirrors and improves on the legacy INTERMEDIATE_CKD_LAB_INFERENCE logic.
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      - name: latest_egfr_value
+        description: Most recent eGFR value
+      - name: latest_egfr_date
+        description: Date of most recent eGFR test
+        tests:
+          - not_null
+      - name: latest_egfr_stage
+        description: CKD G-stage (G1-G5) based on latest eGFR
+      - name: latest_acr_value
+        description: Most recent ACR value
+      - name: latest_acr_date
+        description: Date of most recent ACR test
+      - name: latest_acr_stage
+        description: CKD A-stage (A1-A3) based on latest ACR
+      - name: latest_ckd_stage_inferred
+        description: Combined CKD stage inferred from latest eGFR and ACR
+        tests:
+          - not_null
+      - name: latest_labs_meet_ckd_criteria
+        description: TRUE if latest labs indicate CKD (eGFR < 60 or ACR >= 3)
+        tests:
+          - not_null
+      - name: has_confirmed_low_egfr
+        description: TRUE if two eGFR < 60 results >= 90 days and <= 730 days apart
+        tests:
+          - not_null
+      - name: has_confirmed_high_acr
+        description: TRUE if two ACR >= 3 results >= 90 days and <= 730 days apart
+        tests:
+          - not_null
+      - name: has_confirmed_ckd_by_labs
+        description: TRUE if either low eGFR or high ACR is confirmed (persistent abnormal results)
+        tests:
+          - not_null
