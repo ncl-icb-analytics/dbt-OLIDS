@@ -11,3 +11,7 @@ models:
         description: "Condition code for LTC/LCS grouping"
       - name: is_on_register
         description: "Flag indicating if person is on LTC/LCS register"
+      - name: age
+        description: "The patient's age in years"
+        tests:
+          - not_null

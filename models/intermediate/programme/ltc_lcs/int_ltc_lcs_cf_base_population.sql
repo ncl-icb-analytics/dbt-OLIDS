@@ -11,16 +11,18 @@ WITH health_checks AS (
       AND clinical_effective_date >= DATEADD(month, -24, CURRENT_DATE())
 )
 SELECT DISTINCT
-    person_id,
-    condition_code,
-    is_on_register
-FROM {{ ref('fct_person_ltc_summary') }}
-WHERE person_id NOT IN (
+    ltc.person_id,
+    ltc.condition_code,
+    ltc.is_on_register,
+    age.age
+FROM {{ ref('fct_person_ltc_summary') }} ltc
+JOIN {{ ref('dim_person_age') }} age ON ltc.person_id = age.person_id
+WHERE ltc.person_id NOT IN (
     -- Exclude patients already in LTC programmes
     SELECT person_id 
     FROM {{ ref('int_ltc_lcs_cf_exclusions') }}
 )
-AND person_id NOT IN (
+AND ltc.person_id NOT IN (
     -- Exclude patients with health checks in last 24 months
     SELECT person_id
     FROM health_checks

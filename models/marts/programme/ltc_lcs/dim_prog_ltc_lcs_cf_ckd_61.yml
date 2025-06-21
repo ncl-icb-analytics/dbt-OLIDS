@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_ckd_61
+    description: Mart model for LTC LCS Case Finding CKD_61 - Identifies patients with two consecutive eGFR readings below 60 (case finding for undiagnosed CKD).
+    columns:
+      - name: person_id
+        description: The unique identifier for the patient
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: The patient's age in years (must be >= 17)
+        tests:
+          - not_null
+      - name: has_ckd
+        description: Boolean flag indicating if person has two consecutive eGFR readings < 60
+      - name: latest_egfr_date
+        description: Date of most recent eGFR reading
+      - name: previous_egfr_date
+        description: Date of previous eGFR reading
+      - name: latest_egfr_value
+        description: Most recent eGFR value
+      - name: previous_egfr_value
+        description: Previous eGFR value
+      - name: all_egfr_codes
+        description: Array of all eGFR concept codes for traceability
+      - name: all_egfr_displays
+        description: Array of all eGFR display terms for traceability
+      - name: meets_criteria
+        description: Boolean flag indicating if the patient meets all CKD_61 criteria
+        tests:
+          - not_null
+      - name: last_updated
+        description: Timestamp when this record was last updated
+        tests:
+          - not_null

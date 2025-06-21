@@ -7,8 +7,8 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [ ] DIM_PROG_IMM_CHILD_ELIG
 - [ ] DIM_PROG_IMM_CHILD_VACCINE
 - [ ] DIM_PROG_IMM_CHILD_VACCINE_TEMP
-- [ ] DIM_PROG_LTC_LCS_CF_AF_61
-- [ ] DIM_PROG_LTC_LCS_CF_AF_62
+- [X] DIM_PROG_LTC_LCS_CF_AF_61
+- [X] DIM_PROG_LTC_LCS_CF_AF_62
 - [ ] DIM_PROG_LTC_LCS_CF_CKD_61
 - [ ] DIM_PROG_LTC_LCS_CF_CKD_62
 - [ ] DIM_PROG_LTC_LCS_CF_CKD_63
@@ -26,7 +26,7 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [ ] DIM_PROG_LTC_LCS_CF_DM_64
 - [ ] DIM_PROG_LTC_LCS_CF_DM_65
 - [ ] DIM_PROG_LTC_LCS_CF_DM_66
-- [ ] DIM_PROG_LTC_LCS_CF_EXCLUSIONS
+- [X] DIM_PROG_LTC_LCS_CF_EXCLUSIONS
 - [ ] DIM_PROG_LTC_LCS_CF_HTN_61
 - [ ] DIM_PROG_LTC_LCS_CF_HTN_62
 - [ ] DIM_PROG_LTC_LCS_CF_HTN_63
@@ -82,13 +82,13 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [X] INTERMEDIATE_FOOT_CHECK_ALL  `<!-- Covered by int_foot_examination_latest.sql or fct_person_diabetes_foot_check.sql -->`
 - [X] INTERMEDIATE_HF_DETAILS  `<!-- Logic covered by int_heart_failure_diagnoses_all.sql and downstream aggregation -->`
 - [X] INTERMEDIATE_LD_DIAGNOSES_ALL  `<!-- Covered by int_learning_disability_diagnoses_all.sql -->`
-- [ ] INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION
+- [X] INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION
 - [ ] INTERMEDIATE_LTC_LCS_CF_CVD_65_BASE
 - [ ] INTERMEDIATE_LTC_LCS_CF_CVD_66_BASE
 - [ ] INTERMEDIATE_LTC_LCS_CF_CVD_BASE
-- [ ] INTERMEDIATE_LTC_LCS_CF_HEALTH_CHECKS
+- [X] INTERMEDIATE_LTC_LCS_CF_HEALTH_CHECKS - not needed
 - [ ] INTERMEDIATE_LTC_LCS_CF_HTN_BASE
-- [ ] INTERMEDIATE_LTC_LCS_RAW_DATA
+- [X] INTERMEDIATE_LTC_LCS_RAW_DATA - not needed
 - [X] INTERMEDIATE_MH_DIAGNOSES  `<!-- Covered by int_smi_diagnoses_all.sql (if used for mental health) -->`
 - [X] INTERMEDIATE_ORAL_ANTICOAGULANT_ORDERS_ALL  `<!-- Covered by int_anticoagulant_medications_all.sql -->`
 - [X] INTERMEDIATE_PERM_ABSENCE_PREG_RISK  `<!-- Covered by int_perm_absence_preg_risk.sql -->`
