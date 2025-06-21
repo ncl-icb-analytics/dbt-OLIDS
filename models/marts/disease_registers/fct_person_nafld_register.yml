@@ -62,10 +62,3 @@ models:
         tests:
           - not_null
           
-# Column 'meets_criteria' does not exist in the actual model
-#       - name: meets_criteria
-#         description: "Flag indicating if person meets register criteria"
-#         tests:
-#           - not_null
-#           - accepted_values:
-#               values: [true] 
