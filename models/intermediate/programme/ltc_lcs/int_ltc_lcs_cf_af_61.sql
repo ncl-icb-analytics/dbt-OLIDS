@@ -1,3 +1,5 @@
+{{ config(materialized='ephemeral') }}
+
 -- Intermediate model for LTC LCS Case Finding: AF_61
 -- Builds patient-level AF_61 flags from AF medication and observation intermediates
 

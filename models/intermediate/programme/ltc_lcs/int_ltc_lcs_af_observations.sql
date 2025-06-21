@@ -6,5 +6,3 @@
     cluster_ids="'AF_OBSERVATIONS','AF_EXCLUSIONS','DEEP_VEIN_THROMBOSIS','ATRIAL_FLUTTER','ATRIAL_FIBRILLATION_61_EXCLUSIONS','PULSE_RATE','PULSE_RHYTHM'",
     source='LTC_LCS'
 ) }}
-
--- Add additional transformation logic here if needed

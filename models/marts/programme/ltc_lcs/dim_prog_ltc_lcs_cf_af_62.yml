@@ -1,0 +1,26 @@
+version: 2
+models:
+  - name: dim_prog_ltc_lcs_cf_af_62
+    description: "Dimension table for LTC LCS case finding indicator AF_62: Patients over 65 missing pulse checks. Only includes patients who meet all criteria."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Age of the patient"
+      - name: has_pulse_check
+        description: "Flag for pulse check in last 36 months"
+      - name: latest_pulse_check_date
+        description: "Latest date of pulse check"
+      - name: latest_health_check_date
+        description: "Latest health check date"
+      - name: has_excluding_condition
+        description: "Flag for AF_62 exclusion condition"
+      - name: exclusion_reason
+        description: "Reason for exclusion if applicable"
+      - name: all_pulse_check_codes
+        description: "Array of all pulse check codes"
+      - name: all_pulse_check_displays
+        description: "Array of all pulse check display terms"
