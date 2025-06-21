@@ -97,4 +97,4 @@ ckd_lab_classification AS (
     LEFT JOIN egfr_all e ON le.person_id = e.person_id
     LEFT JOIN acr_all a ON la.person_id = a.person_id
 )
-SELECT * FROM ckd_lab_classification
+SELECT DISTINCT * FROM ckd_lab_classification

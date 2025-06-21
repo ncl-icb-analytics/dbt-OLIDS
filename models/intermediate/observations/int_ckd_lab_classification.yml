@@ -14,8 +14,6 @@ models:
         description: Most recent eGFR value
       - name: latest_egfr_date
         description: Date of most recent eGFR test
-        tests:
-          - not_null
       - name: latest_egfr_stage
         description: CKD G-stage (G1-G5) based on latest eGFR
       - name: latest_acr_value
