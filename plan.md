@@ -134,11 +134,40 @@
 
 ## Current Goal
 
-- ✅ **COMPLETED**: Implement all CVD intermediate and mart models (CVD_61 through CVD_66)
+- ✅ **COMPLETED**: Implement all diabetes intermediate and mart models (DM_61 through DM_66)
 
 ## Recent Progress
 
-### ✅ CVD MODELS IMPLEMENTATION COMPLETED (Current Session)
+### ✅ DIABETES MODELS IMPLEMENTATION COMPLETED (Current Session)
+**SUCCESS**: All 6 diabetes case finding models successfully implemented and tested!
+
+#### Diabetes Models Completed:
+1. **DM_61** ✅ - Multiple risk factors case finding (HbA1c ≥ 42, QDiabetes ≥ 5.6%, QRisk2 > 20%, gestational diabetes history)
+2. **DM_62** ✅ - Gestational diabetes follow-up (pregnancy risk without recent HbA1c)
+3. **DM_63** ✅ - Elevated HbA1c monitoring (46-48 mmol/mol without recent follow-up)
+4. **DM_64** ✅ - High BMI screening (≥32.5 BAME, ≥35 non-BAME, no HbA1c in 24 months)
+5. **DM_65** ✅ - Moderate-high BMI screening (27.5-32.5 BAME, 30-35 non-BAME, no HbA1c in 24 months)
+6. **DM_66** ✅ - Borderline HbA1c intervention (42-46 mmol/mol within 12 months)
+
+#### Key Features Implemented:
+- **Specialized Intermediate Models**: Created diabetes and ethnicity observation models
+  - `int_ltc_lcs_dm_observations` - HbA1c, QDiabetes, QRisk2, gestational diabetes, BMI data
+  - `int_ltc_lcs_ethnicity_observations` - BAME, White British, excluded ethnicity classifications
+- **Business Logic Patterns**:
+  - Multi-risk factor case finding (DM_61)
+  - Pregnancy-related diabetes screening (DM_62)
+  - HbA1c threshold monitoring (DM_63, DM_66)
+  - Ethnicity-based BMI thresholds (DM_64, DM_65)
+- **Technical Fixes**: Resolved nested WITH statement issues by changing key models to table materialization
+- **Data Quality**: Comprehensive YAML schemas with 79/79 tests passing
+- **Clinical Traceability**: Arrays of concept codes and displays for audit trails
+
+#### Models Successfully Built and Tested:
+- **Intermediate Models**: 6 ephemeral models for case finding logic
+- **Mart Models**: 6 materialized table models with Snowflake comments
+- **Supporting Models**: Diabetes observations, ethnicity observations (materialized as tables)
+
+### ✅ CVD MODELS IMPLEMENTATION COMPLETED (Previous Session)
 **SUCCESS**: All 6 CVD case finding models successfully implemented and tested!
 
 #### CVD Models Completed:
@@ -240,10 +269,10 @@
 
 ## Next Steps
 
-With CVD models successfully completed, the next priorities for LTC/LCS migration are:
-- Diabetes case finding models  
-- Hypertension case finding models
-- CYP Asthma case finding models
+With diabetes models successfully completed, the next priorities for LTC/LCS migration are:
+- Hypertension case finding models (HTN_61, HTN_62, HTN_63, HTN_65, HTN_66)
+- CYP Asthma case finding models  
 - LTC/LCS summary and MOC (Model of Care) models
 
+**Diabetes Migration Status**: ✅ **COMPLETE** - All 6 diabetes case finding models implemented and tested successfully!
 **CVD Migration Status**: ✅ **COMPLETE** - All 6 CVD case finding models implemented and tested successfully!

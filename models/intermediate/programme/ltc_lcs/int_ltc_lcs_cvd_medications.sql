@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 -- Intermediate model for CVD-related medications for LTC LCS case finding
 -- Includes statin medications, statin allergies/contraindications, and statin decisions
 

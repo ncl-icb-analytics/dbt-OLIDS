@@ -1,4 +1,4 @@
-{{ config(materialized='ephemeral') }}
+{{ config(materialized='table') }}
 
 -- Intermediate model for ethnicity observations for LTC LCS diabetes case finding
 -- Used for BAME and excluded ethnicity classifications in diabetes screening

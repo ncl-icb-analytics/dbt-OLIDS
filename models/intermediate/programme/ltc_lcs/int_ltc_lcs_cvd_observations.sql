@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 -- Intermediate model for CVD-related observations for LTC LCS case finding
 -- Includes QRISK2 scores, cholesterol measurements, statin allergies/adverse reactions,
 -- statin contraindications, and statin clinical decisions

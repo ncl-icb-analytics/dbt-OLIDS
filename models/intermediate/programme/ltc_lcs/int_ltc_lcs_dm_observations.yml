@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_dm_observations
+    description: "Intermediate model for diabetes observations used in LTC/LCS case finding. Contains HbA1c measurements, diabetes risk scores, gestational diabetes history, and BMI measurements."
+    
+    columns:
+      - name: observation_id
+        description: "Unique identifier for the observation"
+        tests:
+          - not_null
+
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+
+      - name: clinical_effective_date
+        description: "Date when the diabetes-related observation was recorded"
+
+      - name: result_value
+        description: "Numeric result value for measurements (HbA1c, BMI, risk scores)"
+
+      - name: result_value_unit_concept_id
+        description: "Unit concept ID for the result value"
+
+      - name: result_unit_display
+        description: "Human-readable unit display for the result"
+
+      - name: result_text
+        description: "Text result for non-numeric observations"
+
+      - name: mapped_concept_code
+        description: "Mapped concept code for the diabetes observation"
+
+      - name: mapped_concept_display
+        description: "Human-readable description of the diabetes observation"
+
+      - name: cluster_id
+        description: "Cluster identifier for the diabetes observation type"
+        tests:
+          - accepted_values:
+              values: ['HBA1C_LEVEL', 'QDIABETES_RISK', 'QRISK2_10YEAR', 'HISTORY_GESTATIONAL_DIABETES', 'GESTATIONAL_DIABETES_PREGNANCY_RISK', 'BMI_MEASUREMENT']
+
+      - name: cluster_description
+        description: "Description of the diabetes observation cluster"
+
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "HBA1C_LEVEL,QDIABETES_RISK,QRISK2_10YEAR,HISTORY_GESTATIONAL_DIABETES,GESTATIONAL_DIABETES_PREGNANCY_RISK,BMI_MEASUREMENT" 

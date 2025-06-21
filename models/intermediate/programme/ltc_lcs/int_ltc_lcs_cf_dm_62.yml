@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_cf_dm_62
+    description: "Intermediate model for LTC/LCS case finding DM_62. Identifies patients with gestational diabetes and pregnancy risk who have no HbA1c reading in the last 12 months."
+    
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+
+      - name: age
+        description: "Age of the patient (17+)"
+        tests:
+          - not_null
+
+      - name: has_gestational_diabetes_risk
+        description: "Boolean flag indicating if person has gestational diabetes with pregnancy risk and missing HbA1c"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: latest_hba1c_date
+        description: "Date of most recent HbA1c reading (if any)"
+
+      - name: latest_hba1c_value
+        description: "Most recent HbA1c value (if any)"
+
+      - name: all_gestational_diabetes_codes
+        description: "Array of all gestational diabetes with pregnancy risk concept codes"
+
+      - name: all_gestational_diabetes_displays
+        description: "Array of all gestational diabetes with pregnancy risk concept displays" 

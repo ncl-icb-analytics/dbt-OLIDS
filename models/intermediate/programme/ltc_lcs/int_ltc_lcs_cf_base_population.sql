@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 -- Intermediate model for LTC LCS CF Base Population
 -- Reusable base population for LTC LCS case finding indicators.
 -- Excludes patients already in LTC programmes and those with NHS health checks in the last 24 months.

@@ -1,4 +1,4 @@
-{{ config(materialized='ephemeral') }}
+{{ config(materialized='table') }}
 
 -- General CVD base population for case finding indicators
 -- Includes patients aged 40-83 who are not on statins, have no statin allergies/contraindications, and no recent statin decisions
