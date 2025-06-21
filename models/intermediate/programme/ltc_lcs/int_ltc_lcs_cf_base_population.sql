@@ -6,9 +6,8 @@ WITH health_checks AS (
     -- Get patients with health checks in last 24 months
     SELECT DISTINCT
         person_id
-    FROM {{ ref('int_ltc_lcs_af_observations') }}
-    WHERE cluster_id = 'HEALTH_CHECK_COMP'
-      AND clinical_effective_date >= DATEADD(month, -24, CURRENT_DATE())
+    FROM {{ ref('int_ltc_lcs_nhs_health_checks') }}
+    WHERE clinical_effective_date >= DATEADD(month, -24, CURRENT_DATE())
 )
 SELECT DISTINCT
     ltc.person_id,

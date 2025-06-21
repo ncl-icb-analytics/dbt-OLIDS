@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_cvd_medications
+    description: Intermediate model containing CVD-related medications for LTC LCS case finding, including various statin medications for different CVD case finding indicators.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "STATIN_CVD_MEDICATIONS, STATIN_CVD_63_MEDICATIONS, STATIN_CVD_64_MEDICATIONS, STATIN_CVD_65_MEDICATIONS"
+    columns:
+      - name: medication_order_id
+        tests:
+          - not_null
+      - name: person_id
+        tests:
+          - not_null 

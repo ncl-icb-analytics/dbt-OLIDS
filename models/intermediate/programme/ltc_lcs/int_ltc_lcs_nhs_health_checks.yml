@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_nhs_health_checks
+    description: Intermediate model containing NHS health check completion observations for LTC LCS case finding. Used for tracking health check completion and applying exclusion logic across multiple CVD and other case finding indicators.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "HEALTH_CHECK_COMP"
+    columns:
+      - name: observation_id
+        tests:
+          - not_null
+          - unique
+      - name: person_id
+        tests:
+          - not_null 
