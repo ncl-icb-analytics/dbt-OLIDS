@@ -16,21 +16,17 @@ models:
           - dbt_utils.accepted_range:
               min_value: 75
               max_value: 83
-      - name: needs_statin_review
-        description: "Whether patient needs statin review"
+      - name: needs_qrisk2_assessment
+        description: "Whether patient needs QRISK2 assessment"
         tests:
           - not_null
           - accepted_values:
               values: [true]
       - name: latest_qrisk2_date
-        description: "Date of most recent QRISK2 assessment (NULL for patients needing review)"
+        description: "Date of most recent QRISK2 assessment (may be NULL)"
       - name: latest_qrisk2_value
-        description: "Most recent QRISK2 value (NULL for patients needing review)"
-      - name: latest_qrisk2_code
-        description: "Concept code of most recent QRISK2 (NULL for patients needing review)"
-      - name: latest_qrisk2_display
-        description: "Concept display of most recent QRISK2 (NULL for patients needing review)"
+        description: "Most recent QRISK2 value (may be NULL)"
       - name: all_qrisk2_codes
-        description: "Array of all QRISK2 concept codes for patient (NULL for patients needing review)"
+        description: "Array of all QRISK2 concept codes for patient (may be NULL)"
       - name: all_qrisk2_displays
-        description: "Array of all QRISK2 concept displays for patient (NULL for patients needing review)" 
+        description: "Array of all QRISK2 concept displays for patient (may be NULL)" 
