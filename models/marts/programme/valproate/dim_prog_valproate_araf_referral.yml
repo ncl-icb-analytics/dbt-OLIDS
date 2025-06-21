@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: dim_prog_valproate_araf_referral
+    description: "Aggregates ARAF referral-related events for each person, providing analytics-ready person-level ARAF referral event status and history."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person."
+        tests:
+          - not_null
+          - unique
+      - name: has_araf_referral_event
+        description: "TRUE if any ARAF referral event is present for the person. Always TRUE for persons in this table."
+        tests:
+          - not_null
+      - name: earliest_araf_referral_event_date
+        description: "Earliest date of any ARAF referral event for the person."
+      - name: latest_araf_referral_event_date
+        description: "Latest date of any ARAF referral event for the person."
+      - name: all_araf_referral_observation_ids
+        description: "Array of unique observation IDs related to ARAF referral events."
+      - name: all_araf_referral_concept_codes
+        description: "Array of all distinct ARAF referral medical concept codes found."
+      - name: all_araf_referral_concept_displays
+        description: "Array of display terms for the ARAF referral codes."
+      - name: all_araf_referral_code_categories_applied
+        description: "Array of code categories applied (should contain only 'REFERRAL')."

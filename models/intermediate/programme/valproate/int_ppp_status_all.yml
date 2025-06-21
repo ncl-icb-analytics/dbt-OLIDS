@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: int_ppp_status_all
+    description: "Intermediate table containing all Pregnancy Prevention Programme (PPP) events from source systems. Raw data collection layer that feeds the PPP dimension table."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person."
+        tests:
+          - not_null
+      - name: ppp_event_date
+        description: "Date of the PPP-related observation."
+      - name: ppp_observation_id
+        description: "Identifier for the PPP observation."
+      - name: ppp_concept_code
+        description: "The medical concept code for the PPP event."
+      - name: ppp_concept_display
+        description: "Display term for the PPP concept code."
+      - name: ppp_status_description
+        description: "Human-readable description of PPP status."
+      - name: ppp_categories
+        description: "Array of all categories applicable to this PPP code."

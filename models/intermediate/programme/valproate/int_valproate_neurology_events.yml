@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: int_valproate_neurology_events
+    description: "Intermediate table extracting all neurology-related events for each person, using mapped concepts, observation, and valproate program codes (category NEUROLOGY)."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person."
+        tests:
+          - not_null
+      - name: neurology_event_date
+        description: "Date of the neurology-related observation."
+      - name: neurology_observation_id
+        description: "Identifier for the neurology observation."
+      - name: neurology_concept_code
+        description: "Medical concept code for the neurology event."
+      - name: neurology_concept_display
+        description: "Display term for the neurology concept code."
+      - name: neurology_code_category
+        description: "Code category for the neurology event (should be 'NEUROLOGY')."

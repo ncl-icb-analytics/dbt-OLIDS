@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: int_valproate_araf_referral_events
+    description: "Intermediate table extracting all ARAF referral-related events for each person, using mapped concepts, observation, and valproate program codes (category REFERRAL)."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person."
+        tests:
+          - not_null
+      - name: araf_referral_event_date
+        description: "Date of the ARAF referral-related observation."
+      - name: araf_referral_observation_id
+        description: "Identifier for the ARAF referral observation."
+      - name: araf_referral_concept_code
+        description: "Medical concept code for the ARAF referral event."
+      - name: araf_referral_concept_display
+        description: "Display term for the ARAF referral concept code."
+      - name: araf_referral_code_category
+        description: "Code category for the ARAF referral event (should be 'REFERRAL')."
