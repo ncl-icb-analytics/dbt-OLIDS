@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: dim_prog_valproate_action_status
+    description: "Implements clinical decision logic for Valproate safety monitoring, determining recommended actions for each patient based on clinical status and dependencies."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person."
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient's age."
+      - name: sex
+        description: "Patient's sex."
+      - name: is_woman_of_child_bearing_age
+        description: "TRUE if the person is a woman of child-bearing age."
+      - name: has_recent_valproate_medication
+        description: "TRUE if the person has a recent valproate prescription."
+      - name: has_ppp_event
+        description: "TRUE if any PPP event is present for the person."
+      - name: is_currently_ppp_enrolled
+        description: "TRUE if most recent PPP status indicates enrollment."
+      - name: current_ppp_status_description
+        description: "Human-readable description of current PPP status."
+      - name: has_araf_event
+        description: "TRUE if any ARAF event is present for the person."
+      - name: has_specific_araf_form_meeting_lookback
+        description: "TRUE if an ARAF form event meeting lookback criteria is recorded."
+      - name: has_araf_referral_event
+        description: "TRUE if any ARAF referral event is present for the person."
+      - name: has_neurology_event
+        description: "TRUE if any neurology event is present for the person."
+      - name: has_psych_event
+        description: "TRUE if any psychiatry event is present for the person."
+      - name: recommended_action
+        description: "Recommended clinical action for the person based on safety logic."
