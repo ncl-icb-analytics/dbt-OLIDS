@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: int_valproate_araf_events
+    description: "Intermediate table extracting all ARAF-related events for each person, using mapped concepts, observation, and valproate program codes. Applies lookback logic as defined in valproate program codes."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person."
+        tests:
+          - not_null
+      - name: araf_event_date
+        description: "Date of the ARAF-related observation."
+      - name: araf_observation_id
+        description: "Identifier for the ARAF observation."
+      - name: araf_concept_code
+        description: "Medical concept code for the ARAF event."
+      - name: araf_concept_display
+        description: "Display term for the ARAF concept code."
+      - name: araf_code_category
+        description: "Code category for the ARAF event (should be 'ARAF')."
+      - name: is_specific_araf_form_code
+        description: "TRUE if the event is a specific ARAF form code."
