@@ -27,8 +27,8 @@ latest_acr AS (
         person_id,
         acr_value AS latest_acr_value,
         clinical_effective_date AS latest_acr_date,
-        acr_stage AS latest_acr_stage
-    FROM {{ ref('int_acr_latest') }}
+        acr_category AS latest_acr_stage
+    FROM {{ ref('int_urine_acr_latest') }}
 ),
 egfr_all AS (
     SELECT person_id, clinical_effective_date, egfr_value
@@ -37,7 +37,7 @@ egfr_all AS (
 ),
 acr_all AS (
     SELECT person_id, clinical_effective_date, acr_value
-    FROM {{ ref('int_acr_all') }}
+    FROM {{ ref('int_urine_acr_all') }}
     WHERE acr_value IS NOT NULL
 ),
 low_egfr_events AS (
@@ -97,4 +97,4 @@ ckd_lab_classification AS (
     LEFT JOIN egfr_all e ON le.person_id = e.person_id
     LEFT JOIN acr_all a ON la.person_id = a.person_id
 )
-SELECT * FROM ckd_lab_classification;
+SELECT * FROM ckd_lab_classification
