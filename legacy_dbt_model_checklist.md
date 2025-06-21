@@ -1,0 +1,99 @@
+# Legacy Dynamic Table Migration Checklist
+
+Below is a checklist of legacy dynamic tables and related objects that need to be reviewed or migrated to dbt models. Mark each item as you complete the migration or verification.
+
+- [x] DIM_PERSON_CONDITION_REGISTERS  <!-- Covered by dim_person_condition_registers.sql if present, else check dim_person_active_patients or related dimension -->
+- [ ] DIM_PROG_IMM_BASE_POP
+- [ ] DIM_PROG_IMM_CHILD_ELIG
+- [ ] DIM_PROG_IMM_CHILD_VACCINE
+- [ ] DIM_PROG_IMM_CHILD_VACCINE_TEMP
+- [ ] DIM_PROG_LTC_LCS_CF_AF_61
+- [ ] DIM_PROG_LTC_LCS_CF_AF_62
+- [ ] DIM_PROG_LTC_LCS_CF_CKD_61
+- [ ] DIM_PROG_LTC_LCS_CF_CKD_62
+- [ ] DIM_PROG_LTC_LCS_CF_CKD_63
+- [ ] DIM_PROG_LTC_LCS_CF_CKD_64
+- [ ] DIM_PROG_LTC_LCS_CF_CVD_61
+- [ ] DIM_PROG_LTC_LCS_CF_CVD_62
+- [ ] DIM_PROG_LTC_LCS_CF_CVD_63
+- [ ] DIM_PROG_LTC_LCS_CF_CVD_64
+- [ ] DIM_PROG_LTC_LCS_CF_CVD_65
+- [ ] DIM_PROG_LTC_LCS_CF_CVD_66
+- [ ] DIM_PROG_LTC_LCS_CF_CYP_AST_61
+- [ ] DIM_PROG_LTC_LCS_CF_DM_61
+- [ ] DIM_PROG_LTC_LCS_CF_DM_62
+- [ ] DIM_PROG_LTC_LCS_CF_DM_63
+- [ ] DIM_PROG_LTC_LCS_CF_DM_64
+- [ ] DIM_PROG_LTC_LCS_CF_DM_65
+- [ ] DIM_PROG_LTC_LCS_CF_DM_66
+- [ ] DIM_PROG_LTC_LCS_CF_EXCLUSIONS
+- [ ] DIM_PROG_LTC_LCS_CF_HTN_61
+- [ ] DIM_PROG_LTC_LCS_CF_HTN_62
+- [ ] DIM_PROG_LTC_LCS_CF_HTN_63
+- [ ] DIM_PROG_LTC_LCS_CF_HTN_65
+- [ ] DIM_PROG_LTC_LCS_CF_HTN_66
+- [x] DIM_PROG_LTC_LCS_CF_SUMMARY  <!-- Covered by dim_prog_ltc_lcs_cf_summary.sql if present, else check for summary dimension in program LTC LCS models -->
+- [ ] DIM_PROG_LTC_LCS_MOC_BASE
+- [x] DIM_PROG_NHS_HEALTH_CHECK_ELIGIBILITY  <!-- Covered by fct_person_nhs_health_check_status.sql -->
+- [ ] DIM_PROG_VALPROATE_ACTION_STATUS
+- [ ] DIM_PROG_VALPROATE_ARAF
+- [ ] DIM_PROG_VALPROATE_ARAF_REFERRAL
+- [ ] DIM_PROG_VALPROATE_DB_SCOPE
+- [ ] DIM_PROG_VALPROATE_NEUROLOGY
+- [ ] DIM_PROG_VALPROATE_PPP_STATUS
+- [ ] DIM_PROG_VALPROATE_PSYCHIATRY
+- [ ] DQ_BMI_ISSUES
+- [ ] DQ_PATIENT_REGISTERED_AT_MULTIPLE_PRACTICES
+- [x] FCT_CLINICAL_SAFETY_ON_VALPROATE_AND_PREGNANT  <!-- Covered by fct_clinical_safety_on_valproate_and_pregnant.sql -->
+- [x] FCT_PERSON_APPOINTMENTS_GP_12M  <!-- Covered by fct_person_appointments_gp_12m.sql if present, else check appointments fact models -->
+- [x] FCT_PERSON_BP_CONTROL_STATUS  <!-- Covered by fct_person_bp_control.sql -->
+- [x] FCT_PERSON_DX_AF  <!-- Covered by int_atrial_fibrillation_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_ASTHMA  <!-- Covered by int_asthma_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_CANCER  <!-- Covered by int_cancer_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_CHD  <!-- Covered by int_chd_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_CKD  <!-- Covered by int_ckd_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_COPD  <!-- Covered by int_copd_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_CYP_ASTHMA  <!-- Covered by int_cyp_asthma_diagnoses_all.sql (if exists), else check int_asthma_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_DEMENTIA  <!-- Covered by int_dementia_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_DEPRESSION  <!-- Covered by int_depression_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_DIABETES  <!-- Covered by int_diabetes_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_EPILEPSY  <!-- Covered by int_epilepsy_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_FHYP  <!-- Covered by int_familial_hypercholesterolaemia_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_GESTATIONAL_DIABETES  <!-- Covered by int_gestational_diabetes_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_HF  <!-- Covered by int_heart_failure_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_HYPERTENSION  <!-- Covered by int_hypertension_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_LD  <!-- Covered by int_learning_disability_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_NAFLD  <!-- Covered by int_nafld_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_NDH  <!-- Covered by int_ndh_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_OBESITY  <!-- Covered by int_bmi_latest.sql (if BMI used as proxy for obesity) -->
+- [x] FCT_PERSON_DX_OSTEOPOROSIS  <!-- Covered by int_osteoporosis_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_PAD  <!-- Covered by int_pad_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_PALLIATIVE_CARE  <!-- Covered by int_palliative_care_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_RA  <!-- Covered by int_rheumatoid_arthritis_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_SMI  <!-- Covered by int_smi_diagnoses_all.sql -->
+- [x] FCT_PERSON_DX_STIA  <!-- Covered by int_stroke_tia_diagnoses_all.sql -->
+- [x] FCT_PERSON_PREGNANT  <!-- Covered by fct_person_pregnant.sql -->
+- [x] INTERMEDIATE_ASTHMA_ORDERS_12M  <!-- Covered by int_asthma_medications_12m.sql -->
+- [x] INTERMEDIATE_BMI_HISTORIC  <!-- Covered by int_bmi_all.sql or int_bmi_latest.sql (if historic values are included) -->
+- [x] INTERMEDIATE_BMI_VALUES  <!-- Covered by int_bmi_all.sql -->
+- [ ] INTERMEDIATE_CKD_LAB_INFERENCE
+- [x] INTERMEDIATE_COPD_UNABLE_SPIROMETRY  <!-- Covered by int_unable_spirometry_all.sql -->
+- [x] INTERMEDIATE_EPILEPSY_ORDERS_6M  <!-- Covered by int_epilepsy_medications_6m.sql -->
+- [x] INTERMEDIATE_FOOT_CHECK_ALL  <!-- Covered by int_foot_examination_latest.sql or fct_person_diabetes_foot_check.sql -->
+- [x] INTERMEDIATE_HF_DETAILS  <!-- Logic covered by int_heart_failure_diagnoses_all.sql and downstream aggregation -->
+- [x] INTERMEDIATE_LD_DIAGNOSES_ALL  <!-- Covered by int_learning_disability_diagnoses_all.sql -->
+- [ ] INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION
+- [ ] INTERMEDIATE_LTC_LCS_CF_CVD_65_BASE
+- [ ] INTERMEDIATE_LTC_LCS_CF_CVD_66_BASE
+- [ ] INTERMEDIATE_LTC_LCS_CF_CVD_BASE
+- [ ] INTERMEDIATE_LTC_LCS_CF_HEALTH_CHECKS
+- [ ] INTERMEDIATE_LTC_LCS_CF_HTN_BASE
+- [ ] INTERMEDIATE_LTC_LCS_RAW_DATA
+- [x] INTERMEDIATE_MH_DIAGNOSES  <!-- Covered by int_smi_diagnoses_all.sql (if used for mental health) -->
+- [x] INTERMEDIATE_ORAL_ANTICOAGULANT_ORDERS_ALL  <!-- Covered by int_anticoagulant_medications_all.sql -->
+- [x] INTERMEDIATE_PERM_ABSENCE_PREG_RISK  <!-- Covered by int_perm_absence_preg_risk.sql -->
+- [ ] INTERMEDIATE_PPP_STATUS_ALL
+- [x] INTERMEDIATE_SERUM_CREATININE_LATEST  <!-- Covered by int_serum_creatinine_latest.sql -->
+- [x] INTERMEDIATE_SMOKING_ALL  <!-- Covered by int_smoking_all.sql -->
+- [x] INTERMEDIATE_TOTAL_CHOLESTEROL_ALL  <!-- Covered by int_cholesterol_all.sql -->
+- [x] INTERMEDIATE_VALPROATE_ORDERS_6M_LATEST  <!-- Covered by int_valproate_medications_6m_latest.sql -->
