@@ -14,10 +14,6 @@ models:
         description: "Unique identifier for the person"
         tests:
           - not_null
-      - name: sk_patient_id
-        description: "Surrogate key for the patient"
-        tests:
-          - not_null
       - name: clinical_effective_date
         description: "Date of the observation"
       - name: mapped_concept_code

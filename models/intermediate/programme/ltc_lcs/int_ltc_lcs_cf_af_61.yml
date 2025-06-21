@@ -7,10 +7,6 @@ models:
         description: "Unique identifier for the person"
         tests:
           - not_null
-      - name: sk_patient_id
-        description: "Surrogate key for the patient"
-        tests:
-          - not_null
       - name: has_active_anticoagulant
         description: "Flag for active anticoagulant medication order"
       - name: has_active_digoxin

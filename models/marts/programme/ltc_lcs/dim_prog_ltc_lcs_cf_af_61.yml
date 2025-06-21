@@ -8,10 +8,6 @@ models:
         tests:
           - not_null
           - unique
-      - name: sk_patient_id
-        description: "Surrogate key for the patient"
-        tests:
-          - not_null
       - name: has_active_anticoagulant
         description: "Flag for active anticoagulant prescription in last 3 months"
       - name: has_active_digoxin
