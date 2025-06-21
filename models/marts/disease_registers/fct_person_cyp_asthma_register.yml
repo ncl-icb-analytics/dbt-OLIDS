@@ -10,14 +10,12 @@ models:
       - ALL three criteria must be met for register inclusion
       
       **Clinical Context:**
-      This register specifically tracks asthma management in children and young people,
-      requiring both diagnostic coding and medication evidence. The medication requirement
-      ensures active treatment rather than resolved childhood asthma.
+      This register specifically tracks asthma diagnoses in children and young people,
+      requiring both diagnostic coding and medication evidence.
       
       **Requirements:**
       - AST001: Practice can produce a register of patients with asthma (CYP subset)
       - Supports CYP-specific asthma monitoring and inhaler technique reviews
-      - Links to LTC LCS indicator CYP_AST_61 for case-finding (18 months to <18 years)
       
       **Data Sources:**
       - Diagnosis codes: int_asthma_diagnoses_all (AST_COD, ASTRES_COD cluster IDs)

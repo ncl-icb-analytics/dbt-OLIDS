@@ -15,10 +15,10 @@ Clinical Purpose:
 - Liver health assessment
 - Clinical register (NOT part of QOF)
 
-Register Criteria (Simple Pattern):
+Business Logic:
 - Any NAFLD diagnosis code (hardcoded SNOMED concepts)
 - No age restrictions
-- No resolution codes (simple diagnosis-based register)
+- No resolution codes
 
 ⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in codesets.
 

@@ -8,15 +8,9 @@ models:
           cluster_ids: "OSTEO_COD"
     description: |
       All osteoporosis diagnosis observations from clinical records.
-      Simple diagnostic pattern focusing on clinical diagnosis codes.
-      
-      QOF Register Logic:
-      - Osteoporosis diagnosis (OSTEO_COD) OR DXA confirmation
-      - DXA confirmation handled via separate int_dxa_scans_all model
-      - Combined logic applied in fact layer
-      
+            
       Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_osteoporosis_register.sql which applies QOF business rules.
+      Used as input for fct_person_osteoporosis_register.sql which applies QOF business rules.
     columns:
       - name: person_id
         description: "Unique person identifier"
