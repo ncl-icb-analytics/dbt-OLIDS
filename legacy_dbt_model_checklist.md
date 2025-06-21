@@ -35,13 +35,13 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [X] DIM_PROG_LTC_LCS_CF_SUMMARY  `<!-- Covered by dim_prog_ltc_lcs_cf_summary.sql if present, else check for summary dimension in program LTC LCS models -->`
 - [ ] DIM_PROG_LTC_LCS_MOC_BASE
 - [X] DIM_PROG_NHS_HEALTH_CHECK_ELIGIBILITY  `<!-- Covered by fct_person_nhs_health_check_status.sql -->`
-- [ ] DIM_PROG_VALPROATE_ACTION_STATUS
+- [X] DIM_PROG_VALPROATE_ACTION_STATUS
 - [ ] DIM_PROG_VALPROATE_ARAF
-- [ ] DIM_PROG_VALPROATE_ARAF_REFERRAL
-- [ ] DIM_PROG_VALPROATE_DB_SCOPE
-- [ ] DIM_PROG_VALPROATE_NEUROLOGY
-- [ ] DIM_PROG_VALPROATE_PPP_STATUS
-- [ ] DIM_PROG_VALPROATE_PSYCHIATRY
+- [X] DIM_PROG_VALPROATE_ARAF_REFERRAL
+- [X] DIM_PROG_VALPROATE_DB_SCOPE
+- [X] DIM_PROG_VALPROATE_NEUROLOGY
+- [X] DIM_PROG_VALPROATE_PPP_STATUS
+- [X] DIM_PROG_VALPROATE_PSYCHIATRY
 - [ ] DQ_BMI_ISSUES
 - [ ] DQ_PATIENT_REGISTERED_AT_MULTIPLE_PRACTICES
 - [X] FCT_CLINICAL_SAFETY_ON_VALPROATE_AND_PREGNANT  `<!-- Covered by fct_clinical_safety_on_valproate_and_pregnant.sql -->`
@@ -92,7 +92,7 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [X] INTERMEDIATE_MH_DIAGNOSES  `<!-- Covered by int_smi_diagnoses_all.sql (if used for mental health) -->`
 - [X] INTERMEDIATE_ORAL_ANTICOAGULANT_ORDERS_ALL  `<!-- Covered by int_anticoagulant_medications_all.sql -->`
 - [X] INTERMEDIATE_PERM_ABSENCE_PREG_RISK  `<!-- Covered by int_perm_absence_preg_risk.sql -->`
-- [ ] INTERMEDIATE_PPP_STATUS_ALL
+- [X] INTERMEDIATE_PPP_STATUS_ALL
 - [X] INTERMEDIATE_SERUM_CREATININE_LATEST  `<!-- Covered by int_serum_creatinine_latest.sql -->`
 - [X] INTERMEDIATE_SMOKING_ALL  `<!-- Covered by int_smoking_all.sql -->`
 - [X] INTERMEDIATE_TOTAL_CHOLESTEROL_ALL  `<!-- Covered by int_cholesterol_all.sql -->`

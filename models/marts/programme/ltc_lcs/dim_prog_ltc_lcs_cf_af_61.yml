@@ -1,0 +1,32 @@
+version: 2
+models:
+  - name: dim_prog_ltc_lcs_cf_af_61
+    description: "Dimension table for LTC LCS case finding indicator AF_61: Patients on digoxin, flecainide, propafenone or anticoagulants who might have undiagnosed AF. Only includes patients who meet all criteria."
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
+        tests:
+          - not_null
+      - name: has_active_anticoagulant
+        description: "Flag for active anticoagulant prescription in last 3 months"
+      - name: has_active_digoxin
+        description: "Flag for active digoxin prescription in last 3 months"
+      - name: has_active_cardiac_glycoside
+        description: "Flag for active cardiac glycoside prescription in last 3 months"
+      - name: latest_af_medication_date
+        description: "Latest date of AF-related medication"
+      - name: latest_health_check_date
+        description: "Latest health check date"
+      - name: has_exclusion_condition
+        description: "Flag for AF_61 exclusion condition"
+      - name: exclusion_reason
+        description: "Reason for exclusion if applicable"
+      - name: all_af_medication_codes
+        description: "Array of all AF-related medication codes"
+      - name: all_af_medication_displays
+        description: "Array of all AF-related medication display terms"

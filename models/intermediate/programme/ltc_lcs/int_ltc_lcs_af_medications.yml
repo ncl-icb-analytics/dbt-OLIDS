@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: int_ltc_lcs_af_medications
+    description: "Intermediate model for LTC LCS AF Medications. Collects all medication orders relevant to atrial fibrillation (AF) case finding, using mapped concepts with source = 'LTC_LCS'."
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "ORAL_ANTICOAGULANT_2_8_2,AF_MEDICATIONS,DIGOXIN_MEDICATIONS,CARDIAC_GLYCOSIDES"
+    columns:
+      - name: medication_order_id
+        description: "Unique identifier for the medication order"
+        tests:
+          - not_null
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+      - name: sk_patient_id
+        description: "Surrogate key for the patient"
+        tests:
+          - not_null
+      - name: order_date
+        description: "Date of the medication order"
+      - name: mapped_concept_code
+        description: "Mapped concept code for the medication order"
+      - name: mapped_concept_display
+        description: "Display term for the mapped concept"
+      - name: cluster_id
+        description: "Cluster ID for the medication order (AF, exclusions, etc.)"
+      - name: order_medication_name
+        description: "Medication name on order"
+      - name: order_dose
+        description: "Dose for the medication order"
+      - name: order_quantity_value
+        description: "Quantity value for the medication order"
+      - name: order_quantity_unit
+        description: "Quantity unit for the medication order"
+      - name: order_duration_days
+        description: "Duration in days for the medication order"
+
