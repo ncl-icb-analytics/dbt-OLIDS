@@ -124,7 +124,7 @@ egfr_in_last_year as (
     -- Get patients with eGFR in last 12 months to exclude
     select distinct person_id
     from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id = 'EGFR_COD_LCS'
+    where cluster_id = 'EGFR_TESTING'
         and result_value is not null
         and cast(result_value as number) > 0
         and clinical_effective_date >= dateadd(month, -12, current_date())

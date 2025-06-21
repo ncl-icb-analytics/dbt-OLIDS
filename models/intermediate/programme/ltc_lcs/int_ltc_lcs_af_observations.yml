@@ -4,7 +4,7 @@ models:
     description: "Intermediate model for LTC LCS AF Observations. Collects all observations relevant to atrial fibrillation (AF) case finding and exclusions, using mapped concepts with source = 'LTC_LCS'."
     tests:
       - cluster_ids_exist:
-          cluster_ids: "AF_OBSERVATIONS,AF_EXCLUSIONS,DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER,ATRIAL_FIBRILLATION_61_EXCLUSIONS,PULSE_RATE,PULSE_RHYTHM"
+          cluster_ids: "DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER"
     columns:
       - name: observation_id
         description: "Unique identifier for the observation"

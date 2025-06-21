@@ -25,7 +25,7 @@ af_exclusions AS (
     WHERE cluster_id IN ('DEEP_VEIN_THROMBOSIS', 'ATRIAL_FLUTTER', 'ATRIAL_FIBRILLATION_61_EXCLUSIONS')
     GROUP BY person_id
 )
-SELECT
+SELECT DISTINCT
     bp.person_id,
     COALESCE(m.has_active_anticoagulant, 0) AS has_active_anticoagulant,
     COALESCE(m.has_active_digoxin, 0) AS has_active_digoxin,

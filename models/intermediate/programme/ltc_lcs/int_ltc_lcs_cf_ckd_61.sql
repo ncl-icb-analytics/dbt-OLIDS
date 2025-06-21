@@ -48,7 +48,7 @@ egfr_readings as (
         mapped_concept_code as concept_code,
         mapped_concept_display as concept_display
     from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id = 'EGFR_COD_LCS'
+    where cluster_id = 'EGFR_TESTING'
         and result_value is not null
         and cast(result_value as number) > 0
 ),
