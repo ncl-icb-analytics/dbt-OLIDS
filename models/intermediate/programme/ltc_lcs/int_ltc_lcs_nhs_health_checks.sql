@@ -1,4 +1,4 @@
-{{ config(materialized='ephemeral') }}
+{{ config(materialized='table') }}
 -- Intermediate model for NHS health check observations for LTC LCS case finding
 -- Used for health check completion tracking and exclusion logic
 
