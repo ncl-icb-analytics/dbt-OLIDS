@@ -1,23 +1,46 @@
 {{ config(
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'AF_61 case finding dimension table for LTC/LCS programme. Identifies patients on specific cardiac medications (digoxin, flecainide, propafenone, or anticoagulants) who might have undiagnosed atrial fibrillation. These patients require clinical assessment to confirm or rule out AF diagnosis and ensure appropriate management. Used to prioritise patients for ECG monitoring and cardiology review.'"
+    materialized='table',
+    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'AF_61 case finding: Patients on digoxin, flecainide, propafenone or anticoagulants who may have undiagnosed atrial fibrillation'"
 ) }}
 
--- Mart model for LTC LCS Case Finding: AF_61
--- Patients on digoxin, flecainide, propafenone or anticoagulants who might have undiagnosed AF.
+-- AF_61 case finding dimension: Patients on specific cardiac medications
+-- Identifies patients on medications that may indicate undiagnosed atrial fibrillation
 
+WITH af_meds AS (
+    SELECT
+        person_id,
+        MAX(CASE WHEN cluster_id = 'ORAL_ANTICOAGULANT_2_8_2' THEN 1 ELSE 0 END) AS has_active_anticoagulant,
+        MAX(CASE WHEN cluster_id = 'DIGOXIN_MEDICATIONS' THEN 1 ELSE 0 END) AS has_active_digoxin,
+        MAX(CASE WHEN cluster_id = 'CARDIAC_GLYCOSIDES' THEN 1 ELSE 0 END) AS has_active_cardiac_glycoside,
+        MAX(order_date) AS latest_af_medication_date,
+        ARRAY_AGG(DISTINCT mapped_concept_code) AS all_af_medication_codes,
+        ARRAY_AGG(DISTINCT mapped_concept_display) AS all_af_medication_displays
+    FROM {{ ref('int_ltc_lcs_af_medications') }}
+    WHERE cluster_id IN ('ORAL_ANTICOAGULANT_2_8_2', 'DIGOXIN_MEDICATIONS', 'CARDIAC_GLYCOSIDES')
+    GROUP BY person_id
+),
+af_exclusions AS (
+    SELECT
+        person_id,
+        BOOLOR_AGG(cluster_id IN ('DEEP_VEIN_THROMBOSIS', 'ATRIAL_FLUTTER', 'ATRIAL_FIBRILLATION_61_EXCLUSIONS')) AS has_exclusion_condition,
+        LISTAGG(DISTINCT cluster_id, ', ') AS exclusion_reason
+    FROM {{ ref('int_ltc_lcs_af_observations') }}
+    WHERE cluster_id IN ('DEEP_VEIN_THROMBOSIS', 'ATRIAL_FLUTTER', 'ATRIAL_FIBRILLATION_61_EXCLUSIONS')
+    GROUP BY person_id
+)
 SELECT DISTINCT
     bp.person_id,
-    ms.has_active_anticoagulant,
-    ms.has_active_digoxin,
-    ms.has_active_cardiac_glycoside,
-    ms.latest_af_medication_date,
-    ms.latest_health_check_date,
-    COALESCE(ms.has_exclusion_condition, FALSE) AS has_exclusion_condition,
-    ms.exclusion_reason,
-    ms.all_af_medication_codes,
-    ms.all_af_medication_displays
+    COALESCE(m.has_active_anticoagulant, 0) AS has_active_anticoagulant,
+    COALESCE(m.has_active_digoxin, 0) AS has_active_digoxin,
+    COALESCE(m.has_active_cardiac_glycoside, 0) AS has_active_cardiac_glycoside,
+    m.latest_af_medication_date,
+    NULL AS latest_health_check_date, -- To be replaced if health check int is created
+    COALESCE(e.has_exclusion_condition, FALSE) AS has_exclusion_condition,
+    e.exclusion_reason,
+    m.all_af_medication_codes,
+    m.all_af_medication_displays
 FROM {{ ref('int_ltc_lcs_cf_base_population') }} bp
-LEFT JOIN {{ ref('int_ltc_lcs_cf_af_61') }} ms
-    ON bp.person_id = ms.person_id
--- Note: latest_health_check_date and has_recent_health_check_24m can be added when a health check intermediate is available
-
+LEFT JOIN af_meds m
+    ON bp.person_id = m.person_id
+LEFT JOIN af_exclusions e
+    ON bp.person_id = e.person_id

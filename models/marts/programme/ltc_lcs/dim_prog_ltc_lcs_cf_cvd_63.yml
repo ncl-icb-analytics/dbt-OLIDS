@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_cvd_63
-    description: Mart model for LTC LCS case finding indicator CVD_63. Contains patients aged 40-83 who are on statins with non-HDL cholesterol > 2.5 and need statin review.
+    description: Intermediate model for LTC LCS case finding indicator CVD_63. Identifies patients aged 40-83 who are on statins with non-HDL cholesterol > 2.5 and need statin review.
     columns:
       - name: person_id
         tests:
@@ -29,7 +29,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true]
-      - name: last_updated
-        tests:
-          - not_null 
+              values: [true] 

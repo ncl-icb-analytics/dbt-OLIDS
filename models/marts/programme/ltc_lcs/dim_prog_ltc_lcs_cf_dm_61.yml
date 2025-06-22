@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_dm_61
-    description: "LTC/LCS Case Finding DM_61 dimension table. Identifies patients at risk of diabetes based on clinical risk factors including HbA1c levels, diabetes risk scores, cardiovascular risk, or gestational diabetes history."
+    description: "Intermediate model for LTC/LCS case finding DM_61. Identifies patients at risk of diabetes based on HbA1c levels, diabetes risk scores, cardiovascular risk, or gestational diabetes history."
     
     columns:
       - name: person_id

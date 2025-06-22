@@ -1,24 +1,108 @@
-{{
-    config(
-        materialized='table',
-        post_hook="ALTER TABLE {{ this }} SET COMMENT = 'LTC/LCS Case Finding DM_61: Patients at risk of diabetes who meet ANY of the following criteria: (1) HbA1c ≥ 42 mmol/mol within last 5 years, (2) QDiabetes score ≥ 5.6%, (3) QRisk2 score > 20%, or (4) History of gestational diabetes. Excludes patients on LTC registers or with NHS health check in last 24 months. Used for diabetes prevention and early intervention programmes.'"
-    )
-}}
+{{ config(
+    materialized='table',
+    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'DM_61 case finding: Patients with diabetes risk factors and abnormal glucose levels'"
+) }}
 
--- Mart model for LTC LCS Case Finding DM_61
--- Patients at risk of diabetes based on clinical risk factors
+-- Intermediate model for LTC LCS CF DM_61 case finding
+-- Patients at risk of diabetes who meet ANY of the following criteria:
+-- 1. HbA1c ≥ 42 mmol/mol within the last 5 years
+-- 2. QDiabetes score ≥ 5.6%
+-- 3. QRisk2 score > 20%
+-- 4. History of gestational diabetes
 
+WITH base_population AS (
+    -- Get base population aged 17+ (already excludes LTC registers and NHS health checks)
+    SELECT DISTINCT
+        person_id,
+        age
+    FROM {{ ref('int_ltc_lcs_cf_base_population') }}
+    WHERE age >= 17
+),
+
+hba1c_readings AS (
+    -- Get all HbA1c readings with values > 0 within last 5 years
+    SELECT
+        person_id,
+        clinical_effective_date,
+        result_value,
+        mapped_concept_code,
+        mapped_concept_display
+    FROM {{ ref('int_ltc_lcs_dm_observations') }}
+    WHERE cluster_id = 'HBA1C_LEVEL'
+        AND result_value > 0
+        AND clinical_effective_date >= DATEADD(year, -5, CURRENT_DATE())
+),
+
+latest_hba1c AS (
+    -- Get the most recent HbA1c reading for each person
+    SELECT
+        person_id,
+        clinical_effective_date AS latest_hba1c_date,
+        result_value AS latest_hba1c_value,
+        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (ORDER BY mapped_concept_code) AS all_hba1c_codes,
+        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (ORDER BY mapped_concept_display) AS all_hba1c_displays
+    FROM hba1c_readings
+    GROUP BY person_id, clinical_effective_date, result_value
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+),
+
+latest_qdiabetes AS (
+    -- Get the most recent QDiabetes score for each person
+    SELECT
+        person_id,
+        clinical_effective_date AS latest_qdiabetes_date,
+        result_value AS latest_qdiabetes_value
+    FROM {{ ref('int_ltc_lcs_dm_observations') }}
+    WHERE cluster_id = 'QDIABETES_RISK'
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+),
+
+latest_qrisk AS (
+    -- Get the most recent QRisk2 score for each person
+    SELECT
+        person_id,
+        clinical_effective_date AS latest_qrisk_date,
+        result_value AS latest_qrisk_value
+    FROM {{ ref('int_ltc_lcs_dm_observations') }}
+    WHERE cluster_id = 'QRISK2_10YEAR'
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+),
+
+gestational_diabetes AS (
+    -- Get patients with history of gestational diabetes
+    SELECT DISTINCT
+        person_id,
+        TRUE AS has_gestational_diabetes
+    FROM {{ ref('int_ltc_lcs_dm_observations') }}
+    WHERE cluster_id = 'HISTORY_GESTATIONAL_DIABETES'
+)
+
+-- Final selection with risk assessment
 SELECT
-    person_id,
-    age,
-    has_diabetes_risk,
-    latest_hba1c_date,
-    latest_hba1c_value,
-    latest_qdiabetes_date,
-    latest_qdiabetes_value,
-    latest_qrisk_date,
-    latest_qrisk_value,
-    has_gestational_diabetes,
-    all_hba1c_codes,
-    all_hba1c_displays
-FROM {{ ref('int_ltc_lcs_cf_dm_61') }} 
+    bp.person_id,
+    bp.age,
+    CASE 
+        WHEN hba1c.latest_hba1c_value >= 42 OR
+             qd.latest_qdiabetes_value >= 5.6 OR
+             qr.latest_qrisk_value > 20 OR
+             gd.has_gestational_diabetes = TRUE THEN TRUE
+        ELSE FALSE
+    END AS has_diabetes_risk,
+    hba1c.latest_hba1c_date,
+    hba1c.latest_hba1c_value,
+    qd.latest_qdiabetes_date,
+    qd.latest_qdiabetes_value,
+    qr.latest_qrisk_date,
+    qr.latest_qrisk_value,
+    COALESCE(gd.has_gestational_diabetes, FALSE) AS has_gestational_diabetes,
+    hba1c.all_hba1c_codes,
+    hba1c.all_hba1c_displays
+FROM base_population bp
+LEFT JOIN latest_hba1c hba1c ON bp.person_id = hba1c.person_id
+LEFT JOIN latest_qdiabetes qd ON bp.person_id = qd.person_id
+LEFT JOIN latest_qrisk qr ON bp.person_id = qr.person_id
+LEFT JOIN gestational_diabetes gd ON bp.person_id = gd.person_id
+WHERE hba1c.latest_hba1c_value >= 42 
+    OR qd.latest_qdiabetes_value >= 5.6
+    OR qr.latest_qrisk_value > 20
+    OR gd.has_gestational_diabetes = TRUE 

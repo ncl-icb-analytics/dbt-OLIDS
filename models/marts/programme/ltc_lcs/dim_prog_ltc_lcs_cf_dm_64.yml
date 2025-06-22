@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_dm_64
-    description: "LTC/LCS Case Finding DM_64 dimension table. Identifies patients with ethnicity-based high BMI who require diabetes screening due to lack of recent HbA1c testing."
+    description: "Intermediate model for LTC/LCS case finding DM_64. Identifies patients with ethnicity-based high BMI who require diabetes screening due to lack of recent HbA1c testing."
     
     columns:
       - name: person_id

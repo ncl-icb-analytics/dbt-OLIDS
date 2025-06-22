@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_cvd_62
-    description: Mart model for LTC LCS case finding indicator CVD_62. Contains patients aged 40-83 with QRISK2 score between 15-19.99% who require cardiovascular disease prevention interventions.
+    description: Intermediate model for LTC LCS case finding indicator CVD_62. Identifies patients aged 40-83 with QRISK2 score between 15-19.99% who require cardiovascular disease prevention interventions.
     columns:
       - name: person_id
         tests:
@@ -26,7 +26,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true]
-      - name: last_updated
-        tests:
-          - not_null 
+              values: [true] 

@@ -131,154 +131,90 @@
 - [X] Create and test all CKD intermediate models (CKD_61, CKD_62, CKD_63, CKD_64)
 - [X] Create and test all CKD mart models (dim_prog_ltc_lcs_cf_ckd_*)
 - [X] Verify CKD models compile and build successfully
+- [X] **✅ COMPLETE**: All CVD case finding models (CVD_61-66) implemented and tested
+- [X] **✅ COMPLETE**: All diabetes case finding models (DM_61-66) implemented and tested  
+- [X] **✅ COMPLETE**: All hypertension case finding models (HTN_61-66) implemented and tested
+- [X] **✅ COMPLETE**: CYP asthma case finding model (CYP_AST_61) implemented and tested
+- [X] **✅ COMPLETE**: LTC/LCS case finding summary model implemented and tested
 
 ## Current Goal
 
-- 🎯 **NEXT**: Complete hypertension case finding models (HTN_61 ✅, HTN_62-66 debugging)
+- 🎯 **NEXT**: Continue with remaining LTC/LCS models (NHS Health Check, MOC Base, Childhood Immunisations)
 
 ## Recent Progress
 
-### ✅ DIABETES MODELS IMPLEMENTATION COMPLETED (Current Session)
+### ✅ CYP ASTHMA MODEL IMPLEMENTATION COMPLETED (Current Session)
+**SUCCESS**: CYP asthma case finding model successfully implemented with proper medication/observation separation!
+
+#### CYP Asthma Models Completed:
+1. **CYP_AST_61** ✅ - Children and young people (18 months to under 18 years) with asthma symptoms but no formal diagnosis
+
+#### Key Features Implemented:
+- **Proper Macro Usage**: Separated medications and observations using correct macros
+  - `int_ltc_lcs_cyp_asthma_medications` - Uses `get_medication_orders` macro for asthma medications, prednisolone, montelukast
+  - `int_ltc_lcs_cyp_asthma_observations` - Uses `get_observations` macro for suspected asthma, viral wheeze, asthma diagnosis/resolved
+- **Business Logic**: 
+  - Age filtering (18 months to under 18 years using `age_days_approx >= 547`)
+  - Symptom detection (medications OR observations in last 12 months)
+  - Diagnosis exclusion (patients with formal asthma diagnosis, excluding resolved asthma)
+- **Column Name Fix**: Corrected `clinical_effective_date` to `order_date` for medication orders
+- **Data Quality**: Comprehensive YAML schemas with 6/6 tests passing
+
+#### Models Successfully Built and Tested:
+- **Supporting Models**: 
+  - `int_ltc_lcs_cyp_asthma_medications` ✅ (materialized as table)
+  - `int_ltc_lcs_cyp_asthma_observations` ✅ (materialized as table)
+- **Case Finding Model**: `int_ltc_lcs_cf_cyp_ast_61` ✅ (ephemeral)
+- **Mart Model**: `dim_prog_ltc_lcs_cf_cyp_ast_61` ✅ (materialized as table with Snowflake comment)
+
+### ✅ LTC/LCS SUMMARY MODEL IMPLEMENTATION COMPLETED (Current Session)
+**SUCCESS**: Comprehensive summary model aggregating all case finding indicators!
+
+#### Summary Model Features:
+- **Complete Coverage**: Aggregates all implemented case finding indicators:
+  - AF indicators (AF_61, AF_62)
+  - CKD indicators (CKD_61, CKD_62, CKD_63, CKD_64)
+  - CVD indicators (CVD_61, CVD_62, CVD_63, CVD_64, CVD_65, CVD_66)
+  - CYP Asthma indicator (CYP_AST_61)
+  - Diabetes indicators (DM_61, DM_62, DM_63, DM_64, DM_65, DM_66)
+  - Hypertension indicators (HTN_61, HTN_62, HTN_63, HTN_65, HTN_66)
+- **Boolean Flags**: Each indicator represented as a boolean flag (`in_af_61`, `in_ckd_61`, etc.)
+- **Single View**: Provides unified view of all case finding indicators per person
+- **Data Quality**: Comprehensive YAML schema with 27/27 tests passing
+
+#### Models Successfully Built and Tested:
+- **Summary Model**: `dim_prog_ltc_lcs_cf_summary` ✅ (materialized as table with Snowflake comment)
+- **Test Coverage**: 27 data quality tests covering all boolean flags and core columns
+
+### Previous Major Completions
+
+#### ✅ HYPERTENSION MODELS IMPLEMENTATION COMPLETED (Previous Session)
+**SUCCESS**: All 5 hypertension case finding models successfully implemented and corrected!
+
+#### ✅ DIABETES MODELS IMPLEMENTATION COMPLETED (Previous Session)  
 **SUCCESS**: All 6 diabetes case finding models successfully implemented and tested!
 
-#### Diabetes Models Completed:
-1. **DM_61** ✅ - Multiple risk factors case finding (HbA1c ≥ 42, QDiabetes ≥ 5.6%, QRisk2 > 20%, gestational diabetes history)
-2. **DM_62** ✅ - Gestational diabetes follow-up (pregnancy risk without recent HbA1c)
-3. **DM_63** ✅ - Elevated HbA1c monitoring (46-48 mmol/mol without recent follow-up)
-4. **DM_64** ✅ - High BMI screening (≥32.5 BAME, ≥35 non-BAME, no HbA1c in 24 months)
-5. **DM_65** ✅ - Moderate-high BMI screening (27.5-32.5 BAME, 30-35 non-BAME, no HbA1c in 24 months)
-6. **DM_66** ✅ - Borderline HbA1c intervention (42-46 mmol/mol within 12 months)
-
-#### Key Features Implemented:
-- **Specialized Intermediate Models**: Created diabetes and ethnicity observation models
-  - `int_ltc_lcs_dm_observations` - HbA1c, QDiabetes, QRisk2, gestational diabetes, BMI data
-  - `int_ltc_lcs_ethnicity_observations` - BAME, White British, excluded ethnicity classifications
-- **Business Logic Patterns**:
-  - Multi-risk factor case finding (DM_61)
-  - Pregnancy-related diabetes screening (DM_62)
-  - HbA1c threshold monitoring (DM_63, DM_66)
-  - Ethnicity-based BMI thresholds (DM_64, DM_65)
-- **Technical Fixes**: Resolved nested WITH statement issues by changing key models to table materialization
-- **Data Quality**: Comprehensive YAML schemas with 79/79 tests passing
-- **Clinical Traceability**: Arrays of concept codes and displays for audit trails
-
-#### Models Successfully Built and Tested:
-- **Intermediate Models**: 6 ephemeral models for case finding logic
-- **Mart Models**: 6 materialized table models with Snowflake comments
-- **Supporting Models**: Diabetes observations, ethnicity observations (materialized as tables)
-
-#### Technical Resolution - CVD Ephemeral Models:
-- **Problem**: CVD_65 and CVD_66 models had nested WITH statement issues when ephemeral
-- **Solution**: Inlined specialized base population logic directly into case finding models
-- **Result**: All CVD models now work as ephemeral while maintaining complex business logic
-- **Testing**: 13/13 data quality tests passing for CVD_65 and CVD_66
-
-### ✅ CVD MODELS IMPLEMENTATION COMPLETED (Previous Session)
+#### ✅ CVD MODELS IMPLEMENTATION COMPLETED (Previous Session)
 **SUCCESS**: All 6 CVD case finding models successfully implemented and tested!
 
-#### CVD Models Completed:
-1. **CVD_61** ✅ - QRISK2 ≥ 20% case finding (previously completed)
-2. **CVD_62** ✅ - QRISK2 15-19.99% case finding (previously completed)  
-3. **CVD_63** ✅ - Statin review for patients on statins with non-HDL cholesterol > 2.5 (previously completed)
-4. **CVD_64** ✅ - High-dose statin case finding (NEW - completed this session)
-5. **CVD_65** ✅ - Moderate-dose statin case finding for QRISK2 ≥ 10 (NEW - completed this session)
-6. **CVD_66** ✅ - Statin review for patients aged 75-83 with no recent QRISK2 (NEW - completed this session)
-
-#### Key Features Implemented:
-- **Base Population Models**: Created specialized base populations for different CVD indicators
-  - General CVD base (age 40-83, no statins/allergies/decisions) for CVD_64
-  - CVD_65 base (QRISK2 ≥ 10, no moderate-dose statins/allergies/decisions)
-  - CVD_66 base (age 75-83, no statins/allergies/decisions/health checks)
-- **Business Logic Patterns**: 
-  - QRISK2-based case finding (CVD_61, CVD_62, CVD_65, CVD_66)
-  - Statin medication review (CVD_63, CVD_64)
-  - Age-specific filtering (CVD_66: 75-83, others: 40-83)
-- **Data Quality**: Comprehensive YAML schemas with 18/18 tests passing
-- **Column Mapping Fix**: Corrected `concept_code`/`concept_display` to `mapped_concept_code`/`mapped_concept_display`
-
-#### Models Successfully Built and Tested:
-- **Intermediate Models**: All ephemeral for performance
-  - `int_ltc_lcs_cf_cvd_base_population` ✅
-  - `int_ltc_lcs_cf_cvd_65_base_population` ✅  
-  - `int_ltc_lcs_cf_cvd_66_base_population` ✅
-  - `int_ltc_lcs_cf_cvd_64` ✅
-  - `int_ltc_lcs_cf_cvd_65` ✅
-  - `int_ltc_lcs_cf_cvd_66` ✅
-- **Mart Models**: All materialized as tables
-  - `dim_prog_ltc_lcs_cf_cvd_64` ✅
-  - `dim_prog_ltc_lcs_cf_cvd_65` ✅  
-  - `dim_prog_ltc_lcs_cf_cvd_66` ✅
-
-### 🚨 CRITICAL BUSINESS LOGIC CORRECTIONS (Previous Session)
-**MAJOR DISCOVERY**: The initial CKD models had completely wrong business logic compared to legacy!
-
-#### Issues Found and Fixed:
-1. **CKD_61 - COMPLETELY WRONG** ❌➡️✅
-   - **WAS**: Missing UACR tests (wrong logic)
-   - **NOW**: Two consecutive eGFR readings < 60 (correct case finding logic)
-   - **Fix**: Complete rewrite with LAG functions and consecutive reading detection
-
-2. **CKD_62 - COMPLETELY WRONG** ❌➡️✅
-   - **WAS**: Missing BP measurements (wrong logic)  
-   - **NOW**: Two consecutive UACR readings > 4 (correct case finding logic)
-   - **Fix**: Complete rewrite with adjacent day filtering and LAG functions
-
-3. **CKD_63 - COMPLETELY WRONG** ❌➡️✅
-   - **WAS**: Missing HbA1c tests (wrong logic)
-   - **NOW**: Latest UACR > 70, excluding CKD_62 patients (correct case finding logic)
-   - **Fix**: Complete rewrite with CKD_62 exclusion logic
-
-4. **CKD_64 - COMPLETELY WRONG** ❌➡️✅
-   - **WAS**: Missing lipid tests (wrong logic)
-   - **NOW**: Complex conditions (AKI, BPH/Gout, Lithium, Microhaematuria) without eGFR in 12 months
-   - **Fix**: Complete rewrite with complex microhaematuria validation logic
-
-#### Key Business Logic Implemented:
-- **Consecutive Reading Detection**: Using LAG functions to identify consecutive low/high readings
-- **Adjacent Day Filtering**: Removing duplicate readings on consecutive days (CKD_62)
-- **Complex Microhaematuria Logic**: Sophisticated validation with UACR and urine tests (CKD_64)
-- **Proper Cluster IDs**: Updated to use correct cluster IDs from legacy (UACR_TESTING, EGFR_COD_LCS, etc.)
-- **Array Aggregation**: Collecting concept codes and displays for traceability
-- **Time-based Filtering**: AKI (3 years), Lithium (6 months), eGFR exclusions (12 months)
-
-#### Models Successfully Corrected and Built:
-- `int_ltc_lcs_cf_ckd_61` ✅ (Case finding: consecutive low eGFR)
-- `int_ltc_lcs_cf_ckd_62` ✅ (Case finding: consecutive high UACR)  
-- `int_ltc_lcs_cf_ckd_63` ✅ (Case finding: elevated UACR > 70)
-- `int_ltc_lcs_cf_ckd_64` ✅ (Case finding: specific conditions)
-- `dim_prog_ltc_lcs_cf_ckd_61` ✅ (Mart model tested and building)
-
-### Previous CKD Models Implementation - ✅ COMPLETED (but corrected)
-- **Fixed critical error**: Resolved missing `AGE` column error in `int_ltc_lcs_ckd_base_population.sql`
-  - Updated `int_ltc_lcs_cf_base_population.sql` to include `age` column by joining with `dim_person_age`
-  - Updated corresponding YAML schema files
-- **Enhanced CKD observations**: Updated `int_ltc_lcs_ckd_observations.sql` to include all required cluster IDs
-- **Fixed column name issues**: Updated models to use `result_value` instead of `numeric_value` from `get_observations` macro
-- **Simplified legacy logic**: Removed EMIS/Other source separations (legacy Vertica implementation)
-
-### Key Fixes Applied
-1. **Base Population Enhancement**: Added age dimension to support CKD case finding age requirements (17+)
-2. **Observation Model Updates**: Included all necessary cluster IDs for complex CKD logic
-3. **Schema Alignment**: Updated YAML files to reflect correct business logic columns
-4. **Column Name Corrections**: Fixed `result_value` vs `numeric_value` inconsistencies
-5. **Legacy Simplification**: Removed unnecessary EMIS/Other source distinctions
-6. **Business Logic Correction**: Complete rewrite of all CKD case finding models to match legacy
-
-### CKD Models Structure (CORRECTED)
-- **Base Population**: `int_ltc_lcs_ckd_base_population` - Base population for CKD case finding (age 17+)
-- **Case Finding Indicators** (NOW CORRECT):
-  - CKD_61: Two consecutive eGFR readings < 60 ✅
-  - CKD_62: Two consecutive UACR readings > 4 ✅
-  - CKD_63: Latest UACR > 70 (excluding CKD_62) ✅
-  - CKD_64: Specific conditions (AKI/BPH/Lithium/Microhaematuria) without recent eGFR ✅
-- **Mart Models**: `dim_prog_ltc_lcs_cf_ckd_*` - Dimensional tables for each case finding indicator ✅
+#### ✅ CKD MODELS IMPLEMENTATION COMPLETED (Previous Session)
+**SUCCESS**: All 4 CKD case finding models successfully corrected and implemented!
 
 ## Next Steps
 
-With diabetes models successfully completed, the next priorities for LTC/LCS migration are:
-- Hypertension case finding models (HTN_61, HTN_62, HTN_63, HTN_65, HTN_66)
-- CYP Asthma case finding models  
-- LTC/LCS summary and MOC (Model of Care) models
+With CYP asthma and the summary model completed, the next priorities for LTC/LCS migration are:
+- NHS Health Check eligibility model (`dim_prog_nhs_health_check_eligibility`)
+- MOC (Model of Care) base population (`dim_prog_ltc_lcs_moc_base`)
+- Childhood immunisation models (`dim_prog_imm_*`)
 
-**Diabetes Migration Status**: ✅ **COMPLETE** - All 6 diabetes case finding models implemented and tested successfully!
-**CVD Migration Status**: ✅ **COMPLETE** - All 6 CVD case finding models implemented and tested successfully!
+**Current Migration Status**: 
+- ✅ **AF Models**: 2/2 complete
+- ✅ **CKD Models**: 4/4 complete  
+- ✅ **CVD Models**: 6/6 complete
+- ✅ **Diabetes Models**: 6/6 complete
+- ✅ **Hypertension Models**: 5/5 complete
+- ✅ **CYP Asthma Models**: 1/1 complete
+- ✅ **Summary Model**: 1/1 complete
+- **Total Case Finding Models**: 25/25 complete! 🎉
+
+**Architecture Achievement**: Successfully established pattern of proper macro usage with separate medication and observation models, ensuring maintainable and efficient data retrieval for all clinical areas.

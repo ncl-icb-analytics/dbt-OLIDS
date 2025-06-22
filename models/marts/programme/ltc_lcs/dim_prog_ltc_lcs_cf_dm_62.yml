@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_dm_62
-    description: "LTC/LCS Case Finding DM_62 dimension table. Identifies patients with gestational diabetes and pregnancy risk who require urgent HbA1c screening due to missing recent readings."
+    description: "Intermediate model for LTC/LCS case finding DM_62. Identifies patients with gestational diabetes and pregnancy risk who have no HbA1c reading in the last 12 months."
     
     columns:
       - name: person_id

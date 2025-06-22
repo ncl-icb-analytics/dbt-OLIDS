@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_htn_61
-    description: "HTN_61 case finding dimension table for LTC/LCS programme. Identifies patients with severe hypertension based on blood pressure thresholds: Clinic BP ≥180/120 mmHg or Home/ABPM BP ≥170/115 mmHg. These are the highest priority patients for immediate hypertension intervention."
+    description: "Intermediate model for LTC/LCS case finding HTN_61. Identifies patients with severe hypertension based on blood pressure thresholds: Clinic BP ≥180/120 mmHg or Home/ABPM BP ≥170/115 mmHg."
     
     columns:
       - name: person_id

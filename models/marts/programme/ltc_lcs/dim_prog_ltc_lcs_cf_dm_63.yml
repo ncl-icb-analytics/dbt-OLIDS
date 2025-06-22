@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_prog_ltc_lcs_cf_dm_63
-    description: "LTC/LCS Case Finding DM_63 dimension table. Identifies patients with elevated HbA1c (46-47 mmol/mol) who require follow-up monitoring due to lack of recent testing."
+    description: "Intermediate model for LTC/LCS case finding DM_63. Identifies patients with elevated HbA1c (46-47 mmol/mol) who have not had recent monitoring."
     
     columns:
       - name: person_id
