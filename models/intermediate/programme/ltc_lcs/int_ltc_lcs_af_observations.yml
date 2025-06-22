@@ -1,0 +1,32 @@
+version: 2
+models:
+  - name: int_ltc_lcs_af_observations
+    description: "Intermediate model for LTC LCS AF Observations. Collects all observations relevant to atrial fibrillation (AF) case finding and exclusions, using mapped concepts with source = 'LTC_LCS'."
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER"
+    columns:
+      - name: observation_id
+        description: "Unique identifier for the observation"
+        tests:
+          - not_null
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: "Date of the observation"
+      - name: mapped_concept_code
+        description: "Mapped concept code for the observation"
+      - name: mapped_concept_display
+        description: "Display term for the mapped concept"
+      - name: cluster_id
+        description: "Cluster ID for the observation (AF, exclusions, etc.)"
+      - name: cluster_description
+        description: "Description of the cluster"
+      - name: result_value
+        description: "Numeric result value for observations, if applicable"
+      - name: result_unit_display
+        description: "Display term for the result unit"
+      - name: result_text
+        description: "Text result for observations, if applicable"

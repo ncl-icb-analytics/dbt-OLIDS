@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_cvd_62
+    description: Intermediate model for LTC LCS case finding indicator CVD_62. Identifies patients aged 40-83 with QRISK2 score between 15-19.99% who require cardiovascular disease prevention interventions.
+    columns:
+      - name: person_id
+        tests:
+          - not_null
+          - unique
+      - name: age
+        tests:
+          - not_null
+      - name: has_moderate_qrisk2
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_qrisk2_date
+        tests:
+          - not_null
+      - name: latest_qrisk2_value
+        tests:
+          - not_null
+      - name: meets_criteria
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true] 

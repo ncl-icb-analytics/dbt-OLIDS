@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_cvd_observations
+    description: Intermediate model containing CVD-related observations for LTC LCS case finding, including QRISK2 10-year cardiovascular risk scores, non-HDL cholesterol measurements, statin allergies/adverse reactions, statin contraindications, and statin clinical decisions.
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "QRISK2_10YEAR, NON_HDL_CHOLESTEROL, STATIN_ALLERGY_ADVERSE_REACTION, STATIN_NOT_INDICATED, STATINDEC_COD"
+    columns:
+      - name: observation_id
+        tests:
+          - not_null
+          - unique
+      - name: person_id
+        tests:
+          - not_null 

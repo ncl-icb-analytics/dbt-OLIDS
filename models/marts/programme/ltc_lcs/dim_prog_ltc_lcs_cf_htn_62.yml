@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_htn_62
+    description: "HTN_62 case finding: Stage 2 hypertension (clinic BP ≥160/100, home BP ≥150/95), excluding HTN_61 patients"
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Person's age at time of analysis"
+        tests:
+          - not_null
+      - name: has_stage_2_hypertension
+        description: "Flag indicating patient has stage 2 hypertension (always TRUE in this model)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_bp_date
+        description: "Date of the latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_value
+        description: "Value of the latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_type
+        description: "Type of latest BP reading (HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HYPERTENSION_BP_CLINIC', 'HYPERTENSION_BP_HOME', 'HYPERTENSION_BP_ABPM']
+      - name: is_clinic_bp
+        description: "Flag indicating if latest reading is clinic blood pressure"
+        tests:
+          - not_null
+      - name: is_home_bp
+        description: "Flag indicating if latest reading is home/ABPM blood pressure"
+        tests:
+          - not_null
+      - name: latest_bp_code
+        description: "Mapped concept code for latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_display
+        description: "Mapped concept display for latest blood pressure reading"
+        tests:
+          - not_null
+      - name: all_bp_codes
+        description: "Array of all blood pressure concept codes for the patient"
+      - name: all_bp_displays
+        description: "Array of all blood pressure concept displays for the patient" 

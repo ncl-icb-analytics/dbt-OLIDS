@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_cvd_64
+    description: "CVD_64 case finding intermediate model. Identifies patients from the general CVD base population who need high-dose statins."
+    columns:
+      - name: person_id
+        description: "Unique patient identifier"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Patient age (40-83)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 40
+              max_value: 83
+      - name: needs_high_dose_statin
+        description: "Whether patient needs high-dose statin (TRUE for all)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_statin_date
+        description: "Date of latest high-dose statin medication"
+      - name: latest_statin_code
+        description: "Concept code of latest high-dose statin"
+      - name: latest_statin_display
+        description: "Concept display of latest high-dose statin"
+      - name: all_statin_codes
+        description: "Array of all high-dose statin concept codes for patient"
+      - name: all_statin_displays
+        description: "Array of all high-dose statin concept displays for patient" 

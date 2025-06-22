@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_dm_66
+    description: "DM_66 case finding: Patients without diabetes risk factors (control group)"
+    
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+
+      - name: age
+        description: "Age of the patient (17+)"
+        tests:
+          - not_null
+
+      - name: has_no_risk_factors
+        description: "Boolean flag indicating person has no diabetes risk factors"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: latest_bmi_date
+        description: "Date of most recent BMI measurement (if available)"
+
+      - name: latest_bmi_value
+        description: "Most recent BMI value (should be below risk thresholds)"
+
+      - name: latest_hba1c_date
+        description: "Date of most recent HbA1c reading (if available)"
+
+      - name: latest_hba1c_value
+        description: "Most recent HbA1c value (should be below risk thresholds)"
+
+      - name: all_bmi_codes
+        description: "Array of all BMI concept codes for the patient"
+
+      - name: all_bmi_displays
+        description: "Array of all BMI concept display terms for the patient" 
