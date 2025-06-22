@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_htn_63
+    description: "HTN_63 case finding mart: Black/South Asian patients with cardiovascular risk factors and elevated BP"
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Person's age at time of analysis"
+        tests:
+          - not_null
+      - name: is_bsa_with_risk_factors
+        description: "Flag indicating patient is BSA with risk factors (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: has_elevated_bp_bsa
+        description: "Flag indicating patient has elevated BP as BSA (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_bp_date
+        description: "Date of the latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_value
+        description: "Value of the latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_type
+        description: "Type of latest BP reading (clinic, home, or ABPM)"
+        tests:
+          - not_null
+      - name: is_clinic_bp
+        description: "Flag indicating if latest reading is clinic blood pressure"
+        tests:
+          - not_null
+      - name: is_home_bp
+        description: "Flag indicating if latest reading is home/ABPM blood pressure"
+        tests:
+          - not_null 

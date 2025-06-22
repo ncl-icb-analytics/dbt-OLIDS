@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: int_ltc_lcs_htn_observations
+    description: "Intermediate model for hypertension-related observations for LTC/LCS case finding. Combines blood pressure readings from int_blood_pressure_all with other hypertension risk factors."
+    
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "HYPERTENSION_EGFR,HYPERTENSION_BMI,HYPERTENSION_BSA,HYPERTENSION_MYOCARDIAL,HYPERTENSION_CEREBRAL,HYPERTENSION_CLAUDICATION,HYPERTENSION_DIABETES"
+    
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+
+      - name: cluster_id
+        description: "Cluster identifier for the observation type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HYPERTENSION_BP_CLINIC', 'HYPERTENSION_BP_HOME', 'HYPERTENSION_BP_ABPM', 'HYPERTENSION_EGFR', 'HYPERTENSION_BMI', 'HYPERTENSION_BSA', 'HYPERTENSION_MYOCARDIAL', 'HYPERTENSION_CEREBRAL', 'HYPERTENSION_CLAUDICATION', 'HYPERTENSION_DIABETES']
+
+      - name: clinical_effective_date
+        description: "Date when the observation was clinically effective"
+        tests:
+          - not_null
+
+      - name: result_value
+        description: "Numeric result value (for BP systolic/diastolic, eGFR, BMI measurements)"
+
+      - name: mapped_concept_codes
+        description: "Array of mapped concept codes for the observation"
+
+      - name: mapped_concept_displays
+        description: "Array of mapped concept display terms for the observation"
+
+      - name: observation_type
+        description: "Type of observation: BP_SYSTOLIC, BP_DIASTOLIC, or OTHER"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BP_SYSTOLIC', 'BP_DIASTOLIC', 'OTHER'] 

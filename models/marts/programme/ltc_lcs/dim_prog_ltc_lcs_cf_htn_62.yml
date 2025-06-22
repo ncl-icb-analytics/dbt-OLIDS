@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: dim_prog_ltc_lcs_cf_htn_62
+    description: "HTN_62 case finding mart: Stage 2 hypertension patients (excluding severe hypertension HTN_61)"
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Person's age at time of analysis"
+        tests:
+          - not_null
+      - name: has_stage_2_hypertension
+        description: "Flag indicating patient has stage 2 hypertension (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_bp_date
+        description: "Date of the latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_value
+        description: "Value of the latest blood pressure reading"
+        tests:
+          - not_null
+      - name: latest_bp_type
+        description: "Type of latest BP reading (clinic, home, or ABPM)"
+        tests:
+          - not_null
+      - name: is_clinic_bp
+        description: "Flag indicating if latest reading is clinic blood pressure"
+        tests:
+          - not_null
+      - name: is_home_bp
+        description: "Flag indicating if latest reading is home/ABPM blood pressure"
+        tests:
+          - not_null 

@@ -134,7 +134,7 @@
 
 ## Current Goal
 
-- ✅ **COMPLETED**: Implement all diabetes intermediate and mart models (DM_61 through DM_66)
+- 🎯 **NEXT**: Complete hypertension case finding models (HTN_61 ✅, HTN_62-66 debugging)
 
 ## Recent Progress
 
@@ -166,6 +166,12 @@
 - **Intermediate Models**: 6 ephemeral models for case finding logic
 - **Mart Models**: 6 materialized table models with Snowflake comments
 - **Supporting Models**: Diabetes observations, ethnicity observations (materialized as tables)
+
+#### Technical Resolution - CVD Ephemeral Models:
+- **Problem**: CVD_65 and CVD_66 models had nested WITH statement issues when ephemeral
+- **Solution**: Inlined specialized base population logic directly into case finding models
+- **Result**: All CVD models now work as ephemeral while maintaining complex business logic
+- **Testing**: 13/13 data quality tests passing for CVD_65 and CVD_66
 
 ### ✅ CVD MODELS IMPLEMENTATION COMPLETED (Previous Session)
 **SUCCESS**: All 6 CVD case finding models successfully implemented and tested!
