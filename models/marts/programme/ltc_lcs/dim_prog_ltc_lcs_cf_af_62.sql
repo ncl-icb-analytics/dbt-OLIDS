@@ -9,7 +9,7 @@
 with base_population as (
     select
         bp.person_id,
-        age
+        age.age as age
     from {{ ref('int_ltc_lcs_cf_base_population') }} bp
     join {{ ref('dim_person_age') }} age
       on bp.person_id = age.person_id
