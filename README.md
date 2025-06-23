@@ -205,12 +205,7 @@ dbt build --target qa   # Full build in qa environment
 
    ```bash
    git add .
-   git commit -m "feat: add heart failure register with LVSD classification
-
-   - Implements QOF HF register business logic
-   - Includes general HF and LVSD-specific flags
-   - Adds comprehensive test coverage
-   - Updates documentation with clinical context"
+   git commit -m "feat: add heart failure register with LVSD classification"
    ```
 2. **Push your branch and create a PR:**
 
@@ -227,12 +222,7 @@ dbt build --target qa   # Full build in qa environment
 ### **PR Review Process**
 
 - **TO DO: Automated Checks**: CI will run `dbt parse`, `dbt compile`, and basic tests
-- **Code Review**: At least one team member should review for:
-  - Code quality and maintainability
-  - Adherence to naming conventions
-  - Appropriate use of facts vs dimensions
-  - Documentation completeness
-- **Testing**: Reviewers should verify the changes work in a dev environment
+- **Testing**: Reviewers should verify the changes work in both dev and qa environments.
 - **TO DO: Snowflake automatically runs `dbt deps` and `dbt build --target prod` on commits to main and on a schedule**
 
 ### **Merging**
