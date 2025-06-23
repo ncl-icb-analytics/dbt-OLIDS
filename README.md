@@ -43,22 +43,33 @@ dbt test
 
 ```
 models/
-├── staging/          # 1:1 source mappings (views)
-├── intermediate/     # Business logic & consolidation (tables)
-│   ├── diagnoses/    # Clinical observations (observation-level)
-│   ├── medications/  # Medication orders
-│   ├── observations/ # Clinical measurements
-│   └── person_attributes/  # Demographics & characteristics
-└── marts/           # Analytics-ready models (tables)
+├── staging/                 # 1:1 source mappings (views)
+├── intermediate/            # Business logic & consolidation (tables)
+│   ├── diagnoses/           # Clinical observations (observation-level)
+│   │   └── qof/             # QOF-specific diagnosis models
+│   ├── medications/         # Medication orders & prescriptions
+│   ├── observations/        # Clinical measurements & lab results
+│   ├── person_attributes/   # Demographics & characteristics
+│   └── programme/           # specific programme intermediate models
+└── marts/                   # Analytics-ready models (tables)
     ├── clinical_safety/     # Safety monitoring & alerts
     ├── data_quality/        # Data quality reports
     ├── disease_registers/   # Person-level clinical registers
+    │   └── qof/             # QOF disease registers
     ├── geography/           # Households & geographic analytics
     ├── measures/            # Healthcare quality indicators
     ├── organisation/        # Practice & organisational data
     ├── person_demographics/ # Demographics with households
     ├── person_status/       # Patient activity & status
-    └── programme/           # NHS programmes (health checks, etc.)
+    └── programme/           # specific programmes (valproate, ltc_lcs, etc.)
+
+macros/                      # Reusable SQL macros
+├── get_observations.sql     # Extract clinical observations
+├── get_medication_orders.sql # Extract medication data
+└── testing/                 # custom macros for generic tests
+
+legacy/                      # Original SQL scripts for reference
+scripts/                     # Python utilities and automation
 ```
 
 ## Development Commands
