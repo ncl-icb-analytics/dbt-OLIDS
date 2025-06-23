@@ -1,4 +1,4 @@
-# Snowflake Healthcare Data Migration - dbt Project
+# HealtheIntent -> Data Migration
 
 ## Overview
 
