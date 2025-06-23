@@ -2,7 +2,7 @@
 
 ## Overview
 
-A dbt project for migrating healthcare data models from HealtheIntent (Vertica) to Snowflake.
+A dbt project for migrating key data models from HealtheIntent (Vertica) to Snowflake.
 
 ## Architecture
 
