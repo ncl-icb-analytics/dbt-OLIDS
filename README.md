@@ -37,7 +37,7 @@ dbt test
 
 - **`dbt run`** or `dbt build` → `DBT_DEV` schema (safe default)
 - **`dbt build --target qa`** → `DBT_QA` schema (quality assurance)
-- **`dbt build --target prod`** → Production database (explicit confirmation)
+- **`dbt build --target prod`** → `DBT_PROD` schema (production)
 
 ## Project Structure
 
