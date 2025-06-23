@@ -1,12 +1,12 @@
 -- Replacement for legacy/codesets/mapped_concepts.sql with deduplication
 -- This eliminates concept codes having multiple descriptions which cause duplicates
--- Uses COALESCE with priority order to pick consistent description per concept code
+-- Uses FIRST_VALUE() window function with priority order to pick consistent description per concept code
 -- Run this to replace the existing MAPPED_CONCEPTS dynamic table
 
 CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS (
     SOURCE_CODE_ID VARCHAR,
     ORIGINATING_SOURCE_TABLE VARCHAR(255), -- From SOURCE_CONCEPT_ORIGINS
-    CONCEPT_ID VARCHAR,                    -- Assuming numeric ID from CONCEPT table
+    CONCEPT_ID VARCHAR,                    -- ID from CONCEPT table
     CONCEPT_SYSTEM VARCHAR,
     CONCEPT_CODE VARCHAR,
     CONCEPT_DISPLAY VARCHAR,
@@ -34,7 +34,7 @@ WITH base_data AS (
         CCS.SOURCE                  AS SOURCE
     FROM
         "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT_MAP AS MAP
-    -- Left join to the new intermediate table to find the originating table(s)
+    -- Left join to SOURCE_CONCEPT_ORIGINS to find the originating table(s)
     LEFT JOIN
         DATA_LAB_NCL_TRAINING_TEMP.CODESETS.SOURCE_CONCEPT_ORIGINS AS SCO
         ON MAP."source_code_id" = SCO.SOURCE_CODE_ID_VALUE
