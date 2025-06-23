@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: dim_ltc_lcs_cf_cyp_ast_61
+    description: "CYP_AST_61 case finding intermediate: Children and young people (18 months to under 18 years) with asthma symptoms but no formal diagnosis"
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+      - name: age
+        description: "Person's age (18 months to under 18 years)"
+        tests:
+          - not_null
+      - name: has_asthma_symptoms
+        description: "Flag indicating patient has asthma symptoms (always TRUE)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: latest_symptom_date
+        description: "Date of most recent asthma symptom"
+        tests:
+          - not_null 

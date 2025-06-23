@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: dim_ltc_lcs_cf_htn_61
+    description: "Intermediate model for LTC/LCS case finding HTN_61. Identifies patients with severe hypertension based on blood pressure thresholds: Clinic BP ≥180/120 mmHg or Home/ABPM BP ≥170/115 mmHg."
+    
+    columns:
+      - name: person_id
+        description: "Unique identifier for the person"
+        tests:
+          - not_null
+          - unique
+
+      - name: age
+        description: "Age of the patient"
+        tests:
+          - not_null
+
+      - name: has_severe_hypertension
+        description: "Boolean flag indicating if person has severe hypertension"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+
+      - name: latest_bp_date
+        description: "Date of most recent blood pressure reading"
+        tests:
+          - not_null
+
+      - name: latest_bp_value
+        description: "Most recent blood pressure value (systolic or diastolic)"
+        tests:
+          - not_null
+
+      - name: latest_bp_type
+        description: "Type of latest blood pressure reading (CLINIC, HOME, or ABPM)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HYPERTENSION_BP_CLINIC', 'HYPERTENSION_BP_HOME', 'HYPERTENSION_BP_ABPM']
+
+      - name: is_clinic_bp
+        description: "Boolean flag indicating if the latest reading is from clinic"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_home_bp
+        description: "Boolean flag indicating if the latest reading is from home/ambulatory"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: latest_bp_code
+        description: "Concept code of most recent blood pressure reading"
+
+      - name: latest_bp_display
+        description: "Concept display of most recent blood pressure reading"
+
+      - name: all_bp_codes
+        description: "Array of all blood pressure concept codes for the patient"
+
+      - name: all_bp_displays
+        description: "Array of all blood pressure concept display terms for the patient" 
