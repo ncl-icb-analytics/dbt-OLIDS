@@ -16,7 +16,7 @@ Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
 
 ```bash
 # Setup
-git clone <repository-url>
+git clone https://github.com/ncl-icb-analytics/snowflake-hei-migration
 cd snowflake-hei-migration-dbt
 python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt
@@ -30,6 +30,13 @@ dbt deps
 dbt run         # Safe - always dev environment
 dbt test
 ```
+
+### Prerequisites:
+
+- Python 3.8 or later installed on your system.
+- Your Snowflake role can access the source tables required
+
+If Python is not installed, you can get it from the Microsoft Store.
 
 ## Environment Management
 
