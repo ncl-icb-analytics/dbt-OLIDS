@@ -4,7 +4,7 @@
 
 A comprehensive dbt project for migrating healthcare data models from HealtheIntent (Vertica) to Snowflake. Implements modern dimensional modeling with robust data quality testing for NHS primary care analytics.
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
@@ -12,7 +12,7 @@ Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
                       Data Quality & Tests
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Setup
@@ -31,7 +31,7 @@ dbt run         # Safe - always dev environment
 dbt test
 ```
 
-## 🎯 Environment Management
+## Environment Management
 
 **Simple Three-Environment Setup:**
 
@@ -39,7 +39,7 @@ dbt test
 - **`dbt build --target qa`** → `DBT_QA` schema (quality assurance)
 - **`dbt build --target prod`** → Production database (explicit confirmation)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 models/
@@ -61,7 +61,7 @@ models/
     └── programme/           # NHS programmes (health checks, etc.)
 ```
 
-## 🔧 Development Commands
+## Development Commands
 
 ### **Core Commands**
 
@@ -100,7 +100,7 @@ dbt build --select +fct_person_diabetes_register  # Model + dependencies + tests
 dbt docs generate && dbt docs serve
 ```
 
-## 📋 Development Patterns
+## Development Patterns
 
 ### **Macro Usage**
 
@@ -148,6 +148,86 @@ models:
           expression: "count(*) >= 1"
 ```
 
-## 📄 License
+## Contributing
+
+### **Creating a Feature Branch**
+
+1. **Ensure you're on the latest main branch:**
+
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+2. **Create a descriptive feature branch:**
+
+   ```bash
+   # Use descriptive branch names following the pattern:
+   git checkout -b feature/add-heart-failure-register
+   git checkout -b fix/diabetes-type-classification
+   git checkout -b refactor/consolidate-person-dimensions
+   ```
+3. **Make your changes following project conventions:**
+
+   - Follow the established naming patterns and folder structure
+   - Add appropriate YAML documentation for all new models
+   - Include relevant tests (not excessive, but in key places)
+
+### **Testing Your Changes**
+
+```bash
+# Parse and compile to check for syntax errors
+dbt parse
+dbt compile --select +your_new_model
+
+# Run your changes in dev environment (always safe)
+dbt run --select +your_new_model
+dbt test --select +your_new_model
+
+# For broader changes, test the entire project
+dbt build  		# Runs models and tests in DAG order for DEV environment
+dbt build --target qa   # Full build in qa environment
+```
+
+### **Creating a Pull Request**
+
+1. **Commit your changes with clear messages:**
+
+   ```bash
+   git add .
+   git commit -m "feat: add heart failure register with LVSD classification
+
+   - Implements QOF HF register business logic
+   - Includes general HF and LVSD-specific flags
+   - Adds comprehensive test coverage
+   - Updates documentation with clinical context"
+   ```
+2. **Push your branch and create a PR:**
+
+   ```bash
+   git push origin feature/add-heart-failure-register
+   ```
+3. **Open a Pull Request on GitHub:**
+
+   - Use a descriptive title summarising the change
+   - Include a clear description of what was changed and why
+   - Reference any related issues using `#issue-number`
+   - Request reviews from relevant team members
+
+### **PR Review Process**
+
+- **Automated Checks**: CI will run `dbt parse`, `dbt compile`, and basic tests
+- **Code Review**: At least one team member should review for:
+  - Code quality and maintainability
+  - Adherence to naming conventions
+  - Appropriate use of facts vs dimensions
+  - Documentation completeness
+- **Testing**: Reviewers should verify the changes work in a dev environment
+
+### **Merging**
+
+- PRs are merged into `main` after approval
+- Delete the feature branch after merging
+
+## License
 
 This repository is dual licensed under the Open Government v3 & MIT. All code outputs are subject to Crown Copyright.
