@@ -13,25 +13,25 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [X] DIM_PROG_LTC_LCS_CF_CKD_62
 - [X] DIM_PROG_LTC_LCS_CF_CKD_63
 - [X] DIM_PROG_LTC_LCS_CF_CKD_64
-- [ ] DIM_PROG_LTC_LCS_CF_CVD_61
-- [ ] DIM_PROG_LTC_LCS_CF_CVD_62
-- [ ] DIM_PROG_LTC_LCS_CF_CVD_63
-- [ ] DIM_PROG_LTC_LCS_CF_CVD_64
-- [ ] DIM_PROG_LTC_LCS_CF_CVD_65
-- [ ] DIM_PROG_LTC_LCS_CF_CVD_66
-- [ ] DIM_PROG_LTC_LCS_CF_CYP_AST_61
-- [ ] DIM_PROG_LTC_LCS_CF_DM_61
-- [ ] DIM_PROG_LTC_LCS_CF_DM_62
-- [ ] DIM_PROG_LTC_LCS_CF_DM_63
-- [ ] DIM_PROG_LTC_LCS_CF_DM_64
-- [ ] DIM_PROG_LTC_LCS_CF_DM_65
-- [ ] DIM_PROG_LTC_LCS_CF_DM_66
+- [X] DIM_PROG_LTC_LCS_CF_CVD_61
+- [X] DIM_PROG_LTC_LCS_CF_CVD_62
+- [X] DIM_PROG_LTC_LCS_CF_CVD_63
+- [X] DIM_PROG_LTC_LCS_CF_CVD_64
+- [X] DIM_PROG_LTC_LCS_CF_CVD_65
+- [X] DIM_PROG_LTC_LCS_CF_CVD_66
+- [X] DIM_PROG_LTC_LCS_CF_CYP_AST_61
+- [X] DIM_PROG_LTC_LCS_CF_DM_61
+- [X] DIM_PROG_LTC_LCS_CF_DM_62
+- [X] DIM_PROG_LTC_LCS_CF_DM_63
+- [X] DIM_PROG_LTC_LCS_CF_DM_64
+- [X] DIM_PROG_LTC_LCS_CF_DM_65
+- [X] DIM_PROG_LTC_LCS_CF_DM_66
 - [X] DIM_PROG_LTC_LCS_CF_EXCLUSIONS
-- [ ] DIM_PROG_LTC_LCS_CF_HTN_61
-- [ ] DIM_PROG_LTC_LCS_CF_HTN_62
-- [ ] DIM_PROG_LTC_LCS_CF_HTN_63
-- [ ] DIM_PROG_LTC_LCS_CF_HTN_65
-- [ ] DIM_PROG_LTC_LCS_CF_HTN_66
+- [X] DIM_PROG_LTC_LCS_CF_HTN_61
+- [X] DIM_PROG_LTC_LCS_CF_HTN_62
+- [X] DIM_PROG_LTC_LCS_CF_HTN_63
+- [X] DIM_PROG_LTC_LCS_CF_HTN_65
+- [X] DIM_PROG_LTC_LCS_CF_HTN_66
 - [X] DIM_PROG_LTC_LCS_CF_SUMMARY  `<!-- Covered by dim_prog_ltc_lcs_cf_summary.sql if present, else check for summary dimension in program LTC LCS models -->`
 - [ ] DIM_PROG_LTC_LCS_MOC_BASE
 - [X] DIM_PROG_NHS_HEALTH_CHECK_ELIGIBILITY  `<!-- Covered by fct_person_nhs_health_check_status.sql -->`
@@ -82,12 +82,12 @@ Below is a checklist of legacy dynamic tables and related objects that need to b
 - [X] INTERMEDIATE_FOOT_CHECK_ALL  `<!-- Covered by int_foot_examination_latest.sql or fct_person_diabetes_foot_check.sql -->`
 - [X] INTERMEDIATE_HF_DETAILS  `<!-- Logic covered by int_heart_failure_diagnoses_all.sql and downstream aggregation -->`
 - [X] INTERMEDIATE_LD_DIAGNOSES_ALL  `<!-- Covered by int_learning_disability_diagnoses_all.sql -->`
-- [X] INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION
-- [ ] INTERMEDIATE_LTC_LCS_CF_CVD_65_BASE
-- [ ] INTERMEDIATE_LTC_LCS_CF_CVD_66_BASE
-- [ ] INTERMEDIATE_LTC_LCS_CF_CVD_BASE
+- [X] INTERMEDIATE_LTC_LCS_CF_BASE_POPULATION - created as int_ltc_lcs_cf_base_population.sql
+- [X] INTERMEDIATE_LTC_LCS_CF_CVD_65_BASE - built in to indicator
+- [X] INTERMEDIATE_LTC_LCS_CF_CVD_66_BASE - built in to indicator
+- [X] INTERMEDIATE_LTC_LCS_CF_CVD_BASE - built in to indicator
 - [X] INTERMEDIATE_LTC_LCS_CF_HEALTH_CHECKS - not needed
-- [ ] INTERMEDIATE_LTC_LCS_CF_HTN_BASE
+- [X] INTERMEDIATE_LTC_LCS_CF_HTN_BASE - built in to indicator
 - [X] INTERMEDIATE_LTC_LCS_RAW_DATA - not needed
 - [X] INTERMEDIATE_MH_DIAGNOSES  `<!-- Covered by int_smi_diagnoses_all.sql (if used for mental health) -->`
 - [X] INTERMEDIATE_ORAL_ANTICOAGULANT_ORDERS_ALL  `<!-- Covered by int_anticoagulant_medications_all.sql -->`
