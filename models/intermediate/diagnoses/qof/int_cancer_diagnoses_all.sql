@@ -9,7 +9,6 @@
 All cancer diagnosis observations from clinical records.
 Uses QOF cancer cluster IDs:
 - CAN_COD: Cancer diagnoses
-- CANRES_COD: Cancer resolved/remission codes
 
 Clinical Purpose:
 - QOF cancer register data collection
@@ -37,16 +36,14 @@ SELECT
     
     -- Cancer-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'CAN_COD' THEN TRUE ELSE FALSE END AS is_cancer_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'CANRES_COD' THEN TRUE ELSE FALSE END AS is_cancer_resolved_code,
     
     -- Cancer observation type determination
     CASE
         WHEN obs.cluster_id = 'CAN_COD' THEN 'Cancer Diagnosis'
-        WHEN obs.cluster_id = 'CANRES_COD' THEN 'Cancer Resolved'
         ELSE 'Unknown'
     END AS cancer_observation_type
 
-FROM ({{ get_observations("'CAN_COD', 'CANRES_COD'") }}) obs
+FROM ({{ get_observations("'CAN_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

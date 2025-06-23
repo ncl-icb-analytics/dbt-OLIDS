@@ -9,7 +9,7 @@
 **Learning Disability Register - QOF Quality Measures**
 
 Business Logic:
-- Learning disability diagnosis (LD_DIAGNOSIS_COD) for age ≥14 years
+- Learning disability diagnosis (LD_COD) for age ≥14 years
 - No resolution codes (LD is permanent condition)
 - Age restriction: patients must be 14+ years
 - Based on legacy fct_person_dx_ld.sql
@@ -30,14 +30,10 @@ WITH learning_disability_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
-        -- QOF register logic: active diagnosis required
+        -- QOF register logic: LD is permanent, so any diagnosis means active
         CASE
             WHEN MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-                AND (MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END) IS NULL 
-                     OR MAX(CASE WHEN is_learning_disability_diagnosis_code THEN clinical_effective_date END) > 
-                        MAX(CASE WHEN is_learning_disability_resolved_code THEN clinical_effective_date END))
             THEN TRUE
             ELSE FALSE
         END AS has_active_ld_diagnosis,

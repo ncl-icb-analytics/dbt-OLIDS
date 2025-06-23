@@ -3,7 +3,7 @@ models:
 - name: int_learning_disability_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: LDRES_COD, LD_COD
+      cluster_ids: LD_COD
   description: "All learning disability diagnosis observations from clinical records using QOF cluster ID.\nProvides comprehensive\
     \ data collection for learning disability register and special needs service planning.\n\nQOF Cluster IDs Used:\n- LD_DIAGNOSIS_COD:\
     \ Learning disability diagnoses\n\nClinical Purpose:\n- QOF learning disability register data collection (age \u226514)\n\
@@ -36,17 +36,25 @@ models:
     tests:
     - not_null
   - name: source_cluster_id
-    description: QOF cluster ID (LD_COD, LDRES_COD)
+    description: QOF cluster ID (LD_COD)
     tests:
     - not_null
   - name: is_learning_disability_diagnosis_code
-    description: Flag indicating learning disability diagnosis (LD_DIAGNOSIS_COD)
+    description: Flag indicating learning disability diagnosis (LD_COD)
     tests:
     - not_null
     - accepted_values:
         values:
         - true
         - false
+  - name: learning_disability_observation_type
+    description: Classification of this specific observation
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Learning Disability Diagnosis
+        - Unknown
   - name: earliest_ld_diagnosis_date
     description: Earliest learning disability diagnosis date for this person
   - name: latest_ld_diagnosis_date
