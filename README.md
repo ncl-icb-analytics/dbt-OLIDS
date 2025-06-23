@@ -123,19 +123,14 @@ dbt docs generate && dbt docs serve
 ### **Macro Usage**
 
 ```sql
--- Direct FROM clause usage (most common)
-FROM ({{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMRES_COD'") }}) obs
-FROM ({{ get_medication_orders(bnf_code='02050501') }}) meds
+-- Direct SELECT clause usage (most common)
+SELECT * FROM ({{ get_observations("'DM_COD'") }}) obs
+SELECT * FROM ({{ get_medication_orders(bnf_code='02050501') }}) meds
 
--- In subqueries for complex logic
-WITH prioritized_observations AS (
-    SELECT observation_id, person_id, clinical_effective_date
-    FROM ({{ get_observations("'HTN_COD', 'HTNRES_COD'", "PCD") }}) obs -- from PCD Refset only
-    WHERE obs.clinical_effective_date IS NOT NULL
-)
-
--- Multiple parameters for observations
-{{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD'") }}
+-- In subqueries
+SELECT observation_id, person_id, clinical_effective_date
+FROM ({{ get_observations("'HTN_COD', 'HTNRES_COD'", "PCD") }}) obs -- from PCD Refset only
+WHERE obs.clinical_effective_date IS NOT NULL
 
 -- BNF code filtering for medications
 {{ get_medication_orders(bnf_code='02050501') }}  -- ACE inhibitors (BNF Chapter 2.5.5.1)
