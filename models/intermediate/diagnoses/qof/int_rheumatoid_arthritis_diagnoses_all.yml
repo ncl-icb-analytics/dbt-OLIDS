@@ -3,7 +3,7 @@ models:
 - name: int_rheumatoid_arthritis_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: RA_COD
+      cluster_ids: RARTH_COD
   description: "All rheumatoid arthritis (RA) diagnoses from clinical records.\nUses QOF cluster ID RARTH_COD for rheumatoid\
     \ arthritis diagnosis codes.\n\nClinical Purpose:\n- RA register inclusion for QOF quality measures\n- Rheumatoid arthritis\
     \ disease management monitoring\n- DMARDs (Disease-Modifying Anti-Rheumatic Drugs) prescribing support\n\nQOF Context:\n\

@@ -7,6 +7,7 @@
 
 /*
 All urine Albumin-to-Creatinine Ratio (ACR) measurements from observations.
+Uses cluster ID UACR_TESTING for ACR test results.
 */
 
 WITH base_observations AS (
@@ -22,7 +23,7 @@ WITH base_observations AS (
         obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
         
-    FROM ({{ get_observations("'ACR_COD'") }}) obs
+    FROM ({{ get_observations("'UACR_TESTING'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
 )

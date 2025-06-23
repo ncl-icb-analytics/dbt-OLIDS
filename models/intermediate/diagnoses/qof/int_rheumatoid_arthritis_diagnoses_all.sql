@@ -41,7 +41,7 @@ SELECT
         ELSE 'Unknown'
     END AS ra_observation_type
 
-FROM ({{ get_observations("'RA_COD'") }}) obs
+FROM ({{ get_observations("'RARTH_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

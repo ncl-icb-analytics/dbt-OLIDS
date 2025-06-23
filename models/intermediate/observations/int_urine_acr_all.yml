@@ -5,9 +5,10 @@ models:
 
     tests:
       - cluster_ids_exist:
-          cluster_ids: "ACR_COD"
+          cluster_ids: "UACR_TESTING"
     description: |
       All urine Albumin-to-Creatinine Ratio (ACR) measurements from observations.
+      Uses cluster ID UACR_TESTING for ACR test results.
     columns:
       - name: person_id
         description: "Unique person identifier"
