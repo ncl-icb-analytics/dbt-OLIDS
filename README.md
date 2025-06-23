@@ -215,13 +215,14 @@ dbt build --target qa   # Full build in qa environment
 
 ### **PR Review Process**
 
-- **Automated Checks**: CI will run `dbt parse`, `dbt compile`, and basic tests
+- **TO DO: Automated Checks**: CI will run `dbt parse`, `dbt compile`, and basic tests
 - **Code Review**: At least one team member should review for:
   - Code quality and maintainability
   - Adherence to naming conventions
   - Appropriate use of facts vs dimensions
   - Documentation completeness
 - **Testing**: Reviewers should verify the changes work in a dev environment
+- **TO DO: Snowflake automatically runs `dbt deps` and `dbt build --target prod` on commits to main and on a schedule**
 
 ### **Merging**
 
