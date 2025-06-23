@@ -2,7 +2,7 @@
 
 ## Overview
 
-A comprehensive dbt project for migrating healthcare data models from HealtheIntent (Vertica) to Snowflake. Implements modern dimensional modeling with robust data quality testing for NHS primary care analytics.
+A dbt project for migrating healthcare data models from HealtheIntent (Vertica) to Snowflake.
 
 ## Architecture
 
