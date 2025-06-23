@@ -9,7 +9,6 @@
 SELECT
     base.person_id,
     base.age,
-    base.practice_code,
     
     -- AF indicators
     CASE WHEN af_61.person_id IS NOT NULL THEN TRUE ELSE FALSE END AS in_af_61,
