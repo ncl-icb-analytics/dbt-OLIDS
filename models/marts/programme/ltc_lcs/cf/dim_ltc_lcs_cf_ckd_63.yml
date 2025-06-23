@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: dim_ltc_lcs_cf_ckd_63
+    description: Intermediate model for LTC LCS Case Finding CKD_63 - Identifies patients with CKD and diabetes who have not had their HbA1c checked in the last 12 months.
+    columns:
+      - name: person_id
+        description: The unique identifier for the patient
+        tests:
+          - not_null
+          - unique
+      - name: first_ckd_diagnosis_date
+        description: The date of the patient's first CKD diagnosis
+      - name: latest_hba1c_date
+        description: The date of the patient's most recent HbA1c test (if any in last 12 months)
+      - name: has_ckd_diagnosis
+        description: Boolean indicating if the patient has a CKD diagnosis
+      - name: has_recent_hba1c_test
+        description: Boolean indicating if the patient has had an HbA1c test in the last 12 months
+      - name: has_excluding_condition
+        description: Boolean indicating if the patient has any conditions that would exclude them from this case finding
+      - name: meets_criteria
+        description: Boolean indicating if the patient meets all criteria for CKD_63 case finding
