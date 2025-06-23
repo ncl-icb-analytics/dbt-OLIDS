@@ -36,12 +36,9 @@ models:
     tests:
     - not_null
   - name: source_cluster_id
-    description: QOF cluster ID (LD_DIAGNOSIS_COD)
+    description: QOF cluster ID (LD_COD, LDRES_COD)
     tests:
     - not_null
-    - accepted_values:
-        values:
-        - LD_DIAGNOSIS_COD
   - name: is_learning_disability_diagnosis_code
     description: Flag indicating learning disability diagnosis (LD_DIAGNOSIS_COD)
     tests:

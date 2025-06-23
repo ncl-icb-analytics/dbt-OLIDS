@@ -30,7 +30,7 @@ models:
     - accepted_values:
         values:
         - Underweight
-        - Normal Weight
+        - Normal
         - Overweight
         - Obese Class I
         - Obese Class II

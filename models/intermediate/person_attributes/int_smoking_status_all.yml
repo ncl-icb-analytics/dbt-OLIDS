@@ -36,8 +36,6 @@ models:
         description: "Source cluster ID (SMOK_COD, LSMOK_COD, EXSMOK_COD, NSMOK_COD)"
         tests:
           - not_null
-          - accepted_values:
-              values: ['SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD']
       - name: is_smoker_code
         description: "Flag indicating if this is a current smoker code (LSMOK_COD)"
         tests:

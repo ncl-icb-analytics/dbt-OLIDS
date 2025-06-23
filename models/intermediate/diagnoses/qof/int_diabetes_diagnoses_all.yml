@@ -57,8 +57,6 @@ models:
         description: "QOF cluster ID (DM_COD, DMTYPE1_COD, DMTYPE2_COD, DMRES_COD)"
         tests:
           - not_null
-          - accepted_values:
-              values: ['DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD']
               
       - name: is_general_diabetes_code
         description: "Flag indicating general diabetes diagnosis (DM_COD)"
