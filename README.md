@@ -1,4 +1,4 @@
-# HealtheIntent -> Data Migration
+# HealtheIntent -> Snowflake Data Migration
 
 ## Overview
 
