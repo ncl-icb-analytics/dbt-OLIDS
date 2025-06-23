@@ -10,8 +10,8 @@ models:
       Note: In dummy data environment, PCN names may be placeholder values (using PCN code as name).
     
     tests:
-      - dbt_utils.expression_is_true:
-          expression: "count(*) >= 1"
+      - dbt_utils.at_least_one:
+          column_name: practice_code  # Check the table has at least one row
     
     columns:
       - name: practice_code

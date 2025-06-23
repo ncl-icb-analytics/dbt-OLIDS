@@ -32,7 +32,7 @@ models:
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: "years_since_first_occupation >= 0"
+              expression: ">= 0"
       
       - name: first_known_occupation_date
         description: "Earliest known registration date for any person at this dwelling"
@@ -53,14 +53,16 @@ models:
       - name: imd_decile_19
         description: "Index of Multiple Deprivation decile (2019)"
         tests:
-          - dbt_utils.expression_is_true:
-              expression: "imd_decile_19 is null or (imd_decile_19 >= 1 and imd_decile_19 <= 10)"
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 10
       
       - name: imd_quintile_19
         description: "Index of Multiple Deprivation quintile (2019)"
         tests:
-          - dbt_utils.expression_is_true:
-              expression: "imd_quintile_19 is null or (imd_quintile_19 >= 1 and imd_quintile_19 <= 5)"
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 5
       
       - name: created_at
         description: "Timestamp when this record was created"
@@ -72,6 +74,6 @@ models:
           name: "last_activity_after_first_occupation"
           expression: "last_known_activity_date >= first_known_occupation_date"
       
-      - dbt_utils.expression_is_true:
+      - dbt_utils.at_least_one:
           name: "has_at_least_one_dwelling"
-          expression: "count(*) >= 1" 
+          column_name: household_id  # Check the table has at least one row 
