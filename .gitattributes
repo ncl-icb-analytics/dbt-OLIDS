@@ -1,0 +1,3 @@
+# Make GitHub recognise SQL files properly
+*.sql linguist-detectable=true
+*.sql linguist-language=sql 
