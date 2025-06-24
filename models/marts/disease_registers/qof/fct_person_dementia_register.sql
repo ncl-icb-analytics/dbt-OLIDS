@@ -33,14 +33,11 @@ WITH dementia_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_dementia_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
+        NULL AS latest_resolved_date,  -- Dementia has no resolved codes (permanent condition)
         
-        -- QOF register logic: active diagnosis required (even though dementia is rarely resolved)
+        -- QOF register logic: active diagnosis required (dementia is permanent, no resolved codes)
         CASE
             WHEN MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-                AND (MAX(CASE WHEN is_dementia_resolved_code THEN clinical_effective_date END) IS NULL 
-                     OR MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) > 
-                        MAX(CASE WHEN is_dementia_resolved_code THEN clinical_effective_date END))
             THEN TRUE
             ELSE FALSE
         END AS has_active_dementia_diagnosis,
@@ -51,7 +48,7 @@ WITH dementia_diagnoses AS (
         -- Traceability arrays
         ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_code ELSE NULL END) AS all_dementia_concept_codes,
         ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_display ELSE NULL END) AS all_dementia_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_dementia_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        ARRAY_CONSTRUCT() AS all_resolved_concept_codes  -- No resolved codes for dementia
         
     FROM {{ ref('int_dementia_diagnoses_all') }}
     GROUP BY person_id

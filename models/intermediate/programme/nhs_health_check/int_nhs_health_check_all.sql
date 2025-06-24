@@ -7,7 +7,7 @@
 
 /*
 All NHS Health Check completed events with enhanced analytics features.
-Uses NHSHEALTHCHECK_COD cluster with validated SNOMED codes for completed health checks.
+Uses HEALTH_CHECK_COMP cluster with validated SNOMED codes for completed health checks.
 
 Enhanced Analytics Features:
 - Health check type classification and eligibility assessment
@@ -24,7 +24,7 @@ SELECT
     obs.clinical_effective_date,
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
-    'NHSHEALTHCHECK_COD' AS source_cluster_id,
+    'HEALTH_CHECK_COMP' AS source_cluster_id,
     
     -- All records represent completed NHS Health Checks
     TRUE AS is_completed_health_check,
@@ -103,7 +103,7 @@ SELECT
         ELSE 'Overdue (>7 years)'
     END AS health_check_status_interpretation
         
-FROM ({{ get_observations("'NHSHEALTHCHECK_COD'") }}) obs
+FROM ({{ get_observations("'HEALTH_CHECK_COMP'") }}) obs
 LEFT JOIN {{ ref('dim_person_active_patients') }} ap
     ON obs.person_id = ap.person_id
 LEFT JOIN {{ ref('dim_person_age') }} age

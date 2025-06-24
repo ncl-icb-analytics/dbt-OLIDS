@@ -3,7 +3,7 @@ models:
 - name: int_unable_spirometry_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: UNABLESPI_COD
+      cluster_ids: SPIRPU_COD
   description: 'All unable-to-have-spirometry observations from clinical records.
 
     Uses QOF cluster ID UNABLESPI_COD for patients unable to perform spirometry tests.

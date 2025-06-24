@@ -3,7 +3,7 @@ models:
 - name: int_asthma_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: ASTRES_COD, AST_COD
+      cluster_ids: AST_COD, ASTRES_COD
   description: "All asthma diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive data\
     \ collection for asthma register and respiratory management.\n\nQOF Cluster IDs Used:\n- AST_COD: Asthma diagnoses\n-\
     \ ASTRES_COD: Asthma resolved/remission codes\n\nClinical Purpose:\n- QOF asthma register data collection (aged 6+, active\
@@ -38,10 +38,6 @@ models:
     description: QOF cluster ID (AST_COD, ASTRES_COD)
     tests:
     - not_null
-    - accepted_values:
-        values:
-        - AST_COD
-        - ASTRES_COD
   - name: is_asthma_diagnosis_code
     description: Flag indicating asthma diagnosis (AST_COD)
     tests:

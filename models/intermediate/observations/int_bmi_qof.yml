@@ -33,9 +33,11 @@ models:
         max_value: 150
         severity: warn
   - name: original_result_value
-    description: Original BMI value as recorded
+    description: Original BMI value as recorded (NULL for BMI30_COD codes which are descriptive)
     tests:
-    - not_null
+    - not_null:
+        config:
+          where: "source_cluster_id != 'BMI30_COD'"
   - name: is_valid_bmi
     description: Flag indicating if BMI is within valid range (10-80)
     tests:

@@ -30,23 +30,22 @@ WITH stroke_tia_diagnoses AS (
         person_id,
         
         -- Register inclusion dates  
-        MIN(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_stroke_tia_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
+        MIN(CASE WHEN (is_stroke_diagnosis_code OR is_tia_diagnosis_code) THEN clinical_effective_date END) AS earliest_diagnosis_date,
+        MAX(CASE WHEN (is_stroke_diagnosis_code OR is_tia_diagnosis_code) THEN clinical_effective_date END) AS latest_diagnosis_date,
         
-        -- Resolution dates
-        MIN(CASE WHEN is_stroke_tia_resolved_code THEN clinical_effective_date END) AS earliest_resolved_date,
-        MAX(CASE WHEN is_stroke_tia_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
+        -- Resolution dates (stroke/TIA are permanent conditions, no resolved codes)
+        NULL AS earliest_resolved_date,
+        NULL AS latest_resolved_date,
         
         -- Episode counts
-        COUNT(CASE WHEN is_stroke_tia_diagnosis_code THEN 1 END) AS total_stroke_tia_episodes,
-        COUNT(CASE WHEN is_stroke_tia_resolved_code THEN 1 END) AS total_resolution_codes,
+        COUNT(CASE WHEN (is_stroke_diagnosis_code OR is_tia_diagnosis_code) THEN 1 END) AS total_stroke_tia_episodes,
+        0 AS total_resolution_codes,  -- No resolution codes for stroke/TIA
         
         -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_diagnosis_code THEN concept_code END) 
+        ARRAY_AGG(DISTINCT CASE WHEN (is_stroke_diagnosis_code OR is_tia_diagnosis_code) THEN concept_code END) 
             AS stroke_tia_diagnosis_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_resolved_code THEN concept_code END) 
-            AS stroke_tia_resolution_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_stroke_tia_diagnosis_code THEN concept_display END) 
+        ARRAY_CONSTRUCT() AS stroke_tia_resolution_codes,  -- No resolution codes
+        ARRAY_AGG(DISTINCT CASE WHEN (is_stroke_diagnosis_code OR is_tia_diagnosis_code) THEN concept_display END) 
             AS stroke_tia_diagnosis_displays
             
     FROM {{ ref('int_stroke_tia_diagnoses_all') }}
@@ -57,11 +56,9 @@ register_inclusion AS (
     SELECT
         std.*,
         
-        -- QOF register logic: Include if has diagnosis and not resolved
+        -- QOF register logic: Include if has diagnosis (stroke/TIA are permanent conditions)
         CASE 
             WHEN earliest_diagnosis_date IS NOT NULL 
-                 AND (earliest_resolved_date IS NULL 
-                      OR earliest_resolved_date > latest_diagnosis_date)
             THEN TRUE 
             ELSE FALSE 
         END AS is_on_register,
@@ -69,14 +66,7 @@ register_inclusion AS (
         -- Clinical interpretation
         CASE 
             WHEN earliest_diagnosis_date IS NOT NULL 
-                 AND earliest_resolved_date IS NULL
-            THEN 'Active stroke/TIA - never resolved'
-            WHEN earliest_diagnosis_date IS NOT NULL 
-                 AND earliest_resolved_date > latest_diagnosis_date
-            THEN 'Active stroke/TIA - resolved before last diagnosis'
-            WHEN earliest_diagnosis_date IS NOT NULL 
-                 AND earliest_resolved_date <= latest_diagnosis_date  
-            THEN 'Resolved stroke/TIA'
+            THEN 'Active stroke/TIA - permanent condition'
             ELSE 'No stroke/TIA diagnosis'
         END AS stroke_tia_status,
         

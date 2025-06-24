@@ -29,15 +29,11 @@ WITH cancer_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
         MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_cancer_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
         
-        -- QOF register logic: active diagnosis required since April 2003
+        -- QOF register logic: cancer is permanent, any diagnosis since April 2003 qualifies
         CASE
             WHEN MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
                 AND MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) >= '2003-04-01'
-                AND (MAX(CASE WHEN is_cancer_resolved_code THEN clinical_effective_date END) IS NULL 
-                     OR MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) > 
-                        MAX(CASE WHEN is_cancer_resolved_code THEN clinical_effective_date END))
             THEN TRUE
             ELSE FALSE
         END AS has_active_cancer_diagnosis,
@@ -47,8 +43,7 @@ WITH cancer_diagnoses AS (
         
         -- Traceability arrays
         ARRAY_AGG(DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_code ELSE NULL END) AS all_cancer_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_display ELSE NULL END) AS all_cancer_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_cancer_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
+        ARRAY_AGG(DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_display ELSE NULL END) AS all_cancer_concept_displays
         
     FROM {{ ref('int_cancer_diagnoses_all') }}
     GROUP BY person_id
@@ -66,12 +61,10 @@ final AS (
         -- Diagnosis dates
         cd.earliest_diagnosis_date,
         cd.latest_diagnosis_date,
-        cd.latest_resolved_date,
         
         -- Code arrays for traceability  
         cd.all_cancer_concept_codes,
-        cd.all_cancer_concept_displays,
-        cd.all_resolved_concept_codes
+        cd.all_cancer_concept_displays
         
     FROM cancer_diagnoses cd
     LEFT JOIN {{ ref('dim_person') }} p ON cd.person_id = p.person_id
@@ -85,8 +78,6 @@ SELECT
     is_on_register,
     earliest_diagnosis_date,
     latest_diagnosis_date,
-    latest_resolved_date,
     all_cancer_concept_codes,
-    all_cancer_concept_displays,
-    all_resolved_concept_codes
+    all_cancer_concept_displays
 FROM final 

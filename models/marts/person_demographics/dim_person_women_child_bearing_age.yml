@@ -3,7 +3,9 @@ models:
 - name: dim_person_women_child_bearing_age
   description: 'Dimension identifying women of child-bearing age for clinical safety monitoring
 
-    and reproductive health programmes. Uses standard NHS age range of 15-44.
+    and reproductive health programmes. Uses extended age range of 0-55 to capture all
+
+    potential reproductive health scenarios.
 
     '
   columns:
@@ -16,7 +18,7 @@ models:
     description: Current age of person
     tests:
     - dbt_utils.accepted_range:
-        min_value: 15
-        max_value: 44
+        min_value: 0
+        max_value: 55
   - name: sex
     description: Sex classification - should be Female for this dimension

@@ -3,15 +3,26 @@ version: 2
 models:
   - name: fct_person_copd_register
     description: >
-      **COPD Register - QOF Respiratory Quality Measures**
+      **COPD Register - Official QOF Business Rules Implementation**
       
-      Fact table for COPD register. Includes patients with different criteria based on diagnosis date:
-      1) Pre-April 2023: requires COPD diagnosis only
-      2) Post-April 2023: requires either spirometry confirmation (FEV1/FVC < 0.7 within 3 months before 
-         or 6 months after diagnosis, or within 6 months of registration for new patients) or documented 
-         inability to have spirometry. 
+      Implements the exact QOF COPD register specification with correct field mappings:
       
-      Tracks diagnosis dates, spirometry results, and resolution status.
+      **RULE 1**: If EUNRESCOPD_DAT < 01/04/2023 → SELECT (automatic inclusion)
+      
+      **RULE 2**: If EUNRESCOPD_DAT >= 01/04/2023 AND spirometry within timeframe → SELECT  
+      - FEV1/FVC <0.7 within 93 days before and 186 days after EUNRESCOPD_DAT
+      - Maps to QOF Fields 24 (FEV1FVCDIAG_DAT) and 25 (FEV1FVCL70DIAG_DAT)
+      
+      **RULE 3**: Additional spirometry pathway (simplified)
+      - Extended timeframe for post-April 2023 patients
+      
+      **RULE 4**: Final filter - If EUNRESCOPD_DAT >= 01/04/2023 → SELECT, else REJECT
+      
+      **EUNRESCOPD_DAT Calculation** (QOF Field 22):
+      - If COPDRES_DAT = NULL AND COPDRES1_DAT = NULL → RETURN COPD_DAT
+      - Otherwise → RETURN COPD1_DAT
+      
+      This implementation follows the exact QOF specification with proper field mappings.
       
     columns:
       - name: person_id
@@ -21,44 +32,111 @@ models:
           - not_null
           - unique
 
+      - name: age
+        description: "Current age of the person"
+        data_type: integer
+        tests:
+          - not_null
+
       - name: is_on_register
-        description: "Flag indicating if person is on the COPD register"
+        description: "Flag indicating if person qualifies for COPD register under QOF rules"
         data_type: boolean
         tests:
           - not_null
 
+      - name: qof_rule_applied
+        description: "Which QOF rule qualified this person for the register"
+        data_type: string
+        tests:
+          - not_null
+          - accepted_values:
+              values: 
+                - 'Rule 1: Pre-April 2023'
+                - 'Rule 2: Post-April 2023 + Spirometry'
+                - 'Rule 3: Additional Spirometry'
+                - 'Rule 4: Failed - EUNRESCOPD_DAT < 01/04/2023'
+
+      - name: qualification_reason
+        description: "Detailed reason for register qualification or exclusion"
+        data_type: string
+        tests:
+          - not_null
+
+      - name: earliest_unresolved_diagnosis_date
+        description: "QOF Field 22: EUNRESCOPD_DAT - earliest unresolved COPD diagnosis per exact QOF calculation"
+        data_type: date
+
       - name: earliest_diagnosis_date
-        description: "Earliest COPD diagnosis date"
+        description: "QOF Field 4: COPD_DAT - earliest COPD diagnosis"
         data_type: date
         tests:
           - not_null
 
       - name: latest_diagnosis_date
-        description: "Latest COPD diagnosis date"
+        description: "QOF Field 5: COPDLAT_DAT - latest COPD diagnosis"
         data_type: date
         tests:
           - not_null
 
-      - name: latest_resolution_date
-        description: "Latest COPD resolution date"
+      - name: latest_resolved_date
+        description: "QOF Field 6: COPDRES_DAT - latest COPD resolved code after latest diagnosis"
         data_type: date
 
-      - name: earliest_unresolved_diagnosis_date
-        description: "Earliest unresolved diagnosis date (EUNRESCOPD_DAT)"
+      - name: latest_resolved_after_earliest_date
+        description: "QOF Field 20: COPDRES1_DAT - latest COPD resolved code after earliest diagnosis"
         data_type: date
 
-      - name: has_spirometry_confirmation
-        description: "Flag indicating if person has spirometry confirmation"
+      - name: earliest_diagnosis_after_latest_resolved
+        description: "QOF Field 21: COPD1_DAT - earliest COPD diagnosis after latest resolved code"
+        data_type: date
+
+      - name: copd_diagnosis_count
+        description: "Total number of COPD diagnosis records"
+        data_type: integer
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+
+      - name: is_pre_april_2023_diagnosis
+        description: "Flag indicating if EUNRESCOPD_DAT was before April 2023"
         data_type: boolean
         tests:
           - not_null
 
-      - name: latest_spirometry_date
-        description: "Date of latest spirometry test"
+      - name: is_post_april_2023_diagnosis
+        description: "Flag indicating if EUNRESCOPD_DAT was on/after April 2023"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: passed_rule_4_filter
+        description: "Flag indicating if patient passed Rule 4 filter (EUNRESCOPD_DAT >= 01/04/2023)"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: qof_relevant_spirometry_date
+        description: "Date of spirometry test that qualified patient under QOF rules (FEV1FVCDIAG_DAT/FEV1FVCL70DIAG_DAT)"
         data_type: date
 
-      - name: latest_spirometry_fev1_fvc_ratio
-        description: "Latest FEV1/FVC ratio"
+      - name: qof_relevant_spirometry_ratio
+        description: "FEV1/FVC ratio that qualified patient under QOF rules"
+        data_type: number
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0.1
+              max_value: 0.69
+              severity: warn
+              config:
+                where: "qof_relevant_spirometry_ratio IS NOT NULL"
+
+      - name: latest_spirometry_date
+        description: "Date of most recent spirometry test (regardless of QOF qualification)"
+        data_type: date
+
+      - name: latest_spirometry_ratio
+        description: "Most recent FEV1/FVC ratio (regardless of QOF qualification)"
         data_type: number
         tests:
           - dbt_utils.accepted_range:
@@ -66,38 +144,60 @@ models:
               max_value: 2.0
               severity: warn
               config:
-                where: "latest_spirometry_fev1_fvc_ratio IS NOT NULL"
+                where: "latest_spirometry_ratio IS NOT NULL"
 
-      - name: is_unable_spirometry
-        description: "Flag indicating if person is unable to have spirometry"
+      - name: latest_spirometry_confirms_copd
+        description: "Flag indicating if latest spirometry confirms COPD (ratio <0.7)"
         data_type: boolean
         tests:
           - not_null
+
+      - name: total_spirometry_tests
+        description: "Total number of spirometry tests on record"
+        data_type: integer
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
 
       - name: latest_unable_spirometry_date
-        description: "Latest date when unable to have spirometry was recorded"
+        description: "Most recent date when unable to have spirometry was recorded"
         data_type: date
 
-      - name: is_pre_april_2023_diagnosis
-        description: "Flag indicating if diagnosis was before April 2023"
+      - name: total_unable_spirometry_records
+        description: "Total number of unable-spirometry records"
+        data_type: integer
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: qualified_rule_1
+        description: "Flag indicating qualification under Rule 1 (EUNRESCOPD_DAT < 01/04/2023)"
         data_type: boolean
         tests:
           - not_null
 
-      - name: is_post_april_2023_diagnosis
-        description: "Flag indicating if diagnosis was after April 2023"
+      - name: qualified_rule_2
+        description: "Flag indicating qualification under Rule 2 (Post-April + Spirometry within exact timeframe)"
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: qualified_rule_3
+        description: "Flag indicating qualification under Rule 3 (Additional Spirometry pathway)"
         data_type: boolean
         tests:
           - not_null
 
       - name: all_copd_concept_codes
-        description: "All COPD concept codes for this person"
+        description: "Array of all COPD concept codes for this person"
         data_type: array
         tests:
           - not_null
 
       - name: all_copd_concept_displays
-        description: "All COPD concept display terms for this person"
+        description: "Array of all COPD concept display terms for this person"
         data_type: array
         tests:
           - not_null 

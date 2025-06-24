@@ -3,7 +3,7 @@ models:
 - name: int_stroke_tia_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: STIARES_COD, STIA_COD
+      cluster_ids: STRK_COD, TIA_COD
   description: "All stroke and transient ischaemic attack (TIA) diagnoses from clinical records.\nUses QOF cluster ID STIA_COD\
     \ for stroke and TIA diagnosis codes.\n\nClinical Purpose:\n- Stroke/TIA register inclusion for QOF quality measures\n\
     - Stroke secondary prevention monitoring\n- Cardiovascular risk management post-stroke\n\nQOF Context:\nStroke/TIA register\

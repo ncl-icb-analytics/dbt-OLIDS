@@ -3,7 +3,7 @@ models:
 - name: int_depression_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: DEPRES_COD, DEP_COD
+      cluster_ids: DEPRES_COD, DEPR_COD
   description: "All depression diagnosis and care pathway observations from clinical records using QOF cluster IDs.\nProvides\
     \ comprehensive data collection for depression register and care monitoring.\n\nQOF Cluster IDs Used:\n- DEPR_COD: Depression\
     \ diagnoses\n- DEPRES_COD: Depression resolved/remission codes\n- DEPRVW_COD: Depression review codes (QOF timing: 10-56\
@@ -43,10 +43,6 @@ models:
         values:
         - DEPR_COD
         - DEPRES_COD
-        - DEPRVW_COD
-        - DEPRINVITE_COD
-        - DEPRPCADEC_COD
-        - DEPRPCAPU_COD
   - name: is_depression_diagnosis_code
     description: Flag indicating depression diagnosis (DEPR_COD)
     tests:

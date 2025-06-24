@@ -23,8 +23,7 @@ models:
         values:
         - Type 1
         - Type 2
-        - Other
-        - Unspecified
+        - Unknown
   - name: latest_foot_check_date
     description: Date of most recent foot examination
     tests:

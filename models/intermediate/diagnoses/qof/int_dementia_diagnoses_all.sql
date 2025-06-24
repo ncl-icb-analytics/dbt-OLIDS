@@ -7,9 +7,8 @@
 
 /*
 All dementia diagnosis observations from clinical records.
-Uses QOF dementia cluster IDs:
-- DEM_COD: Dementia diagnoses
-- DEMRES_COD: Dementia resolved/remission codes
+Uses QOF dementia cluster ID:
+- DEM_COD: Dementia diagnoses (no resolution codes as dementia is permanent)
 
 Clinical Purpose:
 - QOF dementia register data collection
@@ -18,8 +17,8 @@ Clinical Purpose:
 - Resolution status tracking
 
 QOF Context:
-Dementia register includes persons with dementia diagnosis codes who have not
-been resolved. Resolution logic applied in downstream fact models.
+Dementia register includes persons with dementia diagnosis codes.
+Dementia is considered a permanent condition with no resolution codes.
 No specific age restrictions for dementia register.
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
@@ -36,17 +35,12 @@ SELECT
     obs.cluster_id AS source_cluster_id,
     
     -- Dementia-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'DEM_COD' THEN TRUE ELSE FALSE END AS is_dementia_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'DEMRES_COD' THEN TRUE ELSE FALSE END AS is_dementia_resolved_code,
+    TRUE AS is_dementia_diagnosis_code,
     
     -- Dementia observation type determination
-    CASE
-        WHEN obs.cluster_id = 'DEM_COD' THEN 'Dementia Diagnosis'
-        WHEN obs.cluster_id = 'DEMRES_COD' THEN 'Dementia Resolved'
-        ELSE 'Unknown'
-    END AS dementia_observation_type
+    'Dementia Diagnosis' AS dementia_observation_type
 
-FROM ({{ get_observations("'DEM_COD', 'DEMRES_COD'") }}) obs
+FROM ({{ get_observations("'DEM_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

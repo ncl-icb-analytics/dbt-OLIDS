@@ -57,8 +57,9 @@ models:
         description: "Current age in years (or age at death if deceased)"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "age >= 0 and age <= 150"
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
       
       - name: age_life_stage
         description: "Life stage categorisation"
@@ -132,9 +133,9 @@ models:
           name: "registration_date_reasonable"
           expression: "registration_start_date is null or registration_start_date <= current_date()"
       
-      - dbt_utils.expression_is_true:
+      - dbt_utils.at_least_one:
           name: "has_at_least_one_member"
-          expression: "count(*) >= 1"
+          column_name: person_id  # Check the table has at least one row
       
       # Referential integrity
       - dbt_utils.expression_is_true:

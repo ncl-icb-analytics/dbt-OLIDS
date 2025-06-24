@@ -46,7 +46,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Current Smoker', 'Ex Smoker', 'Never Smoked', 'Unknown']
+              values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'General Smoking Code', 'Unknown']
               
       - name: latest_smoking_date
         description: "Date of most recent smoking-related observation"

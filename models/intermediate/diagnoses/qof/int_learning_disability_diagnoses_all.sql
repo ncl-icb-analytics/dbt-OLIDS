@@ -9,7 +9,6 @@
 All learning disability diagnosis observations from clinical records.
 Uses QOF learning disability cluster IDs:
 - LD_COD: Learning disability diagnoses
-- LDRES_COD: Learning disability resolved/remission codes
 
 Clinical Purpose:
 - QOF learning disability register data collection
@@ -37,16 +36,14 @@ SELECT
     
     -- Learning disability-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'LD_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'LDRES_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_resolved_code,
     
     -- Learning disability observation type determination
     CASE
         WHEN obs.cluster_id = 'LD_COD' THEN 'Learning Disability Diagnosis'
-        WHEN obs.cluster_id = 'LDRES_COD' THEN 'Learning Disability Resolved'
         ELSE 'Unknown'
     END AS learning_disability_observation_type
 
-FROM ({{ get_observations("'LD_COD', 'LDRES_COD'") }}) obs
+FROM ({{ get_observations("'LD_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

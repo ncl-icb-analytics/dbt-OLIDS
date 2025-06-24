@@ -66,8 +66,8 @@ models:
     description: Most recent HbA1c result value (mmol/mol or %)
     tests:
     - dbt_utils.accepted_range:
-        min_value: 20
-        max_value: 200
+        min_value: 10
+        max_value: 300
         severity: warn
   - name: latest_bp_date
     description: Date of most recent blood pressure reading

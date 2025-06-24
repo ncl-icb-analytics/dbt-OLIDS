@@ -34,9 +34,11 @@ models:
         config:
           where: fev1_fvc_ratio IS NOT NULL
   - name: original_result_value
-    description: Original result value as recorded
+    description: Original result value as recorded (NULL for FEV1FVCL70_COD codes which are pre-coded as <0.7)
     tests:
-    - not_null
+    - not_null:
+        config:
+          where: "source_cluster_id != 'FEV1FVCL70_COD'"
   - name: concept_code
     description: SNOMED concept code for spirometry
     tests:

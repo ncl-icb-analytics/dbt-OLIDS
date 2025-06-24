@@ -3,7 +3,7 @@ models:
 - name: int_dementia_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: DEMRES_COD, DEM_COD
+      cluster_ids: DEM_COD
   description: 'All dementia diagnosis observations from clinical records using QOF cluster IDs.
 
     Provides comprehensive data collection for dementia register and cognitive health monitoring.

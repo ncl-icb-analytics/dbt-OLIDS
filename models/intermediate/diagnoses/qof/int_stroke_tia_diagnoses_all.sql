@@ -8,8 +8,8 @@
 /*
 All stroke and TIA diagnosis observations from clinical records.
 Uses QOF stroke cluster IDs:
-- STIA_COD: Stroke and TIA diagnoses
-- STIARES_COD: Stroke/TIA resolved/remission codes
+- STRK_COD: Stroke diagnoses
+- TIA_COD: TIA diagnoses
 
 Clinical Purpose:
 - QOF stroke register data collection
@@ -18,8 +18,8 @@ Clinical Purpose:
 - Resolution status tracking
 
 QOF Context:
-Stroke register includes persons with stroke/TIA diagnosis codes who have not
-been resolved. Resolution logic applied in downstream fact models.
+Stroke register includes persons with stroke or TIA diagnosis codes.
+Strokes and TIAs are considered permanent events with no resolution codes.
 No specific age restrictions for stroke register.
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
@@ -36,17 +36,17 @@ SELECT
     obs.cluster_id AS source_cluster_id,
     
     -- Stroke/TIA-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'STIA_COD' THEN TRUE ELSE FALSE END AS is_stroke_tia_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'STIARES_COD' THEN TRUE ELSE FALSE END AS is_stroke_tia_resolved_code,
+    CASE WHEN obs.cluster_id = 'STRK_COD' THEN TRUE ELSE FALSE END AS is_stroke_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'TIA_COD' THEN TRUE ELSE FALSE END AS is_tia_diagnosis_code,
     
     -- Stroke/TIA observation type determination
     CASE
-        WHEN obs.cluster_id = 'STIA_COD' THEN 'Stroke/TIA Diagnosis'
-        WHEN obs.cluster_id = 'STIARES_COD' THEN 'Stroke/TIA Resolved'
+        WHEN obs.cluster_id = 'STRK_COD' THEN 'Stroke Diagnosis'
+        WHEN obs.cluster_id = 'TIA_COD' THEN 'TIA Diagnosis'
         ELSE 'Unknown'
     END AS stroke_tia_observation_type
 
-FROM ({{ get_observations("'STIA_COD', 'STIARES_COD'") }}) obs
+FROM ({{ get_observations("'STRK_COD', 'TIA_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id 

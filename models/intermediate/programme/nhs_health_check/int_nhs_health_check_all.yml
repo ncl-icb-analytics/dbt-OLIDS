@@ -36,11 +36,11 @@ models:
         tests:
           - not_null
       - name: source_cluster_id
-        description: "Source cluster ID (NHSHEALTHCHECK_COD)"
+        description: "Source cluster ID (HEALTH_CHECK_COMP)"
         tests:
           - not_null
           - accepted_values:
-              values: ['NHSHEALTHCHECK_COD']
+              values: ['HEALTH_CHECK_COMP']
       - name: is_completed_health_check
         description: "Flag indicating completed health check (always TRUE)"
         tests:
@@ -132,4 +132,4 @@ models:
 
     tests:
       - cluster_ids_exist:
-          cluster_ids: "NHSHEALTHCHECK_COD"
+          cluster_ids: "HEALTH_CHECK_COMP"

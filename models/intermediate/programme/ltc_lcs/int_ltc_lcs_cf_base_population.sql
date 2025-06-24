@@ -13,8 +13,6 @@ WITH health_checks AS (
 )
 SELECT DISTINCT
     ltc.person_id,
-    ltc.condition_code,
-    ltc.is_on_register,
     age.age
 FROM {{ ref('fct_person_ltc_summary') }} ltc
 JOIN {{ ref('dim_person_age') }} age ON ltc.person_id = age.person_id

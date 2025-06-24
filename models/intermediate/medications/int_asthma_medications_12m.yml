@@ -5,10 +5,10 @@ models:
 
     tests:
       - cluster_ids_exist:
-          cluster_ids: "ASTTRT_COD"
+          cluster_ids: "ASTRX_COD"
     description: |
       Asthma medication orders from the last 12 months for QOF asthma care monitoring.
-      Uses cluster ID ASTTRT_COD for asthma treatment medications.
+      Uses cluster ID ASTRX_COD for asthma treatment medications.
       Critical for asthma register and QOF quality indicators.
       Includes ALL persons following intermediate layer principles.
       

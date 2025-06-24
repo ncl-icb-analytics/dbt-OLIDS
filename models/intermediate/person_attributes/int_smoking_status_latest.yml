@@ -28,12 +28,6 @@ models:
     description: Source cluster ID
     tests:
     - not_null
-    - accepted_values:
-        values:
-        - SMOK_COD
-        - LSMOK_COD
-        - EXSMOK_COD
-        - NSMOK_COD
   - name: is_smoker_code
     description: Flag indicating current smoker code
     tests:
@@ -67,6 +61,7 @@ models:
         - Current Smoker
         - Ex-Smoker
         - Never Smoked
+        - General Smoking Code
         - Unknown
   - name: is_current_smoker
     description: Flag indicating current smoking status

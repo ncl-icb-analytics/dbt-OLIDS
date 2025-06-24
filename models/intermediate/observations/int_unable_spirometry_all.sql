@@ -7,7 +7,7 @@
 
 /*
 All unable-to-have-spirometry observations from clinical records.
-Uses QOF cluster ID UNABLESPI_COD for patients unable to perform spirometry tests.
+Uses QOF cluster ID SPIRPU_COD for patients where spirometry is unsuitable.
 
 Clinical Purpose:
 - COPD register spirometry confirmation requirements (post-April 2023)
@@ -33,7 +33,7 @@ SELECT
     -- Classification of this specific observation
     'Unable to Perform Spirometry' AS spirometry_observation_type
         
-FROM ({{ get_observations("'UNABLESPI_COD'") }}) obs
+FROM ({{ get_observations("'SPIRPU_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date DESC 

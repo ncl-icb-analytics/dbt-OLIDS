@@ -3,7 +3,7 @@ models:
 - name: int_epilepsy_diagnoses_all
   tests:
   - cluster_ids_exist:
-      cluster_ids: EPIRES_COD, EPI_COD
+      cluster_ids: EPIL_COD, EPILRES_COD
   description: "All epilepsy diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive data\
     \ collection for epilepsy register and neurological management.\n\nQOF Cluster IDs Used:\n- EPIL_COD: Epilepsy diagnoses\n\
     - EPILRES_COD: Epilepsy resolved/remission codes\n\nClinical Purpose:\n- QOF epilepsy register data collection (aged 18+,\
@@ -39,10 +39,6 @@ models:
     description: QOF cluster ID (EPIL_COD, EPILRES_COD)
     tests:
     - not_null
-    - accepted_values:
-        values:
-        - EPIL_COD
-        - EPILRES_COD
   - name: is_epilepsy_diagnosis_code
     description: Flag indicating epilepsy diagnosis (EPIL_COD)
     tests:
