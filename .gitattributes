@@ -1,3 +1,7 @@
 # Make GitHub recognise SQL files properly
 *.sql linguist-detectable=true
-*.sql linguist-language=sql 
+*.sql linguist-language=sql
+
+# Make GitHub recognise YAML files (important for dbt projects)
+*.yml linguist-detectable=true
+*.yaml linguist-detectable=true 
