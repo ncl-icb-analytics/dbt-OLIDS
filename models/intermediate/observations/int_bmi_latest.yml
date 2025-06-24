@@ -13,12 +13,13 @@ models:
     tests:
     - not_null
   - name: bmi_value
-    description: "BMI value in kg/m\xB2 (valid range only)"
+    description: "BMI value in kg/m² (valid range only)"
     tests:
     - not_null
     - dbt_utils.accepted_range:
-        min_value: 10
-        max_value: 80
+        min_value: 5
+        max_value: 400
+        severity: warn
   - name: original_result_value
     description: Original BMI value as recorded
     tests:

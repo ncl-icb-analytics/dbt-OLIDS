@@ -66,13 +66,13 @@ models:
         description: "QOF Field 22: EUNRESCOPD_DAT - earliest unresolved COPD diagnosis per exact QOF calculation"
         data_type: date
 
-      - name: earliest_copd_diagnosis_date
+      - name: earliest_diagnosis_date
         description: "QOF Field 4: COPD_DAT - earliest COPD diagnosis"
         data_type: date
         tests:
           - not_null
 
-      - name: latest_copd_diagnosis_date
+      - name: latest_diagnosis_date
         description: "QOF Field 5: COPDLAT_DAT - latest COPD diagnosis"
         data_type: date
         tests:

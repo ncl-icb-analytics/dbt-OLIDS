@@ -274,8 +274,8 @@ SELECT
     
     -- QOF Key Fields (exact specification)
     qfce.eunrescopd_dat AS earliest_unresolved_diagnosis_date,  -- Field 22
-    qfce.copd_dat AS earliest_copd_diagnosis_date,              -- Field 4  
-    qfce.copdlat_dat AS latest_copd_diagnosis_date,             -- Field 5
+        qfce.copd_dat AS earliest_diagnosis_date,              -- Field 4
+    qfce.copdlat_dat AS latest_diagnosis_date,             -- Field 5
     qfce.copdres_dat AS latest_resolved_date,                   -- Field 6
     qfce.copdres1_dat AS latest_resolved_after_earliest_date,   -- Field 20
     qfce.copd1_dat AS earliest_diagnosis_after_latest_resolved, -- Field 21

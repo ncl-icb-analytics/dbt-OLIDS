@@ -21,8 +21,8 @@ preg_risk_observations AS (
         pp.person_id,
         o.clinical_effective_date,
         mc.concept_code,
-        mc.code_description AS concept_display,
-        mc.cluster_id AS source_cluster_id,
+        COALESCE(mc.code_description, 'Unknown PREGRISK Code') AS concept_display,
+        COALESCE(mc.cluster_id, 'PREGRISK') AS source_cluster_id,
         vpc.code_category,
         o.date_recorded,
         o.lds_datetime_data_acquired
@@ -36,6 +36,7 @@ preg_risk_observations AS (
     INNER JOIN valproate_preg_risk_codes vpc
         ON mc.concept_code = vpc.code
     WHERE vpc.code_category = 'PREGRISK'
+        AND o.clinical_effective_date IS NOT NULL  -- Ensure we have valid dates
 )
 
 SELECT

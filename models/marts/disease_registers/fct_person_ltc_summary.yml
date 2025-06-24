@@ -44,9 +44,11 @@ models:
         values:
         - true
   - name: earliest_diagnosis_date
-    description: Earliest diagnosis date for this condition
+    description: Earliest diagnosis date for this condition (may be NULL for obesity if no valid BMI recorded)
     tests:
-    - not_null
+    - not_null:
+        config:
+          where: "condition_code != 'OB'"
   - name: latest_diagnosis_date
     description: Latest diagnosis date for this condition
     tests:

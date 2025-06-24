@@ -57,4 +57,12 @@
         {% if bnf_code is not none %}
             AND bnf.bnf_code LIKE '{{ bnf_code }}%'
         {% endif %}
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY mo.id, mc.concept_code, bnf.bnf_code
+        ORDER BY 
+            CASE WHEN mc.code_description IS NOT NULL THEN 1 ELSE 2 END,
+            CASE WHEN bnf.bnf_name IS NOT NULL THEN 1 ELSE 2 END,
+            mc.code_description,
+            bnf.bnf_name
+    ) = 1
 {% endmacro %}

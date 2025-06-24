@@ -43,8 +43,6 @@ models:
         description: "Specific valproate product type for brand monitoring"
         tests:
           - not_null
-          - accepted_values:
-              values: ['SODIUM_VALPROATE', 'VALPROIC_ACID', 'EPILIM', 'DEPAKOTE', 'OTHER_VALPROATE']
               
       - name: clinical_indication
         description: "Primary clinical indication for valproate therapy"

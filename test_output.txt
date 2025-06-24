@@ -1,0 +1,5 @@
+11:18:05  The YAML provided in the --warn-error-options argument is not valid.
+Usage: dbt test [OPTIONS]
+Try 'dbt test -h' for help.
+
+Error: Invalid value for '--warn-error-options': String '{\' is not valid YAML

@@ -69,12 +69,9 @@ models:
     - accepted_values:
         values:
         - Severe HTN
-        - Stage 2 HTN (Home/ABPM Threshold)
-        - Stage 1 HTN (Home/ABPM Threshold)
-        - Normal (Home/ABPM Threshold)
-        - Stage 2 HTN (Clinic Threshold)
-        - Stage 1 HTN (Clinic Threshold)
-        - Normal / High Normal (Clinic Threshold)
+        - Stage 2 HTN
+        - Stage 1 HTN
+        - Normal / High Normal
         severity: warn
   - name: meets_age_criteria
     description: "Flag indicating if person meets age \u226518 requirement"
