@@ -24,9 +24,9 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_bmi_all'), 
+        ref('int_bmi_all'),
         partition_by=['person_id'],
         order_by=['clinical_effective_date']
     ) }}
 )
-WHERE is_valid_bmi = TRUE 
+WHERE is_valid_bmi = TRUE

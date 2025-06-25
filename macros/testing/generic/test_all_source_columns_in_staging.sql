@@ -1,5 +1,5 @@
 {% test all_source_columns_in_staging(model) %}
-{# Generic test to verify all source columns are present in staging models #}
+    {# Generic test to verify all source columns are present in staging models #}
 
 {%- set schema_prefixes = {
     'OLIDS_MASKED': 'stg_olids',
@@ -8,15 +8,15 @@
     'RULESETS': 'stg_rulesets'
 } -%}
 
-{%- set ns = namespace(first=true) -%}
+    {%- set ns = namespace(first=true) -%}
 
 -- This test will fail if any source columns are missing from their corresponding staging models
 -- Each row returned represents a missing column
 
-{%- for source in sources -%}
+    {%- for source in sources -%}
     {%- set schema = source.schema -%}
     {%- set prefix = schema_prefixes.get(schema, 'stg') -%}
-    
+
     {%- for table in source.tables if table.columns -%}
         {%- set table_name = table.name -%}
         {%- set table_name_lower = table_name | lower -%}
@@ -41,7 +41,7 @@
     {%- endfor -%}
 {%- endfor -%}
 
-{%- if ns.first %}
+    {%- if ns.first %}
 -- Return empty result set if no sources found (test will pass)
 select
     cast(null as string) as source_table,
@@ -51,4 +51,4 @@ select
 where 1=0
 {%- endif -%}
 
-{% endtest %} 
+{% endtest %}

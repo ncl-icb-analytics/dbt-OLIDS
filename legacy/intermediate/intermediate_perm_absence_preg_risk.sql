@@ -76,4 +76,4 @@ SELECT
     pla.ALL_PERM_ABS_PREG_RISK_CONCEPT_CODES,
     pla.ALL_PERM_ABS_PREG_RISK_CONCEPT_DISPLAYS,
     pla.ALL_PERM_ABS_PREG_RISK_SOURCE_CLUSTER_IDS
-FROM PersonLevelPermAbsPregRiskAggregation pla; 
+FROM PersonLevelPermAbsPregRiskAggregation pla;

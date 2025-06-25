@@ -3,11 +3,11 @@ version: 2
 models:
   - name: int_ltc_lcs_htn_observations
     description: "Intermediate model for hypertension-related observations for LTC/LCS case finding. Combines blood pressure readings from int_blood_pressure_all with other hypertension risk factors."
-    
+
     tests:
       - cluster_ids_exist:
           cluster_ids: "HYPERTENSION_EGFR,HYPERTENSION_BMI,HYPERTENSION_BSA,HYPERTENSION_MYOCARDIAL,HYPERTENSION_CEREBRAL,HYPERTENSION_CLAUDICATION,HYPERTENSION_DIABETES"
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -40,4 +40,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['BP_SYSTOLIC', 'BP_DIASTOLIC', 'OTHER'] 
+              values: ['BP_SYSTOLIC', 'BP_DIASTOLIC', 'OTHER']

@@ -52,18 +52,18 @@ WITH PatientIdsPerPerson AS (
 ),
 LatestRegistrationPerPerson AS (
     -- Get the most recent registration for each person (active or ended)
-    SELECT 
+    SELECT
         eoc."person_id",
         eoc."organisation_id",
         eoc."episode_of_care_start_date",
         eoc."episode_of_care_end_date",
         -- Rank to get the most recent registration for each person
         ROW_NUMBER() OVER (
-            PARTITION BY eoc."person_id" 
+            PARTITION BY eoc."person_id"
             ORDER BY eoc."episode_of_care_start_date" DESC
         ) AS registration_rank
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.EPISODE_OF_CARE eoc
-    WHERE eoc."person_id" IS NOT NULL 
+    WHERE eoc."person_id" IS NOT NULL
         AND eoc."organisation_id" IS NOT NULL
         AND eoc."episode_of_care_start_date" IS NOT NULL
         -- Add episode type filter if needed to identify registration episodes
@@ -121,7 +121,7 @@ LatestPatientRecordPerPerson AS (
         -- Rank to get the latest record
         ROW_NUMBER() OVER (
             PARTITION BY pp."person_id"
-            ORDER BY 
+            ORDER BY
                 p."lds_datetime_data_acquired" DESC,
                 p."id" DESC
         ) AS record_rank
@@ -179,4 +179,4 @@ FROM
 WHERE
     record_rank = 1
     AND IS_ACTIVE = FALSE -- Only include inactive patients
-    AND IS_DUMMY_PATIENT = FALSE; -- Exclude dummy patients 
+    AND IS_DUMMY_PATIENT = FALSE; -- Exclude dummy patients

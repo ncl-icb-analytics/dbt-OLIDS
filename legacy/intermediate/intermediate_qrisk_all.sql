@@ -28,4 +28,4 @@ JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
 JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
     ON o."patient_id" = p."id"
 WHERE c.CLUSTER_ID = 'QRISKSCORE_COD'
-  AND o."result_value" IS NOT NULL; 
+  AND o."result_value" IS NOT NULL;

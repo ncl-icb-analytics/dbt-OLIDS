@@ -11,7 +11,7 @@ Includes ALL persons (active, inactive, deceased).
 */
 
 WITH base_observations AS (
-    
+
     SELECT
         obs.observation_id,
         obs.person_id,
@@ -22,7 +22,7 @@ WITH base_observations AS (
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
-        
+
     FROM ({{ get_observations("'CRE_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
@@ -38,15 +38,15 @@ SELECT
     concept_display,
     source_cluster_id,
     original_result_value,
-    
+
     -- Data quality validation (creatinine typically 40-400 µmol/L)
-    CASE 
+    CASE
         WHEN creatinine_value BETWEEN 20 AND 1000 THEN TRUE
         ELSE FALSE
     END AS is_valid_creatinine,
-    
+
     -- Clinical categorisation (µmol/L) - general adult reference ranges
-    CASE 
+    CASE
         WHEN creatinine_value NOT BETWEEN 20 AND 1000 THEN 'Invalid'
         WHEN creatinine_value <= 120 THEN 'Normal'
         WHEN creatinine_value <= 200 THEN 'Mildly Elevated'
@@ -54,9 +54,9 @@ SELECT
         WHEN creatinine_value > 400 THEN 'Severely Elevated'
         ELSE 'Unknown'
     END AS creatinine_category,
-    
+
     -- Elevated creatinine indicator (>120 µmol/L suggests possible kidney issues)
-    CASE 
+    CASE
         WHEN creatinine_value > 120 AND creatinine_value <= 1000 THEN TRUE
         ELSE FALSE
     END AS is_elevated_creatinine
@@ -64,4 +64,4 @@ SELECT
 FROM base_observations
 
 -- Sort for consistent output
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

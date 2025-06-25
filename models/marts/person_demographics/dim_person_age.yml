@@ -7,19 +7,19 @@ models:
       Uses dim_person_birth_death as source, calculating ages based on death date for deceased persons
       or current date for living persons. Birth and death dates are calculated as mathematical midpoints
       of each month for optimal statistical precision.
-      
+
       **Age Calculation Logic:**
       - For deceased persons: Age calculated to death date
       - For living persons: Age calculated to current date
       - Birth/death dates use month midpoints for statistical accuracy
-      
+
       **Age Band Standards:**
       - NHS Digital bands (Health Survey for England)
       - ONS (Office for National Statistics) bands
       - Standard 5-year and 10-year bands
       - Life stage classifications
       - UK school year/education level mappings
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -150,4 +150,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]

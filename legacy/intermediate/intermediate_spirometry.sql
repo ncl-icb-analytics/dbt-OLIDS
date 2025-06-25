@@ -52,4 +52,4 @@ SELECT
         WHEN SOURCE_CLUSTER_ID = 'FEV1FVC_COD' AND RESULT_VALUE < 0.7 THEN TRUE -- Raw value less than 0.7
         ELSE FALSE
     END AS IS_BELOW_0_7
-FROM BaseSpirometryObservations; 
+FROM BaseSpirometryObservations;

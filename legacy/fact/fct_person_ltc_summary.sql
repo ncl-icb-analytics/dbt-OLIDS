@@ -16,7 +16,7 @@ AS
 
 WITH ConditionUnion AS (
     -- Atrial Fibrillation
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'AF' AS CONDITION_CODE,
@@ -29,7 +29,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Asthma
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'AST' AS CONDITION_CODE,
@@ -42,7 +42,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- CYP Asthma
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'CYP_AST' AS CONDITION_CODE,
@@ -55,7 +55,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Cancer
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'CA' AS CONDITION_CODE,
@@ -68,7 +68,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- CHD
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'CHD' AS CONDITION_CODE,
@@ -81,7 +81,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- CKD
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'CKD' AS CONDITION_CODE,
@@ -94,7 +94,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- COPD
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'COPD' AS CONDITION_CODE,
@@ -107,7 +107,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Dementia
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'DEM' AS CONDITION_CODE,
@@ -120,7 +120,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Depression
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'DEP' AS CONDITION_CODE,
@@ -133,7 +133,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Diabetes
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'DM' AS CONDITION_CODE,
@@ -146,7 +146,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Epilepsy
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'EPIL' AS CONDITION_CODE,
@@ -159,7 +159,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Heart Failure
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'HF' AS CONDITION_CODE,
@@ -172,7 +172,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Hypertension
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'HTN' AS CONDITION_CODE,
@@ -185,7 +185,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Learning Disability
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'LD' AS CONDITION_CODE,
@@ -198,7 +198,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Non-Alcoholic Fatty Liver Disease
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'NAF' AS CONDITION_CODE,
@@ -211,7 +211,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Non-Diabetic Hyperglycaemia
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'NDH' AS CONDITION_CODE,
@@ -224,7 +224,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Obesity
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'OB' AS CONDITION_CODE,
@@ -237,7 +237,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Osteoporosis
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'OP' AS CONDITION_CODE,
@@ -250,7 +250,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Palliative Care
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'PC' AS CONDITION_CODE,
@@ -263,7 +263,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Peripheral Arterial Disease
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'PAD' AS CONDITION_CODE,
@@ -276,7 +276,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Rheumatoid Arthritis
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'RA' AS CONDITION_CODE,
@@ -289,7 +289,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Serious Mental Illness
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'SMI' AS CONDITION_CODE,
@@ -302,7 +302,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Stroke/TIA
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'STIA' AS CONDITION_CODE,
@@ -315,7 +315,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Familial Hypercholesterolaemia
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'FHYP' AS CONDITION_CODE,
@@ -328,7 +328,7 @@ WITH ConditionUnion AS (
     UNION ALL
 
     -- Gestational Diabetes
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         'GESTDIAB' AS CONDITION_CODE,
@@ -338,7 +338,7 @@ WITH ConditionUnion AS (
         LATEST_GEST_DIAB_DIAGNOSIS_DATE AS LATEST_DIAGNOSIS_DATE
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_GESTATIONAL_DIABETES
 )
-SELECT 
+SELECT
     cu.PERSON_ID,
     cu.SK_PATIENT_ID,
     cu.CONDITION_CODE,
@@ -347,4 +347,4 @@ SELECT
     cu.EARLIEST_DIAGNOSIS_DATE,
     cu.LATEST_DIAGNOSIS_DATE
 FROM ConditionUnion cu
-WHERE cu.IS_ON_REGISTER = TRUE; 
+WHERE cu.IS_ON_REGISTER = TRUE;

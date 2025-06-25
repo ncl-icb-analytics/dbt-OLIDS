@@ -73,4 +73,4 @@ SELECT
     pla.ALL_PSYCH_CONCEPT_CODES,
     pla.ALL_PSYCH_CONCEPT_DISPLAYS,
     pla.ALL_PSYCH_CODE_CATEGORIES_APPLIED
-FROM PersonLevelPsychAggregation pla; 
+FROM PersonLevelPsychAggregation pla;

@@ -51,7 +51,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH ConditionSummary AS (
     -- Get all relevant conditions from LTC summary
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         CONDITION_CODE,
@@ -65,7 +65,7 @@ WITH ConditionSummary AS (
 ),
 PersonAge AS (
     -- Get person age
-    SELECT 
+    SELECT
         PERSON_ID,
         AGE
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE
@@ -162,4 +162,4 @@ SELECT
     cp.ALL_CONDITION_NAMES
 FROM ConditionPivot cp
 JOIN PersonAge pa
-    USING (PERSON_ID); 
+    USING (PERSON_ID);

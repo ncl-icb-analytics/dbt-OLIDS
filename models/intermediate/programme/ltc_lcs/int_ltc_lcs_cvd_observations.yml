@@ -13,4 +13,4 @@ models:
           - unique
       - name: person_id
         tests:
-          - not_null 
+          - not_null

@@ -2,26 +2,26 @@ models:
   - name: fct_person_cyp_asthma_register
     description: |
       CYP (Children & Young People) Asthma Register - uses QOF asthma register criteria without a lower age restriction, and upper age limit of 18 years.
-      
+
       **Business Logic:**
       - Age <18 years (children and young people)
-      - Active asthma diagnosis: latest AST_COD > latest ASTRES_COD OR no resolution recorded  
+      - Active asthma diagnosis: latest AST_COD > latest ASTRES_COD OR no resolution recorded
       - Recent medication validation: asthma medication prescribed within last 12 months
       - ALL three criteria must be met for register inclusion
-      
+
       **Clinical Context:**
       This register specifically tracks asthma diagnoses in children and young people,
       requiring both diagnostic coding and medication evidence.
-      
+
       **Requirements:**
       - AST001: Practice can produce a register of patients with asthma (CYP subset)
       - Supports CYP-specific asthma monitoring and inhaler technique reviews
-      
+
       **Data Sources:**
       - Diagnosis codes: int_asthma_diagnoses_all (AST_COD, ASTRES_COD cluster IDs)
       - Medication validation: int_asthma_medications_12m (12-month lookback)
       - Age filtering: dim_person_age (<18 years requirement)
-      
+
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
     columns:
@@ -104,4 +104,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

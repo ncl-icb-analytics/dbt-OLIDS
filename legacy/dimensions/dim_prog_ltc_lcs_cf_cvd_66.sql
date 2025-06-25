@@ -49,7 +49,7 @@ SELECT
     bp.PERSON_ID,
     bp.SK_PATIENT_ID,
     bp.AGE,
-    CASE 
+    CASE
         WHEN qr.PERSON_ID IS NULL THEN TRUE  -- No QRISK2 assessment
         ELSE FALSE
     END AS NEEDS_STATIN_REVIEW,
@@ -62,4 +62,4 @@ LEFT JOIN QRISK2Ranked qr
     USING (PERSON_ID)
 LEFT JOIN QRISK2Codes codes
     USING (PERSON_ID)
-WHERE qr.PERSON_ID IS NULL;  -- Only include patients with no QRISK2 assessment 
+WHERE qr.PERSON_ID IS NULL;  -- Only include patients with no QRISK2 assessment

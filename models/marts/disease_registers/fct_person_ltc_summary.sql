@@ -11,12 +11,12 @@
 
 WITH condition_union AS (
     -- Atrial Fibrillation
-    SELECT 
+    SELECT
         person_id,
         'AF' AS condition_code,
         'Atrial Fibrillation' AS condition_name,
         'Cardiovascular' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -26,12 +26,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Asthma
-    SELECT 
+    SELECT
         person_id,
         'AST' AS condition_code,
         'Asthma' AS condition_name,
         'Respiratory' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -41,12 +41,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Cancer
-    SELECT 
+    SELECT
         person_id,
         'CAN' AS condition_code,
         'Cancer' AS condition_name,
         'Oncology' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -56,12 +56,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Coronary Heart Disease
-    SELECT 
+    SELECT
         person_id,
         'CHD' AS condition_code,
         'Coronary Heart Disease' AS condition_name,
         'Cardiovascular' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -71,12 +71,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Chronic Kidney Disease
-    SELECT 
+    SELECT
         person_id,
         'CKD' AS condition_code,
         'Chronic Kidney Disease' AS condition_name,
         'Renal' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -86,12 +86,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- COPD
-    SELECT 
+    SELECT
         person_id,
         'COPD' AS condition_code,
         'Chronic Obstructive Pulmonary Disease' AS condition_name,
         'Respiratory' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -101,12 +101,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Children and Young People Asthma
-    SELECT 
+    SELECT
         person_id,
         'CYP_AST' AS condition_code,
         'Children and Young People Asthma' AS condition_name,
         'Respiratory' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         FALSE AS is_qof
@@ -116,12 +116,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Dementia
-    SELECT 
+    SELECT
         person_id,
         'DEM' AS condition_code,
         'Dementia' AS condition_name,
         'Mental Health' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -131,12 +131,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Depression
-    SELECT 
+    SELECT
         person_id,
         'DEP' AS condition_code,
         'Depression' AS condition_name,
         'Mental Health' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -146,12 +146,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Diabetes
-    SELECT 
+    SELECT
         person_id,
         'DM' AS condition_code,
         'Diabetes Mellitus' AS condition_name,
         'Metabolic' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -161,12 +161,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Epilepsy
-    SELECT 
+    SELECT
         person_id,
         'EP' AS condition_code,
         'Epilepsy' AS condition_name,
         'Neurology' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -176,12 +176,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Familial Hypercholesterolaemia
-    SELECT 
+    SELECT
         person_id,
         'FH' AS condition_code,
         'Familial Hypercholesterolaemia' AS condition_name,
         'Genetics' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         FALSE AS is_qof
@@ -191,12 +191,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Heart Failure
-    SELECT 
+    SELECT
         person_id,
         'HF' AS condition_code,
         'Heart Failure' AS condition_name,
         'Cardiovascular' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -206,12 +206,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Hypertension
-    SELECT 
+    SELECT
         person_id,
         'HTN' AS condition_code,
         'Hypertension' AS condition_name,
         'Cardiovascular' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -221,12 +221,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Learning Disability
-    SELECT 
+    SELECT
         person_id,
         'LD' AS condition_code,
         'Learning Disability' AS condition_name,
         'Neurodevelopmental' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -236,12 +236,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- NAFLD
-    SELECT 
+    SELECT
         person_id,
         'NAFLD' AS condition_code,
         'Non-Alcoholic Fatty Liver Disease' AS condition_name,
         'Hepatology' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         FALSE AS is_qof
@@ -251,12 +251,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Non-Diabetic Hyperglycaemia
-    SELECT 
+    SELECT
         person_id,
         'NDH' AS condition_code,
         'Non-Diabetic Hyperglycaemia' AS condition_name,
         'Metabolic' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -266,12 +266,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Obesity
-    SELECT 
+    SELECT
         person_id,
         'OB' AS condition_code,
         'Obesity' AS condition_name,
         'Metabolic' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         latest_valid_bmi_date AS earliest_diagnosis_date,
         latest_bmi_date AS latest_diagnosis_date,
         TRUE AS is_qof
@@ -281,12 +281,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Osteoporosis
-    SELECT 
+    SELECT
         person_id,
         'OST' AS condition_code,
         'Osteoporosis' AS condition_name,
         'Musculoskeletal' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -296,12 +296,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Peripheral Arterial Disease
-    SELECT 
+    SELECT
         person_id,
         'PAD' AS condition_code,
         'Peripheral Arterial Disease' AS condition_name,
         'Cardiovascular' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -311,12 +311,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Palliative Care
-    SELECT 
+    SELECT
         person_id,
         'PC' AS condition_code,
         'Palliative Care' AS condition_name,
         'Palliative Care' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -326,12 +326,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Rheumatoid Arthritis
-    SELECT 
+    SELECT
         person_id,
         'RA' AS condition_code,
         'Rheumatoid Arthritis' AS condition_name,
         'Musculoskeletal' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -341,12 +341,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Severe Mental Illness
-    SELECT 
+    SELECT
         person_id,
         'SMI' AS condition_code,
         'Severe Mental Illness' AS condition_name,
         'Mental Health' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -356,12 +356,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Stroke and TIA
-    SELECT 
+    SELECT
         person_id,
         'STIA' AS condition_code,
         'Stroke and TIA' AS condition_name,
         'Neurology' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         TRUE AS is_qof
@@ -371,12 +371,12 @@ WITH condition_union AS (
     UNION ALL
 
     -- Gestational Diabetes
-    SELECT 
+    SELECT
         person_id,
         'GESTDIAB' AS condition_code,
         'Gestational Diabetes' AS condition_name,
         'Maternity' AS clinical_domain,
-        is_on_register AS is_on_register,
+        is_on_register,
         earliest_diagnosis_date,
         latest_diagnosis_date,
         FALSE AS is_qof
@@ -384,7 +384,7 @@ WITH condition_union AS (
     WHERE is_on_register = TRUE
 )
 
-SELECT 
+SELECT
     person_id,
     condition_code,
     condition_name,
@@ -393,10 +393,12 @@ SELECT
     is_qof,
     earliest_diagnosis_date,
     latest_diagnosis_date,
-    
+
     -- Derived metrics for easier analysis
-    DATEDIFF('year', earliest_diagnosis_date, CURRENT_DATE()) AS years_since_first_diagnosis,
-    DATEDIFF('day', latest_diagnosis_date, CURRENT_DATE()) AS days_since_latest_diagnosis
+    DATEDIFF('year', earliest_diagnosis_date, CURRENT_DATE())
+        AS years_since_first_diagnosis,
+    DATEDIFF('day', latest_diagnosis_date, CURRENT_DATE())
+        AS days_since_latest_diagnosis
 
 FROM condition_union
-ORDER BY person_id, condition_code 
+ORDER BY person_id, condition_code

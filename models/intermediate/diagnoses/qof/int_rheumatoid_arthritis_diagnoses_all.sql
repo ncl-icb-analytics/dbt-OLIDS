@@ -15,7 +15,7 @@ Clinical Purpose:
 - Inflammatory arthritis care pathway
 
 QOF Context:
-RA register follows simple diagnosis-only pattern - any RA diagnosis code 
+RA register follows simple diagnosis-only pattern - any RA diagnosis code
 qualifies for register inclusion. No resolution codes or complex criteria.
 This is a lifelong condition register for ongoing disease management.
 
@@ -31,10 +31,10 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- RA-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'RA_COD' THEN TRUE ELSE FALSE END AS is_ra_diagnosis_code,
-    
+
     -- Observation type determination
     CASE
         WHEN obs.cluster_id = 'RA_COD' THEN 'Rheumatoid Arthritis Diagnosis'
@@ -44,4 +44,4 @@ SELECT
 FROM ({{ get_observations("'RARTH_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

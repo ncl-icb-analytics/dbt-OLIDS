@@ -25,21 +25,23 @@ current_smoking_status AS (
         latest.concept_code AS latest_concept_code,
         latest.code_description AS latest_code_description,
         latest.source_cluster_id AS latest_cluster_id,
-        
+
         -- Determine smoking status based on latest record (use existing column)
         latest.smoking_status,
-        
+
         -- Include history
         hist.earliest_smoking_date,
         hist.all_smoking_concept_codes,
         hist.all_smoking_concept_displays,
-        
+
         -- Person demographics
         age.age
-    FROM {{ ref('dim_person') }} p
-    INNER JOIN {{ ref('dim_person_age') }} age ON p.person_id = age.person_id
-    LEFT JOIN {{ ref('int_smoking_status_latest') }} latest ON p.person_id = latest.person_id
-    LEFT JOIN smoking_history hist ON p.person_id = hist.person_id
+    FROM {{ ref('dim_person') }} AS p
+    INNER JOIN {{ ref('dim_person_age') }} AS age ON p.person_id = age.person_id
+    LEFT JOIN
+        {{ ref('int_smoking_status_latest') }} AS latest
+        ON p.person_id = latest.person_id
+    LEFT JOIN smoking_history AS hist ON p.person_id = hist.person_id
 )
 
 SELECT
@@ -55,4 +57,4 @@ SELECT
     all_smoking_concept_displays,
     CURRENT_TIMESTAMP() AS last_refresh_date
 FROM current_smoking_status
-WHERE latest_smoking_date IS NOT NULL -- Only include people with smoking data 
+WHERE latest_smoking_date IS NOT NULL -- Only include people with smoking data

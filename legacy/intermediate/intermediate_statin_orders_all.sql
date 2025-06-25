@@ -24,7 +24,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseStatinOrders AS (
     -- Get all medication orders for statins
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -75,4 +75,4 @@ SELECT
     oc.RECENT_ORDER_COUNT
 FROM BaseStatinOrders bso
 JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

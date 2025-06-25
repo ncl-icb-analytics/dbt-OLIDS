@@ -8,7 +8,7 @@ models:
           cluster_ids: "OSTEO_COD"
     description: |
       All osteoporosis diagnosis observations from clinical records.
-            
+
       Includes ALL persons following intermediate layer principles.
       Used as input for fct_person_osteoporosis_register.sql which applies QOF business rules.
     columns:
@@ -16,37 +16,37 @@ models:
         description: "Unique person identifier"
         tests:
           - not_null
-          
+
       - name: observation_id
         description: "Unique observation identifier"
         tests:
           - not_null
-          
+
       - name: clinical_effective_date
         description: "Date of the osteoporosis diagnosis observation"
         tests:
           - not_null
-          
+
       - name: concept_code
         description: "SNOMED concept code for osteoporosis diagnosis"
         tests:
           - not_null
-          
+
       - name: concept_display
         description: "Description of the osteoporosis diagnosis code"
         tests:
           - not_null
-          
+
       - name: source_cluster_id
         description: "QOF cluster ID (OSTEO_COD)"
         tests:
           - not_null
           - accepted_values:
               values: ['OSTEO_COD']
-              
+
       - name: is_osteoporosis_diagnosis_code
         description: "Flag indicating osteoporosis diagnosis (OSTEO_COD)"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]

@@ -10,7 +10,7 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     IS_CLINIC_BP BOOLEAN, -- Flag indicating if the latest reading is from clinic
     IS_HOME_BP BOOLEAN -- Flag indicating if the latest reading is from home/ambulatory
 )
-COMMENT = 'Intermediate table for LTC LCS case finding hypertension base population. 
+COMMENT = 'Intermediate table for LTC LCS case finding hypertension base population.
 Excludes patients with:
 - White coat hypertension
 - Resolved hypertension
@@ -76,8 +76,8 @@ LEFT JOIN LatestBloodPressure bp_readings
 WHERE NOT COALESCE(ex.HAS_WHITE_COAT_HYPERTENSION, FALSE)
     AND NOT COALESCE(ex.HAS_RESOLVED_HYPERTENSION, FALSE)
     AND NOT EXISTS (
-        SELECT 1 
-        FROM Exclusions e2 
-        WHERE e2.PERSON_ID = bp.PERSON_ID 
+        SELECT 1
+        FROM Exclusions e2
+        WHERE e2.PERSON_ID = bp.PERSON_ID
         AND e2.HAS_RESOLVED_HYPERTENSION IS NULL  -- This means they have diabetes or palliative care
-    ); 
+    );

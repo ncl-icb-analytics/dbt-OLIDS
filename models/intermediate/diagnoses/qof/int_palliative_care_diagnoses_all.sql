@@ -30,7 +30,7 @@ Use this model as input for fct_person_palliative_care_register.sql which applie
 */
 
 WITH base_observations AS (
-    
+
     SELECT
         obs.observation_id,
         obs.person_id,
@@ -38,11 +38,11 @@ WITH base_observations AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
-        
+
         -- Flag different types of palliative care codes following QOF definitions
         CASE WHEN obs.cluster_id = 'PALCARE_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_code,
         CASE WHEN obs.cluster_id = 'PALCARENI_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_not_indicated_code
-        
+
     FROM ({{ get_observations("'PALCARE_COD', 'PALCARENI_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 )
@@ -60,4 +60,4 @@ SELECT
 FROM base_observations
 
 -- Sort for consistent output
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

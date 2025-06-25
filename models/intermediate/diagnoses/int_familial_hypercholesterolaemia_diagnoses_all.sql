@@ -36,11 +36,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Flag FH diagnosis codes following QOF definitions
     CASE WHEN obs.cluster_id = 'FHYP_COD' THEN TRUE ELSE FALSE END AS is_fh_diagnosis_code
-    
+
 FROM ({{ get_observations("'FHYP_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

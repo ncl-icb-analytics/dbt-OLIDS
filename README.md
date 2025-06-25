@@ -26,6 +26,10 @@ cp profiles.yml.template profiles.yml
 cp env.example .env
 # Edit .env with your Snowflake credentials (see Environment Setup below)
 
+# Setup commit message enforcement (one-time)
+pre-commit install --hook-type commit-msg
+pre-commit install
+
 # Run
 dbt deps
 dbt run         # Safe - always dev environment
@@ -62,6 +66,20 @@ If Python is not installed, you can get it from the Microsoft Store.
    ```
 
 **Important:** Never commit `.env` to version control! The file is already in `.gitignore`.
+
+### **Pre-commit Hooks**
+
+This project uses pre-commit hooks to enforce code quality and commit message standards:
+
+This project automatically enforces code quality standards:
+
+- **File Cleanup**: Trailing whitespace removed, line endings standardised, files > 500KB prevented
+- **Commit Messages**: Must follow conventional format (`feat:`, `fix:`, `docs:`, etc.)
+- **YAML Validation**: dbt model configurations checked for syntax errors
+
+**Most of the time**, these checks pass silently and fix issues automatically. You'll only see messages if there are issues that need manual attention.
+
+**Note:** Hooks run automatically on commit. Use `git commit --no-verify` to bypass if needed (not recommended).
 
 ## Environment Management
 
@@ -170,7 +188,7 @@ models:
     description: "Clinical diabetes observations (observation-level)"
     columns:
       - name: observation_id
-        tests: 
+        tests:
           - not_null
           - unique
       - name: person_id

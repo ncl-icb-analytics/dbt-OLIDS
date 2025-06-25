@@ -1,4 +1,4 @@
-{{ 
+{{
     config(
         materialized = 'table',
         tags = ['blood_pressure', 'latest'],
@@ -26,4 +26,7 @@ SELECT
     all_concept_displays,
     all_source_cluster_ids
 FROM {{ ref('int_blood_pressure_all') }}
-QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1 
+QUALIFY
+    ROW_NUMBER()
+        OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+    = 1

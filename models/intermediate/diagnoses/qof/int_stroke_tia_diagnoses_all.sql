@@ -34,11 +34,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Stroke/TIA-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'STRK_COD' THEN TRUE ELSE FALSE END AS is_stroke_diagnosis_code,
     CASE WHEN obs.cluster_id = 'TIA_COD' THEN TRUE ELSE FALSE END AS is_tia_diagnosis_code,
-    
+
     -- Stroke/TIA observation type determination
     CASE
         WHEN obs.cluster_id = 'STRK_COD' THEN 'Stroke Diagnosis'
@@ -49,4 +49,4 @@ SELECT
 FROM ({{ get_observations("'STRK_COD', 'TIA_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

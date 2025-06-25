@@ -46,4 +46,4 @@ SELECT
     rl.ALL_CANCER_CONCEPT_CODES,
     rl.ALL_CANCER_CONCEPT_DISPLAYS
 FROM RegisterLogic rl
-WHERE rl.IS_ON_CANCER_REGISTER = TRUE; -- Only keep patients on the register 
+WHERE rl.IS_ON_CANCER_REGISTER = TRUE; -- Only keep patients on the register

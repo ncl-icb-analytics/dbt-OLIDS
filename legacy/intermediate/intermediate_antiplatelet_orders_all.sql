@@ -24,7 +24,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseAntiplateletOrders AS (
     -- Get all medication orders for antiplatelets
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -68,4 +68,4 @@ SELECT
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
 FROM BaseAntiplateletOrders bso
 LEFT JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

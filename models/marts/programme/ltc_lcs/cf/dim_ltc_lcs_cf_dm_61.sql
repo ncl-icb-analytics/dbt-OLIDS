@@ -28,9 +28,10 @@ hba1c_readings AS (
         mapped_concept_code,
         mapped_concept_display
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
-    WHERE cluster_id = 'HBA1C_LEVEL'
+    WHERE
+        cluster_id = 'HBA1C_LEVEL'
         AND result_value > 0
-        AND clinical_effective_date >= DATEADD(year, -5, CURRENT_DATE())
+        AND clinical_effective_date >= DATEADD(YEAR, -5, CURRENT_DATE())
 ),
 
 latest_hba1c AS (
@@ -39,11 +40,18 @@ latest_hba1c AS (
         person_id,
         clinical_effective_date AS latest_hba1c_date,
         result_value AS latest_hba1c_value,
-        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (ORDER BY mapped_concept_code) AS all_hba1c_codes,
-        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (ORDER BY mapped_concept_display) AS all_hba1c_displays
+        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (
+            ORDER BY mapped_concept_code
+        ) AS all_hba1c_codes,
+        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (
+            ORDER BY mapped_concept_display
+        ) AS all_hba1c_displays
     FROM hba1c_readings
     GROUP BY person_id, clinical_effective_date, result_value
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+    QUALIFY
+        ROW_NUMBER()
+            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+        = 1
 ),
 
 latest_qdiabetes AS (
@@ -54,7 +62,10 @@ latest_qdiabetes AS (
         result_value AS latest_qdiabetes_value
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
     WHERE cluster_id = 'QDIABETES_RISK'
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+    QUALIFY
+        ROW_NUMBER()
+            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+        = 1
 ),
 
 latest_qrisk AS (
@@ -65,7 +76,10 @@ latest_qrisk AS (
         result_value AS latest_qrisk_value
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
     WHERE cluster_id = 'QRISK2_10YEAR'
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+    QUALIFY
+        ROW_NUMBER()
+            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+        = 1
 ),
 
 gestational_diabetes AS (
@@ -81,28 +95,28 @@ gestational_diabetes AS (
 SELECT
     bp.person_id,
     bp.age,
-    CASE 
-        WHEN hba1c.latest_hba1c_value >= 42 OR
-             qd.latest_qdiabetes_value >= 5.6 OR
-             qr.latest_qrisk_value > 20 OR
-             gd.has_gestational_diabetes = TRUE THEN TRUE
-        ELSE FALSE
-    END AS has_diabetes_risk,
     hba1c.latest_hba1c_date,
     hba1c.latest_hba1c_value,
     qd.latest_qdiabetes_date,
     qd.latest_qdiabetes_value,
     qr.latest_qrisk_date,
     qr.latest_qrisk_value,
-    COALESCE(gd.has_gestational_diabetes, FALSE) AS has_gestational_diabetes,
     hba1c.all_hba1c_codes,
-    hba1c.all_hba1c_displays
-FROM base_population bp
-LEFT JOIN latest_hba1c hba1c ON bp.person_id = hba1c.person_id
-LEFT JOIN latest_qdiabetes qd ON bp.person_id = qd.person_id
-LEFT JOIN latest_qrisk qr ON bp.person_id = qr.person_id
-LEFT JOIN gestational_diabetes gd ON bp.person_id = gd.person_id
-WHERE hba1c.latest_hba1c_value >= 42 
+    hba1c.all_hba1c_displays,
+    COALESCE(
+        hba1c.latest_hba1c_value >= 42
+        OR qd.latest_qdiabetes_value >= 5.6
+        OR qr.latest_qrisk_value > 20
+        OR gd.has_gestational_diabetes = TRUE, FALSE
+    ) AS has_diabetes_risk,
+    COALESCE(gd.has_gestational_diabetes, FALSE) AS has_gestational_diabetes
+FROM base_population AS bp
+LEFT JOIN latest_hba1c AS hba1c ON bp.person_id = hba1c.person_id
+LEFT JOIN latest_qdiabetes AS qd ON bp.person_id = qd.person_id
+LEFT JOIN latest_qrisk AS qr ON bp.person_id = qr.person_id
+LEFT JOIN gestational_diabetes AS gd ON bp.person_id = gd.person_id
+WHERE
+    hba1c.latest_hba1c_value >= 42
     OR qd.latest_qdiabetes_value >= 5.6
     OR qr.latest_qrisk_value > 20
-    OR gd.has_gestational_diabetes = TRUE 
+    OR gd.has_gestational_diabetes = TRUE

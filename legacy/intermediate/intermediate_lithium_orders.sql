@@ -49,7 +49,7 @@ PersonDates AS (
         -- Person has lithium issued in last 6 months if:
         -- 1. They have a lithium order in the last 6 months
         -- 2. AND either no stopped date OR stopped date is before the latest order
-        CASE 
+        CASE
             WHEN MAX(ORDER_DATE) OVER (PARTITION BY PERSON_ID) >= DATEADD(month, -6, CURRENT_DATE())
                 AND (
                     MAX(STOPPED_DATE) OVER (PARTITION BY PERSON_ID) IS NULL
@@ -88,4 +88,4 @@ SELECT
 FROM PersonDates pd
 LEFT JOIN PersonLevelCodingAggregation c
     ON pd.PERSON_ID = c.PERSON_ID
-QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1; 
+QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1;

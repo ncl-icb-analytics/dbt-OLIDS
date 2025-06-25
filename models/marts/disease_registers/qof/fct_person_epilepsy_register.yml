@@ -2,28 +2,28 @@ models:
   - name: fct_person_epilepsy_register
     description: |
       QOF Epilepsy Register - Complex QOF register requiring external medication validation.
-      
+
       **Business Logic (Pattern 3):**
       - Age ≥18 years (adult epilepsy monitoring)
       - Active epilepsy diagnosis: latest EPIL_COD > latest EPILRES_COD OR no resolution recorded
       - Recent medication validation: epilepsy medication prescribed within last 6 months
       - ALL three criteria must be met for register inclusion
-      
+
       **Clinical Context:**
       This register identifies adults actively managed for epilepsy, validated through both
       diagnostic coding and anti-epileptic drug prescribing. The 6-month medication requirement
       ensures patients are receiving active treatment and regular monitoring.
-      
+
       **QOF Requirements:**
       - EP001: Practice can produce a register of patients with epilepsy (aged 18+)
       - Medication validation confirms active seizure control management
       - Supports QOF indicators for annual review and seizure control monitoring
-      
+
       **Data Sources:**
       - Diagnosis codes: int_epilepsy_diagnoses_all (EPIL_COD, EPILRES_COD cluster IDs)
       - Medication validation: int_epilepsy_medications_6m (6-month lookback)
       - Age filtering: dim_person_age (≥18 years requirement)
-      
+
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
     columns:
@@ -114,4 +114,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

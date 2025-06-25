@@ -12,4 +12,4 @@ models:
           - not_null
       - name: person_id
         tests:
-          - not_null 
+          - not_null

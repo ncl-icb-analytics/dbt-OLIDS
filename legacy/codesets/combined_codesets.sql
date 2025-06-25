@@ -43,5 +43,5 @@ SELECT
     CLUSTER_DESCRIPTION AS cluster_description,
     CAST(SNOMED_CODE AS VARCHAR) AS code,
     SNOMED_DESCRIPTION AS code_description,
-    'LTC_LCS' AS source                     
+    'LTC_LCS' AS source
 FROM DATA_LAB_NCL_TRAINING_TEMP.CODESETS.LTC_LCS_CODES;

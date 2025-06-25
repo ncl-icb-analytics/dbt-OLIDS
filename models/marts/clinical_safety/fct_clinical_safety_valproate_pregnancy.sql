@@ -15,14 +15,14 @@ SELECT
     preg.age,
     preg.sex,
     preg.is_child_bearing_age_0_55,
-    
+
     -- Pregnancy details
     preg.latest_preg_cod_date,
     preg.latest_pregdel_cod_date,
     preg.all_preg_concept_codes,
     preg.all_preg_concept_displays,
     preg.all_preg_source_cluster_ids,
-    
+
     -- Valproate order details
     valp.most_recent_order_date AS most_recent_valproate_order_date,
     valp.medication_order_id AS valproate_medication_order_id,
@@ -37,8 +37,8 @@ SELECT
     valp.mapped_concept_display AS valproate_mapped_concept_display,
     valp.valproate_product_term,
     valp.recent_order_count AS valproate_recent_order_count
-    
-FROM {{ ref('fct_person_pregnancy_status') }} preg
-INNER JOIN {{ ref('int_valproate_medications_6m_latest') }} valp
+
+FROM {{ ref('fct_person_pregnancy_status') }} AS preg
+INNER JOIN {{ ref('int_valproate_medications_6m_latest') }} AS valp
     ON preg.person_id = valp.person_id
-WHERE preg.is_child_bearing_age_0_55 = TRUE -- Additional safety check 
+WHERE preg.is_child_bearing_age_0_55 = TRUE -- Additional safety check

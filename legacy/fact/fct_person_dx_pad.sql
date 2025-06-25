@@ -17,7 +17,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all PAD diagnoses
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -57,4 +57,4 @@ SELECT
     LATEST_PAD_DATE,
     ALL_PAD_CONCEPT_CODES,
     ALL_PAD_CONCEPT_DISPLAYS
-FROM PersonLevelAggregation; 
+FROM PersonLevelAggregation;

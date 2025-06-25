@@ -28,12 +28,12 @@ WITH latest_ethnicity_per_person AS (
         pea.ethnicity_subcategory,
         pea.ethnicity_granular,
         pea.observation_lds_id -- Include for potential tie-breaking
-    FROM {{ ref('int_ethnicity_all') }} pea
+    FROM {{ ref('int_ethnicity_all') }} AS pea
     QUALIFY ROW_NUMBER() OVER (
-            PARTITION BY pea.person_id
-            -- Order by date first, then by observation ID as a tie-breaker
-            ORDER BY pea.clinical_effective_date DESC, pea.observation_lds_id DESC
-        ) = 1 -- Get only the latest record per person
+        PARTITION BY pea.person_id
+        -- Order by date first, then by observation ID as a tie-breaker
+        ORDER BY pea.clinical_effective_date DESC, pea.observation_lds_id DESC
+    ) = 1 -- Get only the latest record per person
 )
 
 -- Constructs the final dimension by selecting all persons from PATIENT_PERSON and PATIENT tables,
@@ -48,12 +48,13 @@ SELECT
     COALESCE(lepp.snomed_code, 'Not Recorded') AS snomed_code,
     COALESCE(lepp.term, 'Not Recorded') AS term,
     COALESCE(lepp.ethnicity_category, 'Not Recorded') AS ethnicity_category,
-    COALESCE(lepp.ethnicity_subcategory, 'Not Recorded') AS ethnicity_subcategory,
+    COALESCE(lepp.ethnicity_subcategory, 'Not Recorded')
+        AS ethnicity_subcategory,
     COALESCE(lepp.ethnicity_granular, 'Not Recorded') AS ethnicity_granular
-FROM {{ ref('stg_olids_patient_person') }} pp -- Start with all persons
+FROM {{ ref('stg_olids_patient_person') }} AS pp -- Start with all persons
 -- Use LEFT JOIN to keep persons even if no PATIENT record (unlikely but safe)
-LEFT JOIN {{ ref('stg_olids_patient') }} p
+LEFT JOIN {{ ref('stg_olids_patient') }} AS p
     ON pp.patient_id = p.id
 -- Use LEFT JOIN to keep all persons, regardless of whether they have an ethnicity record
-LEFT JOIN latest_ethnicity_per_person lepp 
-    ON pp.person_id = lepp.person_id 
+LEFT JOIN latest_ethnicity_per_person AS lepp
+    ON pp.person_id = lepp.person_id

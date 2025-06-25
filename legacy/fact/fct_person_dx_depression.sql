@@ -56,4 +56,4 @@ SELECT
     rl.ALL_DEPRESSION_RESOLVED_CONCEPT_CODES,
     rl.ALL_DEPRESSION_RESOLVED_CONCEPT_DISPLAYS
 FROM RegisterLogic rl
-WHERE rl.IS_ON_DEPRESSION_REGISTER = TRUE; -- Only keep patients on the register 
+WHERE rl.IS_ON_DEPRESSION_REGISTER = TRUE; -- Only keep patients on the register

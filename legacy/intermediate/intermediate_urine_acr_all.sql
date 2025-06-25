@@ -40,8 +40,8 @@ LEFT JOIN "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT unit_con
 -- NOTE: Uses hardcoded CONCEPT_CODE values because appropriate Clusters are not yet defined or available.
 -- This list should be reviewed and potentially updated once terminology mapping is improved.
 WHERE C.CONCEPT_CODE IN
-    ('5801000237100',    
-     '1027791000000103', 
-     '1023491000000104') 
+    ('5801000237100',
+     '1027791000000103',
+     '1023491000000104')
 -- Filter out records where the result value itself is missing.
 AND o."result_value" IS NOT NULL;

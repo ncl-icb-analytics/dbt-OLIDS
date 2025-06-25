@@ -78,4 +78,4 @@ JOIN
     ON preg.PERSON_ID = valp.PERSON_ID -- Could also join on wcba.PERSON_ID, as PERSON_ID is the key across these tables for an individual
 WHERE
     -- Ensures the cohort is restricted to women of child-bearing age (0-55).
-    wcba.IS_CHILD_BEARING_AGE_0_55 = TRUE; 
+    wcba.IS_CHILD_BEARING_AGE_0_55 = TRUE;

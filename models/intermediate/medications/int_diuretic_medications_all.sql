@@ -26,9 +26,9 @@ SELECT
     mapped_concept_display,
     bnf_code,
     bnf_name,
-    
+
     -- Diuretic type classification
-    CASE 
+    CASE
         WHEN bnf_code LIKE '020201%' THEN 'THIAZIDE_RELATED'     -- Thiazides and related diuretics
         WHEN bnf_code LIKE '020202%' THEN 'LOOP'                -- Loop diuretics
         WHEN bnf_code LIKE '020203%' THEN 'POTASSIUM_SPARING'   -- Potassium-sparing diuretics and aldosterone antagonists
@@ -38,9 +38,9 @@ SELECT
         WHEN bnf_code LIKE '020207%' THEN 'CARBONIC_ANHYDRASE'  -- Carbonic anhydrase inhibitors
         ELSE 'OTHER_DIURETIC'
     END AS diuretic_type,
-    
+
     -- Specific diuretic classification
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%BENDROFLUMETHIAZIDE%' OR bnf_code LIKE '0202010502%' THEN 'BENDROFLUMETHIAZIDE'
         WHEN bnf_code LIKE '%INDAPAMIDE%' OR bnf_code LIKE '0202010520%' THEN 'INDAPAMIDE'
         WHEN bnf_code LIKE '%FUROSEMIDE%' OR bnf_code LIKE '0202020510%' THEN 'FUROSEMIDE'
@@ -50,42 +50,42 @@ SELECT
         WHEN bnf_code LIKE '%EPLERENONE%' OR bnf_code LIKE '0202030510%' THEN 'EPLERENONE'
         ELSE 'OTHER_DIURETIC'
     END AS specific_diuretic,
-    
+
     -- Evidence-based diuretics for heart failure
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%SPIRONOLACTONE%' OR bnf_code LIKE '0202030520%' THEN TRUE  -- RALES trial
         WHEN bnf_code LIKE '%EPLERENONE%' OR bnf_code LIKE '0202030510%' THEN TRUE      -- EPHESUS trial
         WHEN bnf_code LIKE '%FUROSEMIDE%' OR bnf_code LIKE '0202020510%' THEN TRUE      -- Standard loop diuretic
         ELSE FALSE
     END AS is_evidence_based_hf,
-    
+
     -- Common diuretics flags
     CASE WHEN bnf_code LIKE '%FUROSEMIDE%' OR bnf_code LIKE '0202020510%' THEN TRUE ELSE FALSE END AS is_furosemide,
     CASE WHEN bnf_code LIKE '%BENDROFLUMETHIAZIDE%' OR bnf_code LIKE '0202010502%' THEN TRUE ELSE FALSE END AS is_bendroflumethiazide,
     CASE WHEN bnf_code LIKE '%INDAPAMIDE%' OR bnf_code LIKE '0202010520%' THEN TRUE ELSE FALSE END AS is_indapamide,
     CASE WHEN bnf_code LIKE '%SPIRONOLACTONE%' OR bnf_code LIKE '0202030520%' THEN TRUE ELSE FALSE END AS is_spironolactone,
     CASE WHEN bnf_code LIKE '%AMILORIDE%' OR bnf_code LIKE '0202030502%' THEN TRUE ELSE FALSE END AS is_amiloride,
-    
+
     -- Diuretic class flags
     CASE WHEN bnf_code LIKE '020201%' THEN TRUE ELSE FALSE END AS is_thiazide,
     CASE WHEN bnf_code LIKE '020202%' THEN TRUE ELSE FALSE END AS is_loop_diuretic,
     CASE WHEN bnf_code LIKE '020203%' THEN TRUE ELSE FALSE END AS is_potassium_sparing,
-    
+
     -- Calculate time since order
     DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags
-    CASE 
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
         ELSE FALSE
     END AS is_recent_12m
@@ -93,4 +93,4 @@ SELECT
 FROM (
     {{ get_medication_orders(bnf_code='0202') }}
 ) base_orders
-ORDER BY person_id, order_date DESC 
+ORDER BY person_id, order_date DESC

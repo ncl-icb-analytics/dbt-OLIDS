@@ -36,4 +36,4 @@ WHERE c.CONCEPT_CODE IN (
     '904471000000104',
     '904481000000102'
 )
-AND o."clinical_effective_date" IS NOT NULL; 
+AND o."clinical_effective_date" IS NOT NULL;

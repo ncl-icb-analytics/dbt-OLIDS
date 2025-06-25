@@ -26,9 +26,9 @@ SELECT
     mapped_concept_display,
     bnf_code,
     bnf_name,
-    
+
     -- Specific ACE inhibitor classification
-    CASE 
+    CASE
         WHEN bnf_code LIKE '0205050102%' THEN 'CAPTOPRIL'
         WHEN bnf_code LIKE '0205050105%' THEN 'CILAZAPRIL'
         WHEN bnf_code LIKE '0205050110%' THEN 'ENALAPRIL'
@@ -42,38 +42,38 @@ SELECT
         WHEN bnf_code LIKE '0205050150%' THEN 'TRANDOLAPRIL'
         ELSE 'OTHER_ACE_INHIBITOR'
     END AS ace_inhibitor_type,
-    
+
     -- Evidence-based ACE inhibitors (commonly used in cardiovascular disease)
-    CASE 
+    CASE
         WHEN bnf_code LIKE '0205050145%' THEN TRUE  -- Ramipril (HOPE trial)
         WHEN bnf_code LIKE '0205050135%' THEN TRUE  -- Perindopril (EUROPA trial)
         WHEN bnf_code LIKE '0205050125%' THEN TRUE  -- Lisinopril (GISSI-3 trial)
         WHEN bnf_code LIKE '0205050110%' THEN TRUE  -- Enalapril (SOLVD trial)
         ELSE FALSE
     END AS is_evidence_based_cvd,
-    
+
     -- Common ACE inhibitors flags
     CASE WHEN bnf_code LIKE '0205050145%' THEN TRUE ELSE FALSE END AS is_ramipril,
     CASE WHEN bnf_code LIKE '0205050125%' THEN TRUE ELSE FALSE END AS is_lisinopril,
     CASE WHEN bnf_code LIKE '0205050135%' THEN TRUE ELSE FALSE END AS is_perindopril,
     CASE WHEN bnf_code LIKE '0205050110%' THEN TRUE ELSE FALSE END AS is_enalapril,
     CASE WHEN bnf_code LIKE '0205050102%' THEN TRUE ELSE FALSE END AS is_captopril,
-    
+
     -- Calculate time since order
     DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags (ACE inhibitors are typically long-term therapy)
-    CASE 
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
         ELSE FALSE
     END AS is_recent_12m
@@ -81,4 +81,4 @@ SELECT
 FROM (
     {{ get_medication_orders(bnf_code='02050501') }}
 ) base_orders
-ORDER BY person_id, order_date DESC 
+ORDER BY person_id, order_date DESC

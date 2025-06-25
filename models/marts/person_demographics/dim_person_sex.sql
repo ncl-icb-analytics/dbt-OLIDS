@@ -12,7 +12,7 @@
 -- Person Sex Dimension Table
 -- Derives sex from hardcoded gender_concept_id values
 
-SELECT DISTINCT 
+SELECT DISTINCT
     pp.person_id,
     -- Derives sex by mapping specific gender_concept_id values to 'Female' or 'Male'
     -- Any other gender_concept_id or a NULL value results in 'Unknown'
@@ -21,6 +21,6 @@ SELECT DISTINCT
         WHEN p.gender_concept_id = '3ae10994-efd0-47db-ade4-e440eaf0f973' THEN 'Male'   -- Hardcoded ID for Male
         ELSE 'Unknown' -- Default for NULL or any other gender_concept_id values
     END AS sex
-FROM {{ ref('stg_olids_patient') }} p
-INNER JOIN {{ ref('stg_olids_patient_person') }} pp 
-    ON p.id = pp.patient_id 
+FROM {{ ref('stg_olids_patient') }} AS p
+INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
+    ON p.id = pp.patient_id

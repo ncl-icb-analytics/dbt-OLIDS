@@ -29,27 +29,43 @@ Used for dementia quality measures including:
 WITH dementia_diagnoses AS (
     SELECT
         person_id,
-        
+
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        NULL AS latest_resolved_date,  -- Dementia has no resolved codes (permanent condition)
-        
+        NULL AS latest_resolved_date,
+        MIN(
+            CASE
+                WHEN is_dementia_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS earliest_diagnosis_date,
+        MAX(
+            CASE
+                WHEN is_dementia_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS latest_diagnosis_date,  -- Dementia has no resolved codes (permanent condition)
+
         -- QOF register logic: active diagnosis required (dementia is permanent, no resolved codes)
-        CASE
-            WHEN MAX(CASE WHEN is_dementia_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_dementia_diagnosis,
-        
+        COALESCE(MAX(
+            CASE
+                WHEN is_dementia_diagnosis_code THEN clinical_effective_date
+            END
+        ) IS NOT NULL,
+        FALSE) AS has_active_dementia_diagnosis,
+
         -- Count of dementia diagnoses (may indicate progression or confirmation)
-        COUNT(CASE WHEN is_dementia_diagnosis_code THEN 1 END) AS total_dementia_diagnoses,
-        
+        COUNT(CASE WHEN is_dementia_diagnosis_code THEN 1 END)
+            AS total_dementia_diagnoses,
+
         -- Traceability arrays
-        ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_code ELSE NULL END) AS all_dementia_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_display ELSE NULL END) AS all_dementia_concept_displays,
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_code END
+        ) AS all_dementia_concept_codes,
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_dementia_diagnosis_code THEN concept_display
+            END
+        ) AS all_dementia_concept_displays,
         ARRAY_CONSTRUCT() AS all_resolved_concept_codes  -- No resolved codes for dementia
-        
+
     FROM {{ ref('int_dementia_diagnoses_all') }}
     GROUP BY person_id
 )
@@ -64,9 +80,9 @@ SELECT
     dd.all_dementia_concept_codes,
     dd.all_dementia_concept_displays
 
-    FROM dementia_diagnoses dd
-    INNER JOIN {{ ref('dim_person') }} p
-        ON dd.person_id = p.person_id
-    INNER JOIN {{ ref('dim_person_age') }} age
-        ON dd.person_id = age.person_id
-    WHERE dd.has_active_dementia_diagnosis = TRUE  -- Only include persons with active dementia diagnosis 
+FROM dementia_diagnoses AS dd
+INNER JOIN {{ ref('dim_person') }} AS p
+    ON dd.person_id = p.person_id
+INNER JOIN {{ ref('dim_person_age') }} AS age
+    ON dd.person_id = age.person_id
+WHERE dd.has_active_dementia_diagnosis = TRUE  -- Only include persons with active dementia diagnosis

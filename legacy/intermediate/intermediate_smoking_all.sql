@@ -36,4 +36,4 @@ JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP
     ON O."patient_id" = PP."patient_id"
 JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" AS P
     ON O."patient_id" = P."id"
-WHERE MC.CLUSTER_ID IN ('SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD'); 
+WHERE MC.CLUSTER_ID IN ('SMOK_COD', 'LSMOK_COD', 'EXSMOK_COD', 'NSMOK_COD');

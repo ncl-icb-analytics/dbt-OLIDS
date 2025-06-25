@@ -34,11 +34,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Epilepsy-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'EPI_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_diagnosis_code,
     CASE WHEN obs.cluster_id = 'EPIRES_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_resolved_code,
-    
+
     -- Epilepsy observation type determination
     CASE
         WHEN obs.cluster_id = 'EPI_COD' THEN 'Epilepsy Diagnosis'
@@ -49,4 +49,4 @@ SELECT
 FROM ({{ get_observations("'EPI_COD', 'EPIRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

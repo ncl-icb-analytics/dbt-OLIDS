@@ -10,7 +10,7 @@ All estimated Glomerular Filtration Rate (eGFR) measurements from observations.
 */
 
 WITH base_observations AS (
-    
+
     SELECT
         obs.observation_id,
         obs.person_id,
@@ -21,7 +21,7 @@ WITH base_observations AS (
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
-        
+
     FROM ({{ get_observations("'EGFR_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
@@ -37,15 +37,15 @@ SELECT
     concept_display,
     source_cluster_id,
     original_result_value,
-    
+
     -- Data quality validation (eGFR typically 5-150+ mL/min/1.73m²)
-    CASE 
+    CASE
         WHEN egfr_value BETWEEN 1 AND 200 THEN TRUE
         ELSE FALSE
     END AS is_valid_egfr,
-    
+
     -- CKD stage classification (mL/min/1.73m²)
-    CASE 
+    CASE
         WHEN egfr_value NOT BETWEEN 1 AND 200 THEN 'Invalid'
         WHEN egfr_value >= 90 THEN 'Normal/High (≥90)'
         WHEN egfr_value >= 60 THEN 'Mild decrease (60-89)'
@@ -55,9 +55,9 @@ SELECT
         WHEN egfr_value < 15 THEN 'CKD Stage 5 (<15)'
         ELSE 'Unknown'
     END AS ckd_stage,
-    
+
     -- CKD indicator (eGFR < 60 suggests CKD)
-    CASE 
+    CASE
         WHEN egfr_value < 60 AND egfr_value >= 1 THEN TRUE
         ELSE FALSE
     END AS is_ckd_indicator
@@ -65,4 +65,4 @@ SELECT
 FROM base_observations
 
 -- Sort for consistent output
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

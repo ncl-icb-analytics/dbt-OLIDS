@@ -26,13 +26,13 @@ AS
 WITH episode_registration_periods AS (
     -- Get practice registration periods from Episode of Care table
     -- Filter to only include registration-type episodes if episode_type identifies registration episodes
-    SELECT 
+    SELECT
         eoc."person_id",
         eoc."organisation_id",
         eoc."episode_of_care_start_date" AS registration_start_date,
         eoc."episode_of_care_end_date" AS registration_end_date
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.EPISODE_OF_CARE eoc
-    WHERE eoc."person_id" IS NOT NULL 
+    WHERE eoc."person_id" IS NOT NULL
         AND eoc."organisation_id" IS NOT NULL
         AND eoc."episode_of_care_start_date" IS NOT NULL
         -- Add episode type filter if needed to identify registration episodes
@@ -40,7 +40,7 @@ WITH episode_registration_periods AS (
 ),
 all_registrations AS (
     -- Gets all practice registrations for each person with sequencing
-    SELECT 
+    SELECT
         pp."person_id" AS PERSON_ID,
         p."sk_patient_id" AS SK_PATIENT_ID,
         erp."organisation_id" AS PRACTICE_ID,
@@ -57,30 +57,30 @@ all_registrations AS (
         o."is_obsolete" AS PRACTICE_IS_OBSOLETE,
         -- Sequence number (1 is oldest registration)
         ROW_NUMBER() OVER (
-            PARTITION BY pp."person_id" 
-            ORDER BY 
+            PARTITION BY pp."person_id"
+            ORDER BY
                 erp.registration_start_date ASC,
                 COALESCE(erp.registration_end_date, TIMESTAMP '9999-12-31 23:59:59') ASC
         ) AS registration_sequence,
         -- Reverse sequence to identify current registration (1 is newest)
         ROW_NUMBER() OVER (
-            PARTITION BY pp."person_id" 
-            ORDER BY 
+            PARTITION BY pp."person_id"
+            ORDER BY
                 erp.registration_start_date DESC,
                 COALESCE(erp.registration_end_date, TIMESTAMP '9999-12-31 23:59:59') DESC
         ) AS reverse_sequence,
         -- Count total registrations per person
         COUNT(*) OVER (PARTITION BY pp."person_id") AS total_registrations
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p 
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
         ON pp."patient_id" = p."id"
-    JOIN episode_registration_periods erp 
+    JOIN episode_registration_periods erp
         ON pp."person_id" = erp."person_id"
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.ORGANISATION o 
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.ORGANISATION o
         ON erp."organisation_id" = o."id"
 )
 -- Select all registrations with additional flags
-SELECT 
+SELECT
     PERSON_ID,
     SK_PATIENT_ID,
     PRACTICE_ID,
@@ -100,4 +100,4 @@ SELECT
     -- Flag for current practice (reverse_sequence = 1 and end_date is NULL)
     reverse_sequence = 1 AND REGISTRATION_END_DATE IS NULL AS IS_CURRENT_PRACTICE
 FROM all_registrations
-ORDER BY PERSON_ID, registration_sequence; 
+ORDER BY PERSON_ID, registration_sequence;

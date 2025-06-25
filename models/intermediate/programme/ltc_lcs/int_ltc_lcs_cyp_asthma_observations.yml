@@ -34,4 +34,4 @@ models:
         # tests:
         #   - not_null  # TODO: Column missing from model, test disabled
         #   - accepted_values:
-        #       values: ['LTC_LCS'] 
+        #       values: ['LTC_LCS']

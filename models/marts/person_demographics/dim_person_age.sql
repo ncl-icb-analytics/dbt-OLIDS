@@ -26,21 +26,21 @@ WITH age_calculations AS (
         bd.death_date_approx,
         bd.is_deceased,
         -- Use death date for calculations if deceased, otherwise current date
-        CASE 
+        CASE
             WHEN bd.is_deceased THEN bd.death_date_approx
             ELSE CURRENT_DATE()
         END AS calculation_date,
         -- Calculate age metrics based on appropriate end date
-        FLOOR(DATEDIFF(month, bd.birth_date_approx, 
+        FLOOR(DATEDIFF(month, bd.birth_date_approx,
             CASE WHEN bd.is_deceased THEN bd.death_date_approx ELSE CURRENT_DATE() END
         ) / 12) AS age,
-        DATEDIFF(month, bd.birth_date_approx, 
+        DATEDIFF(month, bd.birth_date_approx,
             CASE WHEN bd.is_deceased THEN bd.death_date_approx ELSE CURRENT_DATE() END
         ) AS age_months,
-        FLOOR(DATEDIFF(day, bd.birth_date_approx, 
+        FLOOR(DATEDIFF(day, bd.birth_date_approx,
             CASE WHEN bd.is_deceased THEN bd.death_date_approx ELSE CURRENT_DATE() END
         ) / 7) AS age_weeks_approx,
-        DATEDIFF(day, bd.birth_date_approx, 
+        DATEDIFF(day, bd.birth_date_approx,
             CASE WHEN bd.is_deceased THEN bd.death_date_approx ELSE CURRENT_DATE() END
         ) AS age_days_approx,
         -- Academic year calculation for school stages
@@ -182,4 +182,4 @@ SELECT
         ELSE FALSE
     END AS is_secondary_school_age
 
-FROM age_calculations ac 
+FROM age_calculations ac

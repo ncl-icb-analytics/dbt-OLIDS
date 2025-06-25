@@ -30,7 +30,7 @@ WITH JournalEthnicity AS (
         MC.CODE_DESCRIPTION,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID,
         -- Flag for BAME ethnicity based on cluster IDs
-        CASE 
+        CASE
             WHEN MC.CLUSTER_ID IN (
                 'ETH2016MWBC_COD', -- White and Black Caribbean
                 'ETH2016MWBA_COD', -- White and Black African
@@ -61,7 +61,7 @@ PersonDates AS (
         je.*,
         -- Get latest ethnicity dates
         MAX(CLINICAL_EFFECTIVE_DATE) OVER (PARTITION BY PERSON_ID) AS LATEST_ETHNICITY_DATE,
-        MAX(CASE WHEN IS_BAME THEN CLINICAL_EFFECTIVE_DATE END) 
+        MAX(CASE WHEN IS_BAME THEN CLINICAL_EFFECTIVE_DATE END)
             OVER (PARTITION BY PERSON_ID) AS LATEST_BAME_DATE
     FROM JournalEthnicity je
 ),
@@ -91,4 +91,4 @@ SELECT
 FROM PersonDates pd
 LEFT JOIN PersonLevelCodingAggregation c
     ON pd.PERSON_ID = c.PERSON_ID
-QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1; 
+QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1;

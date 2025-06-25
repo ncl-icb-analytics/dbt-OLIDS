@@ -9,7 +9,7 @@ Business Logic:
 1. Base Population:
    - Patients aged 17+ from base population (excludes those on CKD and Diabetes registers)
    - Excludes patients already in CKD_62
-   
+
 2. UACR Criteria:
    - Latest UACR reading must be > 70
    - Takes max value per day to handle multiple readings
@@ -36,70 +36,81 @@ Dependencies:
     post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_63 case finding: Patients with elevated UACR (> 70) indicating significant kidney damage'"
 ) }}
 
-with base_population as (
+WITH base_population AS (
     -- Get base population of patients over 17
     -- Excludes those on CKD and Diabetes registers, and those in CKD_62
-    select distinct
+    SELECT DISTINCT
         bp.person_id,
         bp.age
-    from {{ ref('int_ltc_lcs_cf_base_population') }} bp
-    left join {{ ref('dim_ltc_lcs_cf_ckd_62') }} ckd62 using (person_id)
-    where bp.age >= 17
-        and ckd62.person_id is null -- Exclude patients in CKD_62
+    FROM {{ ref('int_ltc_lcs_cf_base_population') }} AS bp
+    LEFT JOIN
+        {{ ref('dim_ltc_lcs_cf_ckd_62') }} AS ckd62
+        ON bp.person_id = ckd62.person_id
+    WHERE
+        bp.age >= 17
+        AND ckd62.person_id IS NULL -- Exclude patients in CKD_62
 ),
-uacr_readings as (
-    -- Get all UACR readings with values > 0
-    -- Take max value per day to handle multiple readings
-    select
+
+uacr_readings AS (
+-- Get all UACR readings with values > 0
+-- Take max value per day to handle multiple readings
+    SELECT
         person_id,
         clinical_effective_date,
-        max(cast(result_value as number)) as result_value,
-        any_value(mapped_concept_code) as concept_code,
-        any_value(mapped_concept_display) as concept_display
-    from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id = 'UACR_TESTING'
-        and result_value is not null
-        and cast(result_value as number) > 0
-    group by 
+        max(cast(result_value AS number)) AS result_value,
+        any_value(mapped_concept_code) AS concept_code,
+        any_value(mapped_concept_display) AS concept_display
+    FROM {{ ref('int_ltc_lcs_ckd_observations') }}
+    WHERE
+        cluster_id = 'UACR_TESTING'
+        AND result_value IS NOT NULL
+        AND cast(result_value AS number) > 0
+    GROUP BY
         person_id,
         clinical_effective_date
 ),
-latest_uacr as (
-    -- Get the most recent UACR reading for each person
-    select
+
+latest_uacr AS (
+-- Get the most recent UACR reading for each person
+    SELECT
         ur.person_id,
-        ur.clinical_effective_date as latest_uacr_date,
-        ur.result_value as latest_uacr_value
-    from uacr_readings ur
-    qualify row_number() over (partition by ur.person_id order by ur.clinical_effective_date desc) = 1
+        ur.clinical_effective_date AS latest_uacr_date,
+        ur.result_value AS latest_uacr_value
+    FROM uacr_readings AS ur
+    QUALIFY
+        row_number()
+            OVER (
+                PARTITION BY ur.person_id
+                ORDER BY ur.clinical_effective_date DESC
+            )
+        = 1
 ),
-uacr_codes as (
-    -- Get all codes and displays for each person
-    select
+
+uacr_codes AS (
+-- Get all codes and displays for each person
+    SELECT
         person_id,
-        array_agg(distinct concept_code) within group (order by concept_code) as all_uacr_codes,
-        array_agg(distinct concept_display) within group (order by concept_display) as all_uacr_displays
-    from uacr_readings
-    group by person_id
+        array_agg(DISTINCT concept_code) WITHIN GROUP (ORDER BY concept_code)
+            AS all_uacr_codes,
+        array_agg(DISTINCT concept_display) WITHIN GROUP (
+            ORDER BY concept_display
+        ) AS all_uacr_displays
+    FROM uacr_readings
+    GROUP BY person_id
 )
+
 -- Final selection
-select
+SELECT
     bp.person_id,
     bp.age,
-    case 
-        when ceg.latest_uacr_value > 70 then true
-        else false
-    end as has_elevated_uacr,
     ceg.latest_uacr_date,
     ceg.latest_uacr_value,
     codes.all_uacr_codes,
     codes.all_uacr_displays,
+    coalesce(ceg.latest_uacr_value > 70, FALSE) AS has_elevated_uacr,
     -- Meets criteria flag for mart model
-    case 
-        when ceg.latest_uacr_value > 70 then true
-        else false
-    end as meets_criteria
-from base_population bp
-left join latest_uacr ceg using (person_id)
-left join uacr_codes codes using (person_id)
-where ceg.latest_uacr_value > 70
+    coalesce(ceg.latest_uacr_value > 70, FALSE) AS meets_criteria
+FROM base_population AS bp
+LEFT JOIN latest_uacr AS ceg ON bp.person_id = ceg.person_id
+LEFT JOIN uacr_codes AS codes USING (person_id)
+WHERE ceg.latest_uacr_value > 70

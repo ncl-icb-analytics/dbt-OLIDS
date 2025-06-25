@@ -25,7 +25,7 @@ AS
 
 WITH FilteredByAge AS (
     -- Get all relevant patients with their age
-    SELECT 
+    SELECT
         COALESCE(mh.PERSON_ID, li.PERSON_ID) AS PERSON_ID,
         COALESCE(mh.SK_PATIENT_ID, li.SK_PATIENT_ID) AS SK_PATIENT_ID,
         age.AGE,
@@ -71,4 +71,4 @@ SELECT
     f.ALL_MH_CONCEPT_DISPLAYS,
     f.ALL_LITHIUM_CONCEPT_CODES,
     f.ALL_LITHIUM_CONCEPT_DISPLAYS
-FROM FilteredByAge f; 
+FROM FilteredByAge f;

@@ -33,14 +33,14 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Dementia-specific flags (observation-level only)
     TRUE AS is_dementia_diagnosis_code,
-    
+
     -- Dementia observation type determination
     'Dementia Diagnosis' AS dementia_observation_type
 
 FROM ({{ get_observations("'DEM_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

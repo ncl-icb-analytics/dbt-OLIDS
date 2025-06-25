@@ -34,7 +34,7 @@ AS
 
 WITH FilteredByAge AS (
     -- Get all relevant patients with their age
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -78,10 +78,10 @@ BusinessRules AS (
             -- Rule 2: Has fragility fracture after April 2012
             -- Rule 3: Has osteoporosis diagnosis
             -- Rule 4: Has DXA confirmation (either DXA scan or T-score <= -2.5)
-            WHEN f.EARLIEST_FRAGILITY_FRACTURE_DATE IS NOT NULL 
+            WHEN f.EARLIEST_FRAGILITY_FRACTURE_DATE IS NOT NULL
                 AND f.EARLIEST_OSTEOPOROSIS_DATE IS NOT NULL
                 AND (
-                    f.EARLIEST_DXA_DATE IS NOT NULL 
+                    f.EARLIEST_DXA_DATE IS NOT NULL
                     OR (f.EARLIEST_DXA_T_SCORE_DATE IS NOT NULL AND f.DXA_T_SCORE <= -2.5)
                 ) THEN TRUE
             ELSE FALSE
@@ -91,7 +91,7 @@ BusinessRules AS (
         f.EARLIEST_DXA_T_SCORE_DATE IS NOT NULL AS HAS_DXA_T_SCORE,
         f.EARLIEST_FRAGILITY_FRACTURE_DATE IS NOT NULL AS HAS_FRAGILITY_FRACTURE,
         (
-            f.EARLIEST_DXA_DATE IS NOT NULL 
+            f.EARLIEST_DXA_DATE IS NOT NULL
             OR (f.EARLIEST_DXA_T_SCORE_DATE IS NOT NULL AND f.DXA_T_SCORE <= -2.5)
         ) AS HAS_VALID_DXA_CONFIRMATION
     FROM FilteredByAge f
@@ -123,4 +123,4 @@ SELECT
     ALL_FRACTURE_CONCEPT_DISPLAYS AS ALL_FRAGILITY_FRACTURE_CONCEPT_DISPLAYS,
     ALL_FRACTURE_SITES
 FROM BusinessRules
-WHERE IS_ON_OSTEOPOROSIS_REGISTER = TRUE; -- Only include patients on the osteoporosis register 
+WHERE IS_ON_OSTEOPOROSIS_REGISTER = TRUE; -- Only include patients on the osteoporosis register

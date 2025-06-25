@@ -33,11 +33,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- COPD-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'COPD_COD' THEN TRUE ELSE FALSE END AS is_copd_diagnosis_code,
     CASE WHEN obs.cluster_id = 'COPDRES_COD' THEN TRUE ELSE FALSE END AS is_copd_resolved_code,
-    
+
     -- COPD observation type determination
     CASE
         WHEN obs.cluster_id = 'COPD_COD' THEN 'COPD Diagnosis'
@@ -48,4 +48,4 @@ SELECT
 FROM ({{ get_observations("'COPD_COD', 'COPDRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

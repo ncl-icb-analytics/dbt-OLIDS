@@ -24,10 +24,10 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_egfr_all'), 
+        ref('int_egfr_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
 ) latest_egfr
 
-WHERE is_valid_egfr = TRUE 
+WHERE is_valid_egfr = TRUE

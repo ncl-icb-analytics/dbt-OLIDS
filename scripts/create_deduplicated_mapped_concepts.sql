@@ -61,9 +61,9 @@ deduplicated_descriptions AS (
         -- Pick one consistent description per concept code within each cluster
         -- Priority: PCD > UKHSA_COVID > UKHSA_FLU > others, then alphabetically
         FIRST_VALUE(CODE_DESCRIPTION) OVER (
-            PARTITION BY SOURCE_CODE_ID, CONCEPT_CODE, CLUSTER_ID 
-            ORDER BY 
-                CASE 
+            PARTITION BY SOURCE_CODE_ID, CONCEPT_CODE, CLUSTER_ID
+            ORDER BY
+                CASE
                     WHEN SOURCE = 'PCD' THEN 1
                     WHEN SOURCE = 'UKHSA_COVID' THEN 2
                     WHEN SOURCE = 'UKHSA_FLU' THEN 3
@@ -84,4 +84,4 @@ SELECT DISTINCT
     CLUSTER_DESCRIPTION,
     CODE_DESCRIPTION,
     SOURCE
-FROM deduplicated_descriptions; 
+FROM deduplicated_descriptions;

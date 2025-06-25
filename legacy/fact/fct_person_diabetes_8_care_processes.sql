@@ -64,10 +64,10 @@ SELECT
     -- 2. Either both feet were checked OR the unchecked foot is absent/amputated
     -- 3. The check wasn't declined or unsuitable
     CASE
-        WHEN fc.CLINICAL_EFFECTIVE_DATE IS NOT NULL 
+        WHEN fc.CLINICAL_EFFECTIVE_DATE IS NOT NULL
             AND fc.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago
             AND (
-                fc.BOTH_FEET_CHECKED 
+                fc.BOTH_FEET_CHECKED
                 OR (fc.LEFT_FOOT_CHECKED AND (fc.RIGHT_FOOT_ABSENT OR fc.RIGHT_FOOT_AMPUTATED))
                 OR (fc.RIGHT_FOOT_CHECKED AND (fc.LEFT_FOOT_ABSENT OR fc.LEFT_FOOT_AMPUTATED))
             )
@@ -88,10 +88,10 @@ SELECT
      CASE WHEN cre.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago THEN 1 ELSE 0 END +
      CASE WHEN acr.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago THEN 1 ELSE 0 END +
      CASE
-        WHEN fc.CLINICAL_EFFECTIVE_DATE IS NOT NULL 
+        WHEN fc.CLINICAL_EFFECTIVE_DATE IS NOT NULL
             AND fc.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago
             AND (
-                fc.BOTH_FEET_CHECKED 
+                fc.BOTH_FEET_CHECKED
                 OR (fc.LEFT_FOOT_CHECKED AND (fc.RIGHT_FOOT_ABSENT OR fc.RIGHT_FOOT_AMPUTATED))
                 OR (fc.RIGHT_FOOT_CHECKED AND (fc.LEFT_FOOT_ABSENT OR fc.LEFT_FOOT_AMPUTATED))
             )
@@ -100,16 +100,16 @@ SELECT
      CASE WHEN bmi.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago THEN 1 ELSE 0 END +
      CASE WHEN smok.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago THEN 1 ELSE 0 END
     ) as CARE_PROCESSES_COMPLETED,
-    CASE 
+    CASE
         WHEN (hba.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago AND
               bp.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago AND
               chol.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago AND
               cre.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago AND
               acr.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago AND
-              (fc.CLINICAL_EFFECTIVE_DATE IS NOT NULL 
+              (fc.CLINICAL_EFFECTIVE_DATE IS NOT NULL
                 AND fc.CLINICAL_EFFECTIVE_DATE >= t.twelve_months_ago
                 AND (
-                    fc.BOTH_FEET_CHECKED 
+                    fc.BOTH_FEET_CHECKED
                     OR (fc.LEFT_FOOT_CHECKED AND (fc.RIGHT_FOOT_ABSENT OR fc.RIGHT_FOOT_AMPUTATED))
                     OR (fc.RIGHT_FOOT_CHECKED AND (fc.LEFT_FOOT_ABSENT OR fc.LEFT_FOOT_AMPUTATED))
                 )
@@ -135,4 +135,4 @@ LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_FOOT_CHECK_LATES
 LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BMI_LATEST bmi
     ON dr.PERSON_ID = bmi.PERSON_ID
 LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_SMOKING_LATEST smok
-    ON dr.PERSON_ID = smok.PERSON_ID; 
+    ON dr.PERSON_ID = smok.PERSON_ID;

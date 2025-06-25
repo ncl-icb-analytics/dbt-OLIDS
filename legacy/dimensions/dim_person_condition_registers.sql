@@ -1,6 +1,6 @@
 -- ==========================================================================
 -- Wide View of LTC Summary - Person Condition Register Flags
--- Pivots FCT_PERSON_LTC_SUMMARY from long format (one row per condition) 
+-- Pivots FCT_PERSON_LTC_SUMMARY from long format (one row per condition)
 -- to wide format (one row per person with boolean flags for each condition)
 -- Provides easy boolean lookup for condition register status per person
 -- ==========================================================================
@@ -72,6 +72,6 @@ SELECT
     MAX(CASE WHEN CONDITION_CODE = 'SMI' THEN TRUE ELSE FALSE END) AS HAS_SMI,
     MAX(CASE WHEN CONDITION_CODE = 'STIA' THEN TRUE ELSE FALSE END) AS HAS_STIA
 FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_LTC_SUMMARY
-GROUP BY 
+GROUP BY
     PERSON_ID,
-    SK_PATIENT_ID 
+    SK_PATIENT_ID

@@ -38,7 +38,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all diagnoses related to Depression, Depression Resolved, Reviews, Invites, and PCA decisions
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -59,20 +59,20 @@ WITH BaseObservations AS (
 ),
 ReviewDates AS (
     -- Calculate review dates that fall within 10-56 days of a depression diagnosis
-    SELECT 
+    SELECT
         bo.PERSON_ID,
         bo.CLINICAL_EFFECTIVE_DATE AS REVIEW_DATE,
         d.LATEST_DEPRESSION_DATE,
-        CASE 
-            WHEN bo.CLINICAL_EFFECTIVE_DATE BETWEEN 
-                DATEADD(day, 10, d.LATEST_DEPRESSION_DATE) AND 
+        CASE
+            WHEN bo.CLINICAL_EFFECTIVE_DATE BETWEEN
+                DATEADD(day, 10, d.LATEST_DEPRESSION_DATE) AND
                 DATEADD(day, 56, d.LATEST_DEPRESSION_DATE)
-            THEN TRUE 
-            ELSE FALSE 
+            THEN TRUE
+            ELSE FALSE
         END AS IS_VALID_REVIEW
     FROM BaseObservations bo
     JOIN (
-        SELECT 
+        SELECT
             PERSON_ID,
             MAX(CASE WHEN CLUSTER_ID = 'DEPR_COD' THEN CLINICAL_EFFECTIVE_DATE END) AS LATEST_DEPRESSION_DATE
         FROM BaseObservations
@@ -109,7 +109,7 @@ SELECT
     -- Depression diagnosis dates
     MIN(CASE WHEN bo.CLUSTER_ID = 'DEPR_COD' THEN bo.CLINICAL_EFFECTIVE_DATE END) AS EARLIEST_DEPRESSION_DATE,
     MAX(CASE WHEN bo.CLUSTER_ID = 'DEPR_COD' THEN bo.CLINICAL_EFFECTIVE_DATE END) AS LATEST_DEPRESSION_DATE,
-    
+
     -- Depression resolved date
     MAX(CASE WHEN bo.CLUSTER_ID = 'DEPRES_COD' THEN bo.CLINICAL_EFFECTIVE_DATE END) AS LATEST_DEPRESSION_RESOLVED_DATE,
 
@@ -142,9 +142,9 @@ FROM BaseObservations bo
 LEFT JOIN ReviewDates rd ON bo.PERSON_ID = rd.PERSON_ID
 LEFT JOIN InviteDates id ON bo.PERSON_ID = id.PERSON_ID
 LEFT JOIN SecondInvite si ON bo.PERSON_ID = si.PERSON_ID
-GROUP BY 
-    bo.PERSON_ID, 
-    bo.SK_PATIENT_ID, 
+GROUP BY
+    bo.PERSON_ID,
+    bo.SK_PATIENT_ID,
     bo.AGE,
     id.FIRST_INVITE_DATE,
-    si.SECOND_INVITE_DATE; 
+    si.SECOND_INVITE_DATE;

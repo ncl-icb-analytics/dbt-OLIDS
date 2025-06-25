@@ -77,4 +77,4 @@ SELECT
     pla.ALL_ARAF_CONCEPT_CODES,
     pla.ALL_ARAF_CONCEPT_DISPLAYS,
     pla.ALL_ARAF_CODE_CATEGORIES_APPLIED
-FROM PersonLevelARAFAggregation pla; 
+FROM PersonLevelARAFAggregation pla;

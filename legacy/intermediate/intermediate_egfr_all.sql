@@ -37,6 +37,3 @@ JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
 WHERE C.CLUSTER_ID = 'EGFR_COD'
 -- Filter out records where the result value itself is missing.
 AND o."result_value" IS NOT NULL;
-
-
-

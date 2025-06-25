@@ -7,14 +7,14 @@ models:
       Uses cluster ID EPILDRUG_COD for anti-epileptic drugs.
       Critical for epilepsy register and therapeutic drug monitoring.
       Includes ALL persons following intermediate layer principles.
-      
+
       Clinical Purpose:
       - Epilepsy register maintenance
       - Therapeutic drug monitoring support
       - Brand consistency monitoring
       - Teratogenicity risk assessment
       - Polytherapy identification
-      
+
       Key Features:
       - 6-month AED medication history
       - AED type and generation classification
@@ -23,65 +23,65 @@ models:
       - Brand switching considerations
       - Seizure type indication matching
       - Polytherapy detection
-    
+
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"
         tests:
           - not_null
-          
+
       - name: medication_order_id
         description: "Unique identifier for the medication order record"
         tests:
           - not_null
-          
+
       - name: order_date
         description: "Date the epilepsy medication was ordered"
         tests:
           - not_null
-          
+
       - name: aed_type
         description: "Specific anti-epileptic drug type"
         tests:
           - not_null
           - accepted_values:
               values: ['CARBAMAZEPINE', 'PHENYTOIN', 'VALPROATE', 'LAMOTRIGINE', 'LEVETIRACETAM', 'GABAPENTIN', 'PREGABALIN', 'TOPIRAMATE', 'PHENOBARBITAL', 'CLONAZEPAM', 'ETHOSUXIMIDE', 'OTHER_AED']
-              
+
       - name: aed_generation
         description: "AED generation classification"
         tests:
           - not_null
           - accepted_values:
               values: ['FIRST_GENERATION', 'NEWER_GENERATION', 'UNKNOWN_GENERATION']
-              
+
       - name: requires_tdm
         description: "Boolean flag indicating therapeutic drug monitoring requirement"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: teratogenicity_risk
         description: "Teratogenicity risk category for pregnancy planning"
         tests:
           - not_null
           - accepted_values:
               values: ['HIGH_RISK', 'MODERATE_RISK', 'LOW_RISK', 'UNKNOWN_RISK']
-              
+
       - name: requires_brand_consistency
         description: "Boolean flag indicating narrow therapeutic index requiring brand consistency"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: seizure_indication
         description: "Primary seizure type indication for AED"
         tests:
           - not_null
           - accepted_values:
               values: ['ABSENCE_SEIZURES', 'GENERALISED_SEIZURES', 'FOCAL_SEIZURES', 'BROAD_SPECTRUM']
-              
+
       - name: recent_order_count_6m
         description: "Count of epilepsy medication orders in last 6 months for this person"
         tests:
@@ -90,7 +90,7 @@ models:
               min_value: 1
               max_value: 50
               severity: warn
-              
+
       - name: unique_aed_types
         description: "Number of unique AED types for polytherapy detection"
         tests:
@@ -99,38 +99,38 @@ models:
               min_value: 1
               max_value: 10
               severity: warn
-              
+
       - name: is_polytherapy
         description: "Boolean flag indicating polytherapy (multiple AED types)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: multiple_tdm_drugs
         description: "Boolean flag indicating multiple TDM-requiring drugs"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_recent_1m
         description: "Boolean flag indicating order within last 1 month"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_recent_3m
         description: "Boolean flag indicating order within last 3 months"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_recent_6m
         description: "Boolean flag indicating order within last 6 months (always TRUE)"
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

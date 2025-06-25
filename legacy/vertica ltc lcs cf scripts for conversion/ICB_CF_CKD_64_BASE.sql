@@ -4,60 +4,67 @@
 --17.09.23 Diabetes added back in as not in ICS_LTC_01 (type 2 only)
 
 WITH emisbase AS (
-  SELECT DISTINCT EMPI_ID, 1 AS 'EMIS'
-  FROM (
-    SELECT EMPI_ID
-    FROM LTC_LCS_BASE
-    WHERE AGE >= 17
+    SELECT DISTINCT
+        empi_id,
+        1 AS 'EMIS'
+    FROM (
+        SELECT empi_id
+        FROM ltc_lcs_base
+        WHERE age >= 17
 
-    EXCEPT
+        EXCEPT
 
-    SELECT EMPI_ID
-    FROM ICS_LTC_01
-     
-    EXCEPT 
+        SELECT empi_id
+        FROM ics_ltc_01
 
-    SELECT EMPI_ID
-    FROM POPHEALTH_QOF_LTCS_LIST l
-    WHERE LTC_NAME = 'Diabetes'
+        EXCEPT
 
-    EXCEPT
+        SELECT empi_id
+        FROM pophealth_qof_ltcs_list
+        WHERE ltc_name = 'Diabetes'
 
-    SELECT EMPI_ID
-    FROM PH_F_RESULT
-    JOIN JOINED_LTC_LOOKUP ON SNOMED_CODE = RESULT_CODE
-    WHERE cluster_id IN ('EGFR_COD_LCS')
-      AND NORM_NUMERIC_VALUE > 0
-      AND DATE(SERVICE_DATE) >= add_months(CURRENT_DATE(), -12)
-      AND SOURCE_DESCRIPTION = 'EMIS GP'
-  ) emisexclusions
+        EXCEPT
+
+        SELECT empi_id
+        FROM ph_f_result
+        INNER JOIN joined_ltc_lookup ON snomed_code = result_code
+        WHERE
+            cluster_id IN ('EGFR_COD_LCS')
+            AND norm_numeric_value > 0
+            AND DATE(service_date) >= ADD_MONTHS(CURRENT_DATE(), -12)
+            AND source_description = 'EMIS GP'
+    ) AS emisexclusions
 ),
+
 otherbase AS (
-  SELECT DISTINCT EMPI_ID, 1 AS 'OTHER'
-  FROM (
-    SELECT EMPI_ID
-    FROM LTC_LCS_BASE
-    WHERE AGE >= 17
+    SELECT DISTINCT
+        empi_id,
+        1 AS 'OTHER'
+    FROM (
+        SELECT empi_id
+        FROM ltc_lcs_base
+        WHERE age >= 17
 
-    EXCEPT
+        EXCEPT
 
-    SELECT EMPI_ID
-    FROM ICS_LTC_01
+        SELECT empi_id
+        FROM ics_ltc_01
 
-    EXCEPT
+        EXCEPT
 
-    SELECT EMPI_ID
-    FROM PH_F_RESULT
-    JOIN JOINED_LTC_LOOKUP ON SNOMED_CODE = RESULT_CODE
-    WHERE cluster_id IN ('EGFR_COD_LCS')
-      AND NORM_NUMERIC_VALUE > 0
-      AND DATE(SERVICE_DATE) >= add_months(CURRENT_DATE(), -12)
-  ) otherexclusions
+        SELECT empi_id
+        FROM ph_f_result
+        INNER JOIN joined_ltc_lookup ON snomed_code = result_code
+        WHERE
+            cluster_id IN ('EGFR_COD_LCS')
+            AND norm_numeric_value > 0
+            AND DATE(service_date) >= ADD_MONTHS(CURRENT_DATE(), -12)
+    ) AS otherexclusions
 )
 
-SELECT 
-COALESCE(E.empi_id, O.empi_id) AS empi_id,
-E.EMIS,
-O.OTHER
-FROM emisbase AS E
-FULL OUTER JOIN otherbase AS O USING (empi_id)
+SELECT
+    e.emis,
+    o.other,
+    COALESCE(e.empi_id, o.empi_id) AS empi_id
+FROM emisbase AS e
+FULL OUTER JOIN otherbase AS o ON e.empi_id = o.empi_id

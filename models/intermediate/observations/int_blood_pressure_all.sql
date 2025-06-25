@@ -14,7 +14,7 @@
 
 WITH base_observations_and_clusters AS (
     -- Get all BP-related observations with terminology mapping
-    SELECT 
+    SELECT
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
@@ -34,19 +34,19 @@ WITH base_observations_and_clusters AS (
 
 row_flags AS (
     -- Determine BP type and clinical context for each observation
-    SELECT 
+    SELECT
         *,
         -- Flag for Systolic readings: specific cluster or display text contains 'systolic'
-        (source_cluster_id = 'SYSBP_COD' OR 
+        (source_cluster_id = 'SYSBP_COD' OR
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%systolic%')) AS is_systolic_row,
-        
-        -- Flag for Diastolic readings: specific cluster or display text contains 'diastolic'  
-        (source_cluster_id = 'DIABP_COD' OR 
+
+        -- Flag for Diastolic readings: specific cluster or display text contains 'diastolic'
+        (source_cluster_id = 'DIABP_COD' OR
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%diastolic%')) AS is_diastolic_row,
-        
+
         -- Flag for Home BP context
         (source_cluster_id IN ('HOMEBP_COD', 'HOMEAMBBP_COD')) AS is_home_bp_row,
-        
+
         -- Flag for ABPM context
         (source_cluster_id = 'ABPM_COD') AS is_abpm_bp_row
     FROM base_observations_and_clusters
@@ -56,15 +56,15 @@ row_flags AS (
 SELECT DISTINCT
     person_id,
     clinical_effective_date,
-    
+
     -- Consolidated BP values: pivot systolic/diastolic for the event date
     MAX(CASE WHEN is_systolic_row THEN result_value ELSE NULL END) AS systolic_value,
     MAX(CASE WHEN is_diastolic_row THEN result_value ELSE NULL END) AS diastolic_value,
-    
+
     -- Clinical context flags: if any observation on this date was Home/ABPM
     BOOLOR_AGG(is_home_bp_row) AS is_home_bp_event,
     BOOLOR_AGG(is_abpm_bp_row) AS is_abpm_bp_event,
-    
+
     -- Traceability metadata for audit and debugging
     ANY_VALUE(result_unit_display) AS result_unit_display,
     MAX(CASE WHEN is_systolic_row THEN observation_id ELSE NULL END) AS systolic_observation_id,
@@ -81,4 +81,4 @@ HAVING (systolic_value IS NOT NULL OR diastolic_value IS NOT NULL)
    AND (systolic_value IS NULL OR (systolic_value >= 40 AND systolic_value <= 350))
    AND (diastolic_value IS NULL OR (diastolic_value >= 20 AND diastolic_value <= 200))
 
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

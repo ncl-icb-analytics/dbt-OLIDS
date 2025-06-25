@@ -17,7 +17,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseWaistMeasurements AS (
     -- Get all waist circumference measurements
-    SELECT 
+    SELECT
         o."id" AS OBSERVATION_ID,
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
@@ -54,4 +54,4 @@ SELECT
     COALESCE(mc.RECENT_MEASUREMENT_COUNT, 0) as RECENT_MEASUREMENT_COUNT
 FROM BaseWaistMeasurements bwm
 LEFT JOIN MeasurementCounts mc
-    ON bwm.PERSON_ID = mc.PERSON_ID; 
+    ON bwm.PERSON_ID = mc.PERSON_ID;

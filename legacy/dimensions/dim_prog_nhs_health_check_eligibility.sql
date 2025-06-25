@@ -13,7 +13,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH PersonConditions AS (
     -- Get all relevant conditions from the fact table
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         MAX(CASE WHEN CONDITION_CODE IN ('CHD', 'DM', 'CKD', 'HTN', 'AF', 'STIA', 'FHYP', 'HF', 'PAD') THEN TRUE ELSE FALSE END) AS HAS_ANY_EXCLUDING_CONDITION
@@ -22,14 +22,14 @@ WITH PersonConditions AS (
 ),
 PersonStatins AS (
     -- Get statin prescription status
-    SELECT 
+    SELECT
         PERSON_ID,
         CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS HAS_STATIN_PRESCRIPTION
     FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_STATIN_ORDERS_ALL
     GROUP BY PERSON_ID
 )
 -- Final selection combining all eligibility criteria
-SELECT 
+SELECT
     pc.PERSON_ID,
     pc.SK_PATIENT_ID,
     age.AGE,
@@ -44,4 +44,4 @@ FROM PersonConditions pc
 JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
     ON pc.PERSON_ID = age.PERSON_ID
 LEFT JOIN PersonStatins ps
-    ON pc.PERSON_ID = ps.PERSON_ID; 
+    ON pc.PERSON_ID = ps.PERSON_ID;

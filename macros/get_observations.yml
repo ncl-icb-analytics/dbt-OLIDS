@@ -11,4 +11,4 @@ macros:
         description: Comma-separated list of cluster IDs to filter observations by
     meta:
       tests:
-        - test_get_observations 
+        - test_get_observations

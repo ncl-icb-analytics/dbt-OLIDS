@@ -12,7 +12,7 @@ initialize = ON_CREATE
 warehouse = NCL_ANALYTICS_XS
  as
 -- Calculates the total number of GP appointments for each person at each organisation within the last 12 months.
-SELECT 
+SELECT
     a."person_id" AS LDS_PERSON_ID, -- Person identifier from the APPOINTMENT table
     p."sk_patient_id" AS SK_PATIENT_ID, -- Surrogate key for the patient from the PATIENT table
     'LDS_PERSON_GP_APPOINTMENTS_12M' AS MEASURE_ID, -- Static measure ID indicating the metric
@@ -23,6 +23,6 @@ JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p -- Joins APPOINTMENT to PAT
     ON a."patient_id" = p."id"
 WHERE a."start_date" >= ADD_MONTHS(CURRENT_DATE(), -12) -- Filters for appointments with a start date within the last 12 months from the current date.
 GROUP BY -- Groups results to count appointments per person per organisation.
-    a."person_id", 
+    a."person_id",
     p."sk_patient_id",
     a."organisation_id";

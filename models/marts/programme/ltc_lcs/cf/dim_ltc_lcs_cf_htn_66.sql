@@ -15,22 +15,28 @@ WITH latest_bp AS (
         bp.diastolic_value,
         bp.is_home_bp_event,
         bp.is_abpm_bp_event,
-        CASE 
+        CASE
             WHEN bp.is_abpm_bp_event THEN 'HYPERTENSION_BP_ABPM'
             WHEN bp.is_home_bp_event THEN 'HYPERTENSION_BP_HOME'
             ELSE 'HYPERTENSION_BP_CLINIC'
         END AS latest_bp_type,
-        CASE 
-            WHEN NOT bp.is_home_bp_event AND NOT bp.is_abpm_bp_event THEN TRUE
-            ELSE FALSE
-        END AS is_clinic_bp,
-        CASE 
-            WHEN bp.is_home_bp_event OR bp.is_abpm_bp_event THEN TRUE
-            ELSE FALSE
-        END AS is_home_bp
-    FROM {{ ref('int_blood_pressure_all') }} bp
-    JOIN {{ ref('int_ltc_lcs_cf_base_population') }} base USING (person_id)
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY bp.person_id ORDER BY bp.clinical_effective_date DESC) = 1
+        coalesce(
+            NOT bp.is_home_bp_event AND NOT bp.is_abpm_bp_event,
+            FALSE
+        ) AS is_clinic_bp,
+        coalesce(
+            bp.is_home_bp_event OR bp.is_abpm_bp_event,
+            FALSE
+        ) AS is_home_bp
+    FROM {{ ref('int_blood_pressure_all') }} AS bp
+    INNER JOIN {{ ref('int_ltc_lcs_cf_base_population') }} USING (person_id)
+    QUALIFY
+        row_number()
+            OVER (
+                PARTITION BY bp.person_id
+                ORDER BY bp.clinical_effective_date DESC
+            )
+        = 1
 ),
 
 risk_factor_patients AS (
@@ -40,33 +46,40 @@ risk_factor_patients AS (
         -- Myocardial, cerebral, claudication from observations
         SELECT DISTINCT person_id
         FROM {{ ref('int_ltc_lcs_htn_observations') }}
-        WHERE cluster_id IN ('HYPERTENSION_MYOCARDIAL', 'HYPERTENSION_CEREBRAL', 'HYPERTENSION_CLAUDICATION')
-        
+        WHERE
+            cluster_id IN (
+                'HYPERTENSION_MYOCARDIAL',
+                'HYPERTENSION_CEREBRAL',
+                'HYPERTENSION_CLAUDICATION'
+            )
+
         UNION
-        
+
         -- CKD (eGFR < 60) from observations
         SELECT DISTINCT person_id
         FROM {{ ref('int_ltc_lcs_htn_observations') }}
-        WHERE cluster_id = 'HYPERTENSION_EGFR'
+        WHERE
+            cluster_id = 'HYPERTENSION_EGFR'
             AND result_value < 60
-        
+
         UNION
-        
+
         -- Diabetes from observations
         SELECT DISTINCT person_id
         FROM {{ ref('int_ltc_lcs_htn_observations') }}
         WHERE cluster_id = 'HYPERTENSION_DIABETES'
-        
+
         UNION
-        
+
         -- BMI > 35 from observations
         SELECT DISTINCT person_id
         FROM {{ ref('int_ltc_lcs_htn_observations') }}
-        WHERE cluster_id = 'HYPERTENSION_BMI'
+        WHERE
+            cluster_id = 'HYPERTENSION_BMI'
             AND result_value > 35
-        
+
         UNION
-        
+
         -- Black or South Asian ethnicity
         SELECT DISTINCT person_id
         FROM {{ ref('int_ltc_lcs_ethnicity_observations') }}
@@ -94,13 +107,13 @@ patients_without_risk_factors AS (
         base.person_id,
         base.age,
         FALSE AS has_cardiovascular_risk_factors
-    FROM {{ ref('int_ltc_lcs_cf_base_population') }} base
+    FROM {{ ref('int_ltc_lcs_cf_base_population') }} AS base
     WHERE NOT EXISTS (
-        SELECT 1 FROM risk_factor_patients rf 
+        SELECT 1 FROM risk_factor_patients AS rf
         WHERE rf.person_id = base.person_id
     )
     AND NOT EXISTS (
-        SELECT 1 FROM higher_priority_patients hpp 
+        SELECT 1 FROM higher_priority_patients AS hpp
         WHERE hpp.person_id = base.person_id
     )
 ),
@@ -117,12 +130,20 @@ eligible_patients AS (
         bp.is_home_bp,
         FALSE AS has_cardiovascular_risk_factors,
         TRUE AS has_stage_1_hypertension_no_risk
-    FROM latest_bp bp
-    JOIN patients_without_risk_factors pnrf USING (person_id)
+    FROM latest_bp AS bp
+    INNER JOIN
+        patients_without_risk_factors AS pnrf
+        ON bp.person_id = pnrf.person_id
     WHERE (
-        (bp.is_clinic_bp AND (bp.systolic_value >= 140 OR bp.diastolic_value >= 90))
-        OR 
-        (bp.is_home_bp AND (bp.systolic_value >= 135 OR bp.diastolic_value >= 85))
+        (
+            bp.is_clinic_bp
+            AND (bp.systolic_value >= 140 OR bp.diastolic_value >= 90)
+        )
+        OR
+        (
+            bp.is_home_bp
+            AND (bp.systolic_value >= 135 OR bp.diastolic_value >= 85)
+        )
     )
 )
 
@@ -137,4 +158,4 @@ SELECT
     ep.latest_bp_type,
     ep.is_clinic_bp,
     ep.is_home_bp
-FROM eligible_patients ep 
+FROM eligible_patients AS ep

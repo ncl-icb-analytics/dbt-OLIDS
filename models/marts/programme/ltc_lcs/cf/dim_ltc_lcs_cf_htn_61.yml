@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_ltc_lcs_cf_htn_61
     description: "Intermediate model for LTC/LCS case finding HTN_61. Identifies patients with severe hypertension based on blood pressure thresholds: Clinic BP ≥180/120 mmHg or Home/ABPM BP ≥170/115 mmHg."
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -64,4 +64,4 @@ models:
         description: "Array of all blood pressure concept codes for the patient"
 
       - name: all_bp_displays
-        description: "Array of all blood pressure concept display terms for the patient" 
+        description: "Array of all blood pressure concept display terms for the patient"

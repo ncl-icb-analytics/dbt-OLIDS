@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_ltc_lcs_cf_dm_61
     description: "Intermediate model for LTC/LCS case finding DM_61. Identifies patients at risk of diabetes based on HbA1c levels, diabetes risk scores, cardiovascular risk, or gestational diabetes history."
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -52,4 +52,4 @@ models:
         description: "Array of all HbA1c concept codes for the patient"
 
       - name: all_hba1c_displays
-        description: "Array of all HbA1c concept display terms for the patient" 
+        description: "Array of all HbA1c concept display terms for the patient"

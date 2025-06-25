@@ -8,7 +8,7 @@
 /*
 All depression diagnosis observations from clinical records.
 Uses QOF depression cluster IDs:
-- DEPR_COD: Depression diagnoses  
+- DEPR_COD: Depression diagnoses
 - DEPRES_COD: Depression resolved/remission codes
 
 Clinical Purpose:
@@ -34,11 +34,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Depression-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'DEPR_COD' THEN TRUE ELSE FALSE END AS is_depression_diagnosis_code,
     CASE WHEN obs.cluster_id = 'DEPRES_COD' THEN TRUE ELSE FALSE END AS is_depression_resolved_code,
-    
+
     -- Depression observation type determination
     CASE
         WHEN obs.cluster_id = 'DEPR_COD' THEN 'Depression Diagnosis'
@@ -49,4 +49,4 @@ SELECT
 FROM ({{ get_observations("'DEPR_COD', 'DEPRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

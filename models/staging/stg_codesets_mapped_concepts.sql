@@ -1,15 +1,15 @@
 -- Staging model for CODESETS.MAPPED_CONCEPTS
 -- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
 
-select
-    "SOURCE_CODE_ID" as source_code_id,
-    "ORIGINATING_SOURCE_TABLE" as originating_source_table,
-    "CONCEPT_ID" as concept_id,
-    "CONCEPT_SYSTEM" as concept_system,
-    "CONCEPT_CODE" as concept_code,
-    "CONCEPT_DISPLAY" as concept_display,
-    "CLUSTER_ID" as cluster_id,
-    "CLUSTER_DESCRIPTION" as cluster_description,
-    "CODE_DESCRIPTION" as code_description,
-    "SOURCE" as source
-from {{ source('CODESETS', 'MAPPED_CONCEPTS') }}
+SELECT
+    "SOURCE_CODE_ID" AS source_code_id,
+    "ORIGINATING_SOURCE_TABLE" AS originating_source_table,
+    "CONCEPT_ID" AS concept_id,
+    "CONCEPT_SYSTEM" AS concept_system,
+    "CONCEPT_CODE" AS concept_code,
+    "CONCEPT_DISPLAY" AS concept_display,
+    "CLUSTER_ID" AS cluster_id,
+    "CLUSTER_DESCRIPTION" AS cluster_description,
+    "CODE_DESCRIPTION" AS code_description,
+    "SOURCE" AS source
+FROM {{ source('CODESETS', 'MAPPED_CONCEPTS') }}

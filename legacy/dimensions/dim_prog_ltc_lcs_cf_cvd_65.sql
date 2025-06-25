@@ -54,4 +54,4 @@ JOIN QRISK2Readings qr
     ON b.PERSON_ID = qr.PERSON_ID
     AND qr.rn = 1  -- Get most recent reading
 LEFT JOIN QRISK2Aggregated qa
-    ON b.PERSON_ID = qa.PERSON_ID; 
+    ON b.PERSON_ID = qa.PERSON_ID;

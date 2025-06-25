@@ -23,10 +23,10 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_cholesterol_all'), 
+        ref('int_cholesterol_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
 ) latest_cholesterol
 
-WHERE is_valid_cholesterol = TRUE 
+WHERE is_valid_cholesterol = TRUE

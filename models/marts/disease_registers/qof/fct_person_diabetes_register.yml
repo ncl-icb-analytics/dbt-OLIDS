@@ -2,32 +2,32 @@ models:
   - name: fct_person_diabetes_register
     description: |
       QOF Diabetes Register - Type classification register with diabetes subtype determination.
-      
+
       **Business Logic (Pattern 4):**
       - Age ≥17 years (QOF requirement for diabetes monitoring)
       - Active diabetes diagnosis: latest DM_COD > latest DMRES_COD OR no resolution recorded
       - Type classification: Type 1 vs Type 2 vs Unknown based on latest specific type codes
       - Type hierarchy: Type 1 takes precedence if both types coded on same date
-      
+
       **Clinical Context:**
       This register identifies patients with active diabetes and classifies them by diabetes type
       for appropriate clinical management. Type classification supports different care pathways
       and QOF monitoring requirements for Type 1 and Type 2 diabetes.
-      
+
       **QOF Requirements:**
       - DM014: Practice can produce a register of patients with diabetes mellitus (all types)
       - Supports type-specific indicators for HbA1c monitoring, care processes, and complications screening
       - Type classification enables appropriate clinical review frequencies and targets
-      
+
       **Type Classification Logic:**
       - Type 1: Latest DMTYPE1_COD ≥ latest DMTYPE2_COD (precedence rule)
       - Type 2: Latest DMTYPE2_COD > latest DMTYPE1_COD
       - Unknown: No specific type codes or general DM_COD only
-      
+
       **Data Sources:**
       - Diagnosis codes: int_diabetes_diagnoses_all (DM_COD, DMRES_COD, DMTYPE1_COD, DMTYPE2_COD cluster IDs)
       - Age filtering: dim_person_age (≥17 years requirement)
-      
+
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
     columns:
@@ -112,4 +112,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

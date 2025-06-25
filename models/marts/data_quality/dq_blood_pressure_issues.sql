@@ -16,7 +16,7 @@
 WITH base_observations_raw AS (
     -- Get ALL BP-related observations, including those with issues
     -- Keep NULL dates and out-of-range values for DQ analysis
-    SELECT 
+    SELECT
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date, -- Keep NULL dates
@@ -32,14 +32,14 @@ WITH base_observations_raw AS (
 
 row_flags_raw AS (
     -- Determine BP type for each observation (including problematic ones)
-    SELECT 
+    SELECT
         *,
         -- Flag for Systolic readings
-        (source_cluster_id = 'SYSBP_COD' OR 
+        (source_cluster_id = 'SYSBP_COD' OR
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%systolic%')) AS is_systolic_row,
-        
+
         -- Flag for Diastolic readings
-        (source_cluster_id = 'DIABP_COD' OR 
+        (source_cluster_id = 'DIABP_COD' OR
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%diastolic%')) AS is_diastolic_row
     FROM base_observations_raw
 ),
@@ -49,22 +49,22 @@ aggregated_raw_events AS (
     SELECT
         person_id,
         clinical_effective_date, -- Can be NULL
-        
+
         -- Original values before filtering
         MAX(CASE WHEN is_systolic_row THEN result_value ELSE NULL END) AS systolic_value_original,
         MAX(CASE WHEN is_diastolic_row THEN result_value ELSE NULL END) AS diastolic_value_original,
-        
+
         -- Metadata for traceability
         ANY_VALUE(result_unit_display) AS result_unit_display,
         ARRAY_AGG(DISTINCT observation_id) WITHIN GROUP (ORDER BY observation_id) AS all_observation_ids,
         ARRAY_AGG(DISTINCT concept_code) WITHIN GROUP (ORDER BY concept_code) AS all_concept_codes,
         ARRAY_AGG(DISTINCT concept_display) WITHIN GROUP (ORDER BY concept_display) AS all_concept_displays,
         ARRAY_AGG(DISTINCT source_cluster_id) WITHIN GROUP (ORDER BY source_cluster_id) AS all_source_cluster_ids,
-        
+
         -- Flags for specific code presence (for ambiguity checking)
         BOOLOR_AGG(source_cluster_id = 'SYSBP_COD') AS had_sysbp_cod,
         BOOLOR_AGG(source_cluster_id = 'DIABP_COD') AS had_diabp_cod
-        
+
     FROM row_flags_raw
     GROUP BY person_id, clinical_effective_date
     HAVING systolic_value_original IS NOT NULL OR diastolic_value_original IS NOT NULL
@@ -80,44 +80,44 @@ SELECT
     all_concept_codes,
     all_concept_displays,
     all_source_cluster_ids,
-    
+
     -- DQ Flag: Systolic out of range (< 40 or > 350)
-    CASE 
-        WHEN systolic_value_original IS NOT NULL 
-             AND (systolic_value_original < 40 OR systolic_value_original > 350) 
-        THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN systolic_value_original IS NOT NULL
+             AND (systolic_value_original < 40 OR systolic_value_original > 350)
+        THEN TRUE
+        ELSE FALSE
     END AS is_sbp_out_of_range,
-    
+
     -- DQ Flag: Diastolic out of range (< 20 or > 200)
-    CASE 
-        WHEN diastolic_value_original IS NOT NULL 
-             AND (diastolic_value_original < 20 OR diastolic_value_original > 200) 
-        THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN diastolic_value_original IS NOT NULL
+             AND (diastolic_value_original < 20 OR diastolic_value_original > 200)
+        THEN TRUE
+        ELSE FALSE
     END AS is_dbp_out_of_range,
-    
+
     -- DQ Flag: Coding ambiguity (BP_COD without specific SYSBP/DIABP codes)
-    CASE 
-        WHEN ARRAY_CONTAINS('BP_COD'::VARIANT, all_source_cluster_ids) 
-             AND NOT had_sysbp_cod AND NOT had_diabp_cod 
-        THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN ARRAY_CONTAINS('BP_COD'::VARIANT, all_source_cluster_ids)
+             AND NOT had_sysbp_cod AND NOT had_diabp_cod
+        THEN TRUE
+        ELSE FALSE
     END AS is_coding_ambiguous,
-    
+
     -- DQ Flag: Orphaned reading (SBP without DBP or vice versa)
-    CASE 
-        WHEN (systolic_value_original IS NOT NULL AND diastolic_value_original IS NULL) 
-             OR (systolic_value_original IS NULL AND diastolic_value_original IS NOT NULL) 
-        THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN (systolic_value_original IS NOT NULL AND diastolic_value_original IS NULL)
+             OR (systolic_value_original IS NULL AND diastolic_value_original IS NOT NULL)
+        THEN TRUE
+        ELSE FALSE
     END AS is_orphaned_reading,
-    
+
     -- DQ Flag: Missing date
-    CASE 
-        WHEN clinical_effective_date IS NULL 
-        THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN clinical_effective_date IS NULL
+        THEN TRUE
+        ELSE FALSE
     END AS is_date_missing
 
 FROM aggregated_raw_events
@@ -130,4 +130,4 @@ WHERE (systolic_value_original IS NOT NULL AND (systolic_value_original < 40 OR 
    OR (systolic_value_original IS NULL AND diastolic_value_original IS NOT NULL)
    OR clinical_effective_date IS NULL
 
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

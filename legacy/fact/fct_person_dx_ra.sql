@@ -17,7 +17,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all RA diagnoses for patients aged 16 or over
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -58,4 +58,4 @@ SELECT
     LATEST_RA_DIAGNOSIS_DATE,
     ALL_RA_CONCEPT_CODES,
     ALL_RA_CONCEPT_DISPLAYS
-FROM PersonLevelAggregation; 
+FROM PersonLevelAggregation;

@@ -60,7 +60,7 @@ SELECT
     bp.PERSON_ID,
     bp.SK_PATIENT_ID,
     bp.AGE,
-    CASE 
+    CASE
         WHEN symptoms.LATEST_SYMPTOM_DATE IS NOT NULL THEN TRUE
         ELSE FALSE
     END AS HAS_ASTHMA_SYMPTOMS,
@@ -72,6 +72,6 @@ FROM BasePopulation bp
 JOIN AsthmaSymptoms symptoms
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM AsthmaDiagnosis ad 
+    SELECT 1 FROM AsthmaDiagnosis ad
     WHERE ad.PERSON_ID = bp.PERSON_ID
-); 
+);

@@ -18,8 +18,10 @@ WITH patient_ids_per_person AS (
     -- First collect all patient IDs for each person
     SELECT
         pp.person_id,
-        ARRAY_AGG(DISTINCT pp.patient_id) WITHIN GROUP (ORDER BY pp.patient_id) AS patient_ids
-    FROM {{ ref('stg_olids_patient_person') }} pp
+        ARRAY_AGG(DISTINCT pp.patient_id) WITHIN GROUP (
+            ORDER BY pp.patient_id
+        ) AS patient_ids
+    FROM {{ ref('stg_olids_patient_person') }} AS pp
     GROUP BY pp.person_id
 ),
 
@@ -36,7 +38,7 @@ current_registrations AS (
         ipr.has_changed_practice,
         -- Additional registration metadata
         ipr.care_manager_practitioner_id
-    FROM {{ ref('int_patient_registrations') }} ipr
+    FROM {{ ref('int_patient_registrations') }} AS ipr
     WHERE ipr.is_current_registration = TRUE
 ),
 
@@ -48,13 +50,6 @@ latest_patient_record_per_person AS (
         per.primary_patient_id,
         pip.patient_ids,
         -- Determine if patient is active based on various criteria
-        CASE
-            WHEN p.death_year IS NOT NULL THEN FALSE -- Deceased
-            WHEN p.is_dummy_patient THEN FALSE -- Dummy patient
-            WHEN cr.person_id IS NULL THEN FALSE -- No current registration
-            ELSE TRUE
-        END AS is_active,
-        p.death_year IS NOT NULL AS is_deceased,
         p.is_dummy_patient,
         p.is_confidential,
         p.is_spine_sensitive,
@@ -62,9 +57,9 @@ latest_patient_record_per_person AS (
         p.birth_month,
         p.death_year,
         p.death_month,
-        -- Registration details from proper episode_of_care data
         cr.current_practice_id,
         cr.current_practice_code,
+        -- Registration details from proper episode_of_care data
         cr.current_practice_name,
         cr.current_registration_start,
         cr.current_registration_duration,
@@ -73,21 +68,28 @@ latest_patient_record_per_person AS (
         cr.care_manager_practitioner_id,
         p.record_owner_organisation_code AS record_owner_org_code,
         p.lds_datetime_data_acquired AS latest_record_date,
+        CASE
+            WHEN p.death_year IS NOT NULL THEN FALSE -- Deceased
+            WHEN p.is_dummy_patient THEN FALSE -- Dummy patient
+            WHEN cr.person_id IS NULL THEN FALSE -- No current registration
+            ELSE TRUE
+        END AS is_active,
+        p.death_year IS NOT NULL AS is_deceased,
         -- Rank to get the latest record
         ROW_NUMBER() OVER (
             PARTITION BY pp.person_id
-            ORDER BY 
+            ORDER BY
                 p.lds_datetime_data_acquired DESC,
                 p.id DESC
         ) AS record_rank
-    FROM {{ ref('stg_olids_patient_person') }} pp
-    JOIN {{ ref('stg_olids_patient') }} p
+    FROM {{ ref('stg_olids_patient_person') }} AS pp
+    INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON pp.patient_id = p.id
-    JOIN {{ ref('stg_olids_person') }} per
+    INNER JOIN {{ ref('stg_olids_person') }} AS per
         ON pp.person_id = per.id
-    JOIN patient_ids_per_person pip
+    INNER JOIN patient_ids_per_person AS pip
         ON pp.person_id = pip.person_id
-    LEFT JOIN current_registrations cr
+    LEFT JOIN current_registrations AS cr
         ON pp.person_id = cr.person_id
 )
 
@@ -118,5 +120,6 @@ SELECT
     record_owner_org_code,
     latest_record_date
 FROM latest_patient_record_per_person
-WHERE record_rank = 1
-    AND is_active = TRUE 
+WHERE
+    record_rank = 1
+    AND is_active = TRUE

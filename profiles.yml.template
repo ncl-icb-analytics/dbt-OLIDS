@@ -1,5 +1,5 @@
 # dbt profiles template for Snowflake HEI Migration project
-# 
+#
 # SETUP INSTRUCTIONS:
 # 1. Copy this file to 'profiles.yml' in the same directory
 # 2. Set the required environment variables (see env.example)
@@ -23,7 +23,7 @@ snowflake_hei_migration:
       threads: 4
       client_session_keep_alive: true
       query_tag: "dbt_hei_migration_dev"
-    
+
     qa:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
@@ -36,7 +36,7 @@ snowflake_hei_migration:
       threads: 6
       client_session_keep_alive: true
       query_tag: "dbt_hei_migration_qa"
-    
+
     prod:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"

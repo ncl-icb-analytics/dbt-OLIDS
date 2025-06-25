@@ -24,7 +24,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all Stroke and TIA diagnoses
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -77,4 +77,4 @@ SELECT
     FILTER(pla.ALL_TIA_CONCEPT_CODES, x -> x IS NOT NULL) AS ALL_TIA_CONCEPT_CODES,
     FILTER(pla.ALL_TIA_CONCEPT_DISPLAYS, x -> x IS NOT NULL) AS ALL_TIA_CONCEPT_DISPLAYS
 FROM PersonLevelAggregation pla
-WHERE pla.EARLIEST_STROKE_DATE IS NOT NULL OR pla.EARLIEST_TIA_DATE IS NOT NULL; -- Ensure patient has at least one diagnosis type 
+WHERE pla.EARLIEST_STROKE_DATE IS NOT NULL OR pla.EARLIEST_TIA_DATE IS NOT NULL; -- Ensure patient has at least one diagnosis type

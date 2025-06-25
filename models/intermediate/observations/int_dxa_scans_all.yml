@@ -9,13 +9,13 @@ models:
     description: |
       All DXA scan observations from clinical records.
       Specialized model for bone density measurements and osteoporosis diagnostic support.
-      
+
       Clinical Purpose:
       - DXA scan procedures (DXA_COD)
       - T-score measurements (DXA2_COD) with numeric validation
       - T-score ≤ -2.5 indicates osteoporosis
       - Used in combination with clinical diagnosis for register inclusion
-      
+
       Includes ALL persons following intermediate layer principles.
       Use as input for osteoporosis register and bone health analytics.
     columns:
@@ -23,51 +23,51 @@ models:
         description: "Unique person identifier"
         tests:
           - not_null
-          
+
       - name: observation_id
         description: "Unique observation identifier"
         tests:
           - not_null
-          
+
       - name: clinical_effective_date
         description: "Date of the DXA scan observation"
         tests:
           - not_null
-          
+
       - name: concept_code
         description: "SNOMED concept code for DXA observation"
         tests:
           - not_null
-          
+
       - name: concept_display
         description: "Description of the DXA code"
         tests:
           - not_null
-          
+
       - name: source_cluster_id
         description: "QOF cluster ID for DXA pathway"
         tests:
           - not_null
           - accepted_values:
               values: ['DXA_COD', 'DXA2_COD']
-              
+
       - name: numeric_value
         description: "Raw numeric value from observation (T-score for DXA2_COD)"
-        
+
       - name: is_dxa_scan_procedure
         description: "Flag indicating DXA scan procedure (DXA_COD)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_dxa_t_score_measurement
         description: "Flag indicating DXA T-score measurement (DXA2_COD)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: validated_t_score
         description: "Clinically validated T-score (range -6.0 to 6.0)"
         tests:
@@ -75,16 +75,16 @@ models:
               min_value: -6.0
               max_value: 6.0
               severity: warn
-              
+
       - name: t_score_interpretation
         description: "Clinical interpretation of T-score"
         tests:
           - accepted_values:
               values: ['Normal', 'Osteopenia', 'Osteoporosis']
-              
+
       - name: confirms_osteoporosis_diagnosis
         description: "Flag indicating T-score confirms osteoporosis (≤ -2.5)"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]

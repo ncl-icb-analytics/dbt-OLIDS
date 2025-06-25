@@ -22,7 +22,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all CHD diagnoses
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -67,4 +67,4 @@ SELECT
 
     ad.ALL_CHD_CONCEPT_CODES,
     ad.ALL_CHD_CONCEPT_DISPLAYS
-FROM AggregatedData ad; 
+FROM AggregatedData ad;

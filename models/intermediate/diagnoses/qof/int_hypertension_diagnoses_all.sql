@@ -29,11 +29,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Flag different types of hypertension codes following QOF definitions
     CASE WHEN obs.cluster_id = 'HYP_COD' THEN TRUE ELSE FALSE END AS is_hypertension_diagnosis_code,
     CASE WHEN obs.cluster_id = 'HYPRES_COD' THEN TRUE ELSE FALSE END AS is_hypertension_resolved_code,
-    
+
     -- Hypertension observation type determination
     CASE
         WHEN obs.cluster_id = 'HYP_COD' THEN 'Hypertension Diagnosis'
@@ -43,4 +43,4 @@ SELECT
 
 FROM ({{ get_observations("'HYP_COD', 'HYPRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

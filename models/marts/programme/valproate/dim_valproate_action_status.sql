@@ -3,64 +3,84 @@
     description='Implements clinical decision logic for Valproate safety monitoring, determining recommended actions for each patient based on clinical status and dependencies.'
 ) }}
 
-with db_scope as (
-    select * from {{ ref('dim_valproate_db_scope') }}
+WITH db_scope AS (
+    SELECT * FROM {{ ref('dim_valproate_db_scope') }}
 ),
-ppp_status as (
-    select * from {{ ref('dim_valproate_ppp_status') }}
+
+ppp_status AS (
+    SELECT * FROM {{ ref('dim_valproate_ppp_status') }}
 ),
-araf as (
-    select * from {{ ref('dim_valproate_araf') }}
+
+araf AS (
+    SELECT * FROM {{ ref('dim_valproate_araf') }}
 ),
-araf_referral as (
-    select * from {{ ref('dim_valproate_araf_referral') }}
+
+araf_referral AS (
+    SELECT * FROM {{ ref('dim_valproate_araf_referral') }}
 ),
-neurology as (
-    select * from {{ ref('dim_valproate_neurology') }}
+
+neurology AS (
+    SELECT * FROM {{ ref('dim_valproate_neurology') }}
 ),
-psychiatry as (
-    select * from {{ ref('dim_valproate_psychiatry') }}
+
+psychiatry AS (
+    SELECT * FROM {{ ref('dim_valproate_psychiatry') }}
 ),
-preg as (
-    select person_id, is_currently_pregnant from {{ ref('fct_person_pregnancy_status') }}
+
+preg AS (
+    SELECT
+        person_id,
+        is_currently_pregnant
+    FROM {{ ref('fct_person_pregnancy_status') }}
 )
 
-select
+SELECT
     db.person_id,
     db.age,
     db.sex,
     db.is_child_bearing_age_0_55,
-    db.valproate_medication_order_id is not null as has_recent_valproate_medication,
-    preg.is_currently_pregnant as is_pregnant,
-    -- PPP
+    preg.is_currently_pregnant AS is_pregnant,
     ppp.has_ppp_event,
+    -- PPP
     ppp.is_currently_ppp_enrolled,
     ppp.current_ppp_status_description,
-    -- ARAF
     araf.has_araf_event,
+    -- ARAF
     araf.has_specific_araf_form_meeting_lookback,
-    -- ARAF Referral
     arref.has_araf_referral_event,
-    -- Neurology
+    -- ARAF Referral
     neu.has_neurology_event,
-    -- Psychiatry
+    -- Neurology
     psych.has_psych_event,
+    -- Psychiatry
+    db.valproate_medication_order_id IS NOT NULL
+        AS has_recent_valproate_medication,
     -- Action logic (simplified for demonstration)
-    case
-        when is_pregnant then 'Review or refer: Pregnancy detected'
-        when not has_recent_valproate_medication then 'No action: Not on valproate'
-        when not db.is_child_bearing_age_0_55 then 'No action: Not woman of child-bearing age'
-        when not ppp.is_currently_ppp_enrolled then 'Review: Not enrolled in PPP'
-        when not araf.has_specific_araf_form_meeting_lookback then 'Review: ARAF not completed in lookback'
-        when arref.has_araf_referral_event then 'Monitor: Referral made'
-        when neu.has_neurology_event or psych.has_psych_event then 'Monitor: Under specialist care'
-        else 'No action needed'
-    end as recommended_action
-from db_scope db
-left join ppp_status ppp on db.person_id = ppp.person_id
-left join araf araf on db.person_id = araf.person_id
-left join araf_referral arref on db.person_id = arref.person_id
-left join neurology neu on db.person_id = neu.person_id
-left join psychiatry psych on db.person_id = psych.person_id
-left join preg on db.person_id = preg.person_id
+    CASE
+        WHEN is_pregnant THEN 'Review or refer: Pregnancy detected'
+        WHEN
+            NOT has_recent_valproate_medication
+            THEN 'No action: Not on valproate'
+        WHEN
+            NOT db.is_child_bearing_age_0_55
+            THEN 'No action: Not woman of child-bearing age'
+        WHEN
+            NOT ppp.is_currently_ppp_enrolled
+            THEN 'Review: Not enrolled in PPP'
+        WHEN
+            NOT araf.has_specific_araf_form_meeting_lookback
+            THEN 'Review: ARAF not completed in lookback'
+        WHEN arref.has_araf_referral_event THEN 'Monitor: Referral made'
+        WHEN
+            neu.has_neurology_event OR psych.has_psych_event
+            THEN 'Monitor: Under specialist care'
+        ELSE 'No action needed'
+    END AS recommended_action
+FROM db_scope AS db
+LEFT JOIN ppp_status AS ppp ON db.person_id = ppp.person_id
+LEFT JOIN araf AS araf ON db.person_id = araf.person_id
+LEFT JOIN araf_referral AS arref ON db.person_id = arref.person_id
+LEFT JOIN neurology AS neu ON db.person_id = neu.person_id
+LEFT JOIN psychiatry AS psych ON db.person_id = psych.person_id
+LEFT JOIN preg ON db.person_id = preg.person_id
 -- Brief: Implements clinical action logic for Valproate safety monitoring, using all dependency marts. Adjust logic as needed for full business rules.

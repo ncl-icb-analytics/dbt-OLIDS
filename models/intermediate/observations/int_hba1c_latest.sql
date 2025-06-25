@@ -29,10 +29,10 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_hba1c_all'), 
+        ref('int_hba1c_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
 ) latest_hba1c
 
-WHERE is_valid_hba1c = TRUE 
+WHERE is_valid_hba1c = TRUE

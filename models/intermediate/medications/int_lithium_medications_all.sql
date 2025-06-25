@@ -26,33 +26,33 @@ SELECT
     mapped_concept_display,
     bnf_code,
     bnf_name,
-    
+
     -- Specific lithium preparation classification
-    CASE 
+    CASE
         WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' OR bnf_code LIKE '0402030M0%' THEN 'LITHIUM_CARBONATE'
         WHEN statement_medication_name LIKE '%LITHIUM CITRATE%' OR bnf_code LIKE '0402030N0%' THEN 'LITHIUM_CITRATE'
         ELSE 'OTHER_LITHIUM'
     END AS lithium_type,
-    
+
     -- Brand classification (important for bioequivalence)
-    CASE 
+    CASE
         WHEN order_medication_name LIKE '%PRIADEL%' OR statement_medication_name LIKE '%PRIADEL%' THEN 'PRIADEL'
         WHEN order_medication_name LIKE '%CAMCOLIT%' OR statement_medication_name LIKE '%CAMCOLIT%' THEN 'CAMCOLIT'
         WHEN order_medication_name LIKE '%LISKONUM%' OR statement_medication_name LIKE '%LISKONUM%' THEN 'LISKONUM'
         WHEN order_medication_name LIKE '%LI-LIQUID%' OR statement_medication_name LIKE '%LI-LIQUID%' THEN 'LI_LIQUID'
         ELSE 'OTHER_BRAND'
     END AS lithium_brand,
-    
+
     -- Lithium preparation flags
     CASE WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' OR bnf_code LIKE '0402030M0%' THEN TRUE ELSE FALSE END AS is_lithium_carbonate,
     CASE WHEN statement_medication_name LIKE '%LITHIUM CITRATE%' OR bnf_code LIKE '0402030N0%' THEN TRUE ELSE FALSE END AS is_lithium_citrate,
-    
+
     -- Common brand flags
     CASE WHEN order_medication_name LIKE '%PRIADEL%' OR statement_medication_name LIKE '%PRIADEL%' THEN TRUE ELSE FALSE END AS is_priadel,
     CASE WHEN order_medication_name LIKE '%CAMCOLIT%' OR statement_medication_name LIKE '%CAMCOLIT%' THEN TRUE ELSE FALSE END AS is_camcolit,
-    
+
     -- Dose range classification for lithium carbonate (standard therapeutic doses)
-    CASE 
+    CASE
         WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' AND (
             order_dose LIKE '%200%' OR order_dose LIKE '%300%' OR order_dose LIKE '%400%'
         ) THEN 'STANDARD_DOSE'
@@ -64,33 +64,33 @@ SELECT
         ) THEN 'LOW_DOSE'
         ELSE 'UNKNOWN_DOSE'
     END AS lithium_dose_category,
-    
+
     -- Formulation classification
-    CASE 
+    CASE
         WHEN order_medication_name LIKE '%TABLET%' OR statement_medication_name LIKE '%TABLET%' THEN 'TABLET'
         WHEN order_medication_name LIKE '%CAPSULE%' OR statement_medication_name LIKE '%CAPSULE%' THEN 'CAPSULE'
         WHEN order_medication_name LIKE '%LIQUID%' OR statement_medication_name LIKE '%LIQUID%' THEN 'LIQUID'
         ELSE 'UNKNOWN_FORMULATION'
     END AS formulation_type,
-    
+
     -- Monitoring requirement flag (all lithium requires regular monitoring)
     TRUE AS requires_monitoring,
-    
+
     -- Calculate time since order
     DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags (lithium requires regular monitoring and compliance tracking)
-    CASE 
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
         ELSE FALSE
     END AS is_recent_12m
@@ -98,4 +98,4 @@ SELECT
 FROM (
     {{ get_medication_orders(bnf_code='040203') }}
 ) base_orders
-ORDER BY person_id, order_date DESC 
+ORDER BY person_id, order_date DESC

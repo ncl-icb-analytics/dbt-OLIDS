@@ -14,7 +14,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all numeric BMI values (BMIVAL_COD only)
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         O."clinical_effective_date"::DATE AS CLINICAL_EFFECTIVE_DATE,
@@ -31,11 +31,11 @@ WITH BaseObservations AS (
       AND O."result_value" IS NOT NULL
 )
 -- Final selection with valid BMI values only
-SELECT 
+SELECT
     PERSON_ID,
     SK_PATIENT_ID,
     CLINICAL_EFFECTIVE_DATE,
     BMI_VALUE
 FROM BaseObservations
 WHERE BMI_VALUE BETWEEN 5 AND 400
-ORDER BY PERSON_ID, CLINICAL_EFFECTIVE_DATE; 
+ORDER BY PERSON_ID, CLINICAL_EFFECTIVE_DATE;

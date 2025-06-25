@@ -3,7 +3,7 @@ version: 2
 models:
   - name: int_ltc_lcs_ethnicity_observations
     description: "Intermediate model for ethnicity observations used in LTC/LCS diabetes case finding. Contains BAME, White British, and excluded ethnicity classifications."
-    
+
     columns:
       - name: observation_id
         description: "Unique identifier for the observation"
@@ -35,4 +35,4 @@ models:
 
     tests:
       - cluster_ids_exist:
-          cluster_ids: "ETHNICITY_BAME,ETHNICITY_WHITE_BRITISH,DIABETES_EXCLUDED_ETHNICITY" 
+          cluster_ids: "ETHNICITY_BAME,ETHNICITY_WHITE_BRITISH,DIABETES_EXCLUDED_ETHNICITY"

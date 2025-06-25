@@ -29,41 +29,68 @@ This table provides one row per person for analytical use.
 WITH palliative_care_diagnoses AS (
     SELECT
         person_id,
-        
-        -- Register inclusion dates (after QOF start date)  
-        MIN(CASE WHEN is_palliative_care_code 
-                      AND clinical_effective_date >= DATE '2008-04-01' 
-                 THEN clinical_effective_date END) AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_palliative_care_code 
-                      AND clinical_effective_date >= DATE '2008-04-01' 
-                 THEN clinical_effective_date END) AS latest_diagnosis_date,
-        
+
+        -- Register inclusion dates (after QOF start date)
+        MIN(CASE
+            WHEN
+                is_palliative_care_code
+                AND clinical_effective_date >= DATE '2008-04-01'
+                THEN clinical_effective_date
+        END) AS earliest_diagnosis_date,
+        MAX(CASE
+            WHEN
+                is_palliative_care_code
+                AND clinical_effective_date >= DATE '2008-04-01'
+                THEN clinical_effective_date
+        END) AS latest_diagnosis_date,
+
         -- Exclusion dates ("no longer indicated")
-        MIN(CASE WHEN is_palliative_care_not_indicated_code 
-                 THEN clinical_effective_date END) AS earliest_no_longer_indicated_date,
-        MAX(CASE WHEN is_palliative_care_not_indicated_code 
-                 THEN clinical_effective_date END) AS latest_no_longer_indicated_date,
-        
+        MIN(CASE
+            WHEN is_palliative_care_not_indicated_code
+                THEN clinical_effective_date
+        END) AS earliest_no_longer_indicated_date,
+        MAX(CASE
+            WHEN is_palliative_care_not_indicated_code
+                THEN clinical_effective_date
+        END) AS latest_no_longer_indicated_date,
+
         -- Episode counts
-        COUNT(CASE WHEN is_palliative_care_code 
-                        AND clinical_effective_date >= DATE '2008-04-01' 
-                   THEN 1 END) AS total_palliative_care_episodes,
-        COUNT(CASE WHEN is_palliative_care_not_indicated_code 
-                   THEN 1 END) AS total_no_longer_indicated_episodes,
-        
+        COUNT(CASE
+            WHEN
+                is_palliative_care_code
+                AND clinical_effective_date >= DATE '2008-04-01'
+                THEN 1
+        END) AS total_palliative_care_episodes,
+        COUNT(CASE
+            WHEN is_palliative_care_not_indicated_code
+                THEN 1
+        END) AS total_no_longer_indicated_episodes,
+
         -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_code THEN concept_code END) 
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_palliative_care_code THEN concept_code END
+        )
             AS palliative_care_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_code THEN concept_display END) 
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_palliative_care_code THEN concept_display END
+        )
             AS palliative_care_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_not_indicated_code THEN concept_code END) 
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_palliative_care_not_indicated_code THEN concept_code
+            END
+        )
             AS no_longer_indicated_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_palliative_care_not_indicated_code THEN concept_display END) 
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_palliative_care_not_indicated_code THEN concept_display
+            END
+        )
             AS no_longer_indicated_displays,
-        
+
         -- Latest observation details
         ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
-            
+
     FROM {{ ref('int_palliative_care_diagnoses_all') }}
     GROUP BY person_id
 ),
@@ -71,44 +98,49 @@ WITH palliative_care_diagnoses AS (
 register_inclusion AS (
     SELECT
         pc.*,
-        
+
         -- QOF register logic: Palliative care after April 2008 + not marked as no longer indicated
-        CASE 
-            WHEN latest_diagnosis_date IS NOT NULL 
-                 AND (latest_no_longer_indicated_date IS NULL 
-                      OR latest_no_longer_indicated_date <= latest_diagnosis_date)
-            THEN TRUE 
-            ELSE FALSE 
-        END AS is_on_register,
-        
+        COALESCE(
+            latest_diagnosis_date IS NOT NULL
+            AND (
+                latest_no_longer_indicated_date IS NULL
+                OR latest_no_longer_indicated_date <= latest_diagnosis_date
+            ), FALSE
+        ) AS is_on_register,
+
         -- Clinical interpretation
-        CASE 
-            WHEN latest_diagnosis_date IS NOT NULL 
-                 AND (latest_no_longer_indicated_date IS NULL 
-                      OR latest_no_longer_indicated_date <= latest_diagnosis_date)
-            THEN 'Active palliative care'
-            WHEN latest_diagnosis_date IS NOT NULL 
-                 AND latest_no_longer_indicated_date > latest_diagnosis_date
-            THEN 'Palliative care - no longer indicated'
-            WHEN earliest_diagnosis_date IS NOT NULL 
-                 AND latest_diagnosis_date IS NULL
-            THEN 'Palliative care before QOF date (pre-2008)'
+        CASE
+            WHEN
+                latest_diagnosis_date IS NOT NULL
+                AND (
+                    latest_no_longer_indicated_date IS NULL
+                    OR latest_no_longer_indicated_date <= latest_diagnosis_date
+                )
+                THEN 'Active palliative care'
+            WHEN
+                latest_diagnosis_date IS NOT NULL
+                AND latest_no_longer_indicated_date > latest_diagnosis_date
+                THEN 'Palliative care - no longer indicated'
+            WHEN
+                earliest_diagnosis_date IS NOT NULL
+                AND latest_diagnosis_date IS NULL
+                THEN 'Palliative care before QOF date (pre-2008)'
             ELSE 'No palliative care diagnosis'
         END AS palliative_care_status,
-        
+
         -- Days calculations
-        CASE 
-            WHEN earliest_diagnosis_date IS NOT NULL 
-            THEN DATEDIFF(day, earliest_diagnosis_date, CURRENT_DATE()) 
+        CASE
+            WHEN earliest_diagnosis_date IS NOT NULL
+                THEN DATEDIFF(DAY, earliest_diagnosis_date, CURRENT_DATE())
         END AS days_since_first_palliative_care,
-        
-        CASE 
-            WHEN latest_diagnosis_date IS NOT NULL 
-            THEN DATEDIFF(day, latest_diagnosis_date, CURRENT_DATE()) 
+
+        CASE
+            WHEN latest_diagnosis_date IS NOT NULL
+                THEN DATEDIFF(DAY, latest_diagnosis_date, CURRENT_DATE())
         END AS days_since_latest_palliative_care
-        
-    FROM palliative_care_diagnoses pc
-    INNER JOIN {{ ref('dim_person_active_patients') }} ap
+
+    FROM palliative_care_diagnoses AS pc
+    INNER JOIN {{ ref('dim_person_active_patients') }} AS ap
         ON pc.person_id = ap.person_id
 )
 
@@ -129,8 +161,8 @@ SELECT
     ri.no_longer_indicated_codes,
     ri.no_longer_indicated_displays,
     ri.all_observation_ids
-    
-FROM register_inclusion ri
+
+FROM register_inclusion AS ri
 WHERE ri.is_on_register = TRUE
 
-ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id ASC

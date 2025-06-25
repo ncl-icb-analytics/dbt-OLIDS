@@ -29,43 +29,82 @@ This table provides one row per person for analytical use.
 WITH ndh_diagnoses AS (
     SELECT
         person_id,
-        
+
         -- Register inclusion dates for different NDH types
-        MIN(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END) AS earliest_ndh_date,
-        MAX(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END) AS latest_ndh_date,
-        MIN(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END) AS earliest_igt_date,
-        MAX(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END) AS latest_igt_date,
-        MIN(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) AS earliest_prd_date,
-        MAX(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) AS latest_prd_date,
-        
+        MIN(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END)
+            AS earliest_ndh_date,
+        MAX(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END)
+            AS latest_ndh_date,
+        MIN(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END)
+            AS earliest_igt_date,
+        MAX(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END)
+            AS latest_igt_date,
+        MIN(
+            CASE
+                WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS earliest_prd_date,
+        MAX(
+            CASE
+                WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS latest_prd_date,
+
         -- Overall NDH dates (any type)
-        MIN(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        
+        MIN(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END)
+            AS earliest_diagnosis_date,
+        MAX(CASE WHEN is_any_ndh_type_code THEN clinical_effective_date END)
+            AS latest_diagnosis_date,
+
         -- Episode counts
         COUNT(CASE WHEN is_ndh_diagnosis_code THEN 1 END) AS total_ndh_episodes,
         COUNT(CASE WHEN is_igt_diagnosis_code THEN 1 END) AS total_igt_episodes,
-        COUNT(CASE WHEN is_pre_diabetes_diagnosis_code THEN 1 END) AS total_prd_episodes,
-        
+        COUNT(CASE WHEN is_pre_diabetes_diagnosis_code THEN 1 END)
+            AS total_prd_episodes,
+
         -- Subtype flags
-        CASE WHEN MIN(CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-             THEN TRUE ELSE FALSE END AS has_ndh_diagnosis,
-        CASE WHEN MIN(CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-             THEN TRUE ELSE FALSE END AS has_igt_diagnosis,
-        CASE WHEN MIN(CASE WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-             THEN TRUE ELSE FALSE END AS has_prd_diagnosis,
-        
+        COALESCE(MIN(
+            CASE WHEN is_ndh_diagnosis_code THEN clinical_effective_date END
+        ) IS NOT NULL,
+        FALSE) AS has_ndh_diagnosis,
+        COALESCE(MIN(
+            CASE WHEN is_igt_diagnosis_code THEN clinical_effective_date END
+        ) IS NOT NULL,
+        FALSE) AS has_igt_diagnosis,
+        COALESCE(MIN(
+            CASE
+                WHEN is_pre_diabetes_diagnosis_code THEN clinical_effective_date
+            END
+        ) IS NOT NULL,
+        FALSE) AS has_prd_diagnosis,
+
         -- Concept code arrays for traceability
-        ARRAY_AGG(DISTINCT CASE WHEN is_ndh_diagnosis_code THEN concept_code END) AS ndh_diagnosis_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_ndh_diagnosis_code THEN concept_display END) AS ndh_diagnosis_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_igt_diagnosis_code THEN concept_code END) AS igt_diagnosis_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_igt_diagnosis_code THEN concept_display END) AS igt_diagnosis_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_pre_diabetes_diagnosis_code THEN concept_code END) AS prd_diagnosis_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_pre_diabetes_diagnosis_code THEN concept_display END) AS prd_diagnosis_displays,
-        
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_ndh_diagnosis_code THEN concept_code END
+        ) AS ndh_diagnosis_codes,
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_ndh_diagnosis_code THEN concept_display END
+        ) AS ndh_diagnosis_displays,
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_igt_diagnosis_code THEN concept_code END
+        ) AS igt_diagnosis_codes,
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_igt_diagnosis_code THEN concept_display END
+        ) AS igt_diagnosis_displays,
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_pre_diabetes_diagnosis_code THEN concept_code
+            END
+        ) AS prd_diagnosis_codes,
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_pre_diabetes_diagnosis_code THEN concept_display
+            END
+        ) AS prd_diagnosis_displays,
+
         -- All observation IDs
         ARRAY_AGG(DISTINCT observation_id) AS all_observation_ids
-            
+
     FROM {{ ref('int_ndh_diagnoses_all') }}
     GROUP BY person_id
 ),
@@ -73,18 +112,34 @@ WITH ndh_diagnoses AS (
 diabetes_status AS (
     SELECT
         person_id,
-        
+
         -- Diabetes history for exclusion logic
-        MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) AS earliest_diabetes_diagnosis_date,
-        MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) AS latest_diabetes_resolved_date,
-        
+        MIN(
+            CASE WHEN is_general_diabetes_code THEN clinical_effective_date END
+        ) AS earliest_diabetes_diagnosis_date,
+        MAX(
+            CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END
+        ) AS latest_diabetes_resolved_date,
+
         -- Diabetes flags
-        CASE WHEN MIN(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END) IS NOT NULL 
-             THEN TRUE ELSE FALSE END AS has_diabetes_diagnosis,
-        CASE WHEN MAX(CASE WHEN is_diabetes_resolved_code THEN clinical_effective_date END) > 
-                  MAX(CASE WHEN is_general_diabetes_code THEN clinical_effective_date END)
-             THEN TRUE ELSE FALSE END AS is_diabetes_resolved
-        
+        COALESCE(MIN(
+            CASE WHEN is_general_diabetes_code THEN clinical_effective_date END
+        ) IS NOT NULL,
+        FALSE) AS has_diabetes_diagnosis,
+        COALESCE(
+            MAX(
+                CASE
+                    WHEN is_diabetes_resolved_code THEN clinical_effective_date
+                END
+            )
+            > MAX(
+                CASE
+                    WHEN is_general_diabetes_code THEN clinical_effective_date
+                END
+            ),
+            FALSE
+        ) AS is_diabetes_resolved
+
     FROM {{ ref('int_diabetes_diagnoses_all') }}
     GROUP BY person_id
 ),
@@ -96,57 +151,76 @@ register_inclusion AS (
         ds.is_diabetes_resolved,
         ds.earliest_diabetes_diagnosis_date,
         ds.latest_diabetes_resolved_date,
-        
+
         -- Age at first NDH diagnosis calculation using current age (approximation)
-        CASE 
-            WHEN nd.earliest_diagnosis_date IS NOT NULL 
-            THEN age.age - DATEDIFF(year, nd.earliest_diagnosis_date, CURRENT_DATE())
+        CASE
+            WHEN nd.earliest_diagnosis_date IS NOT NULL
+                THEN
+                    age.age
+                    - DATEDIFF(YEAR, nd.earliest_diagnosis_date, CURRENT_DATE())
         END AS age_at_first_ndh_diagnosis,
-        
+
         -- QOF register logic: Age ≥18 + NDH + (never diabetes OR diabetes resolved)
-        CASE 
-            WHEN nd.earliest_diagnosis_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, nd.earliest_diagnosis_date, CURRENT_DATE())) >= 18
-                 AND (COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE 
-                      OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
-            THEN TRUE 
-            ELSE FALSE 
-        END AS is_on_register,
-        
+        COALESCE(
+            nd.earliest_diagnosis_date IS NOT NULL
+            AND (
+                age.age
+                - DATEDIFF(YEAR, nd.earliest_diagnosis_date, CURRENT_DATE())
+            )
+            >= 18
+            AND (
+                COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE
+                OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE
+            ), FALSE
+        ) AS is_on_register,
+
         -- Clinical interpretation
-        CASE 
-            WHEN nd.earliest_diagnosis_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, nd.earliest_diagnosis_date, CURRENT_DATE())) >= 18
-                 AND (COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE 
-                      OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE)
-            THEN 'Active NDH - eligible for diabetes prevention'
-            WHEN nd.earliest_diagnosis_date IS NOT NULL 
-                 AND (age.age - DATEDIFF(year, nd.earliest_diagnosis_date, CURRENT_DATE())) < 18
-            THEN 'NDH diagnosis (age <18 - excluded from QOF)'
-            WHEN nd.earliest_diagnosis_date IS NOT NULL 
-                 AND COALESCE(ds.has_diabetes_diagnosis, FALSE) = TRUE
-                 AND COALESCE(ds.is_diabetes_resolved, FALSE) = FALSE
-            THEN 'NDH diagnosis (excluded - unresolved diabetes)'
+        CASE
+            WHEN
+                nd.earliest_diagnosis_date IS NOT NULL
+                AND (
+                    age.age
+                    - DATEDIFF(YEAR, nd.earliest_diagnosis_date, CURRENT_DATE())
+                )
+                >= 18
+                AND (
+                    COALESCE(ds.has_diabetes_diagnosis, FALSE) = FALSE
+                    OR COALESCE(ds.is_diabetes_resolved, FALSE) = TRUE
+                )
+                THEN 'Active NDH - eligible for diabetes prevention'
+            WHEN
+                nd.earliest_diagnosis_date IS NOT NULL
+                AND (
+                    age.age
+                    - DATEDIFF(YEAR, nd.earliest_diagnosis_date, CURRENT_DATE())
+                )
+                < 18
+                THEN 'NDH diagnosis (age <18 - excluded from QOF)'
+            WHEN
+                nd.earliest_diagnosis_date IS NOT NULL
+                AND COALESCE(ds.has_diabetes_diagnosis, FALSE) = TRUE
+                AND COALESCE(ds.is_diabetes_resolved, FALSE) = FALSE
+                THEN 'NDH diagnosis (excluded - unresolved diabetes)'
             ELSE 'No NDH diagnosis'
         END AS ndh_status,
-        
+
         -- Days calculations
-        CASE 
-            WHEN nd.earliest_diagnosis_date IS NOT NULL 
-            THEN DATEDIFF(day, nd.earliest_diagnosis_date, CURRENT_DATE()) 
+        CASE
+            WHEN nd.earliest_diagnosis_date IS NOT NULL
+                THEN DATEDIFF(DAY, nd.earliest_diagnosis_date, CURRENT_DATE())
         END AS days_since_first_ndh,
-        
-        CASE 
-            WHEN nd.latest_diagnosis_date IS NOT NULL 
-            THEN DATEDIFF(day, nd.latest_diagnosis_date, CURRENT_DATE()) 
+
+        CASE
+            WHEN nd.latest_diagnosis_date IS NOT NULL
+                THEN DATEDIFF(DAY, nd.latest_diagnosis_date, CURRENT_DATE())
         END AS days_since_latest_ndh
-        
-    FROM ndh_diagnoses nd
-    INNER JOIN {{ ref('dim_person_active_patients') }} ap
+
+    FROM ndh_diagnoses AS nd
+    INNER JOIN {{ ref('dim_person_active_patients') }} AS ap
         ON nd.person_id = ap.person_id
-    INNER JOIN {{ ref('dim_person_age') }} age
+    INNER JOIN {{ ref('dim_person_age') }} AS age
         ON nd.person_id = age.person_id
-    LEFT JOIN diabetes_status ds
+    LEFT JOIN diabetes_status AS ds
         ON nd.person_id = ds.person_id
 )
 
@@ -182,8 +256,8 @@ SELECT
     ri.prd_diagnosis_codes,
     ri.prd_diagnosis_displays,
     ri.all_observation_ids
-    
-FROM register_inclusion ri
+
+FROM register_inclusion AS ri
 WHERE ri.is_on_register = TRUE
 
-ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id 
+ORDER BY ri.earliest_diagnosis_date DESC, ri.person_id ASC

@@ -62,4 +62,3 @@ LEFT JOIN -- Use LEFT JOIN to keep persons even if no PATIENT record (unlikely b
     ON pp."patient_id" = p."id"
 LEFT JOIN -- Use LEFT JOIN to keep all persons, regardless of whether they have an ethnicity record
     LatestEthnicityPerPerson lepp ON pp."person_id" = lepp.person_id;
-

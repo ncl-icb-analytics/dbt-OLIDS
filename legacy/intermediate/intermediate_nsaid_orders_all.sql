@@ -28,7 +28,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseNSAIDOrders AS (
     -- Get all medication orders for NSAIDs
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -44,7 +44,7 @@ WITH BaseNSAIDOrders AS (
         MC.CODE_DESCRIPTION AS MAPPED_CONCEPT_DISPLAY,
         bnf.BNF_CODE,
         bnf.BNF_NAME,
-        CASE 
+        CASE
             -- COX-2 selective
             WHEN bnf.BNF_CODE LIKE '1001010A%' OR bnf.BNF_CODE LIKE '1001010AJ%' OR bnf.BNF_CODE LIKE '1001010AN%' OR bnf.BNF_CODE LIKE '1001010AF%' THEN 'COX2_SELECTIVE'
             -- Topical
@@ -83,4 +83,4 @@ SELECT
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
 FROM BaseNSAIDOrders bso
 LEFT JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

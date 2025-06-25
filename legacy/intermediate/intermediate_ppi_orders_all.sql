@@ -31,7 +31,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BasePPIOrders AS (
     -- Get all medication orders for PPIs
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -47,7 +47,7 @@ WITH BasePPIOrders AS (
         MC.CODE_DESCRIPTION AS MAPPED_CONCEPT_DISPLAY,
         bnf.BNF_CODE,
         bnf.BNF_NAME,
-        CASE 
+        CASE
             WHEN bnf.BNF_CODE LIKE '0103050E%' THEN 'ESOMEPRAZOLE'
             WHEN bnf.BNF_CODE LIKE '0103050A%' THEN 'H_PYLORI_ERADICATION'
             WHEN bnf.BNF_CODE LIKE '0103050L%' THEN 'LANSOPRAZOLE'
@@ -84,4 +84,4 @@ SELECT
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
 FROM BasePPIOrders bso
 LEFT JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

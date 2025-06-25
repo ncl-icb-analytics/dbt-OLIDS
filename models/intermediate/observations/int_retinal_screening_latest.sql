@@ -24,8 +24,8 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_retinal_screening_all'), 
+        ref('int_retinal_screening_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
-) latest_retinal_screening 
+) latest_retinal_screening

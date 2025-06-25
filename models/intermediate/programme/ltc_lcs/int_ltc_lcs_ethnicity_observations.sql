@@ -6,4 +6,4 @@
 {{ get_observations(
     cluster_ids="'ETHNICITY_BAME', 'ETHNICITY_WHITE_BRITISH', 'DIABETES_EXCLUDED_ETHNICITY'",
     source='LTC_LCS'
-) }} 
+) }}

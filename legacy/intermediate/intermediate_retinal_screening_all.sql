@@ -20,4 +20,4 @@ JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp ON o."patient_id" =
 JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p ON pp."patient_id" = p."id"
 JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS c ON o."observation_core_concept_id" = c.concept_id
 WHERE c.CLUSTER_ID = 'RETSCREN_COD'
-    AND o."clinical_effective_date" IS NOT NULL; 
+    AND o."clinical_effective_date" IS NOT NULL;

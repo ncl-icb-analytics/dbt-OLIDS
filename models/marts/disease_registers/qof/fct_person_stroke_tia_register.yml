@@ -4,23 +4,23 @@ models:
   - name: fct_person_stroke_tia_register
     description: |
       **Stroke/TIA Register - QOF Cardiovascular Disease Quality Measures**
-      
-      Fact table for stroke/TIA register following simple register pattern. All patients with 
+
+      Fact table for stroke/TIA register following simple register pattern. All patients with
       any stroke or TIA diagnosis are included on the register.
-      
+
       Simple Register Business Logic:
       - Presence of stroke or TIA diagnosis = on register (lifelong condition)
       - No resolution codes (stroke/TIA are permanent)
       - No age restrictions
       - Important for secondary prevention monitoring
-      
+
       QOF Context:
       Used for cerebrovascular disease secondary prevention quality measures including:
       - Secondary prevention medication monitoring
       - Cardiovascular risk management and anticoagulation decisions
       - Blood pressure management targets
       - Neurological follow-up coordination
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier"
@@ -41,7 +41,7 @@ models:
         description: "Date of first recorded stroke/TIA diagnosis"
         tests:
           - not_null
-          
+
       - name: latest_diagnosis_date
         description: "Date of most recent stroke/TIA diagnosis"
         tests:
@@ -56,4 +56,4 @@ models:
       - name: stroke_tia_diagnosis_displays
         description: "Array of all distinct stroke/TIA concept display terms for this person"
         tests:
-          - not_null 
+          - not_null

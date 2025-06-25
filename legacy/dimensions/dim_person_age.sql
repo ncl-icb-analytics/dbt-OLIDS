@@ -42,21 +42,21 @@ WITH age_calculations AS (
         bd.DEATH_DATE_APPROX,
         bd.IS_DECEASED,
         -- Use death date for calculations if deceased, otherwise current date
-        CASE 
+        CASE
             WHEN bd.IS_DECEASED THEN bd.DEATH_DATE_APPROX
             ELSE CURRENT_DATE()
         END AS CALCULATION_DATE,
         -- Calculate age metrics based on appropriate end date
-        FLOOR(DATEDIFF(month, bd.BIRTH_DATE_APPROX, 
+        FLOOR(DATEDIFF(month, bd.BIRTH_DATE_APPROX,
             CASE WHEN bd.IS_DECEASED THEN bd.DEATH_DATE_APPROX ELSE CURRENT_DATE() END
         ) / 12) AS AGE,
-        DATEDIFF(month, bd.BIRTH_DATE_APPROX, 
+        DATEDIFF(month, bd.BIRTH_DATE_APPROX,
             CASE WHEN bd.IS_DECEASED THEN bd.DEATH_DATE_APPROX ELSE CURRENT_DATE() END
         ) AS AGE_MONTHS,
-        FLOOR(DATEDIFF(day, bd.BIRTH_DATE_APPROX, 
+        FLOOR(DATEDIFF(day, bd.BIRTH_DATE_APPROX,
             CASE WHEN bd.IS_DECEASED THEN bd.DEATH_DATE_APPROX ELSE CURRENT_DATE() END
         ) / 7) AS AGE_WEEKS_APPROX,
-        DATEDIFF(day, bd.BIRTH_DATE_APPROX, 
+        DATEDIFF(day, bd.BIRTH_DATE_APPROX,
             CASE WHEN bd.IS_DECEASED THEN bd.DEATH_DATE_APPROX ELSE CURRENT_DATE() END
         ) AS AGE_DAYS_APPROX,
         -- Academic year calculation for school stages

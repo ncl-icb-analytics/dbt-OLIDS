@@ -26,9 +26,9 @@ SELECT
     mapped_concept_display,
     bnf_code,
     bnf_name,
-    
+
     -- Specific ARB classification
-    CASE 
+    CASE
         WHEN bnf_code LIKE '0205050205%' THEN 'AZILSARTAN'
         WHEN bnf_code LIKE '0205050210%' THEN 'CANDESARTAN'
         WHEN bnf_code LIKE '0205050215%' THEN 'EPROSARTAN'
@@ -39,38 +39,38 @@ SELECT
         WHEN bnf_code LIKE '0205050240%' THEN 'VALSARTAN'
         ELSE 'OTHER_ARB'
     END AS arb_type,
-    
+
     -- Evidence-based ARBs (commonly used in cardiovascular disease)
-    CASE 
+    CASE
         WHEN bnf_code LIKE '0205050225%' THEN TRUE  -- Losartan (LIFE trial)
         WHEN bnf_code LIKE '0205050240%' THEN TRUE  -- Valsartan (Val-HeFT trial)
         WHEN bnf_code LIKE '0205050210%' THEN TRUE  -- Candesartan (CHARM trial)
         WHEN bnf_code LIKE '0205050235%' THEN TRUE  -- Telmisartan (ONTARGET trial)
         ELSE FALSE
     END AS is_evidence_based_cvd,
-    
+
     -- Common ARBs flags
     CASE WHEN bnf_code LIKE '0205050225%' THEN TRUE ELSE FALSE END AS is_losartan,
     CASE WHEN bnf_code LIKE '0205050240%' THEN TRUE ELSE FALSE END AS is_valsartan,
     CASE WHEN bnf_code LIKE '0205050210%' THEN TRUE ELSE FALSE END AS is_candesartan,
     CASE WHEN bnf_code LIKE '0205050220%' THEN TRUE ELSE FALSE END AS is_irbesartan,
     CASE WHEN bnf_code LIKE '0205050235%' THEN TRUE ELSE FALSE END AS is_telmisartan,
-    
+
     -- Calculate time since order
     DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags (ARBs are typically long-term therapy)
-    CASE 
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
         ELSE FALSE
     END AS is_recent_12m
@@ -78,4 +78,4 @@ SELECT
 FROM (
     {{ get_medication_orders(bnf_code='02050502') }}
 ) base_orders
-ORDER BY person_id, order_date DESC 
+ORDER BY person_id, order_date DESC

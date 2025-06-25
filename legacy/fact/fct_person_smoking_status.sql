@@ -63,4 +63,4 @@ SELECT
     CURRENT_TIMESTAMP() AS LAST_REFRESH_DATE
 FROM LatestSmokingRecord lsr
 LEFT JOIN SmokingHistory sh
-    ON lsr.PERSON_ID = sh.PERSON_ID; 
+    ON lsr.PERSON_ID = sh.PERSON_ID;

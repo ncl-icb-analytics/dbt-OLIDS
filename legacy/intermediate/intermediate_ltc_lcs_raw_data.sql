@@ -5,32 +5,32 @@ CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERME
     SOURCE_RECORD_ID VARCHAR, -- ID of the source record (observation_id or medication_order_id)
     SOURCE_TABLE VARCHAR, -- Source table ('OBSERVATION' or 'MEDICATION_ORDER')
     CLINICAL_EFFECTIVE_DATE DATE, -- Date of the record
-    
+
     -- Concept details
     CONCEPT_ID VARCHAR, -- The mapped concept ID
     CONCEPT_CODE VARCHAR, -- The mapped concept code
     CONCEPT_DISPLAY VARCHAR, -- The display term for the concept
     CLUSTER_ID VARCHAR, -- The cluster ID from LTC_LCS_CODES
     CLUSTER_DESCRIPTION VARCHAR, -- Description of the cluster
-    
+
     -- Observation-specific fields (NULL for medications)
     RESULT_VALUE NUMBER, -- Numeric result value for observations
     RESULT_UNIT VARCHAR, -- Unit of measurement for observations
     RESULT_UNIT_DISPLAY VARCHAR, -- Display term for the unit
     RESULT_TEXT VARCHAR, -- Text result for observations
-    
+
     -- Medication-specific fields (NULL for observations)
     MEDICATION_NAME VARCHAR, -- Name of the medication
     DOSE VARCHAR, -- Dose of the medication
     QUANTITY_VALUE NUMBER, -- Quantity value
     QUANTITY_UNIT VARCHAR, -- Unit of quantity
     DURATION_DAYS NUMBER, -- Duration in days
-    
+
     -- Additional context
     ORIGINATING_SOURCE_TABLE VARCHAR, -- The specific table where the concept originated (e.g., 'OBSERVATION', 'MEDICATION_STATEMENT')
     SOURCE_CODE_ID VARCHAR, -- The original source code ID
     SOURCE_CODE_DISPLAY VARCHAR, -- The original source code display term
-    
+
     -- Traceability arrays
     ALL_CONCEPT_CODES ARRAY, -- All concept codes contributing to this record
     ALL_CONCEPT_DISPLAYS ARRAY, -- All concept display terms contributing to this record
@@ -82,7 +82,7 @@ WITH LTC_LCS_Observations AS (
     LEFT JOIN "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT AS UNIT_CON
         ON O."result_value_unit_concept_id" = UNIT_CON."id"
     WHERE MC.SOURCE = 'LTC_LCS'
-    GROUP BY 
+    GROUP BY
         PP."person_id",
         P."sk_patient_id",
         O."id",
@@ -140,7 +140,7 @@ LTC_LCS_Medications AS (
     LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.SOURCE_CONCEPT_ORIGINS AS SCO
         ON MC.SOURCE_CODE_ID = SCO.SOURCE_CODE_ID_VALUE
     WHERE MC.SOURCE = 'LTC_LCS'
-    GROUP BY 
+    GROUP BY
         PP."person_id",
         P."sk_patient_id",
         MO."id",
@@ -162,4 +162,4 @@ LTC_LCS_Medications AS (
 -- Combine observations and medications
 SELECT * FROM LTC_LCS_Observations
 UNION ALL
-SELECT * FROM LTC_LCS_Medications; 
+SELECT * FROM LTC_LCS_Medications;

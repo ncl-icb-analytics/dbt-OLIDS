@@ -9,7 +9,7 @@ models:
     description: |
       Dimension identifying patients residing in care homes for enhanced care
       pathways and medication safety monitoring.
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -28,4 +28,4 @@ models:
         description: "Name of care home (if resident)"
 
       - name: care_home_type
-        description: "Type of care home facility" 
+        description: "Type of care home facility"

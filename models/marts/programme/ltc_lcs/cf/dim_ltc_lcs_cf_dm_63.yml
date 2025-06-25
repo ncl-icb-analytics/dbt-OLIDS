@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_ltc_lcs_cf_dm_63
     description: "Intermediate model for LTC/LCS case finding DM_63. Identifies patients with elevated HbA1c (46-47 mmol/mol) who have not had recent monitoring."
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -37,4 +37,4 @@ models:
         description: "Array of all HbA1c concept codes for the patient"
 
       - name: all_hba1c_displays
-        description: "Array of all HbA1c concept display terms for the patient" 
+        description: "Array of all HbA1c concept display terms for the patient"

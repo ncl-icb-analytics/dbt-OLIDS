@@ -28,5 +28,3 @@ QUALIFY ROW_NUMBER() OVER (
     -- Orders records within each partition by date (most recent first).
     ORDER BY clinical_effective_date DESC
 ) = 1; -- Keeps only the row ranked #1 (i.e., the latest record) for each person.
-
-

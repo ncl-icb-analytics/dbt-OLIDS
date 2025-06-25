@@ -28,4 +28,4 @@ JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS c ON o."observation_cor
 LEFT JOIN "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT AS UNIT_CON ON o."result_value_unit_concept_id" = UNIT_CON."id"
 WHERE c.CLUSTER_ID = 'CRE_COD'
     AND o."result_value" IS NOT NULL -- Exclude NULL results
-    AND UNIT_CON."display" = 'µmol/L'; -- Only include results in standard units 
+    AND UNIT_CON."display" = 'µmol/L'; -- Only include results in standard units

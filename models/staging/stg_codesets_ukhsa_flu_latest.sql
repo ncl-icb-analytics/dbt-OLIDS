@@ -1,16 +1,16 @@
 -- Staging model for CODESETS.UKHSA_FLU_LATEST
 -- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
 
-select
-    "CODING_SCHEME" as coding_scheme,
-    "CODE_LIBRARY" as code_library,
-    "CODE_GROUP" as code_group,
-    "CODE_GROUP_DESCRIPTION" as code_group_description,
-    "SNOMED_CODE" as snomed_code,
-    "SNOMED_DESCRIPTION" as snomed_description,
-    "DATE_CREATED" as date_created,
-    "VALIDATED_SCTID" as validated_sctid,
-    "EMIS_ASTRX" as emis_astrx,
-    "UNNAMED_9" as unnamed_9,
-    "TPP_ASTRX" as tpp_astrx
-from {{ source('CODESETS', 'UKHSA_FLU_LATEST') }}
+SELECT
+    "CODING_SCHEME" AS coding_scheme,
+    "CODE_LIBRARY" AS code_library,
+    "CODE_GROUP" AS code_group,
+    "CODE_GROUP_DESCRIPTION" AS code_group_description,
+    "SNOMED_CODE" AS snomed_code,
+    "SNOMED_DESCRIPTION" AS snomed_description,
+    "DATE_CREATED" AS date_created,
+    "VALIDATED_SCTID" AS validated_sctid,
+    "EMIS_ASTRX" AS emis_astrx,
+    "UNNAMED_9" AS unnamed_9,
+    "TPP_ASTRX" AS tpp_astrx
+FROM {{ source('CODESETS', 'UKHSA_FLU_LATEST') }}

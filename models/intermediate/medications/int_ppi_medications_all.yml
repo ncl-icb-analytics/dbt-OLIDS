@@ -6,80 +6,80 @@ models:
       All PPI (Proton Pump Inhibitor) medication orders for gastric acid suppression.
       Uses BNF classification (1.3.5) for proton pump inhibitors.
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      
+
       Clinical Purpose:
       - Peptic ulcer disease treatment and prevention
       - Gastro-oesophageal reflux disease (GORD) management
       - H. pylori eradication therapy
       - Gastroprotection in high-risk patients (NSAIDs, steroids, anticoagulants)
-      
+
       Key Features:
       - Individual PPI type identification
       - H. pylori eradication combination therapy detection
       - High-dose vs standard-dose classification
       - Long-term therapy identification for deprescribing reviews
-    
+
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"
         tests:
           - not_null
-          
+
       - name: medication_order_id
         description: "Unique identifier for the medication order record"
         tests:
           - not_null
           - unique
-          
+
       - name: ppi_type
         description: "Specific PPI medication type"
         tests:
           - not_null
           - accepted_values:
               values: ['ESOMEPRAZOLE', 'H_PYLORI_ERADICATION', 'LANSOPRAZOLE', 'OMEPRAZOLE', 'PANTOPRAZOLE', 'RABEPRAZOLE', 'OTHER_PPI']
-              
+
       - name: is_omeprazole
         description: "Boolean flag indicating omeprazole use (most common PPI)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_lansoprazole
         description: "Boolean flag indicating lansoprazole use"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_esomeprazole
         description: "Boolean flag indicating esomeprazole use"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_h_pylori_eradication
         description: "Boolean flag indicating H. pylori eradication therapy"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_high_dose
         description: "Boolean flag indicating high-dose PPI therapy"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_standard_dose
         description: "Boolean flag indicating standard-dose PPI therapy"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_long_term_therapy
         description: "Boolean flag indicating long-term PPI therapy (>8 weeks)"
         tests:
@@ -93,4 +93,4 @@ models:
             - person_id
             - medication_order_id
       - bnf_codes_exist:
-          bnf_codes: "0103050" 
+          bnf_codes: "0103050"

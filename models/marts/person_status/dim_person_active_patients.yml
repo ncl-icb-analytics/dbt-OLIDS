@@ -6,22 +6,22 @@ models:
       Dimension table providing active patient status at person level using proper registration data
       from episode_of_care. Filters to only include currently active patients, excluding deceased
       patients and dummy patients.
-      
+
       **Active Patient Criteria:**
       - Has current practice registration (via episode_of_care)
       - Not deceased (death_year IS NULL)
       - Not a dummy/test patient
-      
+
       **Registration Logic:**
       - Uses int_patient_registrations for current practice details
       - Includes registration history metadata
       - One row per active person
-      
+
       **Key Usage:**
       - Primary filter for active patient populations
       - Practice-level patient analysis
       - Current registration reporting
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -148,4 +148,4 @@ models:
       - name: latest_record_date
         description: "Timestamp of latest patient record update"
         tests:
-          - not_null 
+          - not_null

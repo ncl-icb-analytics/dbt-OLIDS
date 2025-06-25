@@ -1,13 +1,13 @@
 -- Staging model for CODESETS.CHILDHOOD_IMMS_CODES
 -- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
 
-select
-    "VACCINE" as vaccine,
-    "DOSE" as dose,
-    "PROPOSEDCLUSTER" as proposedcluster,
-    "SOURCECLUSTERID" as sourceclusterid,
-    "SOURCECLUSTERDESCRIPTION" as sourceclusterdescription,
-    "SNOMEDCONCEPTID" as snomedconceptid,
-    "CODEDESCRIPTION" as codedescription,
-    "SOURCE" as source
-from {{ source('CODESETS', 'CHILDHOOD_IMMS_CODES') }}
+SELECT
+    "VACCINE" AS vaccine,
+    "DOSE" AS dose,
+    "PROPOSEDCLUSTER" AS proposedcluster,
+    "SOURCECLUSTERID" AS sourceclusterid,
+    "SOURCECLUSTERDESCRIPTION" AS sourceclusterdescription,
+    "SNOMEDCONCEPTID" AS snomedconceptid,
+    "CODEDESCRIPTION" AS codedescription,
+    "SOURCE" AS source
+FROM {{ source('CODESETS', 'CHILDHOOD_IMMS_CODES') }}

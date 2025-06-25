@@ -30,7 +30,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseAntidepressantOrders AS (
     -- Get all medication orders for antidepressants
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -46,7 +46,7 @@ WITH BaseAntidepressantOrders AS (
         MC.CODE_DESCRIPTION AS MAPPED_CONCEPT_DISPLAY,
         bnf.BNF_CODE,
         bnf.BNF_NAME,
-        CASE 
+        CASE
             WHEN bnf.BNF_CODE LIKE '040303%' THEN 'SSRI'
             WHEN bnf.BNF_CODE LIKE '040304%' THEN 'SNRI'
             WHEN bnf.BNF_CODE LIKE '040301%' THEN 'TCA'
@@ -82,4 +82,4 @@ SELECT
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
 FROM BaseAntidepressantOrders bso
 LEFT JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

@@ -23,19 +23,22 @@ WITH valproate_6m_orders AS (
         statement_medication_name,
         mapped_concept_code,
         mapped_concept_display,
-        
+
         -- Valproate product classification
-        CASE 
+        CASE
             WHEN order_medication_name ILIKE '%EPILIM%' THEN 'EPILIM'
             WHEN order_medication_name ILIKE '%CONVULEX%' THEN 'CONVULEX'
             WHEN order_medication_name ILIKE '%DEPAKOTE%' THEN 'DEPAKOTE'
             WHEN order_medication_name ILIKE '%EPISENTA%' THEN 'EPISENTA'
-            WHEN order_medication_name ILIKE '%VALPROATE%' THEN 'VALPROATE_GENERIC'
+            WHEN
+                order_medication_name ILIKE '%VALPROATE%'
+                THEN 'VALPROATE_GENERIC'
             ELSE 'OTHER_VALPROATE'
         END AS valproate_product_term
-        
+
     FROM {{ ref('int_valproate_medications_all') }}
-    WHERE order_date >= CURRENT_DATE() - INTERVAL '6 months'
+    WHERE
+        order_date >= CURRENT_DATE() - INTERVAL '6 months'
         AND order_date <= CURRENT_DATE()
 ),
 
@@ -51,12 +54,14 @@ valproate_latest AS (
     SELECT
         vo.*,
         vc.recent_order_count,
-        ROW_NUMBER() OVER (PARTITION BY vo.person_id ORDER BY vo.order_date DESC) AS rn
-    FROM valproate_6m_orders vo
-    INNER JOIN valproate_6m_counts vc ON vo.person_id = vc.person_id
+        ROW_NUMBER()
+            OVER (PARTITION BY vo.person_id ORDER BY vo.order_date DESC)
+            AS rn
+    FROM valproate_6m_orders AS vo
+    INNER JOIN valproate_6m_counts AS vc ON vo.person_id = vc.person_id
 )
 
-SELECT 
+SELECT
     person_id,
     order_date AS most_recent_order_date,
     medication_order_id,
@@ -72,4 +77,4 @@ SELECT
     valproate_product_term,
     recent_order_count
 FROM valproate_latest
-WHERE rn = 1 -- Latest order only per person 
+WHERE rn = 1 -- Latest order only per person

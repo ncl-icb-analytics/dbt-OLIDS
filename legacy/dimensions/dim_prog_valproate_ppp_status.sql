@@ -26,7 +26,7 @@ Sources from INTERMEDIATE_PPP_STATUS_ALL to provide:
 
 Status categories:
   - Enrolled
-  - Discontinued  
+  - Discontinued
   - Not needed
   - Declined'
 TARGET_LAG = '4 hours'
@@ -57,7 +57,7 @@ WITH BasePPPObservations AS (
 ),
 LatestPPPStatus AS (
     -- Get the most recent PPP event for each person
-    SELECT 
+    SELECT
         PERSON_ID,
         OBSERVATION_ID,
         PPP_EVENT_DATE,
@@ -100,4 +100,4 @@ SELECT
     pla.ALL_PPP_CONCEPT_DISPLAYS,
     pla.ALL_PPP_CODE_CATEGORIES_APPLIED
 FROM PersonLevelPPPAggregation pla
-JOIN LatestPPPStatus latest ON pla.PERSON_ID = latest.PERSON_ID; 
+JOIN LatestPPPStatus latest ON pla.PERSON_ID = latest.PERSON_ID;

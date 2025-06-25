@@ -9,12 +9,12 @@ models:
     description: |
       All palliative care pathway observations from clinical records.
       Important pathway with inclusion/exclusion logic for appropriate care targeting.
-      
+
       QOF Register Logic:
       - Palliative care code (PALCARE_COD) on/after 1 April 2008
       - Exclusion logic: 'No longer indicated' codes (PALCARENI_COD)
       - Current status determined by latest code
-      
+
       Includes ALL persons following intermediate layer principles.
       Use as input for fct_person_palliative_care_register.sql which applies QOF business rules.
     columns:
@@ -22,44 +22,44 @@ models:
         description: "Unique person identifier"
         tests:
           - not_null
-          
+
       - name: observation_id
         description: "Unique observation identifier"
         tests:
           - not_null
-          
+
       - name: clinical_effective_date
         description: "Date of the palliative care observation"
         tests:
           - not_null
-          
+
       - name: concept_code
         description: "SNOMED concept code for palliative care observation"
         tests:
           - not_null
-          
+
       - name: concept_display
         description: "Description of the palliative care code"
         tests:
           - not_null
-          
+
       - name: source_cluster_id
         description: "QOF cluster ID for palliative care pathway"
         tests:
           - not_null
           - accepted_values:
               values: ['PALCARE_COD', 'PALCARENI_COD']
-              
+
       - name: is_palliative_care_code
         description: "Flag indicating palliative care code (PALCARE_COD)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_palliative_care_not_indicated_code
         description: "Flag indicating palliative care no longer indicated (PALCARENI_COD)"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]

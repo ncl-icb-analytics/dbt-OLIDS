@@ -28,7 +28,7 @@ WITH BaseObservationsAndDemographics AS (
         P."sk_patient_id" AS SK_PATIENT_ID,
         O."clinical_effective_date" AS CLINICAL_EFFECTIVE_DATE,
         MC.CONCEPT_CODE,
-        MC.CODE_DESCRIPTION AS CONCEPT_DISPLAY, 
+        MC.CODE_DESCRIPTION AS CONCEPT_DISPLAY,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID,
         age_dim.AGE,
         sex_dim.SEX
@@ -43,7 +43,7 @@ WITH BaseObservationsAndDemographics AS (
         ON PP."person_id" = sex_dim.PERSON_ID
     JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age_dim
         ON PP."person_id" = age_dim.PERSON_ID
-    WHERE 
+    WHERE
         MC.CLUSTER_ID IN ('PREG_COD', 'PREGDEL_COD') AND MC.SOURCE = 'UKHSA_FLU'
         AND sex_dim.SEX != 'Male'
 ),
@@ -53,7 +53,7 @@ PersonLevelPregnancyAggregation AS (
     -- Collects all associated concept details (codes, displays, cluster IDs) into arrays.
     SELECT
         PERSON_ID,
-        ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID, 
+        ANY_VALUE(SK_PATIENT_ID) as SK_PATIENT_ID,
         ANY_VALUE(AGE) as AGE, -- AGE from BaseObservationsAndDemographics
         ANY_VALUE(SEX) as SEX, -- SEX from BaseObservationsAndDemographics
         MAX(CASE WHEN SOURCE_CLUSTER_ID = 'PREG_COD' THEN CLINICAL_EFFECTIVE_DATE ELSE NULL END) AS LATEST_PREG_COD_DATE,
@@ -91,4 +91,4 @@ SELECT
 FROM PersonLevelPregnancyAggregation pla
 LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_PERM_ABSENCE_PREG_RISK perm_abs
     ON pla.PERSON_ID = perm_abs.PERSON_ID
-WHERE IS_CURRENTLY_PREGNANT = TRUE; -- Filter to only include those currently deemed pregnant 
+WHERE IS_CURRENTLY_PREGNANT = TRUE; -- Filter to only include those currently deemed pregnant

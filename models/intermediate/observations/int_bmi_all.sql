@@ -23,7 +23,7 @@ WITH base_observations AS (
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
-        
+
     FROM ({{ get_observations("'BMIVAL_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
@@ -39,15 +39,15 @@ SELECT
     concept_display,
     source_cluster_id,
     original_result_value,
-    
+
     -- Data quality validation
-    CASE 
+    CASE
         WHEN bmi_value BETWEEN 5 AND 400 THEN TRUE
         ELSE FALSE
     END AS is_valid_bmi,
-    
+
     -- Clinical categorisation (only for valid BMI)
-    CASE 
+    CASE
         WHEN bmi_value NOT BETWEEN 5 AND 400 THEN 'Invalid'
         WHEN bmi_value < 18.5 THEN 'Underweight'
         WHEN bmi_value < 25 THEN 'Normal'
@@ -60,4 +60,4 @@ SELECT
 FROM base_observations
 
 -- Sort for consistent output
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

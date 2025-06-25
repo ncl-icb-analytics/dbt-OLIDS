@@ -34,11 +34,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- SMI-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'MH_COD' THEN TRUE ELSE FALSE END AS is_smi_diagnosis_code,
     CASE WHEN obs.cluster_id = 'MHREM_COD' THEN TRUE ELSE FALSE END AS is_smi_resolved_code,
-    
+
     -- SMI observation type determination
     CASE
         WHEN obs.cluster_id = 'MH_COD' THEN 'SMI Diagnosis'
@@ -49,4 +49,4 @@ SELECT
 FROM ({{ get_observations("'MH_COD', 'MHREM_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

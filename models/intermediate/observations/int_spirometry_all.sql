@@ -13,7 +13,7 @@ Enhanced with analytics-ready fields and legacy structure alignment.
 */
 
 WITH base_observations AS (
-    
+
     SELECT
         obs.observation_id,
         obs.person_id,
@@ -24,7 +24,7 @@ WITH base_observations AS (
         obs.mapped_concept_display AS code_description,
         obs.cluster_id AS source_cluster_id,
         obs.result_value AS original_result_value
-        
+
     FROM ({{ get_observations("'FEV1FVC_COD', 'FEV1FVCL70_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 )
@@ -39,22 +39,22 @@ SELECT
     concept_code,
     code_description,
     source_cluster_id,
-    
+
     -- Core legacy boolean flag (matching legacy exactly)
     CASE
         WHEN source_cluster_id = 'FEV1FVCL70_COD' THEN TRUE -- Pre-coded as less than 0.7
         WHEN source_cluster_id = 'FEV1FVC_COD' AND fev1_fvc_ratio < 0.7 THEN TRUE -- Raw value less than 0.7
         ELSE FALSE
     END AS is_below_0_7,
-    
+
     -- Enhanced analytics flags
     -- Validate spirometry reading
-    CASE 
+    CASE
         WHEN source_cluster_id = 'FEV1FVCL70_COD' THEN TRUE -- Pre-coded values are valid
         WHEN source_cluster_id = 'FEV1FVC_COD' AND fev1_fvc_ratio BETWEEN 0.1 AND 2.0 THEN TRUE -- Valid ratio range
         ELSE FALSE
     END AS is_valid_spirometry,
-    
+
     -- Clinical interpretation
     CASE
         WHEN source_cluster_id = 'FEV1FVCL70_COD' THEN 'COPD Indicated (Coded <0.7)'
@@ -62,20 +62,20 @@ SELECT
         WHEN source_cluster_id = 'FEV1FVC_COD' AND fev1_fvc_ratio >= 0.7 THEN 'Normal (≥0.7)'
         ELSE 'Invalid'
     END AS spirometry_interpretation,
-    
+
     -- COPD severity staging based on FEV1/FVC ratio
     CASE
         WHEN source_cluster_id = 'FEV1FVCL70_COD' OR fev1_fvc_ratio < 0.7 THEN 'Airway Obstruction'
         WHEN fev1_fvc_ratio >= 0.7 THEN 'Normal'
         ELSE 'Unknown'
     END AS copd_staging,
-    
-    -- Analytics-ready COPD risk indicators  
+
+    -- Analytics-ready COPD risk indicators
     CASE
         WHEN source_cluster_id = 'FEV1FVCL70_COD' OR fev1_fvc_ratio < 0.7 THEN TRUE
         ELSE FALSE
     END AS indicates_copd,
-    
+
     -- QOF-specific spirometry confirmation flag
     CASE
         WHEN (source_cluster_id = 'FEV1FVCL70_COD' OR fev1_fvc_ratio < 0.7) AND is_valid_spirometry THEN TRUE
@@ -83,4 +83,4 @@ SELECT
     END AS confirms_copd_spirometry
 
 FROM base_observations
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

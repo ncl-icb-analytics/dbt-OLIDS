@@ -24,67 +24,120 @@ Used for depression quality measures including:
 WITH depression_diagnoses AS (
     SELECT
         person_id,
-        
+
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END) AS latest_resolved_date,
-        
+        MIN(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS earliest_diagnosis_date,
+        MAX(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS latest_diagnosis_date,
+        MAX(
+            CASE
+                WHEN is_depression_resolved_code THEN clinical_effective_date
+            END
+        ) AS latest_resolved_date,
+
         -- QOF register logic: active diagnosis required since April 2006
-        CASE
-            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-                AND MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= '2006-04-01'
-                AND (MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END) IS NULL 
-                     OR MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) > 
-                        MAX(CASE WHEN is_depression_resolved_code THEN clinical_effective_date END))
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_depression_diagnosis,
-        
+        COALESCE(MAX(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        ) IS NOT NULL
+        AND MAX(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        )
+        >= '2006-04-01'
+        AND (
+            MAX(
+                CASE
+                    WHEN
+                        is_depression_resolved_code
+                        THEN clinical_effective_date
+                END
+            ) IS NULL
+            OR MAX(
+                CASE
+                    WHEN
+                        is_depression_diagnosis_code
+                        THEN clinical_effective_date
+                END
+            )
+            > MAX(
+                CASE
+                    WHEN
+                        is_depression_resolved_code
+                        THEN clinical_effective_date
+                END
+            )
+        ), FALSE) AS has_active_depression_diagnosis,
+
         -- QOF temporal flags for recent episodes
-        CASE 
-            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= CURRENT_DATE - INTERVAL '12 months' 
-            THEN TRUE 
-            ELSE FALSE 
-        END AS has_episode_last_12m,
-        
-        CASE 
-            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= CURRENT_DATE - INTERVAL '15 months' 
-            THEN TRUE 
-            ELSE FALSE 
-        END AS has_episode_last_15m,
-        
-        CASE 
-            WHEN MAX(CASE WHEN is_depression_diagnosis_code THEN clinical_effective_date END) >= CURRENT_DATE - INTERVAL '24 months' 
-            THEN TRUE 
-            ELSE FALSE 
-        END AS has_episode_last_24m,
-        
+        COALESCE(MAX(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        )
+        >= CURRENT_DATE - INTERVAL '12 months',
+        FALSE) AS has_episode_last_12m,
+
+        COALESCE(MAX(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        )
+        >= CURRENT_DATE - INTERVAL '15 months',
+        FALSE) AS has_episode_last_15m,
+
+        COALESCE(MAX(
+            CASE
+                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+            END
+        )
+        >= CURRENT_DATE - INTERVAL '24 months',
+        FALSE) AS has_episode_last_24m,
+
         -- Traceability arrays
-        ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_code ELSE NULL END) AS all_depression_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_depression_diagnosis_code THEN concept_display ELSE NULL END) AS all_depression_concept_displays,
-        ARRAY_AGG(DISTINCT CASE WHEN is_depression_resolved_code THEN concept_code ELSE NULL END) AS all_resolved_concept_codes
-        
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_depression_diagnosis_code THEN concept_code
+            END
+        ) AS all_depression_concept_codes,
+        ARRAY_AGG(
+            DISTINCT CASE
+                WHEN is_depression_diagnosis_code THEN concept_display
+            END
+        ) AS all_depression_concept_displays,
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_depression_resolved_code THEN concept_code END
+        ) AS all_resolved_concept_codes
+
     FROM {{ ref('int_depression_diagnoses_all') }}
     GROUP BY person_id
 ),
 
 register_logic AS (
-    
+
     SELECT
         dd.*,
         age.age,
-        
+
         -- QOF Register Logic: Age ≥18 + Active depression diagnosis
         (
             age.age >= 18
             AND dd.has_active_depression_diagnosis = TRUE
         ) AS is_on_register
-        
-    FROM depression_diagnoses dd
-    INNER JOIN {{ ref('dim_person') }} p
+
+    FROM depression_diagnoses AS dd
+    INNER JOIN {{ ref('dim_person') }} AS p
         ON dd.person_id = p.person_id
-    INNER JOIN {{ ref('dim_person_age') }} age
+    INNER JOIN {{ ref('dim_person_age') }} AS age
         ON dd.person_id = age.person_id
     WHERE dd.has_active_depression_diagnosis = TRUE  -- Only include persons with active depression diagnosis
 )
@@ -101,5 +154,5 @@ SELECT
     rl.all_depression_concept_displays,
     rl.all_resolved_concept_codes AS all_depression_resolved_concept_codes
 
-FROM register_logic rl
-WHERE rl.is_on_register = TRUE 
+FROM register_logic AS rl
+WHERE rl.is_on_register = TRUE

@@ -27,4 +27,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Desirable', 'Borderline High', 'High'] 
+              values: ['Desirable', 'Borderline High', 'High']
