@@ -169,16 +169,16 @@ models:
 1. **Ensure you're on the latest main branch:**
 
    ```bash
-   git checkout main
+   git switch main
    git pull origin main
    ```
 2. **Create a descriptive feature branch:**
 
    ```bash
    # Use descriptive branch names following the pattern:
-   git checkout -b feature/add-heart-failure-register
-   git checkout -b fix/diabetes-type-classification
-   git checkout -b refactor/consolidate-person-dimensions
+   git switch -c feature/add-heart-failure-register
+   git switch -c fix/diabetes-type-classification
+   git switch -c refactor/consolidate-person-dimensions
    ```
 3. **Make your changes following project conventions:**
 
