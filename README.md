@@ -28,7 +28,7 @@ cp env.example .env
 
 # Setup commit message enforcement (one-time)
 pre-commit install --hook-type commit-msg
-pre-commit install  # For code quality checks
+pre-commit install
 
 # Run
 dbt deps
