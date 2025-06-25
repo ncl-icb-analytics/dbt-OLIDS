@@ -158,7 +158,7 @@ models:
       - cluster_ids_exist:
           cluster_ids: "DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD"
       - dbt_utils.at_least_one:
-          name:"has_at_least_one_observation"
+          name: "has_at_least_one_observation"
           column_name: observation_id
 ```
 
