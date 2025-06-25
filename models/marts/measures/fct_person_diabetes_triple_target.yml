@@ -3,33 +3,20 @@ models:
 - name: fct_person_diabetes_triple_target
   description: 'Fact table for diabetes triple target achievement tracking for people on the diabetes register.
 
-
     **Triple Target Goals:**
-
     1. **HbA1c**: < 58 mmol/mol (IFCC) or < 7.5% (DCCT)
-
     2. **Blood Pressure**: Systolic < 140 mmHg AND Diastolic < 80 mmHg
-
     3. **Total Cholesterol**: < 5 mmol/L
 
-
     **Business Logic:**
-
     - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
-
     - Uses latest available values for each measurement
-
     - HbA1c type detection: IFCC (mmol/mol) vs DCCT (%)
-
     - Tracks both target achievement and measurement recency (last 12 months)
-
     - Includes flags for recent measurements that are out of target range
 
-
     **Clinical Context:**
-
     Essential for diabetes outcome monitoring and quality improvement initiatives.
-
     Based on NICE diabetes guidelines for optimal diabetes management targets.
 
     '
