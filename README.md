@@ -17,7 +17,7 @@ Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
 ```bash
 # Setup
 git clone https://github.com/ncl-icb-analytics/snowflake-hei-migration
-cd snowflake-hei-migration-dbt
+cd snowflake-hei-migration
 python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt
 
