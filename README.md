@@ -127,7 +127,7 @@ dbt docs generate && dbt docs serve
 SELECT * FROM ({{ get_observations("'DM_COD'") }}) obs
 SELECT * FROM ({{ get_medication_orders(bnf_code='02050501') }}) meds
 
--- In subqueries
+-- With WHERE clause
 SELECT observation_id, person_id, clinical_effective_date
 FROM ({{ get_observations("'HTN_COD', 'HTNRES_COD'", "PCD") }}) obs -- from PCD Refset only
 WHERE obs.clinical_effective_date IS NOT NULL
