@@ -21,9 +21,10 @@ cd snowflake-hei-migration
 python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt
 
-# Configure (copy templates and edit .env)
+# Configure environment
 cp profiles.yml.template profiles.yml
 cp env.example .env
+# Edit .env with your Snowflake credentials (see Environment Setup below)
 
 # Run
 dbt deps
@@ -37,6 +38,30 @@ dbt test
 - Your Snowflake role can access the source tables required
 
 If Python is not installed, you can get it from the Microsoft Store.
+
+## Environment Setup
+
+### **Snowflake Configuration**
+
+1. **Copy and configure environment file:**
+
+   ```bash
+   cp env.example .env
+   ```
+2. **Edit `.env` with your Snowflake details:**
+
+   - `SNOWFLAKE_ACCOUNT`: Your Snowflake account identifier
+   - `SNOWFLAKE_USER`: Your Snowflake username
+   - `SNOWFLAKE_ROLE`: Your assigned role
+   - `SNOWFLAKE_WAREHOUSE`: Your warehouse name
+   - `SNOWFLAKE_PASSWORD`: Optional (you can use SSO or key-pair authentication)
+3. **Verify connection:**
+
+   ```bash
+   dbt debug
+   ```
+
+**Important:** Never commit `.env` to version control! The file is already in `.gitignore`.
 
 ## Environment Management
 
@@ -202,13 +227,35 @@ dbt build  		# Runs models and tests in DAG order for DEV environment
 dbt build --target qa   # Full build in qa environment
 ```
 
+### **Commit Message Conventions**
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/) for clear, consistent commit messages:
+
+```bash
+# Format: <type>(<scope>): <description>
+git commit -m "feat(disease-registers): add heart failure register with LVSD classification"
+git commit -m "fix(diabetes): correct type 1/2 classification logic"
+git commit -m "docs: update README with environment setup steps"
+git commit -m "refactor(person): consolidate demographic dimensions"
+git commit -m "test: add validation for medication order macros"
+```
+
+**Common types:**
+
+- `feat`: New feature or model
+- `fix`: Bug fix or correction
+- `docs`: Documentation changes
+- `refactor`: Code restructuring without functionality change
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks (dependencies, config)
+
 ### **Creating a Pull Request**
 
 1. **Commit your changes with clear messages:**
 
    ```bash
    git add .
-   git commit -m "feat: add heart failure register with LVSD classification"
+   git commit -m "feat(disease-registers): add heart failure register with LVSD classification"
    ```
 2. **Push your branch and create a PR:**
 
@@ -224,14 +271,22 @@ dbt build --target qa   # Full build in qa environment
 
 ### **PR Review Process**
 
-- **TO DO: Automated Checks**: CI will run `dbt parse`, `dbt compile`, and basic tests
-- **Testing**: Reviewers should verify the changes work in both dev and qa environments.
-- **TO DO: Snowflake automatically runs `dbt deps` and `dbt build --target prod` on commits to main and on a schedule**
+**Current State:** This repository is under active development. The following processes are planned but not yet implemented:
+
+- **Manual Testing Required**: Currently reviewers must manually verify changes work in dev and qa environments
+- **Planned CI/CD**: We're setting up GitHub Actions with a service account for automated testing
+- **Future Branch Protection**: Main branch protection rules will be implemented once CI is ready
+
+**Current Review Process:**
+
+- Manual code review for logic and conventions
+- Test changes locally: `dbt build --select your_model+` (this runs your model + downstream dependencies and tests, in DAG order)
+- Verify changes work in qa environment: `dbt build --target qa --select your_model+`
 
 ### **Merging**
 
-- PRs are merged into `main` after approval
-- Delete the feature branch after merging
+- PRs are merged into `main` after manual approval and testing
+- Delete the feature branch after merging: `git branch -d feature/your-branch-name`
 
 ## License
 
