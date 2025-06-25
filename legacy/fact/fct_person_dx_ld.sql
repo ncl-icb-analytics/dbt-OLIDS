@@ -58,4 +58,4 @@ SELECT
     pla.ALL_LD_CONCEPT_CODES,
     pla.ALL_LD_CONCEPT_DISPLAYS,
     pla.ALL_LD_SOURCE_CLUSTER_IDS
-FROM PersonLevelLDAggregation pla; 
+FROM PersonLevelLDAggregation pla;

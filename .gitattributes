@@ -4,4 +4,4 @@
 
 # Make GitHub recognise YAML files (important for dbt projects)
 *.yml linguist-detectable=true
-*.yaml linguist-detectable=true 
+*.yaml linguist-detectable=true

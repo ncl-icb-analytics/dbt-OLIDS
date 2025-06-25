@@ -5,7 +5,7 @@ models:
     description: |
       Person ethnicity dimension providing NHS standard ethnicity classifications.
       Uses QOF-compatible ethnicity mappings for clinical reporting.
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -20,4 +20,4 @@ models:
         description: "NHS ethnicity description"
 
       - name: ethnicity_group
-        description: "High-level ethnicity grouping" 
+        description: "High-level ethnicity grouping"

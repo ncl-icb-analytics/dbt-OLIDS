@@ -102,7 +102,7 @@ SELECT
     cod_agg.SK_PATIENT_ID,
     cod_agg.AGE,
     CASE
-        WHEN cod_agg.HAS_ACTIVE_EPIL_DIAGNOSIS = TRUE 
+        WHEN cod_agg.HAS_ACTIVE_EPIL_DIAGNOSIS = TRUE
         AND med.LATEST_EPIL_MED_ORDER_DATE IS NOT NULL
         THEN TRUE
         ELSE FALSE
@@ -125,6 +125,6 @@ SELECT
 FROM PersonLevelEpilCodingAggregation cod_agg
 LEFT JOIN LatestMedicationDetails med
     ON cod_agg.PERSON_ID = med.PERSON_ID
-WHERE 
-    cod_agg.HAS_ACTIVE_EPIL_DIAGNOSIS = TRUE 
-    AND med.LATEST_EPIL_MED_ORDER_DATE IS NOT NULL; 
+WHERE
+    cod_agg.HAS_ACTIVE_EPIL_DIAGNOSIS = TRUE
+    AND med.LATEST_EPIL_MED_ORDER_DATE IS NOT NULL;

@@ -7,13 +7,13 @@
             ','
         ))
     )
-    SELECT 
+    SELECT
         rb.bnf_code,
         'BNF code not found in codesets_bnf_latest' AS failure_reason
     FROM required_bnf rb
     WHERE NOT EXISTS (
-        SELECT 1 
+        SELECT 1
         FROM {{ ref('stg_codesets_bnf_latest') }} bnf
         WHERE rb.bnf_code LIKE bnf.bnf_code || '%'
     )
-{% endtest %} 
+{% endtest %}

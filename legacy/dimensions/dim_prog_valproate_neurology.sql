@@ -71,4 +71,4 @@ SELECT
     pla.ALL_NEUROLOGY_CONCEPT_CODES,
     pla.ALL_NEUROLOGY_CONCEPT_DISPLAYS,
     pla.ALL_NEUROLOGY_CODE_CATEGORIES_APPLIED
-FROM PersonLevelNeurologyAggregation pla; 
+FROM PersonLevelNeurologyAggregation pla;

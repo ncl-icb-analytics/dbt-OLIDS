@@ -6,100 +6,100 @@ models:
       All diuretic medication orders for cardiovascular and fluid management.
       Uses BNF classification (2.2) for diuretics.
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      
+
       Clinical Purpose:
       - Heart failure fluid management and symptom relief
       - Blood pressure management in hypertension
       - Oedema management in various conditions
-      
+
       Key Features:
       - Evidence-based diuretics for heart failure from major trials
       - Diuretic type classification (thiazide, loop, potassium-sparing)
       - Individual diuretic identification
       - Recency tracking for ongoing therapy assessment
-    
+
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"
         tests:
           - not_null
-          
+
       - name: medication_order_id
         description: "Unique identifier for the medication order record"
         tests:
           - not_null
           - unique
-          
+
       - name: diuretic_type
         description: "Diuretic type classification based on mechanism of action"
         tests:
           - not_null
           - accepted_values:
               values: ['THIAZIDE_RELATED', 'LOOP', 'POTASSIUM_SPARING', 'POTASSIUM_SPARING_WITH_THIAZIDE', 'OSMOTIC', 'MERCURIAL', 'CARBONIC_ANHYDRASE', 'OTHER_DIURETIC']
-              
+
       - name: specific_diuretic
         description: "Specific diuretic medication type"
         tests:
           - not_null
           - accepted_values:
               values: ['BENDROFLUMETHIAZIDE', 'INDAPAMIDE', 'FUROSEMIDE', 'BUMETANIDE', 'AMILORIDE', 'SPIRONOLACTONE', 'EPLERENONE', 'OTHER_DIURETIC']
-              
+
       - name: is_evidence_based_hf
         description: "Boolean flag indicating evidence-based diuretic for heart failure (spironolactone, eplerenone, furosemide)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_furosemide
         description: "Boolean flag indicating furosemide use (standard loop diuretic)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_bendroflumethiazide
         description: "Boolean flag indicating bendroflumethiazide use"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_indapamide
         description: "Boolean flag indicating indapamide use"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_spironolactone
         description: "Boolean flag indicating spironolactone use (RALES trial evidence)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_amiloride
         description: "Boolean flag indicating amiloride use"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_thiazide
         description: "Boolean flag indicating thiazide or thiazide-related diuretic"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_loop_diuretic
         description: "Boolean flag indicating loop diuretic"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_potassium_sparing
         description: "Boolean flag indicating potassium-sparing diuretic"
         tests:
@@ -113,4 +113,4 @@ models:
             - person_id
             - medication_order_id
       - bnf_codes_exist:
-          bnf_codes: "0202" 
+          bnf_codes: "0202"

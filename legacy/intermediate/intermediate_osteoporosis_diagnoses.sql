@@ -38,7 +38,7 @@ WITH BaseObservations AS (
         MC.CODE_DESCRIPTION,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID,
         -- Extract T-score value for DXA2_COD observations
-        CASE 
+        CASE
             WHEN MC.CLUSTER_ID = 'DXA2_COD' THEN CAST(O."result_value"::FLOAT AS NUMBER(10,1))
             ELSE NULL
         END AS DXA_T_SCORE,
@@ -109,4 +109,4 @@ SELECT
 FROM PersonDates pd
 LEFT JOIN PersonLevelCodingAggregation c
     ON pd.PERSON_ID = c.PERSON_ID
-QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1; 
+QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1;

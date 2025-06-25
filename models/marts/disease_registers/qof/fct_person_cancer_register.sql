@@ -25,26 +25,39 @@ QOF Business Rules:
 WITH cancer_diagnoses AS (
     SELECT
         person_id,
-        
+
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS latest_diagnosis_date,
-        
+        MIN(
+            CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END
+        ) AS earliest_diagnosis_date,
+        MAX(
+            CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END
+        ) AS latest_diagnosis_date,
+
         -- QOF register logic: cancer is permanent, any diagnosis since April 2003 qualifies
-        CASE
-            WHEN MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) IS NOT NULL 
-                AND MAX(CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) >= '2003-04-01'
-            THEN TRUE
-            ELSE FALSE
-        END AS has_active_cancer_diagnosis,
-        
+        COALESCE(MAX(
+            CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END
+        ) IS NOT NULL
+        AND MAX(
+            CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END
+        )
+        >= '2003-04-01', FALSE) AS has_active_cancer_diagnosis,
+
         -- Count of cancer episodes
-        COUNT(DISTINCT CASE WHEN is_cancer_diagnosis_code THEN clinical_effective_date END) AS total_cancer_episodes,
-        
+        COUNT(
+            DISTINCT CASE
+                WHEN is_cancer_diagnosis_code THEN clinical_effective_date
+            END
+        ) AS total_cancer_episodes,
+
         -- Traceability arrays
-        ARRAY_AGG(DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_code ELSE NULL END) AS all_cancer_concept_codes,
-        ARRAY_AGG(DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_display ELSE NULL END) AS all_cancer_concept_displays
-        
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_code END
+        ) AS all_cancer_concept_codes,
+        ARRAY_AGG(
+            DISTINCT CASE WHEN is_cancer_diagnosis_code THEN concept_display END
+        ) AS all_cancer_concept_displays
+
     FROM {{ ref('int_cancer_diagnoses_all') }}
     GROUP BY person_id
 ),
@@ -54,25 +67,25 @@ final AS (
     SELECT
         cd.person_id,
         age.age,
-        
+
         -- Register flag (always true after date filtering)
         cd.has_active_cancer_diagnosis AS is_on_register,
-        
+
         -- Diagnosis dates
         cd.earliest_diagnosis_date,
         cd.latest_diagnosis_date,
-        
-        -- Code arrays for traceability  
+
+        -- Code arrays for traceability
         cd.all_cancer_concept_codes,
         cd.all_cancer_concept_displays
-        
-    FROM cancer_diagnoses cd
-    LEFT JOIN {{ ref('dim_person') }} p ON cd.person_id = p.person_id
-    LEFT JOIN {{ ref('dim_person_age') }} age ON cd.person_id = age.person_id
+
+    FROM cancer_diagnoses AS cd
+    LEFT JOIN {{ ref('dim_person') }} AS p ON cd.person_id = p.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} AS age ON cd.person_id = age.person_id
     WHERE cd.has_active_cancer_diagnosis = TRUE  -- Only include persons with active cancer diagnosis
 )
 
-SELECT 
+SELECT
     person_id,
     age,
     is_on_register,
@@ -80,4 +93,4 @@ SELECT
     latest_diagnosis_date,
     all_cancer_concept_codes,
     all_cancer_concept_displays
-FROM final 
+FROM final

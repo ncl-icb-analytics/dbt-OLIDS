@@ -19,7 +19,7 @@ Clinical Purpose:
 
 QOF Context:
 AF register includes persons with atrial fibrillation diagnosis codes who have not
-been resolved. Complex business rules (age restrictions, resolution logic) applied 
+been resolved. Complex business rules (age restrictions, resolution logic) applied
 in downstream fact models for register inclusion.
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
@@ -34,11 +34,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- AF-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'AFIB_COD' THEN TRUE ELSE FALSE END AS is_af_diagnosis_code,
     CASE WHEN obs.cluster_id = 'AFIBRES_COD' THEN TRUE ELSE FALSE END AS is_af_resolved_code,
-    
+
     -- AF observation type determination
     CASE
         WHEN obs.cluster_id = 'AFIB_COD' THEN 'AF Diagnosis'
@@ -49,4 +49,4 @@ SELECT
 FROM ({{ get_observations("'AFIB_COD', 'AFIBRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

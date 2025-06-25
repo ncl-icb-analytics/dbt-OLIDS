@@ -4,26 +4,26 @@ models:
   - name: fct_person_smoking_status
     description: |
       Smoking status fact table providing current smoking status for individuals with smoking data.
-      
+
       **Business Logic:**
       - Current smoking status based on most recent smoking-related observation
       - Priority: Current Smoker > Ex Smoker > Never Smoked > Unknown
       - Uses QOF-aligned smoking status definitions
-      
+
       **Data Sources:**
       - int_smoking_status_latest for current status
       - int_smoking_status_all for historical context
-      
+
       **Population Coverage:**
       Includes ALL persons (active, inactive, deceased) with smoking observation data.
-      
+
       **Clinical Context:**
       Supports smoking cessation programmes, cardiovascular risk assessment, and QOF reporting.
       Essential for clinical decision support and population health monitoring.
 
     config:
       materialized: table
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier linking to dim_person"
@@ -32,7 +32,7 @@ models:
           - relationships:
               to: ref('dim_person')
               field: person_id
-              
+
       - name: age
         description: "Person's current age in years"
         tests:
@@ -40,50 +40,50 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 120
-              
+
       - name: smoking_status
         description: "Current smoking status classification"
         tests:
           - not_null
           - accepted_values:
               values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'General Smoking Code', 'Unknown']
-              
+
       - name: latest_smoking_date
         description: "Date of most recent smoking-related observation"
         tests:
           - not_null
-          
+
       - name: earliest_smoking_date
         description: "Date of first smoking-related observation"
         tests:
           - not_null
-          
+
       - name: latest_concept_code
         description: "SNOMED concept code of most recent smoking observation"
         tests:
           - not_null
-          
+
       - name: latest_code_description
         description: "Human-readable description of latest smoking observation"
         tests:
           - not_null
-          
+
       - name: latest_cluster_id
         description: "Cluster ID of latest smoking observation (SMOK_COD, EXSMOK_COD, NSMOK_COD, etc.)"
         tests:
           - not_null
-          
+
       - name: all_smoking_concept_codes
         description: "Array of all smoking-related concept codes for traceability"
         tests:
           - not_null
-          
+
       - name: all_smoking_concept_displays
         description: "Array of all smoking-related concept displays for traceability"
         tests:
           - not_null
-          
+
       - name: last_refresh_date
         description: "Timestamp when this record was last refreshed"
         tests:
-          - not_null 
+          - not_null

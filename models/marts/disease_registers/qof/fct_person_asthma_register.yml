@@ -2,28 +2,28 @@ models:
   - name: fct_person_asthma_register
     description: |
       QOF Asthma Register - Complex QOF register requiring external medication validation.
-      
+
       **Business Logic (Pattern 3):**
       - Age ≥6 years (QOF requirement for asthma monitoring)
       - Active asthma diagnosis: latest AST_COD > latest ASTRES_COD OR no resolution recorded
       - Recent medication validation: asthma medication prescribed within last 12 months
       - ALL three criteria must be met for register inclusion
-      
+
       **Clinical Context:**
-      This register identifies patients actively managed for asthma, validated through 
-      both diagnostic coding and medication prescribing patterns. The medication requirement 
+      This register identifies patients actively managed for asthma, validated through
+      both diagnostic coding and medication prescribing patterns. The medication requirement
       ensures patients are receiving active treatment rather than historical diagnoses.
-      
+
       **QOF Requirements:**
       - AST001: Practice can produce a register of patients with asthma (all ages)
       - Medication validation confirms active disease management
       - Supports QOF indicators for asthma monitoring and treatment optimisation
-      
+
       **Data Sources:**
       - Diagnosis codes: int_asthma_diagnoses_all (AST_COD, ASTRES_COD cluster IDs)
       - Medication validation: int_asthma_medications_12m (12-month lookback)
       - Age filtering: dim_person_age (≥6 years requirement)
-      
+
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
     columns:
@@ -114,4 +114,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

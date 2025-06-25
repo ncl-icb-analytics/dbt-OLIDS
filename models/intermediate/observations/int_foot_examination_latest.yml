@@ -75,4 +75,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Unsuitable', 'Declined', 'Complete - Both Feet', 'Complete - Left Only (Right Missing)', 'Complete - Right Only (Left Missing)', 'Partial - Left Only', 'Partial - Right Only', 'Not Done'] 
+              values: ['Unsuitable', 'Declined', 'Complete - Both Feet', 'Complete - Left Only (Right Missing)', 'Complete - Right Only (Left Missing)', 'Partial - Left Only', 'Partial - Right Only', 'Not Done']

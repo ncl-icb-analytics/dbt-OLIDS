@@ -20,7 +20,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all palliative care and 'no longer indicated' codes
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -44,7 +44,7 @@ WITH BaseObservations AS (
 ),
 PalliativeCareDates AS (
     -- Get all palliative care dates after April 2008
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         AGE,
@@ -64,9 +64,9 @@ PersonLevelAggregation AS (
         MIN(pcd.PALLIATIVE_CARE_DATE) AS EARLIEST_PALLIATIVE_CARE_DATE,
         MAX(pcd.PALLIATIVE_CARE_DATE) AS LATEST_PALLIATIVE_CARE_DATE,
         -- Get earliest 'no longer indicated' date that's after the latest palliative care date
-        MIN(CASE 
-            WHEN pcd.NO_LONGER_INDICATED_DATE > pcd.LATEST_PALLIATIVE_CARE_DATE 
-            THEN pcd.NO_LONGER_INDICATED_DATE 
+        MIN(CASE
+            WHEN pcd.NO_LONGER_INDICATED_DATE > pcd.LATEST_PALLIATIVE_CARE_DATE
+            THEN pcd.NO_LONGER_INDICATED_DATE
         END) AS EARLIEST_NO_LONGER_INDICATED_DATE,
         -- Aggregate concept codes and displays
         ARRAY_AGG(DISTINCT CASE WHEN bo.CLUSTER_ID = 'PALCARE_COD' THEN bo.CONCEPT_CODE END) AS ALL_PALLIATIVE_CARE_CONCEPT_CODES,
@@ -83,9 +83,9 @@ SELECT
     SK_PATIENT_ID,
     AGE,
     -- Rule: Include if has palliative care code after April 2008 and no 'no longer indicated' code after latest palliative care
-    CASE 
-        WHEN EARLIEST_PALLIATIVE_CARE_DATE IS NOT NULL 
-        AND EARLIEST_NO_LONGER_INDICATED_DATE IS NULL 
+    CASE
+        WHEN EARLIEST_PALLIATIVE_CARE_DATE IS NOT NULL
+        AND EARLIEST_NO_LONGER_INDICATED_DATE IS NULL
         THEN TRUE
         ELSE FALSE
     END AS IS_ON_PALLIATIVE_CARE_REGISTER,
@@ -96,4 +96,4 @@ SELECT
     ALL_PALLIATIVE_CARE_CONCEPT_DISPLAYS,
     ALL_NO_LONGER_INDICATED_CONCEPT_CODES,
     ALL_NO_LONGER_INDICATED_CONCEPT_DISPLAYS
-FROM PersonLevelAggregation; 
+FROM PersonLevelAggregation;

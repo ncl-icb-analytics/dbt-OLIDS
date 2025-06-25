@@ -25,8 +25,8 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_nhs_health_check_all'), 
+        ref('int_nhs_health_check_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
-) latest_health_check 
+) latest_health_check

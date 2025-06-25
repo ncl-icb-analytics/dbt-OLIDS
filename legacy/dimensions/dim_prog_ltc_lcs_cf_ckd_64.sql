@@ -44,29 +44,29 @@ ClinicalEvents AS (
         CONCEPT_CODE,
         CONCEPT_DISPLAY,
         -- Flag each type of event
-        CASE 
-            WHEN CLUSTER_ID = 'CKD_ACUTE_KIDNEY_INJURY' 
+        CASE
+            WHEN CLUSTER_ID = 'CKD_ACUTE_KIDNEY_INJURY'
                 AND CLINICAL_EFFECTIVE_DATE >= ADD_MONTHS(CURRENT_DATE(), -36) THEN TRUE
             ELSE FALSE
         END AS IS_AKI,
-        CASE 
+        CASE
             WHEN CLUSTER_ID = 'CKD_BPH_GOUT' THEN TRUE
             ELSE FALSE
         END AS IS_BPH_GOUT,
-        CASE 
+        CASE
             WHEN CLUSTER_ID IN ('LITHIUM_MEDICATIONS', 'SULFASALAZINE_MEDICATIONS', 'TACROLIMUS_MEDICATIONS')
                 AND CLINICAL_EFFECTIVE_DATE >= ADD_MONTHS(CURRENT_DATE(), -6) THEN TRUE
             ELSE FALSE
         END AS IS_LITHIUM,
-        CASE 
+        CASE
             WHEN CLUSTER_ID = 'HAEMATURIA' THEN TRUE
             ELSE FALSE
         END AS IS_MICROHAEMATURIA,
-        CASE 
+        CASE
             WHEN CLUSTER_ID = 'UACR_TESTING' AND RESULT_VALUE > 30 THEN TRUE
             ELSE FALSE
         END AS IS_UACR_HIGH,
-        CASE 
+        CASE
             WHEN CLUSTER_ID IN ('URINE_BLOOD_NEGATIVE', 'PROTEINURIA_FINDINGS') THEN TRUE
             ELSE FALSE
         END AS IS_URINE_TEST
@@ -123,8 +123,8 @@ MicrohaematuriaWithConditions AS (
     -- Get patients with microhaematuria and specific conditions
     SELECT
         cs.*,
-        CASE 
-            WHEN cs.LATEST_URINE_TEST_DATE IS NULL 
+        CASE
+            WHEN cs.LATEST_URINE_TEST_DATE IS NULL
                 OR cs.LATEST_MICROHAEMATURIA_DATE > cs.LATEST_URINE_TEST_DATE
                 OR (cs.LATEST_UACR_DATE IS NOT NULL AND cs.LATEST_UACR_DATE >= cs.LATEST_MICROHAEMATURIA_DATE)
             THEN TRUE
@@ -153,7 +153,7 @@ FROM BasePopulation bp
 LEFT JOIN MicrohaematuriaWithConditions mh
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM EGFRInLastYear egfr 
+    SELECT 1 FROM EGFRInLastYear egfr
     WHERE egfr.PERSON_ID = bp.PERSON_ID
 )
 AND (
@@ -161,4 +161,4 @@ AND (
     OR COALESCE(mh.HAS_BPH_GOUT, FALSE)
     OR COALESCE(mh.HAS_LITHIUM_MEDICATION, FALSE)
     OR COALESCE(mh.HAS_VALID_MICROHAEMATURIA, FALSE)
-); 
+);

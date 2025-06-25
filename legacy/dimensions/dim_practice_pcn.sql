@@ -17,6 +17,6 @@ SELECT
     -- We don't have PCN name in the neighbourhood lookup, so we'll join to get it
     COALESCE(pcn."NetworkName", 'Unknown PCN') AS PCN_NAME
 FROM DATA_LAB_NCL_TRAINING_TEMP.POPULATION_HEALTH.PRACTICE_NEIGHBOURHOOD_LOOKUP pnl
-LEFT JOIN "Dictionary"."dbo"."OrganisationMatrixPracticeView" pcn 
+LEFT JOIN "Dictionary"."dbo"."OrganisationMatrixPracticeView" pcn
     ON pnl.PRACTICECODE = pcn."PracticeCode"
-WHERE pnl.PCNCODE IS NOT NULL; 
+WHERE pnl.PCNCODE IS NOT NULL;

@@ -5,14 +5,14 @@ models:
     description: |
       All NHS Health Check completed events with enhanced analytics features.
       Uses NHSHEALTHCHECK_COD cluster with validated SNOMED codes for completed health checks.
-      
+
       Enhanced Analytics Features:
       - Legacy structure alignment with sk_patient_id
       - Health check type classification and eligibility assessment
       - Enhanced timeframe analysis and currency tracking
       - QOF prevention pathway integration support
       - Risk factor assessment context
-      
+
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
     columns:
       - name: observation_id

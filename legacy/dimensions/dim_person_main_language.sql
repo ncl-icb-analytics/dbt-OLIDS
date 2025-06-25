@@ -34,22 +34,22 @@ WITH LatestLanguagePerPerson AS (
         mc.concept_code,
         mc.code_description AS term,
         -- Extract just the language name from the description
-        CASE 
-            WHEN mc.code_description LIKE 'Main spoken language %' THEN 
+        CASE
+            WHEN mc.code_description LIKE 'Main spoken language %' THEN
                 REGEXP_REPLACE(REGEXP_REPLACE(mc.code_description, '^Main spoken language ', ''), ' \\(finding\\)$', '')
-            WHEN mc.code_description LIKE 'Using %' THEN 
+            WHEN mc.code_description LIKE 'Using %' THEN
                 REGEXP_REPLACE(REGEXP_REPLACE(mc.code_description, '^Using ', ''), ' \\(observable entity\\)$', '')
-            WHEN mc.code_description LIKE 'Uses %' THEN 
+            WHEN mc.code_description LIKE 'Uses %' THEN
                 REGEXP_REPLACE(REGEXP_REPLACE(mc.code_description, '^Uses ', ''), ' \\(finding\\)$', '')
-            WHEN mc.code_description LIKE 'Preferred method of communication: %' THEN 
+            WHEN mc.code_description LIKE 'Preferred method of communication: %' THEN
                 REGEXP_REPLACE(mc.code_description, '^Preferred method of communication: ', '')
             ELSE mc.code_description
         END AS language,
         -- Categorise the language type
         CASE
-            WHEN mc.code_description LIKE '%sign language%' OR 
+            WHEN mc.code_description LIKE '%sign language%' OR
                  mc.code_description LIKE '%Sign Language%' THEN 'Sign'
-            WHEN mc.code_description LIKE '%Makaton%' OR 
+            WHEN mc.code_description LIKE '%Makaton%' OR
                  mc.code_description LIKE '%Preferred method of communication%' THEN 'Other Communication Method'
             ELSE 'Spoken'
         END AS language_type,
@@ -82,7 +82,7 @@ LatestInterpreterNeeds AS (
         mc.concept_id,
         mc.code_description AS term,
         -- Determine if interpreter is needed
-        CASE 
+        CASE
             WHEN mc.code_description LIKE '%interpreter needed%' OR
                  mc.code_description LIKE '%Requires %interpreter%' OR
                  mc.code_description LIKE '%Uses %interpreter%' THEN TRUE
@@ -91,7 +91,7 @@ LatestInterpreterNeeds AS (
         END AS interpreter_needed,
         -- Categorise interpreter type
         CASE
-            WHEN mc.code_description LIKE '%sign language%' OR 
+            WHEN mc.code_description LIKE '%sign language%' OR
                  mc.code_description LIKE '%Sign Language%' THEN 'Sign Language'
             WHEN mc.code_description LIKE '%deafblind%' THEN 'Deafblind'
             WHEN mc.code_description LIKE '%language interpreter%' THEN 'Language'
@@ -172,4 +172,4 @@ LEFT JOIN
 LEFT JOIN
     LatestLanguagePerPerson llpp ON pp."person_id" = llpp."person_id"
 LEFT JOIN
-    LatestInterpreterNeeds lin ON pp."person_id" = lin."person_id"; 
+    LatestInterpreterNeeds lin ON pp."person_id" = lin."person_id";

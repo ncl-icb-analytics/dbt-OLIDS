@@ -100,13 +100,13 @@ HigherPriorityPatients AS (
     -- Get patients from higher priority groups (HTN_61 and HTN_62)
     SELECT DISTINCT PERSON_ID
     FROM (
-        SELECT PERSON_ID 
+        SELECT PERSON_ID
         FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_HTN_61
         WHERE HAS_SEVERE_HYPERTENSION = TRUE
-        
+
         UNION
-        
-        SELECT PERSON_ID 
+
+        SELECT PERSON_ID
         FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_HTN_62
         WHERE HAS_STAGE_2_HYPERTENSION = TRUE
     )
@@ -116,17 +116,17 @@ SELECT
     bp.PERSON_ID,
     bp.SK_PATIENT_ID,
     bp.AGE,
-    CASE 
-        WHEN bsa.PERSON_ID IS NOT NULL 
-            AND rf.PERSON_ID IS NOT NULL 
+    CASE
+        WHEN bsa.PERSON_ID IS NOT NULL
+            AND rf.PERSON_ID IS NOT NULL
             AND (
                 (bp_readings.IS_CLINIC_BP AND (
-                    bp_readings.LATEST_SYSTOLIC_BP >= 140 OR 
+                    bp_readings.LATEST_SYSTOLIC_BP >= 140 OR
                     bp_readings.LATEST_DIASTOLIC_BP >= 90
                 ))
-                OR 
+                OR
                 (bp_readings.IS_HOME_BP AND (
-                    bp_readings.LATEST_SYSTOLIC_BP >= 135 OR 
+                    bp_readings.LATEST_SYSTOLIC_BP >= 135 OR
                     bp_readings.LATEST_DIASTOLIC_BP >= 85
                 ))
             ) THEN TRUE
@@ -147,7 +147,7 @@ LEFT JOIN BSAPopulation bsa
 LEFT JOIN RiskFactors rf
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM HigherPriorityPatients hpp 
+    SELECT 1 FROM HigherPriorityPatients hpp
     WHERE hpp.PERSON_ID = bp.PERSON_ID
 )
 AND bsa.PERSON_ID IS NOT NULL  -- Must be BSA
@@ -155,12 +155,12 @@ AND rf.PERSON_ID IS NOT NULL   -- Must have risk factor
 AND (
     -- Include patients with stage 2 hypertension (lower thresholds for BSA)
     (bp_readings.IS_CLINIC_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 140 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 140 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 90
     ))
-    OR 
+    OR
     (bp_readings.IS_HOME_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 135 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 135 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 85
     ))
-); 
+);

@@ -21,16 +21,16 @@ REFRESH_MODE = AUTO
 INITIALIZE = ON_CREATE
 WAREHOUSE = NCL_ANALYTICS_XS
 AS
-SELECT DISTINCT 
+SELECT DISTINCT
     pp."person_id" AS PERSON_ID,
     p."sk_patient_id" AS SK_PATIENT_ID,
     p."birth_year" AS BIRTH_YEAR,
     p."birth_month" AS BIRTH_MONTH,
     -- Calculate approximate birth date using exact midpoint of the month
-    CASE 
-        WHEN p."birth_year" IS NOT NULL AND p."birth_month" IS NOT NULL 
-        THEN DATEADD(day, 
-            FLOOR(DAY(LAST_DAY(TO_DATE(p."birth_year" || '-' || p."birth_month" || '-01'))) / 2), 
+    CASE
+        WHEN p."birth_year" IS NOT NULL AND p."birth_month" IS NOT NULL
+        THEN DATEADD(day,
+            FLOOR(DAY(LAST_DAY(TO_DATE(p."birth_year" || '-' || p."birth_month" || '-01'))) / 2),
             TO_DATE(p."birth_year" || '-' || p."birth_month" || '-01')
         )
         ELSE NULL
@@ -38,10 +38,10 @@ SELECT DISTINCT
     p."death_year" AS DEATH_YEAR,
     p."death_month" AS DEATH_MONTH,
     -- Calculate approximate death date using exact midpoint of the month
-    CASE 
-        WHEN p."death_year" IS NOT NULL AND p."death_month" IS NOT NULL 
-        THEN DATEADD(day, 
-            FLOOR(DAY(LAST_DAY(TO_DATE(p."death_year" || '-' || p."death_month" || '-01'))) / 2), 
+    CASE
+        WHEN p."death_year" IS NOT NULL AND p."death_month" IS NOT NULL
+        THEN DATEADD(day,
+            FLOOR(DAY(LAST_DAY(TO_DATE(p."death_year" || '-' || p."death_month" || '-01'))) / 2),
             TO_DATE(p."death_year" || '-' || p."death_month" || '-01')
         )
         ELSE NULL
@@ -49,6 +49,6 @@ SELECT DISTINCT
     p."death_year" IS NOT NULL AS IS_DECEASED,
     COALESCE(p."is_dummy_patient", FALSE) AS IS_DUMMY_PATIENT
 FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
-INNER JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp 
-    ON p."id" = pp."patient_id" 
-WHERE p."birth_year" IS NOT NULL AND p."birth_month" IS NOT NULL 
+INNER JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
+    ON p."id" = pp."patient_id"
+WHERE p."birth_year" IS NOT NULL AND p."birth_month" IS NOT NULL

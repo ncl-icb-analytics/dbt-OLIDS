@@ -6,72 +6,72 @@ models:
           cluster_ids: "ABPM_COD, BP_COD, DIABP_COD, HOMEAMBBP_COD, HOMEBP_COD, SYSBP_COD"
     description: |
       Data quality issues table for blood pressure measurements.
-      
+
       Identifies BP readings that are filtered out or do not pair properly in the main
       blood pressure intermediate tables. This table captures events with:
-      - Out-of-range values (SBP <40/>350, DBP <20/>200)  
+      - Out-of-range values (SBP <40/>350, DBP <20/>200)
       - Orphaned readings (SBP without DBP or vice versa)
       - Coding ambiguity (BP_COD without specific SYSBP_COD/DIABP_COD)
       - Missing clinical effective dates
-      
+
       Supports clinical governance and data validation processes by providing
       visibility into problematic BP data that requires review.
-      
-      Aligns with the event-based BP consolidation approach used in 
+
+      Aligns with the event-based BP consolidation approach used in
       int_blood_pressure_all and maintains consistency with legacy DQ processes.
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier"
         tests: [not_null]
-        
+
       - name: clinical_effective_date
         description: "Date of BP measurement (can be NULL for date missing issues)"
-        
+
       - name: systolic_value_original
         description: "Original systolic BP value before range filtering (40-350 mmHg)"
-        
+
       - name: diastolic_value_original
         description: "Original diastolic BP value before range filtering (20-200 mmHg)"
-        
+
       - name: result_unit_display
         description: "BP measurement unit (typically mmHg)"
-        
+
       - name: all_concept_codes
         description: "Array of all SNOMED concept codes contributing to this BP event"
-        
+
       - name: all_concept_displays
         description: "Array of all concept display terms for traceability"
-        
+
       - name: all_source_cluster_ids
         description: "Array of source cluster IDs (BP_COD, SYSBP_COD, DIABP_COD, etc.)"
-        
+
       - name: is_sbp_out_of_range
         description: "TRUE if systolic BP is <40 or >350 mmHg"
         tests:
           - accepted_values:
               values: [true, false]
-        
+
       - name: is_dbp_out_of_range
         description: "TRUE if diastolic BP is <20 or >200 mmHg"
         tests:
           - accepted_values:
               values: [true, false]
-        
+
       - name: is_coding_ambiguous
         description: "TRUE if BP_COD used without specific SYSBP_COD/DIABP_COD codes"
         tests:
           - accepted_values:
               values: [true, false]
-        
+
       - name: is_orphaned_reading
         description: "TRUE if only SBP or DBP present (missing paired reading)"
         tests:
           - accepted_values:
               values: [true, false]
-        
+
       - name: is_date_missing
         description: "TRUE if clinical_effective_date is NULL"
         tests:
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]

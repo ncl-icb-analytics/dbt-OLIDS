@@ -100,25 +100,25 @@ HigherPriorityPatients AS (
     -- Get patients from higher priority groups (HTN_61, HTN_62, HTN_63, and HTN_65)
     SELECT DISTINCT PERSON_ID
     FROM (
-        SELECT PERSON_ID 
+        SELECT PERSON_ID
         FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_HTN_61
         WHERE HAS_SEVERE_HYPERTENSION = TRUE
-        
+
         UNION
-        
-        SELECT PERSON_ID 
+
+        SELECT PERSON_ID
         FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_HTN_62
         WHERE HAS_STAGE_2_HYPERTENSION = TRUE
 
         UNION
 
-        SELECT PERSON_ID 
+        SELECT PERSON_ID
         FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_HTN_63
         WHERE HAS_STAGE_2_HYPERTENSION_BSA = TRUE
 
         UNION
 
-        SELECT PERSON_ID 
+        SELECT PERSON_ID
         FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_LTC_LCS_CF_HTN_65
         WHERE HAS_STAGE_1_HYPERTENSION_RISK = TRUE
     )
@@ -128,15 +128,15 @@ SELECT
     bp.PERSON_ID,
     bp.SK_PATIENT_ID,
     bp.AGE,
-    CASE 
+    CASE
         WHEN (
             (bp_readings.IS_CLINIC_BP AND (
-                bp_readings.LATEST_SYSTOLIC_BP >= 140 OR 
+                bp_readings.LATEST_SYSTOLIC_BP >= 140 OR
                 bp_readings.LATEST_DIASTOLIC_BP >= 90
             ))
-            OR 
+            OR
             (bp_readings.IS_HOME_BP AND (
-                bp_readings.LATEST_SYSTOLIC_BP >= 135 OR 
+                bp_readings.LATEST_SYSTOLIC_BP >= 135 OR
                 bp_readings.LATEST_DIASTOLIC_BP >= 85
             ))
         ) THEN TRUE
@@ -151,22 +151,22 @@ FROM BasePopulation bp
 LEFT JOIN LatestBloodPressure bp_readings
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM HigherPriorityPatients hpp 
+    SELECT 1 FROM HigherPriorityPatients hpp
     WHERE hpp.PERSON_ID = bp.PERSON_ID
 )
 AND NOT EXISTS (
-    SELECT 1 FROM RiskFactors rf 
+    SELECT 1 FROM RiskFactors rf
     WHERE rf.PERSON_ID = bp.PERSON_ID
 )
 AND (
     -- Include patients with stage 1 hypertension
     (bp_readings.IS_CLINIC_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 140 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 140 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 90
     ))
-    OR 
+    OR
     (bp_readings.IS_HOME_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 135 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 135 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 85
     ))
-); 
+);

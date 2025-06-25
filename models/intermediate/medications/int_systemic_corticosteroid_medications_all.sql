@@ -26,17 +26,17 @@ SELECT
     base_orders.mapped_concept_display,
     base_orders.bnf_code,
     base_orders.bnf_name,
-    
+
     -- Corticosteroid type classification
-    CASE 
+    CASE
         WHEN base_orders.bnf_code LIKE '060301%' THEN 'REPLACEMENT'        -- Replacement therapy
         WHEN base_orders.bnf_code LIKE '060302%' THEN 'GLUCOCORTICOID'     -- Glucocorticoid therapy
         WHEN base_orders.bnf_code LIKE '060303%' THEN 'MINERALOCORTICOID'  -- Mineralocorticoid
         ELSE 'OTHER_CORTICOSTEROID'
     END AS corticosteroid_type,
-    
+
     -- Specific corticosteroid classification
-    CASE 
+    CASE
         WHEN base_orders.statement_medication_name LIKE '%PREDNISOLONE%' OR base_orders.bnf_code LIKE '0603020T0%' THEN 'PREDNISOLONE'
         WHEN base_orders.statement_medication_name LIKE '%HYDROCORTISONE%' OR base_orders.bnf_code LIKE '0603010F0%' THEN 'HYDROCORTISONE'
         WHEN base_orders.statement_medication_name LIKE '%DEXAMETHASONE%' OR base_orders.bnf_code LIKE '0603020C0%' THEN 'DEXAMETHASONE'
@@ -46,9 +46,9 @@ SELECT
         WHEN base_orders.statement_medication_name LIKE '%FLUDROCORTISONE%' OR base_orders.bnf_code LIKE '0603030F0%' THEN 'FLUDROCORTISONE'
         ELSE 'OTHER_CORTICOSTEROID'
     END AS specific_corticosteroid,
-    
+
     -- Potency classification (relative to hydrocortisone = 1)
-    CASE 
+    CASE
         WHEN base_orders.statement_medication_name LIKE '%HYDROCORTISONE%' OR base_orders.bnf_code LIKE '0603010F0%' THEN 'LOW_POTENCY'        -- 1x
         WHEN base_orders.statement_medication_name LIKE '%PREDNISOLONE%' OR base_orders.bnf_code LIKE '0603020T0%' THEN 'MEDIUM_POTENCY'      -- 4x
         WHEN base_orders.statement_medication_name LIKE '%METHYLPREDNISOLONE%' OR base_orders.bnf_code LIKE '0603020M0%' THEN 'MEDIUM_POTENCY' -- 5x
@@ -56,46 +56,46 @@ SELECT
         WHEN base_orders.statement_medication_name LIKE '%BETAMETHASONE%' OR base_orders.bnf_code LIKE '0603020A0%' THEN 'HIGH_POTENCY'       -- 25x
         ELSE 'UNKNOWN_POTENCY'
     END AS potency_classification,
-    
+
     -- Common corticosteroids flags
     CASE WHEN base_orders.statement_medication_name LIKE '%PREDNISOLONE%' OR base_orders.bnf_code LIKE '0603020T0%' THEN TRUE ELSE FALSE END AS is_prednisolone,
     CASE WHEN base_orders.statement_medication_name LIKE '%HYDROCORTISONE%' OR base_orders.bnf_code LIKE '0603010F0%' THEN TRUE ELSE FALSE END AS is_hydrocortisone,
     CASE WHEN base_orders.statement_medication_name LIKE '%DEXAMETHASONE%' OR base_orders.bnf_code LIKE '0603020C0%' THEN TRUE ELSE FALSE END AS is_dexamethasone,
     CASE WHEN base_orders.statement_medication_name LIKE '%METHYLPREDNISOLONE%' OR base_orders.bnf_code LIKE '0603020M0%' THEN TRUE ELSE FALSE END AS is_methylprednisolone,
     CASE WHEN base_orders.statement_medication_name LIKE '%FLUDROCORTISONE%' OR base_orders.bnf_code LIKE '0603030F0%' THEN TRUE ELSE FALSE END AS is_fludrocortisone,
-    
+
     -- Usage classification flags
     CASE WHEN base_orders.bnf_code LIKE '060301%' THEN TRUE ELSE FALSE END AS is_replacement_therapy,
     CASE WHEN base_orders.bnf_code LIKE '060302%' THEN TRUE ELSE FALSE END AS is_anti_inflammatory,
     CASE WHEN base_orders.bnf_code LIKE '060303%' THEN TRUE ELSE FALSE END AS is_mineralocorticoid,
-    
+
     -- High-dose flag (important for monitoring)
-    CASE 
+    CASE
         WHEN base_orders.statement_medication_name LIKE '%PREDNISOLONE%' AND (
-            base_orders.order_dose LIKE '%20%' OR base_orders.order_dose LIKE '%25%' OR base_orders.order_dose LIKE '%30%' OR 
+            base_orders.order_dose LIKE '%20%' OR base_orders.order_dose LIKE '%25%' OR base_orders.order_dose LIKE '%30%' OR
             base_orders.order_dose LIKE '%40%' OR base_orders.order_dose LIKE '%50%' OR base_orders.order_dose LIKE '%60%'
         ) THEN TRUE
         ELSE FALSE
     END AS is_high_dose,
-    
+
     -- Calculate time since order
     DATEDIFF(day, base_orders.order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags (important for steroid monitoring)
-    CASE 
+    CASE
         WHEN DATEDIFF(day, base_orders.order_date, CURRENT_DATE()) <= 30 THEN TRUE
         ELSE FALSE
     END AS is_recent_1m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, base_orders.order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, base_orders.order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m
 
 FROM ({{ get_medication_orders(bnf_code='0603') }}) base_orders
-ORDER BY base_orders.person_id, base_orders.order_date DESC 
+ORDER BY base_orders.person_id, base_orders.order_date DESC

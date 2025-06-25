@@ -4,18 +4,18 @@
 ) }}
 
 -- Core cohort: non-male, age 0-55, recent valproate order
-with child_bearing_age as (
-    select
+WITH child_bearing_age AS (
+    SELECT
         person_id,
         age,
         sex,
         is_child_bearing_age_0_55
-    from {{ ref('dim_person_women_child_bearing_age') }}
-    where is_child_bearing_age_0_55 = true
+    FROM {{ ref('dim_person_women_child_bearing_age') }}
+    WHERE is_child_bearing_age_0_55 = TRUE
 ),
 
-recent_valproate as (
-    select
+recent_valproate AS (
+    SELECT
         person_id,
         most_recent_order_date,
         medication_order_id,
@@ -26,23 +26,23 @@ recent_valproate as (
         order_quantity_value,
         order_quantity_unit,
         order_duration_days
-    from {{ ref('int_valproate_medications_6m_latest') }}
+    FROM {{ ref('int_valproate_medications_6m_latest') }}
 )
 
-select
+SELECT
     cba.person_id,
     cba.age,
     cba.sex,
     cba.is_child_bearing_age_0_55,
-    rv.most_recent_order_date as most_recent_valproate_order_date,
-    rv.medication_order_id as valproate_medication_order_id,
-    rv.order_medication_name as valproate_order_medication_name,
+    rv.most_recent_order_date AS most_recent_valproate_order_date,
+    rv.medication_order_id AS valproate_medication_order_id,
+    rv.order_medication_name AS valproate_order_medication_name,
     rv.valproate_product_term,
-    rv.recent_order_count as valproate_recent_order_count,
-    rv.order_dose as valproate_order_dose,
-    rv.order_quantity_value as valproate_order_quantity_value,
-    rv.order_quantity_unit as valproate_order_quantity_unit,
-    rv.order_duration_days as valproate_order_duration_days
-from child_bearing_age cba
-join recent_valproate rv
-    on cba.person_id = rv.person_id -- Only include those with both child-bearing age and recent valproate order
+    rv.recent_order_count AS valproate_recent_order_count,
+    rv.order_dose AS valproate_order_dose,
+    rv.order_quantity_value AS valproate_order_quantity_value,
+    rv.order_quantity_unit AS valproate_order_quantity_unit,
+    rv.order_duration_days AS valproate_order_duration_days
+FROM child_bearing_age AS cba
+INNER JOIN recent_valproate AS rv
+    ON cba.person_id = rv.person_id -- Only include those with both child-bearing age and recent valproate order

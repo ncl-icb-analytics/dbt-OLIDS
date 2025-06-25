@@ -32,4 +32,3 @@ models:
         description: "Quantity unit for the medication order"
       - name: order_duration_days
         description: "Duration in days for the medication order"
-

@@ -37,7 +37,7 @@ AS
 
 WITH FilteredByAge AS (
     -- Get all relevant patients with their age
-    SELECT 
+    SELECT
         COALESCE(ndh.PERSON_ID, dm.PERSON_ID) AS PERSON_ID,
         COALESCE(ndh.SK_PATIENT_ID, dm.SK_PATIENT_ID) AS SK_PATIENT_ID,
         age.AGE,
@@ -78,12 +78,12 @@ SELECT
     -- Implement business rules for register inclusion
     CASE
         -- Rule 2: Has NDH diagnosis and never had diabetes
-        WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL 
+        WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL
             AND f.EARLIEST_DIABETES_DATE IS NULL THEN TRUE
         -- Rule 3: Has NDH diagnosis and latest diabetes is resolved
-        WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL 
-            AND f.LATEST_DIABETES_DATE IS NOT NULL 
-            AND f.LATEST_DIABETES_RESOLUTION_DATE IS NOT NULL 
+        WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL
+            AND f.LATEST_DIABETES_DATE IS NOT NULL
+            AND f.LATEST_DIABETES_RESOLUTION_DATE IS NOT NULL
             AND f.IS_DIABETES_RESOLVED THEN TRUE
         ELSE FALSE
     END AS IS_ON_NDH_REGISTER,
@@ -114,12 +114,12 @@ SELECT
 FROM FilteredByAge f
 WHERE CASE
     -- Rule 2: Has NDH diagnosis and never had diabetes
-    WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL 
+    WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL
         AND f.EARLIEST_DIABETES_DATE IS NULL THEN TRUE
     -- Rule 3: Has NDH diagnosis and latest diabetes is resolved
-    WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL 
-        AND f.LATEST_DIABETES_DATE IS NOT NULL 
-        AND f.LATEST_DIABETES_RESOLUTION_DATE IS NOT NULL 
+    WHEN f.EARLIEST_MULTNDH_DATE IS NOT NULL
+        AND f.LATEST_DIABETES_DATE IS NOT NULL
+        AND f.LATEST_DIABETES_RESOLUTION_DATE IS NOT NULL
         AND f.IS_DIABETES_RESOLVED THEN TRUE
     ELSE FALSE
-END = TRUE; -- Only include patients on the NDH register 
+END = TRUE; -- Only include patients on the NDH register

@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_ltc_lcs_cf_summary
     description: "LTC/LCS case finding summary: Aggregated view of all case finding indicators per person"
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -209,4 +209,4 @@ models:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
-              max_value: 24 
+              max_value: 24

@@ -46,7 +46,7 @@ WITH BaseAsthmaOrders AS (
         ON mo."patient_id" = PP."patient_id"
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" P
         ON mo."patient_id" = P."id"
-    WHERE 
+    WHERE
         MC.CLUSTER_ID = 'ASTTRT_COD'
         AND mo."clinical_effective_date"::DATE >= DATEADD(MONTH, -12, CURRENT_DATE())
 ),
@@ -64,4 +64,4 @@ SELECT
     oc.RECENT_ORDER_COUNT
 FROM BaseAsthmaOrders beo
 JOIN OrderCounts oc
-    ON beo.PERSON_ID = oc.PERSON_ID; 
+    ON beo.PERSON_ID = oc.PERSON_ID;

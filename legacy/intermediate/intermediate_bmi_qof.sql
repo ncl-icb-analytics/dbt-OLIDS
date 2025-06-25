@@ -33,7 +33,7 @@ WITH BaseObservations AS (
         MC.CODE_DESCRIPTION,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID,
         -- Extract BMI value from result_value, handling both numeric and coded values
-        CASE 
+        CASE
             WHEN MC.CLUSTER_ID = 'BMIVAL_COD' THEN CAST(O."result_value"::FLOAT AS NUMBER(10,2))
             WHEN MC.CLUSTER_ID = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
             ELSE NULL
@@ -51,25 +51,25 @@ PersonDates AS (
     SELECT
         bo.*,
         -- Flag for valid BMI range (5-400)
-        CASE 
+        CASE
             WHEN BMI_VALUE BETWEEN 5 AND 400 THEN TRUE
             ELSE FALSE
         END AS IS_VALID_BMI,
         -- Flag for BMI >= 30
-        CASE 
+        CASE
             WHEN SOURCE_CLUSTER_ID = 'BMI30_COD' OR BMI_VALUE >= 30 THEN TRUE
             ELSE FALSE
         END AS IS_BMI_30_PLUS,
         -- Flag for BMI >= 27.5
-        CASE 
+        CASE
             WHEN BMI_VALUE >= 27.5 THEN TRUE
             ELSE FALSE
         END AS IS_BMI_27_5_PLUS,
         -- Get latest BMI dates and values
         MAX(CLINICAL_EFFECTIVE_DATE) OVER (PARTITION BY PERSON_ID) AS LATEST_BMI_DATE,
-        MAX(CASE WHEN BMI_VALUE BETWEEN 5 AND 400 THEN CLINICAL_EFFECTIVE_DATE END) 
+        MAX(CASE WHEN BMI_VALUE BETWEEN 5 AND 400 THEN CLINICAL_EFFECTIVE_DATE END)
             OVER (PARTITION BY PERSON_ID) AS LATEST_VALID_BMI_DATE,
-        MAX(CASE WHEN BMI_VALUE BETWEEN 5 AND 400 THEN BMI_VALUE END) 
+        MAX(CASE WHEN BMI_VALUE BETWEEN 5 AND 400 THEN BMI_VALUE END)
             OVER (PARTITION BY PERSON_ID) AS LATEST_VALID_BMI_VALUE
     FROM BaseObservations bo
 ),
@@ -103,4 +103,4 @@ SELECT
 FROM PersonDates pd
 LEFT JOIN PersonLevelCodingAggregation c
     ON pd.PERSON_ID = c.PERSON_ID
-QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1; 
+QUALIFY ROW_NUMBER() OVER (PARTITION BY pd.PERSON_ID ORDER BY pd.CLINICAL_EFFECTIVE_DATE) = 1;

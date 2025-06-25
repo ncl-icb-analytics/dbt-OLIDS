@@ -29,7 +29,7 @@ WITH LatestResidenceStatusPerPerson AS (
             o."id" AS observation_id,
             ARRAY_AGG(DISTINCT mc.cluster_id) WITHIN GROUP (ORDER BY mc.cluster_id) AS cluster_ids,
             -- Pre-calculate residence status based on clusters
-            CASE 
+            CASE
                 WHEN ARRAY_CONTAINS('CAREHOME_COD'::VARIANT, ARRAY_AGG(DISTINCT mc.cluster_id)) THEN 'Care Home'
                 WHEN ARRAY_CONTAINS('NURSEHOME_COD'::VARIANT, ARRAY_AGG(DISTINCT mc.cluster_id)) THEN 'Nursing Home'
                 WHEN ARRAY_CONTAINS('TEMPCARHOME_COD'::VARIANT, ARRAY_AGG(DISTINCT mc.cluster_id)) THEN 'Temporary Care Home'
@@ -104,4 +104,4 @@ SELECT
     lrsp.residence_status,
     lrsp.source_cluster_ids AS SOURCE_CLUSTER_IDS
 FROM
-    LatestResidenceStatusPerPerson lrsp; 
+    LatestResidenceStatusPerPerson lrsp;

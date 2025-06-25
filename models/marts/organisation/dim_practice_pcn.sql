@@ -22,5 +22,6 @@ SELECT
     -- Since we don't have separate PCN names in dummy data, use PCN code as name
     COALESCE(pcn_code, 'Unknown PCN') AS pcn_name
 FROM {{ ref('stg_population_health_practice_neighbourhood_lookup') }}
-WHERE practice_code IS NOT NULL
-    AND pcn_code IS NOT NULL 
+WHERE
+    practice_code IS NOT NULL
+    AND pcn_code IS NOT NULL

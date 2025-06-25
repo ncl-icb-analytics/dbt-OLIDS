@@ -24,10 +24,10 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_creatinine_all'), 
+        ref('int_creatinine_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
 ) latest_creatinine
 
-WHERE is_valid_creatinine = TRUE 
+WHERE is_valid_creatinine = TRUE

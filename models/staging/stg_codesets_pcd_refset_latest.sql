@@ -1,11 +1,11 @@
 -- Staging model for CODESETS.PCD_REFSET_LATEST
 -- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
 
-select
-    "CLUSTER_ID" as cluster_id,
-    "CLUSTER_DESCRIPTION" as cluster_description,
-    "SNOMED_CODE" as snomed_code,
-    "SNOMED_CODE_DESCRIPTION" as snomed_code_description,
-    "PCD_REFSET_ID" as pcd_refset_id,
-    "SERVICE_AND_RULESET" as service_and_ruleset
-from {{ source('CODESETS', 'PCD_REFSET_LATEST') }}
+SELECT
+    "CLUSTER_ID" AS cluster_id,
+    "CLUSTER_DESCRIPTION" AS cluster_description,
+    "SNOMED_CODE" AS snomed_code,
+    "SNOMED_CODE_DESCRIPTION" AS snomed_code_description,
+    "PCD_REFSET_ID" AS pcd_refset_id,
+    "SERVICE_AND_RULESET" AS service_and_ruleset
+FROM {{ source('CODESETS', 'PCD_REFSET_LATEST') }}

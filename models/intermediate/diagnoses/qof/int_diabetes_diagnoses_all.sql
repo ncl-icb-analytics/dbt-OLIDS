@@ -9,7 +9,7 @@
 All diabetes diagnosis observations from clinical records.
 Uses QOF diabetes cluster IDs with clinical prioritization:
 - DMTYPE1_COD: Type 1 diabetes specific diagnoses (highest priority)
-- DMTYPE2_COD: Type 2 diabetes specific diagnoses  
+- DMTYPE2_COD: Type 2 diabetes specific diagnoses
 - DM_COD: General diabetes diagnoses
 - DMRES_COD: Diabetes resolved/remission codes (lowest priority)
 
@@ -34,7 +34,7 @@ WITH diabetes_observations_all_clusters AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
-        
+
         -- Assign priority ranking for cluster selection
         CASE obs.cluster_id
             WHEN 'DMTYPE1_COD' THEN 1  -- Highest priority: Type 1 specific
@@ -57,7 +57,7 @@ diabetes_observations_prioritized AS (
         concept_display,
         source_cluster_id,
         ROW_NUMBER() OVER (
-            PARTITION BY observation_id 
+            PARTITION BY observation_id
             ORDER BY cluster_priority, source_cluster_id
         ) AS cluster_rank
     FROM diabetes_observations_all_clusters
@@ -70,17 +70,17 @@ SELECT
     concept_code,
     concept_display,
     source_cluster_id,
-    
+
     -- Flag different types of diabetes codes following QOF definitions
     CASE WHEN source_cluster_id = 'DM_COD' THEN TRUE ELSE FALSE END AS is_general_diabetes_code,
     CASE WHEN source_cluster_id = 'DMTYPE1_COD' THEN TRUE ELSE FALSE END AS is_type1_diabetes_code,
     CASE WHEN source_cluster_id = 'DMTYPE2_COD' THEN TRUE ELSE FALSE END AS is_type2_diabetes_code,
     CASE WHEN source_cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END AS is_diabetes_resolved_code,
-    
+
     -- Diabetes type determination (for individual observation context)
     CASE
         WHEN source_cluster_id = 'DMTYPE1_COD' THEN 'Type 1'
-        WHEN source_cluster_id = 'DMTYPE2_COD' THEN 'Type 2' 
+        WHEN source_cluster_id = 'DMTYPE2_COD' THEN 'Type 2'
         WHEN source_cluster_id = 'DM_COD' THEN 'General'
         WHEN source_cluster_id = 'DMRES_COD' THEN 'Resolved'
         ELSE 'Unknown'
@@ -88,4 +88,4 @@ SELECT
 
 FROM diabetes_observations_prioritized
 WHERE cluster_rank = 1  -- Only keep the highest priority cluster per observation
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

@@ -40,7 +40,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseAnticoagulantOrders AS (
     -- Get all medication orders for oral anticoagulants
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -56,7 +56,7 @@ WITH BaseAnticoagulantOrders AS (
         MC.CODE_DESCRIPTION AS MAPPED_CONCEPT_DISPLAY,
         bnf.BNF_CODE,
         bnf.BNF_NAME,
-        CASE 
+        CASE
             -- DOACs
             WHEN bnf.BNF_CODE LIKE '0208020Z%' THEN 'DOAC'
             WHEN bnf.BNF_CODE LIKE '0208020X%' THEN 'DOAC'
@@ -69,7 +69,7 @@ WITH BaseAnticoagulantOrders AS (
             WHEN bnf.BNF_CODE LIKE '0208020S%' THEN 'VKA'
             ELSE 'OTHER'
         END AS ANTICOAGULANT_TYPE,
-        CASE 
+        CASE
             WHEN bnf.BNF_CODE LIKE '0208020Z%' THEN 'APIXABAN'
             WHEN bnf.BNF_CODE LIKE '0208020X%' THEN 'DABIGATRAN'
             WHEN bnf.BNF_CODE LIKE '0208020AA%' THEN 'EDOXABAN'
@@ -110,4 +110,4 @@ SELECT
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
 FROM BaseAnticoagulantOrders bso
 LEFT JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

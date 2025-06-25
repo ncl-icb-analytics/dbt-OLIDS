@@ -10,7 +10,7 @@ warehouse = NCL_ANALYTICS_XS
  as
 -- Selects distinct persons and derives their sex based on hardcoded gender_concept_id values.
 -- Uses DISTINCT to ensure a single row per PERSON_ID, in case of multiple patient records linking to the same person.
-SELECT DISTINCT 
+SELECT DISTINCT
     pp."person_id" AS PERSON_ID,
     -- Derives SEX by mapping specific gender_concept_id values to 'Female' or 'Male'.
     -- Any other gender_concept_id or a NULL value results in 'Unknown'.

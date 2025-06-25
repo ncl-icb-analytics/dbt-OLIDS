@@ -26,4 +26,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

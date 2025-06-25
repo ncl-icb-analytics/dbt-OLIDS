@@ -1,21 +1,21 @@
 -- Staging model for OLIDS_MASKED.EPISODE_OF_CARE
 -- Source: "Data_Store_OLIDS_Dummy".OLIDS_MASKED
 
-select
-    "lds_id" as lds_id,
-    "id" as id,
-    "lds_business_key" as lds_business_key,
-    "lds_dataset_id" as lds_dataset_id,
-    "record_owner_organisation_code" as record_owner_organisation_code,
-    "lds_datetime_data_acquired" as lds_datetime_data_acquired,
-    "lds_initial_data_received_date" as lds_initial_data_received_date,
-    "lds_start_date_time" as lds_start_date_time,
-    "organisation_id" as organisation_id,
-    "patient_id" as patient_id,
-    "person_id" as person_id,
-    "episode_type_raw_concept_id" as episode_type_raw_concept_id,
-    "episode_status_raw_concept_id" as episode_status_raw_concept_id,
-    "episode_of_care_start_date" as episode_of_care_start_date,
-    "episode_of_care_end_date" as episode_of_care_end_date,
-    "care_manager_practitioner_id" as care_manager_practitioner_id
-from {{ source('OLIDS_MASKED', 'EPISODE_OF_CARE') }}
+SELECT
+    "lds_id" AS lds_id,
+    "id" AS id,
+    "lds_business_key" AS lds_business_key,
+    "lds_dataset_id" AS lds_dataset_id,
+    "record_owner_organisation_code" AS record_owner_organisation_code,
+    "lds_datetime_data_acquired" AS lds_datetime_data_acquired,
+    "lds_initial_data_received_date" AS lds_initial_data_received_date,
+    "lds_start_date_time" AS lds_start_date_time,
+    "organisation_id" AS organisation_id,
+    "patient_id" AS patient_id,
+    "person_id" AS person_id,
+    "episode_type_raw_concept_id" AS episode_type_raw_concept_id,
+    "episode_status_raw_concept_id" AS episode_status_raw_concept_id,
+    "episode_of_care_start_date" AS episode_of_care_start_date,
+    "episode_of_care_end_date" AS episode_of_care_end_date,
+    "care_manager_practitioner_id" AS care_manager_practitioner_id
+FROM {{ source('OLIDS_MASKED', 'EPISODE_OF_CARE') }}

@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_ltc_lcs_cf_dm_66
     description: "DM_66 case finding: Patients without diabetes risk factors (control group)"
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -39,4 +39,4 @@ models:
         description: "Array of all BMI concept codes for the patient"
 
       - name: all_bmi_displays
-        description: "Array of all BMI concept display terms for the patient" 
+        description: "Array of all BMI concept display terms for the patient"

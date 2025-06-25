@@ -38,7 +38,7 @@ AS
 
 WITH BaseObservations AS (
     -- Get all diagnoses related to Cancer, Reviews, Invites, and PCA decisions
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         AGE.AGE,
@@ -116,9 +116,9 @@ SELECT
 FROM BaseObservations bo
 LEFT JOIN InviteDates id ON bo.PERSON_ID = id.PERSON_ID
 LEFT JOIN SecondInvite si ON bo.PERSON_ID = si.PERSON_ID
-GROUP BY 
-    bo.PERSON_ID, 
-    bo.SK_PATIENT_ID, 
+GROUP BY
+    bo.PERSON_ID,
+    bo.SK_PATIENT_ID,
     bo.AGE,
     id.FIRST_INVITE_DATE,
-    si.SECOND_INVITE_DATE; 
+    si.SECOND_INVITE_DATE;

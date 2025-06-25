@@ -20,9 +20,9 @@ WITH observation_clusters AS (
         o.observation_id,
         ARRAY_AGG(DISTINCT o.cluster_id) WITHIN GROUP (ORDER BY o.cluster_id) AS cluster_ids,
         -- Pre-calculate carer status based on clusters
-        CASE 
+        CASE
             WHEN ARRAY_CONTAINS('NOTACARER_COD'::VARIANT, ARRAY_AGG(DISTINCT o.cluster_id)) THEN FALSE
-            WHEN ARRAY_CONTAINS('ISACARER_COD'::VARIANT, ARRAY_AGG(DISTINCT o.cluster_id)) OR 
+            WHEN ARRAY_CONTAINS('ISACARER_COD'::VARIANT, ARRAY_AGG(DISTINCT o.cluster_id)) OR
                  ARRAY_CONTAINS('UNPAIDCARER_COD'::VARIANT, ARRAY_AGG(DISTINCT o.cluster_id)) THEN TRUE
             ELSE NULL
         END AS is_carer
@@ -47,7 +47,7 @@ latest_carer_status_per_person AS (
             WHEN LOWER(o.mapped_concept_display) LIKE '%primary caregiver%' THEN 'Primary Carer'
             WHEN LOWER(o.mapped_concept_display) LIKE '%informal caregiver%' THEN 'Informal Carer'
             WHEN LOWER(o.mapped_concept_display) LIKE '%unpaid caregiver%' THEN 'Unpaid Carer'
-            WHEN LOWER(o.mapped_concept_display) LIKE '%professional%' OR 
+            WHEN LOWER(o.mapped_concept_display) LIKE '%professional%' OR
                  LOWER(o.mapped_concept_display) LIKE '%occupation%' THEN 'Professional Carer'
             WHEN LOWER(o.mapped_concept_display) LIKE '%carer allowance%' THEN 'Carer Receiving Allowance'
             WHEN oc.is_carer THEN 'Other Carer'
@@ -106,4 +106,4 @@ SELECT
     lcsp.carer_type,
     lcsp.carer_details,
     lcsp.source_cluster_ids
-FROM latest_carer_status_per_person lcsp 
+FROM latest_carer_status_per_person lcsp

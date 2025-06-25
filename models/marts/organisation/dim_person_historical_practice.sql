@@ -15,7 +15,7 @@
 
 WITH enriched_registrations AS (
     -- Get all registrations with additional practice details
-    SELECT 
+    SELECT
         ipr.person_id,
         ipr.sk_patient_id,
         ipr.organisation_id AS practice_id,
@@ -42,59 +42,60 @@ WITH enriched_registrations AS (
         o.close_date AS practice_close_date,
         o.is_obsolete AS practice_is_obsolete,
         -- Additional registration analysis
-        CASE 
+        CASE
             WHEN ipr.registration_end_date IS NULL THEN 'Open Registration'
-            WHEN ipr.registration_end_date > CURRENT_DATE() THEN 'Future End Date'
+            WHEN
+                ipr.registration_end_date > CURRENT_DATE()
+                THEN 'Future End Date'
             ELSE 'Closed Registration'
         END AS registration_type,
         -- Calculate age at registration start (approximate)
-        CASE 
-            WHEN p.birth_year IS NOT NULL 
-            THEN YEAR(ipr.registration_start_date) - p.birth_year
-            ELSE NULL
+        CASE
+            WHEN p.birth_year IS NOT NULL
+                THEN YEAR(ipr.registration_start_date) - p.birth_year
         END AS age_at_registration_start
-    FROM {{ ref('int_patient_registrations') }} ipr
-    LEFT JOIN {{ ref('stg_olids_organisation') }} o 
+    FROM {{ ref('int_patient_registrations') }} AS ipr
+    LEFT JOIN {{ ref('stg_olids_organisation') }} AS o
         ON ipr.organisation_id = o.id
-    LEFT JOIN {{ ref('stg_olids_patient') }} p
+    LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON ipr.patient_id = p.id
 ),
 
 registration_transitions AS (
     -- Add information about transitions between practices
-    SELECT 
+    SELECT
         er.*,
         -- Get previous practice details
         LAG(er.practice_id) OVER (
-            PARTITION BY er.person_id 
+            PARTITION BY er.person_id
             ORDER BY er.registration_start_date
         ) AS previous_practice_id,
         LAG(er.practice_name) OVER (
-            PARTITION BY er.person_id 
+            PARTITION BY er.person_id
             ORDER BY er.registration_start_date
         ) AS previous_practice_name,
         LAG(er.registration_end_date) OVER (
-            PARTITION BY er.person_id 
+            PARTITION BY er.person_id
             ORDER BY er.registration_start_date
         ) AS previous_registration_end_date,
         -- Get next practice details
         LEAD(er.practice_id) OVER (
-            PARTITION BY er.person_id 
+            PARTITION BY er.person_id
             ORDER BY er.registration_start_date
         ) AS next_practice_id,
         LEAD(er.practice_name) OVER (
-            PARTITION BY er.person_id 
+            PARTITION BY er.person_id
             ORDER BY er.registration_start_date
         ) AS next_practice_name,
         LEAD(er.registration_start_date) OVER (
-            PARTITION BY er.person_id 
+            PARTITION BY er.person_id
             ORDER BY er.registration_start_date
         ) AS next_registration_start_date
-    FROM enriched_registrations er
+    FROM enriched_registrations AS er
 )
 
 -- Final selection with all registration history
-SELECT 
+SELECT
     person_id,
     sk_patient_id,
     practice_id,
@@ -132,4 +133,4 @@ SELECT
     registration_sequence = 1 AS is_first_registration,
     registration_sequence = total_registrations_count AS is_last_registration
 FROM registration_transitions
-ORDER BY person_id, registration_start_date 
+ORDER BY person_id, registration_start_date

@@ -36,11 +36,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Flag gestational diabetes diagnosis codes following QOF definitions
     CASE WHEN obs.cluster_id = 'GESTDIAB_COD' THEN TRUE ELSE FALSE END AS is_gestational_diabetes_diagnosis_code
-    
+
 FROM ({{ get_observations("'GESTDIAB_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

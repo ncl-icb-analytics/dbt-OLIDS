@@ -26,7 +26,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH FootObservations AS (
     -- Get all relevant foot-related observations
-    SELECT 
+    SELECT
         PP."person_id" AS PERSON_ID,
         P."sk_patient_id" AS SK_PATIENT_ID,
         O."clinical_effective_date"::DATE AS CLINICAL_EFFECTIVE_DATE,
@@ -38,7 +38,7 @@ WITH FootObservations AS (
         REGEXP_LIKE(LOWER(MC.CODE_DESCRIPTION), '.*right.*') AS HAS_RIGHT,
         -- Check if code is a Townson scale and extract level
         REGEXP_LIKE(LOWER(MC.CODE_DESCRIPTION), '.*townson.*scale.*level.*') AS IS_TOWNSON,
-        CASE 
+        CASE
             WHEN REGEXP_LIKE(LOWER(MC.CODE_DESCRIPTION), '.*townson.*scale.*level 1.*') THEN 'Level 1'
             WHEN REGEXP_LIKE(LOWER(MC.CODE_DESCRIPTION), '.*townson.*scale.*level 2.*') THEN 'Level 2'
             WHEN REGEXP_LIKE(LOWER(MC.CODE_DESCRIPTION), '.*townson.*scale.*level 3.*') THEN 'Level 3'
@@ -46,7 +46,7 @@ WITH FootObservations AS (
             ELSE NULL
         END AS TOWNSON_LEVEL,
         -- Extract risk level from description
-        CASE 
+        CASE
             WHEN LOWER(MC.CODE_DESCRIPTION) LIKE '%low risk%' THEN 'Low'
             WHEN LOWER(MC.CODE_DESCRIPTION) LIKE '%moderate risk%' THEN 'Moderate'
             WHEN LOWER(MC.CODE_DESCRIPTION) LIKE '%increased risk%' THEN 'Moderate'
@@ -78,7 +78,7 @@ WITH FootObservations AS (
 ),
 -- First aggregate foot status (amputations/absences) across all time
 FootStatus AS (
-    SELECT 
+    SELECT
         PERSON_ID,
         MAX(CASE WHEN CLUSTER_ID = 'CONABL_COD' THEN TRUE ELSE FALSE END) AS LEFT_FOOT_ABSENT,
         MAX(CASE WHEN CLUSTER_ID = 'CONABR_COD' THEN TRUE ELSE FALSE END) AS RIGHT_FOOT_ABSENT,
@@ -89,7 +89,7 @@ FootStatus AS (
 ),
 -- Then get the check details for each date
 CheckDetails AS (
-    SELECT 
+    SELECT
         PERSON_ID,
         SK_PATIENT_ID,
         CLINICAL_EFFECTIVE_DATE,
@@ -100,57 +100,57 @@ CheckDetails AS (
         -- Left foot is checked if either:
         -- 1. We have an explicit left foot check, OR
         -- 2. A Townson scale was used (implying both feet)
-        MAX(CASE 
-            WHEN CLUSTER_ID = 'FRC_COD' AND (HAS_LEFT OR IS_TOWNSON) THEN TRUE 
-            ELSE FALSE 
+        MAX(CASE
+            WHEN CLUSTER_ID = 'FRC_COD' AND (HAS_LEFT OR IS_TOWNSON) THEN TRUE
+            ELSE FALSE
         END) AS LEFT_FOOT_CHECKED,
         -- Right foot is checked if either:
         -- 1. We have an explicit right foot check, OR
         -- 2. A Townson scale was used (implying both feet)
-        MAX(CASE 
-            WHEN CLUSTER_ID = 'FRC_COD' AND (HAS_RIGHT OR IS_TOWNSON) THEN TRUE 
-            ELSE FALSE 
+        MAX(CASE
+            WHEN CLUSTER_ID = 'FRC_COD' AND (HAS_RIGHT OR IS_TOWNSON) THEN TRUE
+            ELSE FALSE
         END) AS RIGHT_FOOT_CHECKED,
         -- Both feet checked if either:
         -- 1. A Townson scale was used (implying both feet), OR
         -- 2. We have explicit checks for both left and right feet
-        MAX(CASE 
+        MAX(CASE
             WHEN CLUSTER_ID = 'FRC_COD' AND IS_TOWNSON THEN TRUE
             WHEN CLUSTER_ID = 'FRC_COD' AND HAS_LEFT AND EXISTS (
-                SELECT 1 FROM FootObservations f2 
-                WHERE f2.PERSON_ID = FootObservations.PERSON_ID 
+                SELECT 1 FROM FootObservations f2
+                WHERE f2.PERSON_ID = FootObservations.PERSON_ID
                 AND f2.CLINICAL_EFFECTIVE_DATE = FootObservations.CLINICAL_EFFECTIVE_DATE
-                AND f2.CLUSTER_ID = 'FRC_COD' 
+                AND f2.CLUSTER_ID = 'FRC_COD'
                 AND f2.HAS_RIGHT
             ) THEN TRUE
-            ELSE FALSE 
+            ELSE FALSE
         END) AS BOTH_FEET_CHECKED,
         -- Get risk levels for each foot
-        MAX(CASE 
+        MAX(CASE
             WHEN CLUSTER_ID = 'FRC_COD' AND (HAS_LEFT OR IS_TOWNSON) THEN RISK_LEVEL
-            ELSE NULL 
+            ELSE NULL
         END) AS LEFT_FOOT_RISK_LEVEL,
-        MAX(CASE 
+        MAX(CASE
             WHEN CLUSTER_ID = 'FRC_COD' AND (HAS_RIGHT OR IS_TOWNSON) THEN RISK_LEVEL
-            ELSE NULL 
+            ELSE NULL
         END) AS RIGHT_FOOT_RISK_LEVEL,
         -- Get Townson scale level if used
-        MAX(CASE 
+        MAX(CASE
             WHEN IS_TOWNSON THEN TOWNSON_LEVEL
-            ELSE NULL 
+            ELSE NULL
         END) AS TOWNSON_SCALE_LEVEL,
         -- Collect all codes and terms for traceability
         ARRAY_AGG(DISTINCT CODE) WITHIN GROUP (ORDER BY CODE) AS ALL_CONCEPT_CODES,
         ARRAY_AGG(DISTINCT TERM) WITHIN GROUP (ORDER BY TERM) AS ALL_CONCEPT_DISPLAYS,
         ARRAY_AGG(DISTINCT CLUSTER_ID) WITHIN GROUP (ORDER BY CLUSTER_ID) AS ALL_SOURCE_CLUSTER_IDS
     FROM FootObservations
-    GROUP BY 
+    GROUP BY
         PERSON_ID,
         SK_PATIENT_ID,
         CLINICAL_EFFECTIVE_DATE
 )
 -- Final selection combining check details with foot status
-SELECT 
+SELECT
     cd.PERSON_ID,
     cd.SK_PATIENT_ID,
     cd.CLINICAL_EFFECTIVE_DATE,
@@ -170,4 +170,4 @@ SELECT
     cd.ALL_CONCEPT_DISPLAYS,
     cd.ALL_SOURCE_CLUSTER_IDS
 FROM CheckDetails cd
-LEFT JOIN FootStatus fs ON cd.PERSON_ID = fs.PERSON_ID; 
+LEFT JOIN FootStatus fs ON cd.PERSON_ID = fs.PERSON_ID;

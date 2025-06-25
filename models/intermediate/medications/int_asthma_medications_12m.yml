@@ -11,13 +11,13 @@ models:
       Uses cluster ID ASTRX_COD for asthma treatment medications.
       Critical for asthma register and QOF quality indicators.
       Includes ALL persons following intermediate layer principles.
-      
+
       Clinical Purpose:
       - QOF asthma register maintenance
       - Asthma medication adherence monitoring
       - Inhaler technique assessment support
       - MART therapy identification
-      
+
       Key Features:
       - 12-month medication history for QOF compliance
       - Medication type classification (SABA, LABA, ICS, combinations)
@@ -25,58 +25,58 @@ models:
       - Inhaler device type tracking
       - MART therapy detection
       - Repeat prescription indicators
-    
+
     columns:
       - name: person_id
         description: "Unique person identifier across the HEI system"
         tests:
           - not_null
-          
+
       - name: medication_order_id
         description: "Unique identifier for the medication order record"
         tests:
           - not_null
-          
+
       - name: order_date
         description: "Date the asthma medication was ordered"
         tests:
           - not_null
-          
+
       - name: asthma_medication_type
         description: "Classification of asthma medication type"
         tests:
           - not_null
           - accepted_values:
               values: ['SABA', 'LABA', 'ICS', 'ICS_LABA_COMBINATION', 'LEUKOTRIENE_ANTAGONIST', 'METHYLXANTHINE', 'ORAL_STEROID', 'OTHER_ASTHMA_TREATMENT']
-              
+
       - name: medication_role
         description: "Role of medication in asthma management"
         tests:
           - not_null
           - accepted_values:
               values: ['RELIEVER', 'CONTROLLER', 'OTHER']
-              
+
       - name: inhaler_device_type
         description: "Type of inhaler device for technique assessment"
         tests:
           - not_null
           - accepted_values:
               values: ['MDI', 'DPI', 'NEBULISER', 'UNKNOWN_DEVICE']
-              
+
       - name: is_mart_therapy
         description: "Boolean flag indicating MART (Maintenance and Reliever Therapy)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_asthma_treatment
         description: "Boolean flag confirming asthma treatment identification"
         tests:
           - not_null
           - accepted_values:
               values: [true]
-              
+
       - name: recent_order_count_12m
         description: "Count of asthma medication orders in last 12 months for this person"
         tests:
@@ -85,31 +85,31 @@ models:
               min_value: 1
               max_value: 100
               severity: warn
-              
+
       - name: has_repeat_prescriptions
         description: "Boolean flag indicating repeat asthma prescriptions (≥2 orders)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_recent_3m
         description: "Boolean flag indicating order within last 3 months"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_recent_6m
         description: "Boolean flag indicating order within last 6 months"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
-              
+
       - name: is_recent_12m
         description: "Boolean flag indicating order within last 12 months (always TRUE)"
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

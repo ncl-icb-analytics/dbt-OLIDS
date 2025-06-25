@@ -15,131 +15,131 @@ This is OBSERVATION-LEVEL data - one row per medication order.
 Person-level aggregation should be handled in downstream fact models.
 */
 
-SELECT 
+SELECT
     bo.*,
-    
+
     -- Classify antihistamine types based on medication names
-    CASE 
-        WHEN bo.statement_medication_name ILIKE '%CETIRIZINE%' 
+    CASE
+        WHEN bo.statement_medication_name ILIKE '%CETIRIZINE%'
             OR bo.order_medication_name ILIKE '%CETIRIZINE%' THEN 'CETIRIZINE'
-        WHEN bo.statement_medication_name ILIKE '%LORATADINE%' 
+        WHEN bo.statement_medication_name ILIKE '%LORATADINE%'
             OR bo.order_medication_name ILIKE '%LORATADINE%' THEN 'LORATADINE'
-        WHEN bo.statement_medication_name ILIKE '%FEXOFENADINE%' 
+        WHEN bo.statement_medication_name ILIKE '%FEXOFENADINE%'
             OR bo.order_medication_name ILIKE '%FEXOFENADINE%' THEN 'FEXOFENADINE'
-        WHEN bo.statement_medication_name ILIKE '%CHLORPHENAMINE%' 
+        WHEN bo.statement_medication_name ILIKE '%CHLORPHENAMINE%'
             OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%' THEN 'CHLORPHENAMINE'
-        WHEN bo.statement_medication_name ILIKE '%PROMETHAZINE%' 
+        WHEN bo.statement_medication_name ILIKE '%PROMETHAZINE%'
             OR bo.order_medication_name ILIKE '%PROMETHAZINE%' THEN 'PROMETHAZINE'
-        WHEN bo.statement_medication_name ILIKE '%HYDROXYZINE%' 
+        WHEN bo.statement_medication_name ILIKE '%HYDROXYZINE%'
             OR bo.order_medication_name ILIKE '%HYDROXYZINE%' THEN 'HYDROXYZINE'
-        WHEN bo.statement_medication_name ILIKE '%DESLORATADINE%' 
+        WHEN bo.statement_medication_name ILIKE '%DESLORATADINE%'
             OR bo.order_medication_name ILIKE '%DESLORATADINE%' THEN 'DESLORATADINE'
-        WHEN bo.statement_medication_name ILIKE '%LEVOCETIRIZINE%' 
+        WHEN bo.statement_medication_name ILIKE '%LEVOCETIRIZINE%'
             OR bo.order_medication_name ILIKE '%LEVOCETIRIZINE%' THEN 'LEVOCETIRIZINE'
-        WHEN bo.statement_medication_name ILIKE '%BILASTINE%' 
+        WHEN bo.statement_medication_name ILIKE '%BILASTINE%'
             OR bo.order_medication_name ILIKE '%BILASTINE%' THEN 'BILASTINE'
-        WHEN bo.statement_medication_name ILIKE '%ACRIVASTINE%' 
+        WHEN bo.statement_medication_name ILIKE '%ACRIVASTINE%'
             OR bo.order_medication_name ILIKE '%ACRIVASTINE%' THEN 'ACRIVASTINE'
         ELSE 'OTHER_ANTIHISTAMINE'
     END AS antihistamine_type,
-    
+
     -- Classify by generation (sedating vs non-sedating)
-    CASE 
-        WHEN bo.statement_medication_name ILIKE '%CETIRIZINE%' 
-            OR bo.statement_medication_name ILIKE '%LORATADINE%' 
-            OR bo.statement_medication_name ILIKE '%FEXOFENADINE%' 
-            OR bo.statement_medication_name ILIKE '%DESLORATADINE%' 
-            OR bo.statement_medication_name ILIKE '%LEVOCETIRIZINE%' 
-            OR bo.statement_medication_name ILIKE '%BILASTINE%' 
-            OR bo.statement_medication_name ILIKE '%ACRIVASTINE%' 
-            OR bo.order_medication_name ILIKE '%CETIRIZINE%' 
-            OR bo.order_medication_name ILIKE '%LORATADINE%' 
-            OR bo.order_medication_name ILIKE '%FEXOFENADINE%' 
-            OR bo.order_medication_name ILIKE '%DESLORATADINE%' 
-            OR bo.order_medication_name ILIKE '%LEVOCETIRIZINE%' 
-            OR bo.order_medication_name ILIKE '%BILASTINE%' 
+    CASE
+        WHEN bo.statement_medication_name ILIKE '%CETIRIZINE%'
+            OR bo.statement_medication_name ILIKE '%LORATADINE%'
+            OR bo.statement_medication_name ILIKE '%FEXOFENADINE%'
+            OR bo.statement_medication_name ILIKE '%DESLORATADINE%'
+            OR bo.statement_medication_name ILIKE '%LEVOCETIRIZINE%'
+            OR bo.statement_medication_name ILIKE '%BILASTINE%'
+            OR bo.statement_medication_name ILIKE '%ACRIVASTINE%'
+            OR bo.order_medication_name ILIKE '%CETIRIZINE%'
+            OR bo.order_medication_name ILIKE '%LORATADINE%'
+            OR bo.order_medication_name ILIKE '%FEXOFENADINE%'
+            OR bo.order_medication_name ILIKE '%DESLORATADINE%'
+            OR bo.order_medication_name ILIKE '%LEVOCETIRIZINE%'
+            OR bo.order_medication_name ILIKE '%BILASTINE%'
             OR bo.order_medication_name ILIKE '%ACRIVASTINE%' THEN 'NON_SEDATING'
-        WHEN bo.statement_medication_name ILIKE '%CHLORPHENAMINE%' 
-            OR bo.statement_medication_name ILIKE '%PROMETHAZINE%' 
-            OR bo.statement_medication_name ILIKE '%HYDROXYZINE%' 
-            OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%' 
-            OR bo.order_medication_name ILIKE '%PROMETHAZINE%' 
+        WHEN bo.statement_medication_name ILIKE '%CHLORPHENAMINE%'
+            OR bo.statement_medication_name ILIKE '%PROMETHAZINE%'
+            OR bo.statement_medication_name ILIKE '%HYDROXYZINE%'
+            OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%'
+            OR bo.order_medication_name ILIKE '%PROMETHAZINE%'
             OR bo.order_medication_name ILIKE '%HYDROXYZINE%' THEN 'SEDATING'
         ELSE 'UNKNOWN_SEDATION'
     END AS sedation_profile,
-    
+
     -- Route of administration
-    CASE 
-        WHEN bo.order_medication_name ILIKE '%TABLET%' 
-            OR bo.order_medication_name ILIKE '%CAPSULE%' 
-            OR bo.statement_medication_name ILIKE '%TABLET%' 
+    CASE
+        WHEN bo.order_medication_name ILIKE '%TABLET%'
+            OR bo.order_medication_name ILIKE '%CAPSULE%'
+            OR bo.statement_medication_name ILIKE '%TABLET%'
             OR bo.statement_medication_name ILIKE '%CAPSULE%' THEN 'ORAL'
-        WHEN bo.order_medication_name ILIKE '%SYRUP%' 
-            OR bo.order_medication_name ILIKE '%LIQUID%' 
-            OR bo.order_medication_name ILIKE '%SOLUTION%' 
-            OR bo.statement_medication_name ILIKE '%SYRUP%' 
-            OR bo.statement_medication_name ILIKE '%LIQUID%' 
+        WHEN bo.order_medication_name ILIKE '%SYRUP%'
+            OR bo.order_medication_name ILIKE '%LIQUID%'
+            OR bo.order_medication_name ILIKE '%SOLUTION%'
+            OR bo.statement_medication_name ILIKE '%SYRUP%'
+            OR bo.statement_medication_name ILIKE '%LIQUID%'
             OR bo.statement_medication_name ILIKE '%SOLUTION%' THEN 'ORAL_LIQUID'
-        WHEN bo.order_medication_name ILIKE '%INJECTION%' 
-            OR bo.order_medication_name ILIKE '%AMPOULE%' 
-            OR bo.statement_medication_name ILIKE '%INJECTION%' 
+        WHEN bo.order_medication_name ILIKE '%INJECTION%'
+            OR bo.order_medication_name ILIKE '%AMPOULE%'
+            OR bo.statement_medication_name ILIKE '%INJECTION%'
             OR bo.statement_medication_name ILIKE '%AMPOULE%' THEN 'INJECTION'
-        WHEN bo.order_medication_name ILIKE '%CREAM%' 
-            OR bo.order_medication_name ILIKE '%OINTMENT%' 
-            OR bo.statement_medication_name ILIKE '%CREAM%' 
+        WHEN bo.order_medication_name ILIKE '%CREAM%'
+            OR bo.order_medication_name ILIKE '%OINTMENT%'
+            OR bo.statement_medication_name ILIKE '%CREAM%'
             OR bo.statement_medication_name ILIKE '%OINTMENT%' THEN 'TOPICAL'
         ELSE 'UNKNOWN_ROUTE'
     END AS route_of_administration,
-    
+
     -- Clinical indication flags
-    CASE 
-        WHEN bo.statement_medication_name ILIKE '%ALLERGIC RHINITIS%' 
-            OR bo.order_medication_name ILIKE '%ALLERGIC RHINITIS%' 
-            OR bo.statement_medication_name ILIKE '%HAY FEVER%' 
+    CASE
+        WHEN bo.statement_medication_name ILIKE '%ALLERGIC RHINITIS%'
+            OR bo.order_medication_name ILIKE '%ALLERGIC RHINITIS%'
+            OR bo.statement_medication_name ILIKE '%HAY FEVER%'
             OR bo.order_medication_name ILIKE '%HAY FEVER%' THEN 'ALLERGIC_RHINITIS'
-        WHEN bo.statement_medication_name ILIKE '%URTICARIA%' 
-            OR bo.order_medication_name ILIKE '%URTICARIA%' 
-            OR bo.statement_medication_name ILIKE '%HIVES%' 
+        WHEN bo.statement_medication_name ILIKE '%URTICARIA%'
+            OR bo.order_medication_name ILIKE '%URTICARIA%'
+            OR bo.statement_medication_name ILIKE '%HIVES%'
             OR bo.order_medication_name ILIKE '%HIVES%' THEN 'URTICARIA'
-        WHEN bo.statement_medication_name ILIKE '%ECZEMA%' 
-            OR bo.order_medication_name ILIKE '%ECZEMA%' 
-            OR bo.statement_medication_name ILIKE '%DERMATITIS%' 
+        WHEN bo.statement_medication_name ILIKE '%ECZEMA%'
+            OR bo.order_medication_name ILIKE '%ECZEMA%'
+            OR bo.statement_medication_name ILIKE '%DERMATITIS%'
             OR bo.order_medication_name ILIKE '%DERMATITIS%' THEN 'ECZEMA_DERMATITIS'
         ELSE 'GENERAL_ALLERGY'
     END AS clinical_indication,
-    
+
     -- Age-appropriate flags
-    CASE 
-        WHEN bo.statement_medication_name ILIKE '%PAEDIATRIC%' 
-            OR bo.order_medication_name ILIKE '%PAEDIATRIC%' 
-            OR bo.statement_medication_name ILIKE '%CHILDREN%' 
+    CASE
+        WHEN bo.statement_medication_name ILIKE '%PAEDIATRIC%'
+            OR bo.order_medication_name ILIKE '%PAEDIATRIC%'
+            OR bo.statement_medication_name ILIKE '%CHILDREN%'
             OR bo.order_medication_name ILIKE '%CHILDREN%' THEN TRUE
         ELSE FALSE
     END AS is_paediatric_formulation,
-    
+
     -- Over-the-counter availability
-    CASE 
+    CASE
         WHEN (bo.statement_medication_name ILIKE '%CETIRIZINE%' OR bo.order_medication_name ILIKE '%CETIRIZINE%')
             OR (bo.statement_medication_name ILIKE '%LORATADINE%' OR bo.order_medication_name ILIKE '%LORATADINE%')
             OR (bo.statement_medication_name ILIKE '%CHLORPHENAMINE%' OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%')
             OR (bo.statement_medication_name ILIKE '%ACRIVASTINE%' OR bo.order_medication_name ILIKE '%ACRIVASTINE%') THEN TRUE
         ELSE FALSE
     END AS is_otc_available,
-    
+
     -- Drowsiness warning required
-    CASE 
+    CASE
         WHEN (bo.statement_medication_name ILIKE '%CHLORPHENAMINE%' OR bo.order_medication_name ILIKE '%CHLORPHENAMINE%')
             OR (bo.statement_medication_name ILIKE '%PROMETHAZINE%' OR bo.order_medication_name ILIKE '%PROMETHAZINE%')
             OR (bo.statement_medication_name ILIKE '%HYDROXYZINE%' OR bo.order_medication_name ILIKE '%HYDROXYZINE%') THEN TRUE
         ELSE FALSE
     END AS requires_drowsiness_warning,
-    
+
     -- Recency flags for monitoring (order-level only)
     bo.order_date >= CURRENT_DATE() - INTERVAL '3 months' AS is_recent_3m,
     bo.order_date >= CURRENT_DATE() - INTERVAL '6 months' AS is_recent_6m,
     bo.order_date >= CURRENT_DATE() - INTERVAL '12 months' AS is_recent_12m
-    
+
 FROM ({{ get_medication_orders(bnf_code='0304') }}) bo
 
 -- Order by person and date for analysis
-ORDER BY bo.person_id, bo.order_date DESC 
+ORDER BY bo.person_id, bo.order_date DESC

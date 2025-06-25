@@ -5,12 +5,12 @@ models:
     description: |
       Dimension table for person sex classification. Uses hardcoded gender_concept_id values
       to determine sex due to issues with Concept Map/Concept tables.
-      
+
       **Sex Classification Logic:**
       - Maps specific hardcoded UUIDs to 'Female' and 'Male'
       - Any other or NULL gender_concept_id results in 'Unknown'
       - One row per person
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -23,4 +23,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Female', 'Male', 'Unknown'] 
+              values: ['Female', 'Male', 'Unknown']

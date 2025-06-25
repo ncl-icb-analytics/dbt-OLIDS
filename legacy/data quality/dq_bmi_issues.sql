@@ -33,7 +33,7 @@ WITH BaseObservations AS (
         -- Extract BMI value from result_value, handling both types:
         -- - BMI30_COD: Always assigned value of 30
         -- - BMIVAL_COD: Actual numeric value from result_value
-        CASE 
+        CASE
             WHEN MC.CLUSTER_ID = 'BMIVAL_COD' THEN CAST(O."result_value"::FLOAT AS NUMBER(10,2))
             WHEN MC.CLUSTER_ID = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
             ELSE NULL
@@ -59,10 +59,10 @@ SELECT
     bo.BMI_VALUE,
     CASE WHEN bo.BMI_VALUE < 5 THEN TRUE ELSE FALSE END AS IS_TOO_LOW,
     CASE WHEN bo.BMI_VALUE > 400 THEN TRUE ELSE FALSE END AS IS_TOO_HIGH,
-    CASE 
+    CASE
         WHEN bo.BMI_VALUE < 5 THEN 'BMI value below valid range (<5)'
         WHEN bo.BMI_VALUE > 400 THEN 'BMI value above valid range (>400)'
         ELSE NULL
     END AS ISSUE_DESCRIPTION
 FROM BaseObservations bo
-WHERE bo.BMI_VALUE < 5 OR bo.BMI_VALUE > 400; -- Only include values outside valid range 
+WHERE bo.BMI_VALUE < 5 OR bo.BMI_VALUE > 400; -- Only include values outside valid range

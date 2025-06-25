@@ -24,7 +24,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 
 WITH BaseObservationsAndClusters AS (
-    -- Fetches all observation records related to diabetes diagnosis (DM_COD, DMTYPE1_COD, DMTYPE2_COD) 
+    -- Fetches all observation records related to diabetes diagnosis (DM_COD, DMTYPE1_COD, DMTYPE2_COD)
     -- or diabetes resolution (DMRES_COD) by joining with the MAPPED_CONCEPTS table.
     -- Includes basic person identifiers and clinical effective dates.
     SELECT
@@ -122,4 +122,4 @@ SELECT
     agg.ALL_DM_CONCEPT_DISPLAYS,
     agg.ALL_DM_SOURCE_CLUSTER_IDS
 FROM PersonLevelAggregation agg
-WHERE IS_ON_DM_REGISTER = TRUE -- filter to only include patients where dm is not resolved 
+WHERE IS_ON_DM_REGISTER = TRUE -- filter to only include patients where dm is not resolved

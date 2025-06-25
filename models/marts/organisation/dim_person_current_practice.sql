@@ -12,7 +12,7 @@
 -- Person Current Practice Dimension Table
 -- Simple view of current practice registrations from historical practice table
 
-SELECT 
+SELECT
     person_id,
     sk_patient_id,
     practice_id,
@@ -28,4 +28,4 @@ SELECT
     registration_start_date,
     registration_end_date
 FROM {{ ref('dim_person_historical_practice') }}
-WHERE is_current_registration = TRUE 
+WHERE is_current_registration = TRUE

@@ -7,7 +7,7 @@ Purpose:
 Business Logic:
 1. Base Population:
    - Patients aged 17+ from base population (excludes those on CKD and Diabetes registers)
-   
+
 2. eGFR Criteria:
    - Must have at least 2 eGFR readings with values > 0
    - Both most recent and previous reading must be < 60
@@ -33,87 +33,110 @@ Dependencies:
     post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_61 case finding: Patients with two consecutive low eGFR readings (< 60) suggesting chronic kidney disease'"
 ) }}
 
-with base_population as (
+WITH base_population AS (
     -- Get base population of patients over 17
     -- Base population already excludes those on CKD and Diabetes registers
-    select distinct
+    SELECT DISTINCT
         person_id,
         age
-    from {{ ref('int_ltc_lcs_cf_base_population') }}
-    where age >= 17
+    FROM {{ ref('int_ltc_lcs_cf_base_population') }}
+    WHERE age >= 17
 ),
-egfr_readings as (
+
+egfr_readings AS (
     -- Get all eGFR readings with values > 0
-    select
+    SELECT
         person_id,
         clinical_effective_date,
-        cast(result_value as number) as result_value,
-        mapped_concept_code as concept_code,
-        mapped_concept_display as concept_display
-    from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id = 'EGFR_TESTING'
-        and result_value is not null
-        and cast(result_value as number) > 0
+        cast(result_value AS number) AS result_value,
+        mapped_concept_code AS concept_code,
+        mapped_concept_display AS concept_display
+    FROM {{ ref('int_ltc_lcs_ckd_observations') }}
+    WHERE
+        cluster_id = 'EGFR_TESTING'
+        AND result_value IS NOT NULL
+        AND cast(result_value AS number) > 0
 ),
-egfr_ranked as (
+
+egfr_ranked AS (
     -- Rank eGFR readings by date for each person
-    select
+    SELECT
         *,
-        row_number() over (partition by person_id order by clinical_effective_date desc) as reading_rank
-    from egfr_readings
+        row_number()
+            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+            AS reading_rank
+    FROM egfr_readings
 ),
-egfr_counts as (
+
+egfr_counts AS (
     -- Count readings per person to ensure at least 2
-    select
+    SELECT
         person_id,
-        count(*) as reading_count
-    from egfr_readings
-    group by person_id
-    having count(*) > 1
+        count(*) AS reading_count
+    FROM egfr_readings
+    GROUP BY person_id
+    HAVING count(*) > 1
 ),
-egfr_with_lags as (
+
+egfr_with_lags AS (
     -- Get the two most recent readings with their lags
-    select
+    SELECT
         er.person_id,
-        er.clinical_effective_date as latest_egfr_date,
-        lag(er.clinical_effective_date) over (partition by er.person_id order by er.clinical_effective_date desc) as previous_egfr_date,
-        er.result_value as latest_egfr_value,
-        lag(er.result_value) over (partition by er.person_id order by er.clinical_effective_date desc) as previous_egfr_value
-    from egfr_ranked er
-    join egfr_counts ec using (person_id)
-    where er.reading_rank <= 2
-    qualify er.reading_rank = 1
+        er.clinical_effective_date AS latest_egfr_date,
+        er.result_value AS latest_egfr_value,
+        lag(er.clinical_effective_date)
+            OVER (
+                PARTITION BY er.person_id
+                ORDER BY er.clinical_effective_date DESC
+            )
+            AS previous_egfr_date,
+        lag(er.result_value)
+            OVER (
+                PARTITION BY er.person_id
+                ORDER BY er.clinical_effective_date DESC
+            )
+            AS previous_egfr_value
+    FROM egfr_ranked AS er
+    INNER JOIN egfr_counts ON er.person_id = egfr_counts.person_id
+    WHERE er.reading_rank <= 2
+    QUALIFY er.reading_rank = 1
 ),
-egfr_codes as (
-    -- Get all codes and displays for each person
-    select
+
+egfr_codes AS (
+-- Get all codes and displays for each person
+    SELECT
         person_id,
-        array_agg(distinct concept_code) within group (order by concept_code) as all_egfr_codes,
-        array_agg(distinct concept_display) within group (order by concept_display) as all_egfr_displays
-    from egfr_readings
-    group by person_id
+        array_agg(DISTINCT concept_code) WITHIN GROUP (ORDER BY concept_code)
+            AS all_egfr_codes,
+        array_agg(DISTINCT concept_display) WITHIN GROUP (
+            ORDER BY concept_display
+        ) AS all_egfr_displays
+    FROM egfr_readings
+    GROUP BY person_id
 )
+
 -- Final selection
-select
+SELECT
     bp.person_id,
     bp.age,
-    case 
-        when ceg.latest_egfr_value < 60 and ceg.previous_egfr_value < 60 then true
-        else false
-    end as has_ckd,
     ceg.latest_egfr_date,
     ceg.previous_egfr_date,
     ceg.latest_egfr_value,
     ceg.previous_egfr_value,
     codes.all_egfr_codes,
     codes.all_egfr_displays,
+    coalesce(
+        ceg.latest_egfr_value < 60 AND ceg.previous_egfr_value < 60,
+        FALSE
+    ) AS has_ckd,
     -- Meets criteria flag for mart model
-    case 
-        when ceg.latest_egfr_value < 60 and ceg.previous_egfr_value < 60 then true
-        else false
-    end as meets_criteria
-from base_population bp
-left join egfr_with_lags ceg using (person_id)
-left join egfr_codes codes using (person_id)
-where ceg.latest_egfr_value < 60 
-    and ceg.previous_egfr_value < 60
+    coalesce(
+        ceg.latest_egfr_value < 60 AND ceg.previous_egfr_value < 60,
+        FALSE
+    ) AS meets_criteria
+FROM base_population AS bp
+LEFT JOIN egfr_with_lags AS ceg ON bp.person_id = ceg.person_id
+LEFT JOIN egfr_codes AS codes USING (person_id)
+WHERE
+    ceg.latest_egfr_value < 60
+    AND ceg.previous_egfr_value < 60

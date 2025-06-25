@@ -57,13 +57,13 @@ SELECT
     bp.PERSON_ID,
     bp.SK_PATIENT_ID,
     bp.AGE,
-    CASE 
+    CASE
         WHEN bp_readings.IS_CLINIC_BP AND (
-            bp_readings.LATEST_SYSTOLIC_BP >= 160 OR 
+            bp_readings.LATEST_SYSTOLIC_BP >= 160 OR
             bp_readings.LATEST_DIASTOLIC_BP >= 100
         ) THEN TRUE
         WHEN bp_readings.IS_HOME_BP AND (
-            bp_readings.LATEST_SYSTOLIC_BP >= 150 OR 
+            bp_readings.LATEST_SYSTOLIC_BP >= 150 OR
             bp_readings.LATEST_DIASTOLIC_BP >= 95
         ) THEN TRUE
         ELSE FALSE
@@ -77,18 +77,18 @@ FROM BasePopulation bp
 LEFT JOIN LatestBloodPressure bp_readings
     USING (PERSON_ID)
 WHERE NOT EXISTS (
-    SELECT 1 FROM SevereHypertension sh 
+    SELECT 1 FROM SevereHypertension sh
     WHERE sh.PERSON_ID = bp.PERSON_ID
 )
 AND (
     -- Include patients with stage 2 hypertension
     (bp_readings.IS_CLINIC_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 160 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 160 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 100
     ))
-    OR 
+    OR
     (bp_readings.IS_HOME_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 150 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 150 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 95
     ))
-); 
+);

@@ -33,4 +33,4 @@ models:
       - name: all_qrisk2_codes
         description: "Array of all QRISK2 concept codes for patient (should be NULL for all)"
       - name: all_qrisk2_displays
-        description: "Array of all QRISK2 concept displays for patient (should be NULL for all)" 
+        description: "Array of all QRISK2 concept displays for patient (should be NULL for all)"

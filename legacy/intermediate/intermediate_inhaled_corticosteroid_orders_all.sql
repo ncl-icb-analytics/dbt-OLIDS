@@ -27,7 +27,7 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH BaseInhaledCorticosteroidOrders AS (
     -- Get all medication orders for inhaled corticosteroids
-    SELECT 
+    SELECT
         mo."id" AS MEDICATION_ORDER_ID,
         ms."id" AS MEDICATION_STATEMENT_ID,
         PP."person_id" AS PERSON_ID,
@@ -43,7 +43,7 @@ WITH BaseInhaledCorticosteroidOrders AS (
         MC.CODE_DESCRIPTION AS MAPPED_CONCEPT_DISPLAY,
         bnf.BNF_CODE,
         bnf.BNF_NAME,
-        CASE 
+        CASE
             WHEN bnf.BNF_CODE IN ('0302000C0', '0302000K0', '0302000U0', '0302000N0', '0302000R0') THEN 'SINGLE_AGENT'
             ELSE 'COMBINATION'
         END AS CORTICOSTEROID_TYPE
@@ -75,4 +75,4 @@ SELECT
     COALESCE(oc.RECENT_ORDER_COUNT, 0) as RECENT_ORDER_COUNT
 FROM BaseInhaledCorticosteroidOrders bso
 LEFT JOIN OrderCounts oc
-    ON bso.PERSON_ID = oc.PERSON_ID; 
+    ON bso.PERSON_ID = oc.PERSON_ID;

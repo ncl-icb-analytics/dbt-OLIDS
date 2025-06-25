@@ -5,7 +5,7 @@ models:
     description: |
       Dimension table for inactive patients including deceased patients and those
       without current practice registrations. Complement to dim_person_active_patients.
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -35,4 +35,4 @@ models:
       - name: inactive_reason
         description: "Reason for inactive status (Deceased, No Current Registration, Dummy Patient)"
         tests:
-          - not_null 
+          - not_null

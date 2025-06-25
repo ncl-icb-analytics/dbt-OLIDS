@@ -22,7 +22,7 @@ os.makedirs(STAGING_DIR, exist_ok=True)
 for source in sources['sources']:
     schema = source['schema']
     prefix = SCHEMA_PREFIXES.get(schema, 'stg')  # Default to 'stg' if schema not in mapping
-    
+
     for table in source['tables']:
         # Keep original case for source reference
         table_name = table['name']
@@ -31,16 +31,16 @@ for source in sources['sources']:
         columns = [col['name'] for col in table.get('columns', [])]
         if not columns:
             continue  # Skip tables with no columns listed
-            
+
         # Quote source columns but expose them as lowercase without quotes
         column_list = ',\n    '.join(f'"{col}" as {col.lower()}' for col in columns)
         model_sql = f"-- Staging model for {schema}.{table_name}\n"
         model_sql += f"-- Source: {source['database']}.{schema}\n\n"
         model_sql += f"select\n    {column_list}\nfrom {{{{ source('{schema}', '{table_name}') }}}}"
-        
+
         # Create model name with prefix
         model_name = f"{prefix}_{table_name_lower}"
         out_path = os.path.join(STAGING_DIR, f'{model_name}.sql')
-        
+
         with open(out_path, 'w') as out_f:
-            out_f.write(model_sql + '\n') 
+            out_f.write(model_sql + '\n')

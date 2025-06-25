@@ -15,4 +15,4 @@ models:
 
 # This test will be applied to each staging model individually
 # The test will check that all columns from the corresponding source table
-# are present in the staging model 
+# are present in the staging model

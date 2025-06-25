@@ -74,4 +74,4 @@ SELECT
     ALL_ETHNICITY_CONCEPT_CODES,
     ALL_ETHNICITY_CONCEPT_DISPLAYS
 FROM FilteredByAge
-WHERE (IS_BMI_30_PLUS OR (IS_BAME AND IS_BMI_27_5_PLUS)); -- Only include patients on the obesity register 
+WHERE (IS_BMI_30_PLUS OR (IS_BAME AND IS_BMI_27_5_PLUS)); -- Only include patients on the obesity register

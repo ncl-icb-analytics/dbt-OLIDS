@@ -22,14 +22,14 @@ SELECT DISTINCT
     c.concept_code,
     c.code_description,
     -- Flag IFCC measurements
-    CASE 
-        WHEN c.cluster_id = 'IFCCHBAM_COD' THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN c.cluster_id = 'IFCCHBAM_COD' THEN TRUE
+        ELSE FALSE
     END as is_ifcc,
     -- Flag DCCT measurements
-    CASE 
-        WHEN c.cluster_id = 'DCCTHBA1C_COD' THEN TRUE 
-        ELSE FALSE 
+    CASE
+        WHEN c.cluster_id = 'DCCTHBA1C_COD' THEN TRUE
+        ELSE FALSE
     END as is_dcct
 -- Source table for observations.
 FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION O
@@ -46,4 +46,4 @@ JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
 -- Filter for specific HbA1c concept codes.
 WHERE C.CLUSTER_ID IN ('IFCCHBAM_COD', 'DCCTHBA1C_COD')
 -- Filter out records where the result value itself is missing.
-AND o."result_value" IS NOT NULL; 
+AND o."result_value" IS NOT NULL;

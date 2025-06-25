@@ -6,16 +6,16 @@ models:
       Core birth and death information for each person providing foundation data for age calculations
       and demographic analysis. Calculates birth/death dates as the exact midpoint of the recorded
       month for optimal statistical precision.
-      
+
       **Date Calculation Logic:**
       - Birth and death dates use mathematical midpoint of recorded month
       - Provides more accurate statistical estimates than start/end of month
       - Foundation table for all age-related calculations
-      
+
       **Data Sources:**
       - Birth/death information from stg_olids_patient
       - Person linkage via stg_olids_patient_person
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -78,4 +78,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false] 
+              values: [true, false]

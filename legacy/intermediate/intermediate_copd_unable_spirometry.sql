@@ -47,4 +47,4 @@ SELECT
     pla.LATEST_UNABLE_SPIROMETRY_DATE
 FROM BaseObservations bo
 JOIN PersonLevelAggregation pla
-    ON bo.PERSON_ID = pla.PERSON_ID; 
+    ON bo.PERSON_ID = pla.PERSON_ID;

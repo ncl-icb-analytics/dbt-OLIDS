@@ -4,26 +4,26 @@ models:
   - name: fct_person_copd_register
     description: >
       **COPD Register - Official QOF Business Rules Implementation**
-      
+
       Implements the exact QOF COPD register specification with correct field mappings:
-      
+
       **RULE 1**: If EUNRESCOPD_DAT < 01/04/2023 → SELECT (automatic inclusion)
-      
-      **RULE 2**: If EUNRESCOPD_DAT >= 01/04/2023 AND spirometry within timeframe → SELECT  
+
+      **RULE 2**: If EUNRESCOPD_DAT >= 01/04/2023 AND spirometry within timeframe → SELECT
       - FEV1/FVC <0.7 within 93 days before and 186 days after EUNRESCOPD_DAT
       - Maps to QOF Fields 24 (FEV1FVCDIAG_DAT) and 25 (FEV1FVCL70DIAG_DAT)
-      
+
       **RULE 3**: Additional spirometry pathway (simplified)
       - Extended timeframe for post-April 2023 patients
-      
+
       **RULE 4**: Final filter - If EUNRESCOPD_DAT >= 01/04/2023 → SELECT, else REJECT
-      
+
       **EUNRESCOPD_DAT Calculation** (QOF Field 22):
       - If COPDRES_DAT = NULL AND COPDRES1_DAT = NULL → RETURN COPD_DAT
       - Otherwise → RETURN COPD1_DAT
-      
+
       This implementation follows the exact QOF specification with proper field mappings.
-      
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -50,7 +50,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: 
+              values:
                 - 'Rule 1: Pre-April 2023'
                 - 'Rule 2: Post-April 2023 + Spirometry'
                 - 'Rule 3: Additional Spirometry'
@@ -200,4 +200,4 @@ models:
         description: "Array of all COPD concept display terms for this person"
         data_type: array
         tests:
-          - not_null 
+          - not_null

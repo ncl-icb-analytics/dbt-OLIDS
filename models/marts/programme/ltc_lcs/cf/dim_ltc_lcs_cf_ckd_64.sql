@@ -2,16 +2,16 @@
 LTC LCS Case Finding: CKD_64 - Specific Conditions Requiring eGFR Monitoring
 
 Purpose:
-- Identifies patients with specific conditions (AKI, BPH/Gout, Lithium, Microhaematuria) 
+- Identifies patients with specific conditions (AKI, BPH/Gout, Lithium, Microhaematuria)
   who have not had eGFR in last 12 months
 
 Business Logic:
 1. Base Population:
    - Patients aged 17+ from base population (excludes those on CKD and Diabetes registers)
-   
+
 2. Condition Criteria (must have at least one):
    - AKI in last 3 years ('CKD_ACUTE_KIDNEY_INJURY')
-   - BPH or Gout ('CKD_BPH_GOUT')  
+   - BPH or Gout ('CKD_BPH_GOUT')
    - Lithium/Sulfasalazine/Tacrolimus medications in last 6 months
    - Valid microhaematuria (complex logic with UACR and urine tests)
 
@@ -38,57 +38,54 @@ Dependencies:
     post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_64 case finding: Patients with conditions and medications suggesting chronic kidney disease'"
 ) }}
 
-with base_population as (
+WITH base_population AS (
     -- Get base population of patients over 17
     -- Base population already excludes those on CKD and Diabetes registers
-    select distinct
+    SELECT DISTINCT
         person_id,
         age
-    from {{ ref('int_ltc_lcs_cf_base_population') }}
-    where age >= 17
+    FROM {{ ref('int_ltc_lcs_cf_base_population') }}
+    WHERE age >= 17
 ),
-clinical_events as (
+
+clinical_events AS (
     -- Get all relevant clinical events in one go
-    select
+    SELECT
         person_id,
         clinical_effective_date,
         cluster_id,
-        cast(result_value as number) as result_value,
-        mapped_concept_code as concept_code,
-        mapped_concept_display as concept_display,
+        cast(result_value AS number) AS result_value,
+        mapped_concept_code AS concept_code,
+        mapped_concept_display AS concept_display,
         -- Flag each type of event
-        case 
-            when cluster_id = 'CKD_ACUTE_KIDNEY_INJURY' 
-                and clinical_effective_date >= dateadd(month, -36, current_date()) then true
-            else false
-        end as is_aki,
-        case 
-            when cluster_id = 'CKD_BPH_GOUT' then true
-            else false
-        end as is_bph_gout,
-        case 
-            when cluster_id in ('LITHIUM_MEDICATIONS', 'SULFASALAZINE_MEDICATIONS', 'TACROLIMUS_MEDICATIONS')
-                and clinical_effective_date >= dateadd(month, -6, current_date()) then true
-            else false
-        end as is_lithium,
-        case 
-            when cluster_id = 'HAEMATURIA' then true
-            else false
-        end as is_microhaematuria,
-        case 
-            when cluster_id = 'UACR_TESTING' and result_value > 30 then true
-            else false
-        end as is_uacr_high,
-        case 
-            when cluster_id in ('URINE_BLOOD_NEGATIVE', 'PROTEINURIA_FINDINGS') then true
-            else false
-        end as is_urine_test
-    from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id in (
+        coalesce(
+            cluster_id = 'CKD_ACUTE_KIDNEY_INJURY'
+            AND clinical_effective_date >= dateadd(MONTH, -36, current_date()),
+            FALSE
+        ) AS is_aki,
+        coalesce(cluster_id = 'CKD_BPH_GOUT', FALSE) AS is_bph_gout,
+        coalesce(cluster_id IN (
+            'LITHIUM_MEDICATIONS',
+            'SULFASALAZINE_MEDICATIONS',
+            'TACROLIMUS_MEDICATIONS'
+        )
+        AND clinical_effective_date >= dateadd(MONTH, -6, current_date()),
+        FALSE) AS is_lithium,
+        coalesce(cluster_id = 'HAEMATURIA', FALSE) AS is_microhaematuria,
+        coalesce(
+            cluster_id = 'UACR_TESTING' AND result_value > 30,
+            FALSE
+        ) AS is_uacr_high,
+        coalesce(cluster_id IN (
+            'URINE_BLOOD_NEGATIVE', 'PROTEINURIA_FINDINGS'
+        ),
+        FALSE) AS is_urine_test
+    FROM {{ ref('int_ltc_lcs_ckd_observations') }}
+    WHERE cluster_id IN (
         'CKD_ACUTE_KIDNEY_INJURY',
         'CKD_BPH_GOUT',
         'LITHIUM_MEDICATIONS',
-        'SULFASALAZINE_MEDICATIONS', 
+        'SULFASALAZINE_MEDICATIONS',
         'TACROLIMUS_MEDICATIONS',
         'HAEMATURIA',
         'UACR_TESTING',
@@ -96,63 +93,74 @@ clinical_events as (
         'PROTEINURIA_FINDINGS'
     )
 ),
-condition_summary as (
+
+condition_summary AS (
     -- Summarise conditions per person
-    select
+    SELECT
         person_id,
         -- AKI
-        max(case when is_aki then clinical_effective_date end) as latest_aki_date,
-        boolor_agg(is_aki) as has_acute_kidney_injury,
+        max(CASE WHEN is_aki THEN clinical_effective_date END)
+            AS latest_aki_date,
+        boolor_agg(is_aki) AS has_acute_kidney_injury,
         -- BPH/Gout
-        max(case when is_bph_gout then clinical_effective_date end) as latest_bph_gout_date,
-        boolor_agg(is_bph_gout) as has_bph_gout,
+        max(CASE WHEN is_bph_gout THEN clinical_effective_date END)
+            AS latest_bph_gout_date,
+        boolor_agg(is_bph_gout) AS has_bph_gout,
         -- Lithium
-        max(case when is_lithium then clinical_effective_date end) as latest_lithium_date,
-        boolor_agg(is_lithium) as has_lithium_medication,
+        max(CASE WHEN is_lithium THEN clinical_effective_date END)
+            AS latest_lithium_date,
+        boolor_agg(is_lithium) AS has_lithium_medication,
         -- Microhaematuria
-        max(case when is_microhaematuria then clinical_effective_date end) as latest_microhaematuria_date,
-        boolor_agg(is_microhaematuria) as has_microhaematuria,
+        max(CASE WHEN is_microhaematuria THEN clinical_effective_date END)
+            AS latest_microhaematuria_date,
+        boolor_agg(is_microhaematuria) AS has_microhaematuria,
         -- UACR
-        max(case when is_uacr_high then clinical_effective_date end) as latest_uacr_date,
-        max(case when is_uacr_high then result_value end) as latest_uacr_value,
+        max(CASE WHEN is_uacr_high THEN clinical_effective_date END)
+            AS latest_uacr_date,
+        max(CASE WHEN is_uacr_high THEN result_value END) AS latest_uacr_value,
         -- Urine tests
-        max(case when is_urine_test then clinical_effective_date end) as latest_urine_test_date,
+        max(CASE WHEN is_urine_test THEN clinical_effective_date END)
+            AS latest_urine_test_date,
         -- Codes and displays
-        array_agg(distinct concept_code) within group (order by concept_code) as all_condition_codes,
-        array_agg(distinct concept_display) within group (order by concept_display) as all_condition_displays
-    from clinical_events
-    group by person_id
+        array_agg(DISTINCT concept_code) WITHIN GROUP (ORDER BY concept_code)
+            AS all_condition_codes,
+        array_agg(DISTINCT concept_display) WITHIN GROUP (
+            ORDER BY concept_display
+        ) AS all_condition_displays
+    FROM clinical_events
+    GROUP BY person_id
 ),
-egfr_in_last_year as (
+
+egfr_in_last_year AS (
     -- Get patients with eGFR in last 12 months to exclude
-    select distinct person_id
-    from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id = 'EGFR_TESTING'
-        and result_value is not null
-        and cast(result_value as number) > 0
-        and clinical_effective_date >= dateadd(month, -12, current_date())
+    SELECT DISTINCT person_id
+    FROM {{ ref('int_ltc_lcs_ckd_observations') }}
+    WHERE
+        cluster_id = 'EGFR_TESTING'
+        AND result_value IS NOT NULL
+        AND cast(result_value AS number) > 0
+        AND clinical_effective_date >= dateadd(MONTH, -12, current_date())
 ),
-microhaematuria_with_conditions as (
+
+microhaematuria_with_conditions AS (
     -- Get patients with microhaematuria and specific conditions
-    select
+    SELECT
         cs.*,
-        case 
-            when cs.latest_urine_test_date is null 
-                or cs.latest_microhaematuria_date > cs.latest_urine_test_date
-                or (cs.latest_uacr_date is not null and cs.latest_uacr_date >= cs.latest_microhaematuria_date)
-            then true
-            else false
-        end as has_valid_microhaematuria
-    from condition_summary cs
+        coalesce(
+            cs.latest_urine_test_date IS NULL
+            OR cs.latest_microhaematuria_date > cs.latest_urine_test_date
+            OR (
+                cs.latest_uacr_date IS NOT NULL
+                AND cs.latest_uacr_date >= cs.latest_microhaematuria_date
+            ), FALSE
+        ) AS has_valid_microhaematuria
+    FROM condition_summary AS cs
 )
+
 -- Final selection
-select
+SELECT
     bp.person_id,
     bp.age,
-    coalesce(mh.has_acute_kidney_injury, false) as has_acute_kidney_injury,
-    coalesce(mh.has_bph_gout, false) as has_bph_gout,
-    coalesce(mh.has_lithium_medication, false) as has_lithium_medication,
-    coalesce(mh.has_valid_microhaematuria, false) as has_microhaematuria,
     mh.latest_aki_date,
     mh.latest_bph_gout_date,
     mh.latest_lithium_date,
@@ -161,24 +169,26 @@ select
     mh.latest_uacr_value,
     mh.all_condition_codes,
     mh.all_condition_displays,
+    coalesce(mh.has_acute_kidney_injury, FALSE) AS has_acute_kidney_injury,
+    coalesce(mh.has_bph_gout, FALSE) AS has_bph_gout,
+    coalesce(mh.has_lithium_medication, FALSE) AS has_lithium_medication,
+    coalesce(mh.has_valid_microhaematuria, FALSE) AS has_microhaematuria,
     -- Meets criteria flag for mart model
-    case 
-        when (coalesce(mh.has_acute_kidney_injury, false)
-            or coalesce(mh.has_bph_gout, false)
-            or coalesce(mh.has_lithium_medication, false)
-            or coalesce(mh.has_valid_microhaematuria, false))
-        then true
-        else false
-    end as meets_criteria
-from base_population bp
-left join microhaematuria_with_conditions mh using (person_id)
-where not exists (
-    select 1 from egfr_in_last_year egfr 
-    where egfr.person_id = bp.person_id
+    coalesce((
+        coalesce(mh.has_acute_kidney_injury, FALSE)
+        OR coalesce(mh.has_bph_gout, FALSE)
+        OR coalesce(mh.has_lithium_medication, FALSE)
+        OR coalesce(mh.has_valid_microhaematuria, FALSE)
+    ), FALSE) AS meets_criteria
+FROM base_population AS bp
+LEFT JOIN microhaematuria_with_conditions AS mh ON bp.person_id = mh.person_id
+WHERE NOT EXISTS (
+    SELECT 1 FROM egfr_in_last_year AS egfr
+    WHERE egfr.person_id = bp.person_id
 )
-and (
-    coalesce(mh.has_acute_kidney_injury, false)
-    or coalesce(mh.has_bph_gout, false)
-    or coalesce(mh.has_lithium_medication, false)
-    or coalesce(mh.has_valid_microhaematuria, false)
+AND (
+    coalesce(mh.has_acute_kidney_injury, FALSE)
+    OR coalesce(mh.has_bph_gout, FALSE)
+    OR coalesce(mh.has_lithium_medication, FALSE)
+    OR coalesce(mh.has_valid_microhaematuria, FALSE)
 )

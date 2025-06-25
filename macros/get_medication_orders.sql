@@ -2,21 +2,21 @@
     -- Simpler: emit a single SELECT, no CTEs, cluster_id IN (...), always includes cluster_id in output
     -- Optional source parameter to filter to specific refset (e.g., 'LTC_LCS')
     {% if bnf_code is none and cluster_id is none %}
-        {{ exceptions.raise_compiler_error("Must provide either bnf_code or cluster_id parameter to get_medication_orders macro") }}
-    {% endif %}
+    {{ exceptions.raise_compiler_error("Must provide either bnf_code or cluster_id parameter to get_medication_orders macro") }}
+{% endif %}
 
-    {# Accept cluster_id as string or list, convert to a comma-separated quoted list #}
-    {% set cluster_ids_str = '' %}
-    {% if cluster_id is not none %}
-        {% if cluster_id is string and ',' in cluster_id %}
+{# Accept cluster_id as string or list, convert to a comma-separated quoted list #}
+{% set cluster_ids_str = '' %}
+{% if cluster_id is not none %}
+    {% if cluster_id is string and ',' in cluster_id %}
             {% set cluster_ids = cluster_id.replace("'", "").split(",") %}
         {% elif cluster_id is string %}
             {% set cluster_ids = [cluster_id] %}
         {% else %}
-            {% set cluster_ids = cluster_id %}
-        {% endif %}
-        {% set cluster_ids_str = cluster_ids | map('trim') | map('upper') | map('string') | map('replace', "'", "") | map('replace', '"', '') | map('string') | join("','") %}
+        {% set cluster_ids = cluster_id %}
     {% endif %}
+    {% set cluster_ids_str = cluster_ids | map('trim') | map('upper') | map('string') | map('replace', "'", "") | map('replace', '"', '') | map('string') | join("','") %}
+{% endif %}
 
     SELECT
         mo.id AS medication_order_id,
@@ -51,15 +51,15 @@
         {% if cluster_id is not none %}
             AND mc.cluster_id IN ('{{ cluster_ids_str }}')
         {% endif %}
-        {% if source is not none %}
+{% if source is not none %}
             AND mc.source = '{{ source }}'
         {% endif %}
-        {% if bnf_code is not none %}
+{% if bnf_code is not none %}
             AND bnf.bnf_code LIKE '{{ bnf_code }}%'
         {% endif %}
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY mo.id, mc.concept_code, bnf.bnf_code
-        ORDER BY 
+        ORDER BY
             CASE WHEN mc.code_description IS NOT NULL THEN 1 ELSE 2 END,
             CASE WHEN bnf.bnf_name IS NOT NULL THEN 1 ELSE 2 END,
             mc.code_description,

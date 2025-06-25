@@ -22,4 +22,4 @@ models:
       - name: latest_symptom_date
         description: "Date of most recent asthma symptom"
         tests:
-          - not_null 
+          - not_null

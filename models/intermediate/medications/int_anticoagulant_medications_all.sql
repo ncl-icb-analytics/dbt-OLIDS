@@ -26,9 +26,9 @@ SELECT
     mapped_concept_display,
     bnf_code,
     bnf_name,
-    
+
     -- Anticoagulant type classification
-    CASE 
+    CASE
         -- DOACs (Direct Oral Anticoagulants)
         WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN 'DOAC'
         WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN 'DOAC'
@@ -41,9 +41,9 @@ SELECT
         WHEN bnf_code LIKE '%PHENPROCOUMON%' OR bnf_code LIKE '0208020S%' THEN 'VKA'
         ELSE 'OTHER_ANTICOAGULANT'
     END AS anticoagulant_type,
-    
+
     -- Specific anticoagulant classification
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN 'APIXABAN'
         WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN 'DABIGATRAN'
         WHEN bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN 'EDOXABAN'
@@ -54,9 +54,9 @@ SELECT
         WHEN bnf_code LIKE '%PHENPROCOUMON%' OR bnf_code LIKE '0208020S%' THEN 'PHENPROCOUMON'
         ELSE 'OTHER_ANTICOAGULANT'
     END AS specific_anticoagulant,
-    
+
     -- Evidence-based anticoagulants for AF
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN TRUE    -- ARISTOTLE trial
         WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN TRUE  -- RE-LY trial
         WHEN bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' THEN TRUE -- ROCKET-AF trial
@@ -64,46 +64,46 @@ SELECT
         WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' THEN TRUE    -- Gold standard
         ELSE FALSE
     END AS is_evidence_based_af,
-    
+
     -- Common anticoagulants flags
     CASE WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' THEN TRUE ELSE FALSE END AS is_warfarin,
     CASE WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN TRUE ELSE FALSE END AS is_apixaban,
     CASE WHEN bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' THEN TRUE ELSE FALSE END AS is_rivaroxaban,
     CASE WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN TRUE ELSE FALSE END AS is_dabigatran,
     CASE WHEN bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN TRUE ELSE FALSE END AS is_edoxaban,
-    
+
     -- Anticoagulant class flags
-    CASE 
-        WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' 
-             OR bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' 
-             OR bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' 
+    CASE
+        WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%'
+             OR bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%'
+             OR bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%'
              OR bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN TRUE
         ELSE FALSE
     END AS is_doac,
-    
-    CASE 
-        WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' 
-             OR bnf_code LIKE '%ACENOCOUMAROL%' OR bnf_code LIKE '0208020H%' 
-             OR bnf_code LIKE '%PHENINDIONE%' OR bnf_code LIKE '0208020N%' 
+
+    CASE
+        WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%'
+             OR bnf_code LIKE '%ACENOCOUMAROL%' OR bnf_code LIKE '0208020H%'
+             OR bnf_code LIKE '%PHENINDIONE%' OR bnf_code LIKE '0208020N%'
              OR bnf_code LIKE '%PHENPROCOUMON%' OR bnf_code LIKE '0208020S%' THEN TRUE
         ELSE FALSE
     END AS is_vka,
-    
+
     -- Calculate time since order
     DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags (anticoagulants are typically long-term therapy)
-    CASE 
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
         ELSE FALSE
     END AS is_recent_12m
@@ -111,4 +111,4 @@ SELECT
 FROM (
     {{ get_medication_orders(bnf_code='020802') }}
 ) base_orders
-ORDER BY person_id, order_date DESC 
+ORDER BY person_id, order_date DESC

@@ -1,4 +1,7 @@
 {% macro test_staging_columns_match_source(source_schema, source_table, staging_model, source_columns) %}
+
+
+
 -- Macro to check that all columns from the source table are present in the staging model
 -- Column names are compared in lower case (as per staging convention)
 
@@ -21,4 +24,7 @@ from source_cols s
 left join staging_cols t on s.column_name = t.column_name
 where t.column_name is null
 
-{% endmacro %} 
+
+
+
+{% endmacro %}

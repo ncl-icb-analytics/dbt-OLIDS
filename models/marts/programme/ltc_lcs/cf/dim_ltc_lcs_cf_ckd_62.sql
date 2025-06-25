@@ -7,7 +7,7 @@ Purpose:
 Business Logic:
 1. Base Population:
    - Patients aged 17+ from base population (excludes those on CKD and Diabetes registers)
-   
+
 2. UACR Criteria:
    - Must have at least 2 UACR readings with values > 0
    - Takes max value per day to handle multiple readings
@@ -36,109 +36,145 @@ Dependencies:
     post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_62 case finding: Patients with two consecutive high UACR readings (> 3) suggesting kidney damage'"
 ) }}
 
-with base_population as (
+WITH base_population AS (
     -- Get base population of patients over 17
     -- Base population already excludes those on CKD and Diabetes registers
-    select distinct
+    SELECT DISTINCT
         person_id,
         age
-    from {{ ref('int_ltc_lcs_cf_base_population') }}
-    where age >= 17
+    FROM {{ ref('int_ltc_lcs_cf_base_population') }}
+    WHERE age >= 17
 ),
-uacr_readings as (
+
+uacr_readings AS (
     -- Get all UACR readings with values > 0
     -- Take max value per day to handle multiple readings
-    select
+    SELECT
         person_id,
         clinical_effective_date,
-        max(cast(result_value as number)) as result_value,
-        any_value(mapped_concept_code) as concept_code,
-        any_value(mapped_concept_display) as concept_display
-    from {{ ref('int_ltc_lcs_ckd_observations') }}
-    where cluster_id = 'UACR_TESTING'
-        and result_value is not null
-        and cast(result_value as number) > 0
-    group by 
+        max(cast(result_value AS number)) AS result_value,
+        any_value(mapped_concept_code) AS concept_code,
+        any_value(mapped_concept_display) AS concept_display
+    FROM {{ ref('int_ltc_lcs_ckd_observations') }}
+    WHERE
+        cluster_id = 'UACR_TESTING'
+        AND result_value IS NOT NULL
+        AND cast(result_value AS number) > 0
+    GROUP BY
         person_id,
         clinical_effective_date
 ),
-uacr_with_adjacent_check as (
+
+uacr_with_adjacent_check AS (
     -- Check for same results on adjacent days
-    select
+    SELECT
         *,
-                case
-            when dateadd(day, 1, clinical_effective_date) = lag(clinical_effective_date) over (partition by person_id order by clinical_effective_date desc)
-            and result_value = lag(result_value) over (partition by person_id order by clinical_effective_date desc)
-            then 'EXCLUDE'
-            else 'INCLUDE'
-        end as adjacent_day_check
-    from uacr_readings
+        CASE
+            WHEN
+                dateadd(DAY, 1, clinical_effective_date)
+                = lag(clinical_effective_date)
+                    OVER (
+                        PARTITION BY person_id
+                        ORDER BY clinical_effective_date DESC
+                    )
+                AND result_value
+                = lag(result_value)
+                    OVER (
+                        PARTITION BY person_id
+                        ORDER BY clinical_effective_date DESC
+                    )
+                THEN 'EXCLUDE'
+            ELSE 'INCLUDE'
+        END AS adjacent_day_check
+    FROM uacr_readings
 ),
-uacr_filtered as (
+
+uacr_filtered AS (
     -- Remove adjacent day duplicates
-    select *
-    from uacr_with_adjacent_check
-    where adjacent_day_check = 'INCLUDE'
+    SELECT *
+    FROM uacr_with_adjacent_check
+    WHERE adjacent_day_check = 'INCLUDE'
 ),
-uacr_ranked as (
+
+uacr_ranked AS (
     -- Rank UACR readings by date for each person
-    select
+    SELECT
         *,
-        row_number() over (partition by person_id order by clinical_effective_date desc) as reading_rank
-    from uacr_filtered
+        row_number()
+            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+            AS reading_rank
+    FROM uacr_filtered
 ),
-uacr_counts as (
+
+uacr_counts AS (
     -- Count readings per person to ensure at least 2
-    select
+    SELECT
         person_id,
-        count(*) as reading_count
-    from uacr_filtered
-    group by person_id
-    having count(*) > 1
+        count(*) AS reading_count
+    FROM uacr_filtered
+    GROUP BY person_id
+    HAVING count(*) > 1
 ),
-uacr_with_lags as (
+
+uacr_with_lags AS (
     -- Get the two most recent readings with their lags
-    select
+    SELECT
         ur.person_id,
-        ur.clinical_effective_date as latest_uacr_date,
-        lag(ur.clinical_effective_date) over (partition by ur.person_id order by ur.clinical_effective_date desc) as previous_uacr_date,
-        ur.result_value as latest_uacr_value,
-        lag(ur.result_value) over (partition by ur.person_id order by ur.clinical_effective_date desc) as previous_uacr_value
-    from uacr_ranked ur
-    join uacr_counts uc using (person_id)
-    where ur.reading_rank <= 2
-    qualify ur.reading_rank = 1
+        ur.clinical_effective_date AS latest_uacr_date,
+        ur.result_value AS latest_uacr_value,
+        lag(ur.clinical_effective_date)
+            OVER (
+                PARTITION BY ur.person_id
+                ORDER BY ur.clinical_effective_date DESC
+            )
+            AS previous_uacr_date,
+        lag(ur.result_value)
+            OVER (
+                PARTITION BY ur.person_id
+                ORDER BY ur.clinical_effective_date DESC
+            )
+            AS previous_uacr_value
+    FROM uacr_ranked AS ur
+    INNER JOIN uacr_counts ON ur.person_id = uacr_counts.person_id
+    WHERE ur.reading_rank <= 2
+    QUALIFY ur.reading_rank = 1
 ),
-uacr_codes as (
-    -- Get all codes and displays for each person
-    select
+
+uacr_codes AS (
+-- Get all codes and displays for each person
+    SELECT
         person_id,
-        array_agg(distinct concept_code) within group (order by concept_code) as all_uacr_codes,
-        array_agg(distinct concept_display) within group (order by concept_display) as all_uacr_displays
-    from uacr_readings
-    group by person_id
+        array_agg(DISTINCT concept_code) WITHIN GROUP (ORDER BY concept_code)
+            AS all_uacr_codes,
+        array_agg(DISTINCT concept_display) WITHIN GROUP (
+            ORDER BY concept_display
+        ) AS all_uacr_displays
+    FROM uacr_readings
+    GROUP BY person_id
 )
+
 -- Final selection
-select
+SELECT
     bp.person_id,
     bp.age,
-    case 
-        when ceg.latest_uacr_value > 4 and ceg.previous_uacr_value > 4 then true
-        else false
-    end as has_elevated_uacr,
     ceg.latest_uacr_date,
     ceg.previous_uacr_date,
     ceg.latest_uacr_value,
     ceg.previous_uacr_value,
     codes.all_uacr_codes,
     codes.all_uacr_displays,
+    coalesce(
+        ceg.latest_uacr_value > 4 AND ceg.previous_uacr_value > 4,
+        FALSE
+    ) AS has_elevated_uacr,
     -- Meets criteria flag for mart model
-    case 
-        when ceg.latest_uacr_value > 4 and ceg.previous_uacr_value > 4 then true
-        else false
-    end as meets_criteria
-from base_population bp
-left join uacr_with_lags ceg using (person_id)
-left join uacr_codes codes using (person_id)
-where ceg.latest_uacr_value > 4 
-    and ceg.previous_uacr_value > 4
+    coalesce(
+        ceg.latest_uacr_value > 4 AND ceg.previous_uacr_value > 4,
+        FALSE
+    ) AS meets_criteria
+FROM base_population AS bp
+LEFT JOIN uacr_with_lags AS ceg ON bp.person_id = ceg.person_id
+LEFT JOIN uacr_codes AS codes USING (person_id)
+WHERE
+    ceg.latest_uacr_value > 4
+    AND ceg.previous_uacr_value > 4

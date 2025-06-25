@@ -26,10 +26,10 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_urine_acr_all'), 
+        ref('int_urine_acr_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
 ) latest_acr
 
-WHERE is_valid_acr = TRUE 
+WHERE is_valid_acr = TRUE

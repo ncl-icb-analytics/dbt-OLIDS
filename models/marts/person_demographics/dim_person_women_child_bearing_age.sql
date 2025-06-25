@@ -22,8 +22,8 @@ SELECT
     -- Flag for age 0-55 inclusive: Used for specific safety programs like Valproate
     -- This flag will always be TRUE for rows in this table because the WHERE clause (age <= 55) ensures it
     (age.age <= 55) AS is_child_bearing_age_0_55
-FROM {{ ref('dim_person_age') }} age
-INNER JOIN {{ ref('dim_person_sex') }} sex 
+FROM {{ ref('dim_person_age') }} AS age
+INNER JOIN {{ ref('dim_person_sex') }} AS sex
     ON age.person_id = sex.person_id
 WHERE
     -- Filter for individuals NOT identified as Male
@@ -31,4 +31,4 @@ WHERE
     sex.sex != 'Male'
     -- Further filter to include only these non-males who are aged 55 or younger
     -- ensuring they fall into at least the broader 0-55 child-bearing age definition used in this table
-    AND age.age <= 55 
+    AND age.age <= 55

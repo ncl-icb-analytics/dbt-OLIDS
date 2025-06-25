@@ -5,4 +5,4 @@
 {{ get_observations(
     cluster_ids="'HEALTH_CHECK_COMP'",
     source='LTC_LCS'
-) }} 
+) }}

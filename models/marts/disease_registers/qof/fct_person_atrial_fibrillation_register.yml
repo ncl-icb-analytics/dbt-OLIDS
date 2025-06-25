@@ -4,26 +4,26 @@ models:
   - name: fct_person_atrial_fibrillation_register
     description: |
       QOF Atrial Fibrillation Register - Standard QOF register with resolution logic.
-      
+
       **Business Logic:**
       - Active AF diagnosis: latest AFIB_COD > latest AFIBRES_COD OR no resolution recorded
       - No age restrictions
       - No medication validation requirements
-      
+
       **Clinical Context:**
       This register identifies patients with active atrial fibrillation diagnoses for QOF monitoring
       and anticoagulation review. AF is a permanent condition so resolution codes are rare, but
       when present they should be respected (e.g., post-cardioversion normal rhythm).
-      
+
       **QOF Requirements:**
       - AF006: Practice can produce a register of patients with atrial fibrillation
       - Supports indicators for anticoagulation monitoring and stroke risk assessment
       - Links to CHADS-VASc scoring and bleeding risk assessment
-      
+
       **Data Sources:**
       - Diagnosis codes: int_atrial_fibrillation_diagnoses_all (AFIB_COD, AFIBRES_COD cluster IDs)
       - No age filtering required
-      
+
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
     columns:
@@ -83,4 +83,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

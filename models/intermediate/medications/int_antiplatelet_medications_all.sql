@@ -26,9 +26,9 @@ SELECT
     mapped_concept_display,
     bnf_code,
     bnf_name,
-    
+
     -- Specific antiplatelet classification
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%' THEN 'ASPIRIN'
         WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN 'CLOPIDOGREL'
         WHEN bnf_code LIKE '%DIPYRIDAMOLE%' OR bnf_code LIKE '0209000515%' THEN 'DIPYRIDAMOLE'
@@ -37,54 +37,54 @@ SELECT
         WHEN bnf_code LIKE '%TICLOPIDINE%' OR bnf_code LIKE '0209000535%' THEN 'TICLOPIDINE'
         ELSE 'OTHER_ANTIPLATELET'
     END AS antiplatelet_type,
-    
+
     -- P2Y12 inhibitor classification (for dual antiplatelet therapy)
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN TRUE
         WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN TRUE
         WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN TRUE
         WHEN bnf_code LIKE '%TICLOPIDINE%' OR bnf_code LIKE '0209000535%' THEN TRUE
         ELSE FALSE
     END AS is_p2y12_inhibitor,
-    
+
     -- Evidence-based antiplatelets
-    CASE 
+    CASE
         WHEN bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%' THEN TRUE      -- Multiple trials
         WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN TRUE  -- CAPRIE, CURE trials
         WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN TRUE   -- PLATO trial
         WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN TRUE    -- TRITON-TIMI trial
         ELSE FALSE
     END AS is_evidence_based_cvd,
-    
+
     -- Common antiplatelets flags
     CASE WHEN bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%' THEN TRUE ELSE FALSE END AS is_aspirin,
     CASE WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN TRUE ELSE FALSE END AS is_clopidogrel,
     CASE WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN TRUE ELSE FALSE END AS is_ticagrelor,
     CASE WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN TRUE ELSE FALSE END AS is_prasugrel,
     CASE WHEN bnf_code LIKE '%DIPYRIDAMOLE%' OR bnf_code LIKE '0209000515%' THEN TRUE ELSE FALSE END AS is_dipyridamole,
-    
+
     -- Low dose aspirin flag (typically 75mg for cardioprotection)
-    CASE 
-        WHEN (bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%') 
+    CASE
+        WHEN (bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%')
              AND (order_dose LIKE '%75%' OR order_dose LIKE '%low%') THEN TRUE
         ELSE FALSE
     END AS is_low_dose_aspirin,
-    
+
     -- Calculate time since order
     DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
-    
+
     -- Order recency flags (antiplatelets are typically long-term therapy)
-    CASE 
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
         ELSE FALSE
     END AS is_recent_3m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
         ELSE FALSE
     END AS is_recent_6m,
-    
-    CASE 
+
+    CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
         ELSE FALSE
     END AS is_recent_12m
@@ -92,4 +92,4 @@ SELECT
 FROM (
     {{ get_medication_orders(bnf_code='0209') }}
 ) base_orders
-ORDER BY person_id, order_date DESC 
+ORDER BY person_id, order_date DESC

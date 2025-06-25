@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_ltc_lcs_cf_dm_62
     description: "Intermediate model for LTC/LCS case finding DM_62. Identifies patients with gestational diabetes and pregnancy risk who have no HbA1c reading in the last 12 months."
-    
+
     columns:
       - name: person_id
         description: "Unique identifier for the person"
@@ -33,4 +33,4 @@ models:
         description: "Array of all gestational diabetes with pregnancy risk concept codes"
 
       - name: all_gestational_diabetes_displays
-        description: "Array of all gestational diabetes with pregnancy risk concept displays" 
+        description: "Array of all gestational diabetes with pregnancy risk concept displays"

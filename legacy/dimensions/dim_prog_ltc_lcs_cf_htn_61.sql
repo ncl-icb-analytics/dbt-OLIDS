@@ -50,13 +50,13 @@ SELECT
     bp.PERSON_ID,
     bp.SK_PATIENT_ID,
     bp.AGE,
-    CASE 
+    CASE
         WHEN bp_readings.IS_CLINIC_BP AND (
-            bp_readings.LATEST_SYSTOLIC_BP >= 180 OR 
+            bp_readings.LATEST_SYSTOLIC_BP >= 180 OR
             bp_readings.LATEST_DIASTOLIC_BP >= 120
         ) THEN TRUE
         WHEN bp_readings.IS_HOME_BP AND (
-            bp_readings.LATEST_SYSTOLIC_BP >= 170 OR 
+            bp_readings.LATEST_SYSTOLIC_BP >= 170 OR
             bp_readings.LATEST_DIASTOLIC_BP >= 115
         ) THEN TRUE
         ELSE FALSE
@@ -72,12 +72,12 @@ LEFT JOIN LatestBloodPressure bp_readings
 WHERE (
     -- Include patients with severe hypertension
     (bp_readings.IS_CLINIC_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 180 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 180 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 120
     ))
-    OR 
+    OR
     (bp_readings.IS_HOME_BP AND (
-        bp_readings.LATEST_SYSTOLIC_BP >= 170 OR 
+        bp_readings.LATEST_SYSTOLIC_BP >= 170 OR
         bp_readings.LATEST_DIASTOLIC_BP >= 115
     ))
-); 
+);

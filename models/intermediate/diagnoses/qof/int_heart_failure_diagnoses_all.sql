@@ -10,7 +10,7 @@ All heart failure diagnosis observations from clinical records.
 Uses QOF heart failure cluster IDs:
 - HF_COD: Heart failure diagnoses
 - HFRES_COD: Heart failure resolved/remission codes
-- HFLVSD_COD: Heart failure with left ventricular systolic dysfunction  
+- HFLVSD_COD: Heart failure with left ventricular systolic dysfunction
 - REDEJCFRAC_COD: Reduced ejection fraction diagnoses
 
 Clinical Purpose:
@@ -31,13 +31,13 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Heart failure-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_diagnosis_code,
     CASE WHEN obs.cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_resolved_code,
     CASE WHEN obs.cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
     CASE WHEN obs.cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code,
-    
+
     -- Heart failure observation type determination
     CASE
         WHEN obs.cluster_id = 'HF_COD' THEN 'Heart Failure Diagnosis'
@@ -50,4 +50,4 @@ SELECT
 FROM ({{ get_observations("'HF_COD', 'HFRES_COD', 'HFLVSD_COD', 'REDEJCFRAC_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

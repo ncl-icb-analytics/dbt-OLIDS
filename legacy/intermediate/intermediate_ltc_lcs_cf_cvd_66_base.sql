@@ -92,4 +92,4 @@ LEFT JOIN HealthChecks hc
 WHERE NOT COALESCE(sm.PERSON_ID IS NOT NULL, FALSE)  -- Not on statins
     AND NOT COALESCE(sa.PERSON_ID IS NOT NULL, FALSE)  -- No statin allergies
     AND NOT COALESCE(sd.PERSON_ID IS NOT NULL, FALSE)  -- No statin decisions
-    AND NOT COALESCE(hc.PERSON_ID IS NOT NULL, FALSE);  -- No health checks in last 24 months 
+    AND NOT COALESCE(hc.PERSON_ID IS NOT NULL, FALSE);  -- No health checks in last 24 months

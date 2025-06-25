@@ -70,4 +70,4 @@ SELECT
     dem_agg.ALL_DEM_CONCEPT_DISPLAYS,
     dem_agg.ALL_DEM_SOURCE_CLUSTER_IDS
 FROM PersonLevelDEMCodingAggregation dem_agg
-WHERE dem_agg.IS_ON_DEM_REGISTER = TRUE; 
+WHERE dem_agg.IS_ON_DEM_REGISTER = TRUE;

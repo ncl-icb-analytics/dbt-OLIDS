@@ -34,11 +34,11 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- CKD-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'CKD_COD' THEN TRUE ELSE FALSE END AS is_ckd_diagnosis_code,
     CASE WHEN obs.cluster_id = 'CKDRES_COD' THEN TRUE ELSE FALSE END AS is_ckd_resolved_code,
-    
+
     -- CKD observation type determination
     CASE
         WHEN obs.cluster_id = 'CKD_COD' THEN 'CKD Diagnosis'
@@ -49,4 +49,4 @@ SELECT
 FROM ({{ get_observations("'CKD_COD', 'CKDRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

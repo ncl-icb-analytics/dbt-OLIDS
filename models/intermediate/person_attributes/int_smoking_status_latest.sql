@@ -26,8 +26,8 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_smoking_status_all'), 
+        ref('int_smoking_status_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
-) latest_smoking_status 
+) latest_smoking_status

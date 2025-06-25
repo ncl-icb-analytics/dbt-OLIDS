@@ -19,10 +19,10 @@ create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PRO
 COMMENT = 'Base population dimension for childhood immunisation programs, including individuals aged under 25. Enriches person age details with specific birthday milestones, ethnicity, and a Looked After Child (LAC) flag.'
 target_lag = '4 hours'
 refresh_mode = AUTO
-initialize = ON_CREATE 
+initialize = ON_CREATE
 warehouse = NCL_ANALYTICS_XS
 AS
--- THIS IS THE BASE POPULATION AGED UNDER 25 FOR CHILDHOOD IMMS WITH DEMOGRAPHICS 
+-- THIS IS THE BASE POPULATION AGED UNDER 25 FOR CHILDHOOD IMMS WITH DEMOGRAPHICS
 --Find looked after Children using the MAPPEDCONCEPTS view
 WITH lac as (
     SELECT DISTINCT -- Use DISTINCT to avoid duplicates if multiple observations exist for the same person
@@ -30,16 +30,16 @@ WITH lac as (
         pp."person_id" as PERSON_ID
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION o
     -- Join OBSERVATION to MAPPEDCONCEPTS using the observation_core_concept_id
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc 
-        ON o."observation_core_concept_id" = mc.SOURCE_CODE_ID 
+    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+        ON o."observation_core_concept_id" = mc.SOURCE_CODE_ID
     -- Join to PATIENT_PERSON to get the person_id (using INNER JOIN as we need the person)
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp 
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
         on pp."patient_id" = o."patient_id"
     -- Filter using the CONCEPT_CODE from the MAPPEDCONCEPTS view
     WHERE CAST(mc.CONCEPT_CODE AS VARCHAR) IN ('764841000000100') -- Looked after Child code
 )
 --DEFINE MAIN PERSON POPULATION FOR ALL IMMUNISATIONS UNDER 25s for now. Will eventually include all DEMOGRAPHICS
-select 
+select
     a.PERSON_ID,
     a.BIRTH_DATE_APPROX,
     a.AGE,

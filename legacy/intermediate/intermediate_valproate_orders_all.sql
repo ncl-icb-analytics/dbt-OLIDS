@@ -73,5 +73,3 @@ WHERE
     OR
     -- Criterion B: Check if the LEFT JOIN to VALPROATE_PROG_CODES was successful (meaning vp.CODE is not NULL).
     (vp.CODE IS NOT NULL);
-
-

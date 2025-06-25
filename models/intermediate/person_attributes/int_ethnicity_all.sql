@@ -15,7 +15,7 @@
 
 WITH observations_with_concepts AS (
     -- Join observations directly through concept_map to concept, then filter by ethnicity codes
-    SELECT 
+    SELECT
         o.id AS observation_id,
         o.patient_id,
         pp.person_id,
@@ -24,23 +24,24 @@ WITH observations_with_concepts AS (
         c.code AS concept_code,
         c.display AS concept_display,
         c.id AS concept_id
-    FROM {{ ref('stg_olids_observation') }} o
-    JOIN {{ ref('stg_olids_patient') }} p
+    FROM {{ ref('stg_olids_observation') }} AS o
+    INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON o.patient_id = p.id
-    JOIN {{ ref('stg_olids_patient_person') }} pp 
+    INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
         ON p.id = pp.patient_id
     -- Join through concept_map to concept (vanilla structure)
-    LEFT JOIN {{ ref('stg_olids_term_concept_map') }} cm
+    LEFT JOIN {{ ref('stg_olids_term_concept_map') }} AS cm
         ON o.observation_core_concept_id = cm.source_code_id
-    LEFT JOIN {{ ref('stg_olids_term_concept') }} c
+    LEFT JOIN {{ ref('stg_olids_term_concept') }} AS c
         ON cm.target_code_id = c.id
-    WHERE o.clinical_effective_date IS NOT NULL
-      AND c.code IS NOT NULL
+    WHERE
+        o.clinical_effective_date IS NOT NULL
+        AND c.code IS NOT NULL
 ),
 
 ethnicity_observations AS (
     -- Filter observations that match ethnicity codes
-    SELECT 
+    SELECT
         owc.person_id,
         owc.sk_patient_id,
         owc.clinical_effective_date,
@@ -48,23 +49,23 @@ ethnicity_observations AS (
         owc.concept_code,
         owc.concept_display,
         owc.observation_id
-    FROM observations_with_concepts owc
+    FROM observations_with_concepts AS owc
     -- Join to ethnicity codes to filter only valid ethnicity observations
-    INNER JOIN {{ ref('stg_codesets_ethnicity_codes') }} ec
+    INNER JOIN {{ ref('stg_codesets_ethnicity_codes') }} AS ec
         ON owc.concept_code = ec.code
 ),
 
 ethnicity_enriched AS (
     -- Add ethnicity categorisation details from ethnicity codes reference table
-    SELECT 
+    SELECT
         eo.*,
         ec.term,
         ec.category AS ethnicity_category,
         ec.subcategory AS ethnicity_subcategory,
         ec.granular AS ethnicity_granular
-    FROM ethnicity_observations eo
+    FROM ethnicity_observations AS eo
     -- Join to ethnicity codes to get the detailed categorisation
-    LEFT JOIN {{ ref('stg_codesets_ethnicity_codes') }} ec
+    LEFT JOIN {{ ref('stg_codesets_ethnicity_codes') }} AS ec
         ON eo.concept_code = ec.code
 )
 
@@ -75,10 +76,10 @@ SELECT
     clinical_effective_date,
     concept_id,
     concept_code AS snomed_code,
+    observation_id AS observation_lds_id,
     COALESCE(term, concept_display) AS term,
     COALESCE(ethnicity_category, 'Unknown') AS ethnicity_category,
     COALESCE(ethnicity_subcategory, 'Unknown') AS ethnicity_subcategory,
-    COALESCE(ethnicity_granular, 'Unknown') AS ethnicity_granular,
-    observation_id AS observation_lds_id
+    COALESCE(ethnicity_granular, 'Unknown') AS ethnicity_granular
 FROM ethnicity_enriched
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id ASC, clinical_effective_date DESC

@@ -83,4 +83,4 @@ LEFT JOIN StatinDecisions sd
     USING (PERSON_ID)
 WHERE NOT COALESCE(mds.PERSON_ID IS NOT NULL, FALSE)  -- Not on moderate-dose statins
     AND NOT COALESCE(sa.PERSON_ID IS NOT NULL, FALSE)  -- No statin allergies
-    AND NOT COALESCE(sd.PERSON_ID IS NOT NULL, FALSE);  -- No statin decisions 
+    AND NOT COALESCE(sd.PERSON_ID IS NOT NULL, FALSE);  -- No statin decisions

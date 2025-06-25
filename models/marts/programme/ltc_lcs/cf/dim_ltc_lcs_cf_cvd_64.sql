@@ -13,9 +13,11 @@ WITH high_dose_statin_medications AS (
         med.order_date AS clinical_effective_date,
         med.mapped_concept_code,
         med.mapped_concept_display,
-        ROW_NUMBER() OVER (PARTITION BY med.person_id ORDER BY med.order_date DESC) AS medication_rank
-    FROM {{ ref('int_ltc_lcs_cvd_medications') }} med
-    JOIN {{ ref('int_ltc_lcs_cf_cvd_base_population') }} bp USING (person_id)
+        ROW_NUMBER()
+            OVER (PARTITION BY med.person_id ORDER BY med.order_date DESC)
+            AS medication_rank
+    FROM {{ ref('int_ltc_lcs_cvd_medications') }} AS med
+    INNER JOIN {{ ref('int_ltc_lcs_cf_cvd_base_population') }} USING (person_id)
     WHERE med.cluster_id = 'STATIN_CVD_64_MEDICATIONS'
 ),
 
@@ -34,8 +36,12 @@ all_high_dose_statin_codes AS (
     -- Aggregate all high-dose statin codes and displays for each person
     SELECT
         person_id,
-        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (ORDER BY mapped_concept_code) AS all_statin_codes,
-        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (ORDER BY mapped_concept_display) AS all_statin_displays
+        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (
+            ORDER BY mapped_concept_code
+        ) AS all_statin_codes,
+        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (
+            ORDER BY mapped_concept_display
+        ) AS all_statin_displays
     FROM high_dose_statin_medications
     GROUP BY person_id
 )
@@ -50,6 +56,6 @@ SELECT
     lhs.latest_statin_display,
     ahsc.all_statin_codes,
     ahsc.all_statin_displays
-FROM {{ ref('int_ltc_lcs_cf_cvd_base_population') }} bp
-LEFT JOIN latest_high_dose_statins lhs USING (person_id)
-LEFT JOIN all_high_dose_statin_codes ahsc USING (person_id) 
+FROM {{ ref('int_ltc_lcs_cf_cvd_base_population') }} AS bp
+LEFT JOIN latest_high_dose_statins AS lhs ON bp.person_id = lhs.person_id
+LEFT JOIN all_high_dose_statin_codes AS ahsc USING (person_id)

@@ -31,4 +31,4 @@ models:
       - name: all_statin_codes
         description: "Array of all high-dose statin concept codes for patient"
       - name: all_statin_displays
-        description: "Array of all high-dose statin concept displays for patient" 
+        description: "Array of all high-dose statin concept displays for patient"

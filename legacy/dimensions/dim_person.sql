@@ -24,19 +24,19 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH person_patients AS (
     -- Get all patient relationships for each person
-    SELECT 
+    SELECT
         pp."person_id" AS PERSON_ID,
         ARRAY_AGG(DISTINCT p."sk_patient_id") AS SK_PATIENT_IDS,
         ARRAY_AGG(DISTINCT p."id") AS PATIENT_IDS,
         COUNT(DISTINCT p."id") AS TOTAL_PATIENTS
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p 
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
         ON pp."patient_id" = p."id"
     GROUP BY pp."person_id"
 ),
 person_practices AS (
     -- Get all practice relationships from the historical practice dimension
-    SELECT 
+    SELECT
         PERSON_ID,
         ARRAY_AGG(DISTINCT PRACTICE_ID) AS PRACTICE_IDS,
         ARRAY_AGG(DISTINCT PRACTICE_CODE) AS PRACTICE_CODES,
@@ -47,7 +47,7 @@ person_practices AS (
 ),
 current_practices AS (
     -- Get the current practice for each person
-    SELECT 
+    SELECT
         PERSON_ID,
         PRACTICE_ID AS CURRENT_PRACTICE_ID,
         PRACTICE_CODE AS CURRENT_PRACTICE_CODE,
@@ -56,7 +56,7 @@ current_practices AS (
     WHERE IS_CURRENT_PRACTICE = TRUE
 )
 -- Final aggregation
-SELECT 
+SELECT
     pp.PERSON_ID,
     pp.SK_PATIENT_IDS,
     pp.PATIENT_IDS,
@@ -70,4 +70,4 @@ SELECT
     COALESCE(pr.TOTAL_PRACTICES, 0) AS TOTAL_PRACTICES
 FROM person_patients pp
 LEFT JOIN person_practices pr ON pp.PERSON_ID = pr.PERSON_ID
-LEFT JOIN current_practices cp ON pp.PERSON_ID = cp.PERSON_ID 
+LEFT JOIN current_practices cp ON pp.PERSON_ID = cp.PERSON_ID

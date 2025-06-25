@@ -11,7 +11,7 @@
 
 WITH blood_pressure_events AS (
     -- Use the existing blood pressure intermediate with proper pairing logic
-    SELECT 
+    SELECT
         person_id,
         clinical_effective_date,
         systolic_value,
@@ -19,9 +19,9 @@ WITH blood_pressure_events AS (
         is_home_bp_event,
         is_abpm_bp_event,
         -- Determine BP type for case finding logic
-        CASE 
+        CASE
             WHEN is_abpm_bp_event THEN 'HYPERTENSION_BP_ABPM'
-            WHEN is_home_bp_event THEN 'HYPERTENSION_BP_HOME' 
+            WHEN is_home_bp_event THEN 'HYPERTENSION_BP_HOME'
             ELSE 'HYPERTENSION_BP_CLINIC'
         END AS cluster_id,
         all_concept_codes AS mapped_concept_codes,
@@ -39,7 +39,7 @@ other_htn_observations AS (
 
 combined_observations AS (
     -- Blood pressure events
-    SELECT 
+    SELECT
         person_id,
         clinical_effective_date,
         cluster_id,
@@ -49,10 +49,10 @@ combined_observations AS (
         'BP_SYSTOLIC' AS observation_type
     FROM blood_pressure_events
     WHERE systolic_value IS NOT NULL
-    
+
     UNION ALL
-    
-    SELECT 
+
+    SELECT
         person_id,
         clinical_effective_date,
         cluster_id,
@@ -62,11 +62,11 @@ combined_observations AS (
         'BP_DIASTOLIC' AS observation_type
     FROM blood_pressure_events
     WHERE diastolic_value IS NOT NULL
-    
+
     UNION ALL
-    
+
     -- Other hypertension observations
-    SELECT 
+    SELECT
         person_id,
         clinical_effective_date,
         cluster_id,
@@ -78,7 +78,7 @@ combined_observations AS (
     WHERE clinical_effective_date IS NOT NULL
 )
 
-SELECT 
+SELECT
     person_id,
     clinical_effective_date,
     cluster_id,
@@ -87,4 +87,4 @@ SELECT
     mapped_concept_displays,
     observation_type
 FROM combined_observations
-ORDER BY person_id, clinical_effective_date DESC 
+ORDER BY person_id, clinical_effective_date DESC

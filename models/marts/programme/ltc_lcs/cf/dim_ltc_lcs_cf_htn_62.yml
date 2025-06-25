@@ -52,4 +52,4 @@ models:
       - name: all_bp_codes
         description: "Array of all blood pressure concept codes for the patient"
       - name: all_bp_displays
-        description: "Array of all blood pressure concept displays for the patient" 
+        description: "Array of all blood pressure concept displays for the patient"

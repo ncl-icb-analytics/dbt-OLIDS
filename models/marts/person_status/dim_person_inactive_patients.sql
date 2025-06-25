@@ -17,8 +17,10 @@ WITH patient_ids_per_person AS (
     -- First collect all patient IDs for each person
     SELECT
         pp.person_id,
-        ARRAY_AGG(DISTINCT pp.patient_id) WITHIN GROUP (ORDER BY pp.patient_id) AS patient_ids
-    FROM {{ ref('stg_olids_patient_person') }} pp
+        ARRAY_AGG(DISTINCT pp.patient_id) WITHIN GROUP (
+            ORDER BY pp.patient_id
+        ) AS patient_ids
+    FROM {{ ref('stg_olids_patient_person') }} AS pp
     GROUP BY pp.person_id
 ),
 
@@ -30,14 +32,6 @@ latest_patient_record_per_person AS (
         per.primary_patient_id,
         pip.patient_ids,
         -- Determine if patient is active based on various criteria
-        CASE
-            WHEN p.death_year IS NOT NULL THEN FALSE -- Deceased
-            WHEN p.is_dummy_patient THEN FALSE -- Dummy patient
-            WHEN php.practice_close_date IS NOT NULL THEN FALSE -- Practice closed
-            WHEN php.practice_is_obsolete THEN FALSE -- Practice obsolete
-            ELSE TRUE
-        END AS is_active,
-        p.death_year IS NOT NULL AS is_deceased,
         p.is_dummy_patient,
         p.is_confidential,
         p.is_spine_sensitive,
@@ -45,9 +39,9 @@ latest_patient_record_per_person AS (
         p.birth_month,
         p.death_year,
         p.death_month,
-        -- Practice details from DIM_PERSON_HISTORICAL_PRACTICE
         php.practice_id AS registered_practice_id,
         php.practice_code,
+        -- Practice details from DIM_PERSON_HISTORICAL_PRACTICE
         php.practice_name,
         php.practice_type_code,
         php.practice_type_desc,
@@ -58,30 +52,38 @@ latest_patient_record_per_person AS (
         php.practice_is_obsolete,
         p.record_owner_organisation_code AS record_owner_org_code,
         p.lds_datetime_data_acquired AS latest_record_date,
+        CASE
+            WHEN p.death_year IS NOT NULL THEN FALSE -- Deceased
+            WHEN p.is_dummy_patient THEN FALSE -- Dummy patient
+            WHEN php.practice_close_date IS NOT NULL THEN FALSE -- Practice closed
+            WHEN php.practice_is_obsolete THEN FALSE -- Practice obsolete
+            ELSE TRUE
+        END AS is_active,
+        p.death_year IS NOT NULL AS is_deceased,
         -- Determine reason for inactivity
         CASE
             WHEN p.death_year IS NOT NULL THEN 'Deceased'
             WHEN php.practice_close_date IS NOT NULL THEN 'Practice Closed'
             WHEN php.practice_is_obsolete THEN 'Practice Obsolete'
-            ELSE NULL
         END AS inactive_reason,
         -- Rank to get the latest record
         ROW_NUMBER() OVER (
             PARTITION BY pp.person_id
-            ORDER BY 
+            ORDER BY
                 p.lds_datetime_data_acquired DESC,
                 p.id DESC
         ) AS record_rank
-    FROM {{ ref('stg_olids_patient_person') }} pp
-    JOIN {{ ref('stg_olids_patient') }} p
+    FROM {{ ref('stg_olids_patient_person') }} AS pp
+    INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON pp.patient_id = p.id
-    JOIN {{ ref('stg_olids_person') }} per
+    INNER JOIN {{ ref('stg_olids_person') }} AS per
         ON pp.person_id = per.id
-    JOIN patient_ids_per_person pip
+    INNER JOIN patient_ids_per_person AS pip
         ON pp.person_id = pip.person_id
-    LEFT JOIN {{ ref('dim_person_historical_practice') }} php
-        ON pp.person_id = php.person_id
-        AND php.is_current_registration = TRUE
+    LEFT JOIN {{ ref('dim_person_historical_practice') }} AS php
+        ON
+            pp.person_id = php.person_id
+            AND php.is_current_registration = TRUE
 )
 
 -- Select only the latest record per person and only inactive patients
@@ -113,7 +115,8 @@ SELECT
     latest_record_date,
     inactive_reason
 FROM latest_patient_record_per_person
-WHERE record_rank = 1
+WHERE
+    record_rank = 1
     AND is_active = FALSE
     AND is_dummy_patient = FALSE -- Exclude dummy patients
-    AND inactive_reason IS NOT NULL -- Only include patients with a valid inactive reason 
+    AND inactive_reason IS NOT NULL -- Only include patients with a valid inactive reason

@@ -4,16 +4,16 @@ models:
   - name: int_retinal_screening_all
     description: |
       All diabetes retinal screening programme completions with enhanced analytics features.
-      Uses RETSCREN_COD cluster which only includes completed screenings 
+      Uses RETSCREN_COD cluster which only includes completed screenings
       (excludes declined, unsuitable, or referral codes).
-      
+
       Enhanced Analytics Features:
       - Legacy structure alignment with sk_patient_id
       - Comprehensive screening result categorisation
       - Diabetes eye risk assessment and interpretation
       - Enhanced clinical context and timeframe analysis
       - QOF diabetes care process integration support
-      
+
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
     columns:
       - name: observation_id

@@ -22,7 +22,7 @@ select
   dem.person_id,
   {{ dbt_utils.generate_surrogate_key(['dem.uprn_hash']) }} as household_id,
   dem.uprn_hash,
-  
+
   -- Person demographics and status
   dem.is_active,
   dem.is_deceased,
@@ -30,26 +30,26 @@ select
   dem.age,
   dem.age_life_stage,
   dem.age_band_ons,
-  
+
   -- Ethnicity and language
   dem.ethnicity_category,
   dem.main_language,
   dem.interpreter_needed,
-  
+
   -- Practice registration
   dem.current_practice_code,
   dem.current_practice_name,
   dem.registration_start_date,
-  
+
   -- Practice organisational context
   dem.pcn_code,
   dem.pcn_name,
   dem.local_authority,
   dem.practice_neighbourhood,
-  
+
   -- Temporal context
   current_date() as snapshot_date,
   current_timestamp() as created_at
 
 from {{ ref('dim_person_demographics') }} dem
-where dem.uprn_hash is not null 
+where dem.uprn_hash is not null

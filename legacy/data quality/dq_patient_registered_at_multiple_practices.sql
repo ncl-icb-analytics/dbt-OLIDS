@@ -19,32 +19,32 @@ WAREHOUSE = NCL_ANALYTICS_XS
 AS
 WITH registration_periods AS (
     -- Get all registration periods from Episode of Care with lead/lag analysis
-    SELECT 
+    SELECT
         pp."person_id" AS PERSON_ID,
         p."sk_patient_id" AS SK_PATIENT_ID,
         eoc."episode_of_care_start_date" AS REGISTRATION_START_DATE,
         eoc."episode_of_care_end_date" AS REGISTRATION_END_DATE,
         -- Get next registration's start date for gap analysis
         LEAD(eoc."episode_of_care_start_date") OVER (
-            PARTITION BY pp."person_id" 
+            PARTITION BY pp."person_id"
             ORDER BY eoc."episode_of_care_start_date"
         ) AS next_registration_start,
         -- Get previous registration's end date for overlap analysis
         LAG(eoc."episode_of_care_end_date") OVER (
-            PARTITION BY pp."person_id" 
+            PARTITION BY pp."person_id"
             ORDER BY eoc."episode_of_care_start_date"
         ) AS prev_registration_end,
         -- Count registrations per person
         COUNT(*) OVER (PARTITION BY pp."person_id") AS total_registrations,
         -- Count current (non-ended) registrations
-        SUM(CASE WHEN eoc."episode_of_care_end_date" IS NULL THEN 1 ELSE 0 END) 
+        SUM(CASE WHEN eoc."episode_of_care_end_date" IS NULL THEN 1 ELSE 0 END)
             OVER (PARTITION BY pp."person_id") AS current_registration_count
     FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p 
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
         ON pp."patient_id" = p."id"
-    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.EPISODE_OF_CARE eoc 
+    JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.EPISODE_OF_CARE eoc
         ON pp."person_id" = eoc."person_id"
-    WHERE eoc."person_id" IS NOT NULL 
+    WHERE eoc."person_id" IS NOT NULL
         AND eoc."organisation_id" IS NOT NULL
         AND eoc."episode_of_care_start_date" IS NOT NULL
         -- Add episode type filter if needed to identify registration episodes
@@ -60,19 +60,19 @@ registration_analysis AS (
         MIN(REGISTRATION_START_DATE) OVER (PARTITION BY PERSON_ID) AS earliest_registration,
         MAX(REGISTRATION_START_DATE) OVER (PARTITION BY PERSON_ID) AS latest_registration,
         -- Check for overlaps with previous registration
-        CASE WHEN 
-            prev_registration_end IS NOT NULL 
+        CASE WHEN
+            prev_registration_end IS NOT NULL
             AND REGISTRATION_START_DATE <= prev_registration_end
         THEN 1 ELSE 0 END AS has_overlap,
         -- Check for gaps with next registration
-        CASE WHEN 
-            next_registration_start IS NOT NULL 
+        CASE WHEN
+            next_registration_start IS NOT NULL
             AND REGISTRATION_END_DATE IS NOT NULL
             AND DATEDIFF(day, REGISTRATION_END_DATE, next_registration_start) > 0
         THEN 1 ELSE 0 END AS has_gap,
         -- Calculate gap duration if exists
-        CASE WHEN 
-            next_registration_start IS NOT NULL 
+        CASE WHEN
+            next_registration_start IS NOT NULL
             AND REGISTRATION_END_DATE IS NOT NULL
             AND DATEDIFF(day, REGISTRATION_END_DATE, next_registration_start) > 0
         THEN DATEDIFF(day, REGISTRATION_END_DATE, next_registration_start)
@@ -94,20 +94,20 @@ person_summary AS (
         MAX(gap_days) AS longest_gap_days,
         -- Build array of specific issues
         ARRAY_AGG(
-            CASE 
+            CASE
                 WHEN has_overlap = 1 THEN 'Overlapping Registration Periods'
                 WHEN has_gap = 1 THEN 'Gap Between Registrations'
                 WHEN current_registration_count > 1 THEN 'Multiple Current Registrations'
-                ELSE NULL 
+                ELSE NULL
             END
-        ) WITHIN GROUP (ORDER BY CASE 
+        ) WITHIN GROUP (ORDER BY CASE
                 WHEN has_overlap = 1 THEN 1
                 WHEN has_gap = 1 THEN 2
                 WHEN current_registration_count > 1 THEN 3
-                ELSE 4 
+                ELSE 4
             END) AS all_issues
     FROM registration_analysis
-    GROUP BY 
+    GROUP BY
         PERSON_ID,
         SK_PATIENT_ID,
         total_registrations,
@@ -129,16 +129,16 @@ SELECT
     ARRAY_COMPACT(all_issues) AS DQ_ISSUES
 FROM person_summary
 -- Only include records with potential issues
-WHERE 
-    total_registrations > 1 
+WHERE
+    total_registrations > 1
     OR current_registration_count > 1
-    OR has_overlapping_registrations 
+    OR has_overlapping_registrations
     OR has_registration_gaps
-ORDER BY 
-    CASE 
+ORDER BY
+    CASE
         WHEN current_registration_count > 1 THEN 1
         WHEN has_overlapping_registrations THEN 2
         WHEN has_registration_gaps THEN 3
         ELSE 4
     END,
-    total_registrations DESC; 
+    total_registrations DESC;

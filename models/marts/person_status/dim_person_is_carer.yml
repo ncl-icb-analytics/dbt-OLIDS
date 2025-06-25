@@ -9,7 +9,7 @@ models:
     description: |
       Dimension identifying patients who are carers for enhanced support services
       and carer-specific health programmes.
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key"
@@ -28,4 +28,4 @@ models:
         description: "Type or category of caring role"
 
       - name: carer_identified_date
-        description: "Date when carer status was first identified" 
+        description: "Date when carer status was first identified"

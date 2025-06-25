@@ -32,7 +32,7 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_foot_examination_all'), 
+        ref('int_foot_examination_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}

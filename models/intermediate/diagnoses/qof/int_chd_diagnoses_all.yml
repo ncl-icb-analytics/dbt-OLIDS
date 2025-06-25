@@ -5,27 +5,27 @@ models:
     description: |
       All coronary heart disease (CHD) diagnoses from clinical records.
       Uses QOF cluster ID CHD_COD for all forms of CHD diagnosis.
-      
+
       Clinical Purpose:
       - CHD register inclusion for QOF cardiovascular disease management
-      - Cardiovascular risk stratification and monitoring  
+      - Cardiovascular risk stratification and monitoring
       - Secondary prevention pathway identification
-      
+
       QOF Context:
-      CHD register follows simple diagnosis-only pattern - any CHD diagnosis code qualifies 
-      for register inclusion. No resolution codes or complex criteria. This is a lifelong 
+      CHD register follows simple diagnosis-only pattern - any CHD diagnosis code qualifies
+      for register inclusion. No resolution codes or complex criteria. This is a lifelong
       condition register for cardiovascular secondary prevention.
-      
+
       Key Clinical Notes:
       - CHD is considered a permanent condition (no resolution codes)
       - Register inclusion based purely on presence of diagnostic codes
       - Important for secondary prevention medication monitoring
       - No age restrictions for CHD register
-      
+
       This is OBSERVATION-LEVEL data - one row per CHD observation.
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
       Use this model as input for CHD register and cardiovascular risk models.
-      
+
     columns:
       - name: observation_id
         description: "Unique observation identifier"
@@ -77,4 +77,4 @@ models:
           combination_of_columns:
             - observation_id
             - concept_code
-            - source_cluster_id 
+            - source_cluster_id

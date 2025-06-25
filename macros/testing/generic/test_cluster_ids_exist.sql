@@ -7,12 +7,12 @@
             ','
         ))
     )
-    SELECT 
+    SELECT
         rc.cluster_id,
         'Cluster ID not found in codesets_combined_codesets' AS failure_reason
     FROM required_clusters rc
     WHERE rc.cluster_id NOT IN (
-        SELECT DISTINCT cluster_id 
+        SELECT DISTINCT cluster_id
         FROM {{ ref('stg_codesets_combined_codesets') }}
     )
-{% endtest %} 
+{% endtest %}

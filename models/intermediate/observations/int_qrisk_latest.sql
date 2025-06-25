@@ -27,10 +27,10 @@ SELECT
 
 FROM (
     {{ get_latest_events(
-        ref('int_qrisk_all'), 
+        ref('int_qrisk_all'),
         partition_by=['person_id'],
         order_by='clinical_effective_date'
     ) }}
 ) latest_qrisk
 
-WHERE is_valid_qrisk = TRUE 
+WHERE is_valid_qrisk = TRUE

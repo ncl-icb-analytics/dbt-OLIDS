@@ -3,3 +3,4 @@ pandas
 pyyaml
 dbt-core
 dbt-snowflake
+pre-commit

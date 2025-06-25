@@ -39,4 +39,4 @@ models:
       - name: latest_statin_allergy_date
         description: "Latest statin allergy/contraindication date (should be NULL for all)"
       - name: latest_statin_decision_date
-        description: "Latest statin decision date (should be NULL for all)" 
+        description: "Latest statin decision date (should be NULL for all)"

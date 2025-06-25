@@ -17,7 +17,7 @@ Clinical Purpose:
 - Resolution status tracking
 
 QOF Context:
-Learning disability register includes persons with learning disability diagnosis codes 
+Learning disability register includes persons with learning disability diagnosis codes
 who have not been resolved. Resolution logic applied in downstream fact models.
 Age restrictions typically ≥14 years applied in fact layer.
 
@@ -33,10 +33,10 @@ SELECT
     obs.mapped_concept_code AS concept_code,
     obs.mapped_concept_display AS concept_display,
     obs.cluster_id AS source_cluster_id,
-    
+
     -- Learning disability-specific flags (observation-level only)
     CASE WHEN obs.cluster_id = 'LD_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_diagnosis_code,
-    
+
     -- Learning disability observation type determination
     CASE
         WHEN obs.cluster_id = 'LD_COD' THEN 'Learning Disability Diagnosis'
@@ -46,4 +46,4 @@ SELECT
 FROM ({{ get_observations("'LD_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
-ORDER BY person_id, clinical_effective_date, observation_id 
+ORDER BY person_id, clinical_effective_date, observation_id

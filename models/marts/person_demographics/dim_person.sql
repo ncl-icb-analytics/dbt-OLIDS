@@ -15,20 +15,20 @@
 
 WITH person_patients AS (
     -- Get all patient relationships for each person
-    SELECT 
+    SELECT
         pp.person_id,
         ARRAY_AGG(DISTINCT p.sk_patient_id) AS sk_patient_ids,
         ARRAY_AGG(DISTINCT p.id) AS patient_ids,
         COUNT(DISTINCT p.id) AS total_patients
-    FROM {{ ref('stg_olids_patient_person') }} pp
-    JOIN {{ ref('stg_olids_patient') }} p 
+    FROM {{ ref('stg_olids_patient_person') }} AS pp
+    INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON pp.patient_id = p.id
     GROUP BY pp.person_id
 ),
 
 person_practices AS (
     -- Get all practice relationships from the historical practice dimension
-    SELECT 
+    SELECT
         person_id,
         ARRAY_AGG(DISTINCT practice_id) AS practice_ids,
         ARRAY_AGG(DISTINCT practice_code) AS practice_codes,
@@ -40,7 +40,7 @@ person_practices AS (
 
 current_practices AS (
     -- Get the current practice for each person
-    SELECT 
+    SELECT
         person_id,
         practice_id AS current_practice_id,
         practice_code AS current_practice_code,
@@ -50,20 +50,20 @@ current_practices AS (
 )
 
 -- Final aggregation
-SELECT 
+SELECT
     pp.person_id,
     pp.sk_patient_ids,
     pp.patient_ids,
-    COALESCE(pr.practice_ids, ARRAY_CONSTRUCT()) AS practice_ids,
-    COALESCE(pr.practice_codes, ARRAY_CONSTRUCT()) AS practice_codes,
-    COALESCE(pr.practice_names, ARRAY_CONSTRUCT()) AS practice_names,
     cp.current_practice_id,
     cp.current_practice_code,
     cp.current_practice_name,
     pp.total_patients,
+    COALESCE(pr.practice_ids, ARRAY_CONSTRUCT()) AS practice_ids,
+    COALESCE(pr.practice_codes, ARRAY_CONSTRUCT()) AS practice_codes,
+    COALESCE(pr.practice_names, ARRAY_CONSTRUCT()) AS practice_names,
     COALESCE(pr.total_practices, 0) AS total_practices
-FROM person_patients pp
-LEFT JOIN person_practices pr 
+FROM person_patients AS pp
+LEFT JOIN person_practices AS pr
     ON pp.person_id = pr.person_id
-LEFT JOIN current_practices cp 
-    ON pp.person_id = cp.person_id 
+LEFT JOIN current_practices AS cp
+    ON pp.person_id = cp.person_id

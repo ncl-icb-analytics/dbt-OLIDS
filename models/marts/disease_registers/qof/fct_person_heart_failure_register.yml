@@ -2,32 +2,32 @@ models:
   - name: fct_person_heart_failure_register
     description: |
       QOF Heart Failure Register - Type classification register with HF subtype determination.
-      
+
       **Business Logic (Pattern 4):**
       - Active heart failure diagnosis: latest HF_COD > latest HFRES_COD OR no resolution recorded
       - No age restrictions
       - Subtype classification: General HF vs HF with LVSD/Reduced EF
       - Multiple register flags: General HF register + LVSD/Reduced EF specialist register
-      
+
       **Clinical Context:**
       This register identifies patients with active heart failure and classifies them by HF subtype
       for appropriate clinical management. LVSD/Reduced EF classification supports specialist
       cardiology referral and evidence-based medication management.
-      
+
       **QOF Requirements:**
       - HF001: Practice can produce a register of patients with heart failure
       - HF002: Percentage of patients with a diagnosis of heart failure due to left ventricular
         systolic dysfunction who are currently treated with ACE inhibitors or ARBs
       - Supports heart failure monitoring indicators and medication optimisation
-      
+
       **Subtype Classification Logic:**
       - General HF: Any active heart failure diagnosis (HF_COD cluster)
       - HF with LVSD/Reduced EF: General HF + (HFLVSD_COD OR REDEJCFRAC_COD)
-      
+
       **Data Sources:**
       - Diagnosis codes: int_heart_failure_diagnoses_all (HF_COD, HFRES_COD, HFLVSD_COD, REDEJCFRAC_COD cluster IDs)
       - No age filtering required
-      
+
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
     columns:
@@ -120,4 +120,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true] 
+              values: [true]

@@ -3,7 +3,7 @@ version: 2
 models:
   - name: int_ltc_lcs_dm_observations
     description: "Intermediate model for diabetes observations used in LTC/LCS case finding. Contains HbA1c measurements, diabetes risk scores, gestational diabetes history, and BMI measurements."
-    
+
     columns:
       - name: observation_id
         description: "Unique identifier for the observation"
@@ -47,4 +47,4 @@ models:
 
     tests:
       - cluster_ids_exist:
-          cluster_ids: "HBA1C_LEVEL,QDIABETES_RISK,QRISK2_10YEAR,HISTORY_GESTATIONAL_DIABETES,GESTATIONAL_DIABETES_PREGNANCY_RISK,BMI_MEASUREMENT" 
+          cluster_ids: "HBA1C_LEVEL,QDIABETES_RISK,QRISK2_10YEAR,HISTORY_GESTATIONAL_DIABETES,GESTATIONAL_DIABETES_PREGNANCY_RISK,BMI_MEASUREMENT"

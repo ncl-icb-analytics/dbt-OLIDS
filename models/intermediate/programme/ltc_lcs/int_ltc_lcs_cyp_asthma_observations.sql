@@ -6,4 +6,4 @@
 {{ get_observations(
     cluster_ids="'SUSPECTED_ASTHMA','VIRAL_WHEEZE','ASTHMA_DIAGNOSIS','ASTHMA_RESOLVED'",
     source='LTC_LCS'
-) }} 
+) }}

@@ -19,7 +19,7 @@ SELECT
     sex.SEX, -- Sex is included for confirmation; it's filtered to be 'Female' or 'Unknown' by the WHERE clause.
     -- Flag for age 12-55 inclusive: Standard demographic definition for child-bearing age.
     (age.AGE >= 12 AND age.AGE <= 55) AS IS_CHILD_BEARING_AGE_12_55,
-    
+
     -- Flag for age 0-55 inclusive: Used for specific safety programs like Valproate.
     -- This flag will always be TRUE for rows in this table because the WHERE clause (age.AGE <= 55) ensures it.
     (age.AGE <= 55) AS IS_CHILD_BEARING_AGE_0_55
@@ -30,10 +30,9 @@ INNER JOIN
     -- Source table containing resolved sex for each person.
     DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_SEX sex ON age.PERSON_ID = sex.PERSON_ID
 WHERE
-    -- Filter for individuals NOT identified as Male. 
+    -- Filter for individuals NOT identified as Male.
     -- This approach ('Not male') is often used for clinical safety to be more inclusive than specifically selecting 'Female'.
     sex.SEX != 'Male'
-    -- Further filter to include only these non-males who are aged 55 or younger, 
+    -- Further filter to include only these non-males who are aged 55 or younger,
     -- ensuring they fall into at least the broader 0-55 child-bearing age definition used in this table.
     AND age.AGE <= 55;
-

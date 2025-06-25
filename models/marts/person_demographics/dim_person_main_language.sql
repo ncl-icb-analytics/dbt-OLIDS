@@ -25,22 +25,22 @@ WITH latest_language_per_person AS (
         o.mapped_concept_code AS concept_code,
         o.mapped_concept_display AS term,
         -- Extract just the language name from the description
-        CASE 
-            WHEN o.mapped_concept_display LIKE 'Main spoken language %' THEN 
+        CASE
+            WHEN o.mapped_concept_display LIKE 'Main spoken language %' THEN
                 REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Main spoken language ', ''), ' \\(finding\\)$', '')
-            WHEN o.mapped_concept_display LIKE 'Using %' THEN 
+            WHEN o.mapped_concept_display LIKE 'Using %' THEN
                 REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Using ', ''), ' \\(observable entity\\)$', '')
-            WHEN o.mapped_concept_display LIKE 'Uses %' THEN 
+            WHEN o.mapped_concept_display LIKE 'Uses %' THEN
                 REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Uses ', ''), ' \\(finding\\)$', '')
-            WHEN o.mapped_concept_display LIKE 'Preferred method of communication: %' THEN 
+            WHEN o.mapped_concept_display LIKE 'Preferred method of communication: %' THEN
                 REGEXP_REPLACE(o.mapped_concept_display, '^Preferred method of communication: ', '')
             ELSE o.mapped_concept_display
         END AS language,
         -- Categorise the language type
         CASE
-            WHEN o.mapped_concept_display LIKE '%sign language%' OR 
+            WHEN o.mapped_concept_display LIKE '%sign language%' OR
                  o.mapped_concept_display LIKE '%Sign Language%' THEN 'Sign'
-            WHEN o.mapped_concept_display LIKE '%Makaton%' OR 
+            WHEN o.mapped_concept_display LIKE '%Makaton%' OR
                  o.mapped_concept_display LIKE '%Preferred method of communication%' THEN 'Other Communication Method'
             ELSE 'Spoken'
         END AS language_type,
@@ -64,7 +64,7 @@ latest_interpreter_needs AS (
         o.mapped_concept_id AS concept_id,
         o.mapped_concept_display AS term,
         -- Determine if interpreter is needed
-        CASE 
+        CASE
             WHEN o.mapped_concept_display LIKE '%interpreter needed%' OR
                  o.mapped_concept_display LIKE '%Requires %interpreter%' OR
                  o.mapped_concept_display LIKE '%Uses %interpreter%' THEN TRUE
@@ -73,7 +73,7 @@ latest_interpreter_needs AS (
         END AS interpreter_needed,
         -- Categorise interpreter type
         CASE
-            WHEN o.mapped_concept_display LIKE '%sign language%' OR 
+            WHEN o.mapped_concept_display LIKE '%sign language%' OR
                  o.mapped_concept_display LIKE '%Sign Language%' THEN 'Sign Language'
             WHEN o.mapped_concept_display LIKE '%deafblind%' THEN 'Deafblind'
             WHEN o.mapped_concept_display LIKE '%language interpreter%' THEN 'Language'
@@ -143,7 +143,7 @@ SELECT
 FROM {{ ref('stg_olids_patient_person') }} pp
 LEFT JOIN {{ ref('stg_olids_patient') }} p
     ON pp.patient_id = p.id
-LEFT JOIN latest_language_per_person llpp 
+LEFT JOIN latest_language_per_person llpp
     ON pp.person_id = llpp.person_id
-LEFT JOIN latest_interpreter_needs lin 
-    ON pp.person_id = lin.person_id 
+LEFT JOIN latest_interpreter_needs lin
+    ON pp.person_id = lin.person_id

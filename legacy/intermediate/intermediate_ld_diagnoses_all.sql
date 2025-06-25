@@ -32,4 +32,4 @@ JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
 JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT p
     ON o."patient_id" = p."id"
 -- Filter for observations belonging to the learning disability diagnosis code cluster.
-WHERE C.CLUSTER_ID = 'LD_DIAGNOSIS_COD'; 
+WHERE C.CLUSTER_ID = 'LD_DIAGNOSIS_COD';

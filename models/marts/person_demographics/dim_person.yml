@@ -6,18 +6,18 @@ models:
       Simplified person dimension providing aggregated patient and practice relationships.
       Uses arrays to efficiently store multiple patient IDs and practice associations per person.
       This is the core dimension for person-level analytics across the healthcare data warehouse.
-      
+
       **Key Features:**
       - One row per unique person_id
       - Aggregates all patient identifiers associated with each person
       - Stores all practice relationships (current and historical)
       - Uses Snowflake arrays for efficient storage of one-to-many relationships
-      
+
       **Business Logic:**
       - Aggregates from person-patient mappings via stg_olids_patient_person
       - Links to practice relationships via dim_person_historical_practice
       - Maintains current practice as a separate denormalised field
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier - primary key for the dimension"
@@ -67,4 +67,4 @@ models:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
-              max_value: 50 
+              max_value: 50

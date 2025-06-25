@@ -1,10 +1,10 @@
 -- Staging model for CODESETS.ETHNICITY_CODES
 -- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
 
-select
-    "CODE" as code,
-    "TERM" as term,
-    "CATEGORY" as category,
-    "SUBCATEGORY" as subcategory,
-    "GRANULAR" as granular
-from {{ source('CODESETS', 'ETHNICITY_CODES') }}
+SELECT
+    "CODE" AS code,
+    "TERM" AS term,
+    "CATEGORY" AS category,
+    "SUBCATEGORY" AS subcategory,
+    "GRANULAR" AS granular
+FROM {{ source('CODESETS', 'ETHNICITY_CODES') }}

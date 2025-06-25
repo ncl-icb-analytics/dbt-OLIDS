@@ -4,28 +4,28 @@ models:
   - name: fct_person_nafld_register
     description: |
       Non-Alcoholic Fatty Liver Disease (NAFLD) register fact table identifying individuals with NAFLD diagnosis.
-      
+
       **Business Logic:**
       - Simple presence of NAFLD diagnosis code = on register
       - No age restrictions or complex criteria
-      
+
       **Technical Note:**
       Uses hardcoded concept codes as no NAFLD cluster is defined in the terminology mapping.
       This should be reviewed and updated once an appropriate cluster is available.
-      
+
       **Hardcoded Concept Codes:**
       - 197315008, 1197739005, 1231824009, 442685003, 722866000, 503681000000108
-      
+
       **Population Coverage:**
       Includes ALL persons (active, inactive, deceased) for comprehensive reporting and research.
-      
+
       **Clinical Context:**
       Supports identification of patients with documented NAFLD for monitoring and care management.
       Simple register approach reflects straightforward diagnostic criteria without complex validation.
 
     config:
       materialized: table
-      
+
     columns:
       - name: person_id
         description: "Unique person identifier linking to dim_person"
@@ -34,31 +34,30 @@ models:
           - relationships:
               to: ref('dim_person')
               field: person_id
-              
+
       - name: is_on_register
         description: "Register inclusion flag (always TRUE in this table as filtered view)"
         tests:
           - not_null
           - accepted_values:
               values: [true]
-              
+
       - name: earliest_diagnosis_date
         description: "Date of first recorded NAFLD diagnosis"
         tests:
           - not_null
-          
+
       - name: latest_diagnosis_date
         description: "Date of most recent NAFLD diagnosis"
         tests:
           - not_null
-          
+
       - name: nafld_diagnosis_codes
         description: "Array of all NAFLD-related concept codes recorded for traceability"
         tests:
           - not_null
-          
+
       - name: nafld_diagnosis_displays
         description: "Array of human-readable terms for NAFLD concept codes"
         tests:
           - not_null
-          

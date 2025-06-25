@@ -21,4 +21,4 @@ SELECT
     local_authority,
     practice_neighbourhood
 FROM {{ ref('stg_population_health_practice_neighbourhood_lookup') }}
-WHERE practice_code IS NOT NULL 
+WHERE practice_code IS NOT NULL

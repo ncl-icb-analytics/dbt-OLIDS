@@ -26,9 +26,10 @@ hba1c_readings AS (
         mapped_concept_code,
         mapped_concept_display
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
-    WHERE cluster_id = 'HBA1C_LEVEL'
+    WHERE
+        cluster_id = 'HBA1C_LEVEL'
         AND result_value > 0
-        AND clinical_effective_date >= DATEADD(year, -1, CURRENT_DATE())
+        AND clinical_effective_date >= DATEADD(YEAR, -1, CURRENT_DATE())
 ),
 
 latest_hba1c AS (
@@ -37,26 +38,34 @@ latest_hba1c AS (
         person_id,
         clinical_effective_date AS latest_hba1c_date,
         result_value AS latest_hba1c_value,
-        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (ORDER BY mapped_concept_code) AS all_hba1c_codes,
-        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (ORDER BY mapped_concept_display) AS all_hba1c_displays
+        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (
+            ORDER BY mapped_concept_code
+        ) AS all_hba1c_codes,
+        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (
+            ORDER BY mapped_concept_display
+        ) AS all_hba1c_displays
     FROM hba1c_readings
     GROUP BY person_id, clinical_effective_date, result_value
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC) = 1
+    QUALIFY
+        ROW_NUMBER()
+            OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
+        = 1
 )
 
 -- Final selection with HbA1c range assessment
 SELECT
     bp.person_id,
     bp.age,
-    CASE 
-        WHEN hba1c.latest_hba1c_value >= 42 AND hba1c.latest_hba1c_value <= 46 THEN TRUE
-        ELSE FALSE
-    END AS has_elevated_hba1c,
     hba1c.latest_hba1c_date,
     hba1c.latest_hba1c_value,
     hba1c.all_hba1c_codes,
-    hba1c.all_hba1c_displays
-FROM base_population bp
-LEFT JOIN latest_hba1c hba1c ON bp.person_id = hba1c.person_id
-WHERE hba1c.latest_hba1c_value >= 42 
-    AND hba1c.latest_hba1c_value <= 46 
+    hba1c.all_hba1c_displays,
+    COALESCE(
+        hba1c.latest_hba1c_value >= 42 AND hba1c.latest_hba1c_value <= 46,
+        FALSE
+    ) AS has_elevated_hba1c
+FROM base_population AS bp
+LEFT JOIN latest_hba1c AS hba1c ON bp.person_id = hba1c.person_id
+WHERE
+    hba1c.latest_hba1c_value >= 42
+    AND hba1c.latest_hba1c_value <= 46

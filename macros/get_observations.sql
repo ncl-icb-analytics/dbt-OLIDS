@@ -29,7 +29,7 @@
     FROM {{ ref('stg_olids_observation') }} o
     JOIN {{ ref('stg_olids_patient') }} p
         ON o.patient_id = p.id
-    JOIN {{ ref('stg_olids_patient_person') }} pp 
+    JOIN {{ ref('stg_olids_patient_person') }} pp
         ON p.id = pp.patient_id
     LEFT JOIN {{ ref('stg_olids_term_concept') }} unit_con
         ON o.result_value_unit_concept_id = unit_con.id
@@ -41,8 +41,8 @@
         {% endif %}
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY o.id, mc.concept_code, mc.cluster_id
-        ORDER BY 
+        ORDER BY
             CASE WHEN mc.code_description IS NOT NULL THEN 1 ELSE 2 END,
             mc.code_description
     ) = 1
-{% endmacro %} 
+{% endmacro %}

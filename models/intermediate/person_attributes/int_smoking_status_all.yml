@@ -9,7 +9,7 @@ models:
     description: |
       All smoking status observations from clinical records using QOF definitions.
       Enhanced with analytics-ready flags and legacy structure alignment.
-      Uses cluster IDs: SMOK_COD (general smoking codes), LSMOK_COD (current smoker codes), 
+      Uses cluster IDs: SMOK_COD (general smoking codes), LSMOK_COD (current smoker codes),
       EXSMOK_COD (ex-smoker codes), and NSMOK_COD (never smoked codes).
     columns:
       - name: person_id
@@ -89,4 +89,4 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Active Smoker (QOF Risk)', 'Ex-Smoker (CVD Risk)', 'Never Smoked (Low Risk)', 'Unknown Risk'] 
+              values: ['Active Smoker (QOF Risk)', 'Ex-Smoker (CVD Risk)', 'Never Smoked (Low Risk)', 'Unknown Risk']

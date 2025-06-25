@@ -7,4 +7,4 @@
 {{ get_observations(
     cluster_ids="'QRISK2_10YEAR', 'NON_HDL_CHOLESTEROL', 'STATIN_ALLERGY_ADVERSE_REACTION', 'STATIN_NOT_INDICATED', 'STATINDEC_COD'",
     source='LTC_LCS'
-) }} 
+) }}
