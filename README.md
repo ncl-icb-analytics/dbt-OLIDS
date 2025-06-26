@@ -256,6 +256,7 @@ git commit -m "fix(diabetes): correct type 1/2 classification logic"
 git commit -m "docs: update README with environment setup steps"
 git commit -m "refactor(person): consolidate demographic dimensions"
 git commit -m "test: add validation for medication order macros"
+git commit -m "chore: updated dbt_utils to v1.3.0"
 ```
 
 **Common types:**
