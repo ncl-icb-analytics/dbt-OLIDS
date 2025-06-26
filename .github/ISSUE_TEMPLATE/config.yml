@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 dbt Documentation
+    url: https://docs.getdbt.com/
+    about: Official dbt documentation for reference
+  - name: 💬 General Discussion
+    url: https://github.com/ncl-icb-analytics/snowflake-hei-migration-dbt/discussions
+    about: For questions, ideas, and general discussion about the project

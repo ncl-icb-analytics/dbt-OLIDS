@@ -1,0 +1,55 @@
+name: 🐛 Model Bug Report
+description: Report an issue with an existing dbt model or test failure
+title: "[Bug]: "
+labels: ["bug", "model-issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our dbt project!
+        Please provide details about the model issue you've discovered.
+
+  - type: input
+    id: model-name
+    attributes:
+      label: Affected Model(s)
+      placeholder: "e.g., fct_person_diabetes_register"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      options:
+        - Test failure
+        - Incorrect business logic
+        - Data quality issue (missing/duplicate/incorrect data)
+        - Performance problem
+        - Compilation error
+        - Documentation issue
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What's happening and what should happen instead?
+      placeholder: "e.g., The model is returning duplicate rows for some patients, but each patient should appear only once... OR Test 'unique_person_id' is failing because..."
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "e.g., DEV, QA, PROD, All environments"
+
+  - type: checkboxes
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - label: High priority (affects live reporting or blocks other work)

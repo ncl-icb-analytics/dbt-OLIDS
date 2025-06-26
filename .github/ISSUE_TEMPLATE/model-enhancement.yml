@@ -1,0 +1,57 @@
+name: ✨ Model Enhancement
+description: Request an improvement to an existing dbt model
+title: "[Enhancement]: "
+labels: ["enhancement", "model-improvement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to our dbt project!
+        Please describe the enhancement you'd like to see in an existing model.
+
+  - type: input
+    id: model-name
+    attributes:
+      label: Target Model(s)
+      placeholder: "e.g., fct_person_diabetes_register"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: enhancement-type
+    attributes:
+      label: Enhancement Type
+      options:
+        - Add new columns/metrics
+        - Improve business logic
+        - Add new tests
+        - Performance optimisation
+        - Documentation improvement
+        - Integration with other models
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What enhancement would you like and why?
+      placeholder: "e.g., Add columns for condition type classification based on diagnosis codes..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - label: High priority (blocking other work or urgent business need)
+
+  - type: checkboxes
+    id: breaking-change
+    attributes:
+      label: Breaking Change Assessment
+      options:
+        - label: This might be a breaking change (changes existing logic)
+        - label: I'm not sure about the impact
