@@ -1,0 +1,60 @@
+name: 🏗️ New dbt Model Request
+description: Request a new dbt model
+title: "[Model Request]: "
+labels: ["enhancement", "model-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to our dbt project!
+        Please provide details about the new model you'd like to see implemented.
+
+  - type: dropdown
+    id: model-layer
+    attributes:
+      label: Model Layer
+      options:
+        - Staging (1:1 source mapping, view)
+        - Intermediate (business logic, table)
+        - Mart (analytics-ready, table)
+    validations:
+      required: true
+
+  - type: input
+    id: model-name
+    attributes:
+      label: Proposed Model Name
+      placeholder: "e.g., fct_person_condition_register"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: model-category
+    attributes:
+      label: Model Category
+      options:
+        - Clinical Register/Cohort
+        - Clinical Measurements/Observations
+        - Medications/Prescriptions
+        - Demographics/Attributes
+        - Data Quality/Validation
+        - Organisation/Practice
+        - Geography/Location
+        - Programme/Campaign specific
+        - Other
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What problem does this model solve and what should it do?
+      placeholder: "e.g., Identify patients with specific conditions for reporting..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - label: High priority (blocking other work or urgent business need)

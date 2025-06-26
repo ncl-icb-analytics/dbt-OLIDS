@@ -1,0 +1,44 @@
+name: 🔧 General Project Issue
+description: Infrastructure, documentation, processes, or other non-model issues
+title: "[General]: "
+labels: ["general"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to our dbt project!
+        Use this template for issues that don't relate to specific dbt models.
+
+  - type: dropdown
+    id: issue-category
+    attributes:
+      label: Issue Category
+      options:
+        - Documentation
+        - CI/CD & GitHub Actions
+        - Development Environment/Setup
+        - dbt Project Configuration
+        - Performance/Infrastructure
+        - Code Quality/Standards
+        - Testing Framework
+        - Security
+        - Process Improvement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the issue and what you'd like to see instead
+      placeholder: "e.g., The README needs updating to include new setup instructions..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - label: High priority (blocking development or urgent need)
