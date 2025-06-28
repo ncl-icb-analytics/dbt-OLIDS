@@ -1,0 +1,362 @@
+version: 2
+
+models:
+  - name: int_flu_age_birth_range_rules
+    description: "Birth date range eligibility rules for child flu vaccination (CHILD_2_3, CHILD_4_16)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier (e.g., flu_2024_25)"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (CHILD_2_3, CHILD_4_16)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CHILD_2_3', 'CHILD_4_16']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: birth_date
+        description: "Person's birth date"
+        tests:
+          - not_null
+      - name: birth_start
+        description: "Start of eligible birth date range"
+      - name: birth_end
+        description: "End of eligible birth date range"
+      - name: age_months
+        description: "Age in months at reference date"
+      - name: age_years
+        description: "Age in years at reference date"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - rule_group_id
+            - person_id
+          name: unique_age_birth_range_person_rule
+
+  - name: int_flu_ckd_hierarchical_eligibility
+    description: "CKD hierarchical eligibility with stage-based logic"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (CKD_GROUP)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CKD_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying CKD event"
+        tests:
+          - not_null
+      - name: diagnosis_type
+        description: "Type of CKD diagnosis or staging"
+      - name: stage_hierarchy_note
+        description: "Explanation of hierarchical staging logic applied"
+
+  - name: int_flu_bmi_hierarchical_eligibility
+    description: "BMI hierarchical eligibility for severe obesity (BMI 40+)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (BMI_GROUP)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BMI_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying BMI/obesity event"
+        tests:
+          - not_null
+      - name: eligibility_path
+        description: "Path by which BMI eligibility was determined"
+      - name: latest_bmi_value
+        description: "Most recent BMI value"
+
+  - name: int_flu_pregnancy_hierarchical_eligibility
+    description: "Pregnancy hierarchical eligibility with delivery logic"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (PREG_GROUP)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PREG_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying pregnancy event"
+        tests:
+          - not_null
+      - name: eligibility_group
+        description: "Group by which pregnancy eligibility was determined"
+      - name: person_sex
+        description: "Person's sex (should be female for pregnancy)"
+        tests:
+          - accepted_values:
+              values: ['F', 'FEMALE', 'WOMAN']
+
+  - name: int_flu_remaining_simple_eligibility
+    description: "Remaining simple rule groups (CNS, ASPLENIA, LEARNDIS)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CNS_GROUP', 'ASPLENIA_GROUP', 'LEARNDIS_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying clinical event"
+        tests:
+          - not_null
+
+  - name: int_flu_remaining_combination_eligibility
+    description: "Remaining combination rule groups (IMMUNO, RESP)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['IMMUNO_GROUP', 'RESP_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying clinical event"
+        tests:
+          - not_null
+      - name: evidence_type
+        description: "Type of evidence supporting eligibility"
+
+  - name: int_flu_carer_exclusion_eligibility
+    description: "Carer exclusion eligibility (carers not already eligible under other rules)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (CARER_GROUP)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CARER_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying carer event"
+        tests:
+          - not_null
+      - name: carer_type
+        description: "Type of carer status"
+      - name: latest_not_carer_date
+        description: "Date of latest 'not carer' code (if any)"
+
+  - name: int_flu_vaccination_status
+    description: "Vaccination status tracking (given, declined, LAIV)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['FLUVAX_GROUP', 'FLUDECLINED_GROUP', 'LAIV_GROUP']
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: event_date
+        description: "Date of vaccination/decline event"
+        tests:
+          - not_null
+      - name: status_type
+        description: "Type of vaccination status"
+        tests:
+          - accepted_values:
+              values: ['vaccinated', 'laiv_vaccinated', 'declined']
+  - name: int_flu_age_based_rules
+    description: "Age-based eligibility rules for flu vaccination (e.g., Over 65)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier (e.g., flu_2024_25)"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (e.g., OVER65_GROUP)"
+        tests:
+          - not_null
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: birth_date
+        description: "Person's birth date"
+        tests:
+          - not_null
+      - name: reference_date
+        description: "Campaign reference date used for age calculation"
+        tests:
+          - not_null
+      - name: age_months
+        description: "Age in months at reference date"
+      - name: age_years
+        description: "Age in years at reference date"
+      - name: description
+        description: "Rule description"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - rule_group_id
+            - person_id
+          name: unique_age_based_person_rule
+
+  - name: int_flu_simple_rules
+    description: "Simple single-cluster eligibility rules for flu vaccination"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier (e.g., flu_2024_25)"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (e.g., CHD_GROUP, LEARNDIS_GROUP)"
+        tests:
+          - not_null
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying clinical event"
+        tests:
+          - not_null
+      - name: reference_date
+        description: "Reference date used for date qualifiers"
+      - name: description
+        description: "Rule description"
+      - name: birth_date
+        description: "Person's birth date"
+      - name: age_months
+        description: "Current age in months"
+      - name: age_years
+        description: "Current age in years"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - rule_group_id
+            - person_id
+          name: unique_simple_rule_person
+
+  - name: int_flu_combination_rules
+    description: "Combination eligibility rules requiring multiple conditions (AND/OR logic)"
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier (e.g., flu_2024_25)"
+        tests:
+          - not_null
+      - name: rule_group_id
+        description: "Rule group identifier (e.g., AST_GROUP, RESP_GROUP)"
+        tests:
+          - not_null
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      - name: qualifying_event_date
+        description: "Date of qualifying clinical event"
+        tests:
+          - not_null
+      - name: reference_date
+        description: "Reference date used for eligibility"
+      - name: description
+        description: "Rule description"
+      - name: birth_date
+        description: "Person's birth date"
+      - name: age_months
+        description: "Current age in months"
+      - name: age_years
+        description: "Current age in years"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - rule_group_id
+            - person_id
+          name: unique_combination_rule_person
