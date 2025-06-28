@@ -1,0 +1,113 @@
+version: 2
+
+models:
+  - name: fct_flu_eligibility_2024_25
+    description: |
+      Flu vaccination eligibility fact table for 2024-25 campaign.
+      
+      This model consolidates all flu vaccination eligibility rules into a single
+      fact table, replacing the complex macro-based approach. Each row represents
+      one person's eligibility under one specific rule group.
+      
+      A person may appear multiple times if eligible under different rules
+      (e.g., both age-based and clinical condition). This is expected and correct.
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier (flu_2024_25)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['flu_2024_25']
+      
+      - name: campaign_name
+        description: "Human-readable campaign name"
+        tests:
+          - not_null
+      
+      - name: rule_group_id
+        description: "Rule group identifier (e.g., OVER65_GROUP, AST_GROUP, CHD_GROUP)"
+        tests:
+          - not_null
+      
+      - name: rule_group_name
+        description: "Human-readable rule group name"
+        tests:
+          - not_null
+      
+      - name: rule_type
+        description: "Type of rule logic applied"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AGE_BASED', 'AGE_BIRTH_RANGE', 'SIMPLE', 'COMBINATION', 'HIERARCHICAL', 'EXCLUSION']
+      
+      - name: person_id
+        description: "Person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person_demographics')
+              field: person_id
+      
+      - name: qualifying_event_date
+        description: "Date of qualifying clinical event (NULL for age-based rules)"
+      
+      - name: reference_date
+        description: "Reference date used for eligibility determination"
+        tests:
+          - not_null
+      
+      - name: eligibility_reason
+        description: "Human-readable description of eligibility reason"
+        tests:
+          - not_null
+      
+      - name: birth_date
+        description: "Person's birth date"
+        tests:
+          - not_null
+      
+      - name: age_months
+        description: "Age in months at reference date"
+        tests:
+          - not_null
+      
+      - name: age_years
+        description: "Age in years at reference date"
+        tests:
+          - not_null
+      
+      - name: days_since_qualifying_event
+        description: "Days between qualifying event and audit end date"
+      
+      - name: eligibility_priority
+        description: "Priority ranking for multiple eligibilities (1=highest)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7]
+      
+      - name: created_at
+        description: "Timestamp when record was created"
+        tests:
+          - not_null
+    
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - person_id
+            - rule_group_id
+          name: unique_person_campaign_rule_combination
+      
+      - dbt_utils.expression_is_true:
+          expression: "age_years >= 0 AND age_years <= 120"
+          name: reasonable_age_range
+      
+      - dbt_utils.expression_is_true:
+          expression: "qualifying_event_date IS NULL OR qualifying_event_date <= audit_end_date"
+          name: qualifying_event_before_audit_end
+      
+      - dbt_utils.at_least_one:
+          column_name: person_id
+          name: has_at_least_one_eligible_person
