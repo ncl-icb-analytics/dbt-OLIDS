@@ -1,0 +1,13 @@
+campaign_id,rule_group_id,date_type,date_value,description
+flu_2024_25,ALL,start_dat,2024-09-01,Campaign start date
+flu_2024_25,ALL,ref_dat,2025-03-31,Campaign reference date
+flu_2024_25,ALL,child_dat,2024-08-31,Child reference date for school age calculations
+flu_2024_25,ALL,audit_end_dat,2025-02-28,Campaign end date for audit purposes
+flu_2024_25,AST_GROUP,latest_since_date,2023-09-01,Asthma medication lookback date
+flu_2024_25,IMMUNO_GROUP,latest_since_date,2024-03-01,Immunosuppression medication lookback date
+flu_2024_25,CHILD_2_3,birth_start,2020-09-01,Birth date range start for 2-3 year olds
+flu_2024_25,CHILD_2_3,birth_end,2022-08-31,Birth date range end for 2-3 year olds
+flu_2024_25,CHILD_4_16,birth_start,2008-09-01,Birth date range start for 4-16 year olds
+flu_2024_25,CHILD_4_16,birth_end,2020-08-31,Birth date range end for 4-16 year olds
+flu_2024_25,FLUVAX_GROUP,latest_after_date,2024-08-31,Flu vaccination given after this date
+flu_2024_25,LAIV_GROUP,latest_after_date,2024-08-31,LAIV vaccination given after this date 

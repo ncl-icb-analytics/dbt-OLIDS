@@ -1,0 +1,42 @@
+rule_group_id,cluster_id,data_source_type,date_qualifier,cluster_description
+AST_GROUP,AST_COD,observation,EARLIEST,Asthma diagnosis codes
+AST_GROUP,ASTMED_COD,observation,LATEST_SINCE,Asthma medication administration codes
+AST_GROUP,ASTRX_COD,medication,LATEST_SINCE,Asthma medication prescription codes
+AST_ADM_GROUP,ASTADM_COD,observation,LATEST,Asthma admission codes
+RESP_GROUP,RESP_COD,observation,EARLIEST,Chronic respiratory disease codes
+CHD_GROUP,CHD_COD,observation,EARLIEST,Chronic heart disease codes
+CKD_GROUP,CKD_COD,observation,EARLIEST,Chronic kidney disease diagnosis codes
+CKD_GROUP,CKD15_COD,observation,LATEST,CKD stage 1-5 codes
+CKD_GROUP,CKD35_COD,observation,LATEST,CKD stage 3-5 codes
+CLD_GROUP,CLD_COD,observation,EARLIEST,Chronic liver disease codes
+DIAB_GROUP,DIAB_COD,observation,LATEST,Diabetes diagnosis codes
+DIAB_GROUP,DMRES_COD,observation,LATEST,Diabetes resolved codes
+DIAB_GROUP,ADDIS_COD,observation,EARLIEST,Addison's disease codes
+IMMUNO_GROUP,IMMDX_COD,observation,LATEST,Immunosuppression diagnosis codes
+IMMUNO_GROUP,IMMRX_COD,medication,LATEST_SINCE,Immunosuppression medication codes
+IMMUNO_GROUP,IMMADM_COD,observation,LATEST_SINCE,Immunosuppression administration codes
+IMMUNO_GROUP,DXT_CHEMO_COD,observation,LATEST_SINCE,Chemotherapy/radiotherapy codes
+CNS_GROUP,CNSGROUP_COD,observation,EARLIEST,Chronic neurological disease codes
+ASPLENIA_GROUP,PNSPLEEN_COD,observation,EARLIEST,Asplenia/spleen dysfunction codes
+BMI_GROUP,BMI_COD,observation,LATEST,BMI value codes
+BMI_GROUP,BMI_STAGE_COD,observation,LATEST,BMI stage codes
+BMI_GROUP,SEV_OBESITY_COD,observation,LATEST,Severe obesity codes
+PREG_GROUP,PREGDEL_COD,observation,LATEST,Pregnancy and delivery codes
+PREG_GROUP,PREG_COD,observation,LATEST,Pregnancy codes only
+LEARNDIS_GROUP,LEARNDIS_COD,observation,LATEST,Learning disability codes
+CARER_GROUP,CARER_COD,observation,LATEST,Carer status codes
+CARER_GROUP,NOTCARER_COD,observation,LATEST,Not carer status codes
+HOMELESS_GROUP,RESIDE_COD,observation,LATEST,All residential status codes
+HOMELESS_GROUP,HOMELESS_COD,observation,LATEST,Homeless residential codes
+LONGRES_GROUP,RESIDE_COD,observation,LATEST,All residential status codes
+LONGRES_GROUP,LONGRES_COD,observation,LATEST,Long term residential care codes
+HHLD_IMDEF_GROUP,HHLD_IMDEF_COD,observation,LATEST,Household contact immunocompromised codes
+HCWORKER_GROUP,CAREHOME_COD,observation,LATEST,Care home worker codes
+HCWORKER_GROUP,NURSEHOME_COD,observation,LATEST,Nursing home worker codes
+HCWORKER_GROUP,DOMCARE_COD,observation,LATEST,Domiciliary care worker codes
+FLUVAX_GROUP,FLUVAX_COD,observation,LATEST_AFTER,Flu vaccination administration codes
+FLUVAX_GROUP,FLURX_COD,medication,LATEST_AFTER,Flu vaccination medication codes
+FLUDECLINED_GROUP,DECL_COD,observation,LATEST,Flu vaccination declined codes
+FLUDECLINED_GROUP,NOCONS_COD,observation,LATEST,No consent for vaccination codes
+LAIV_GROUP,LAIV_COD,observation,LATEST_AFTER,LAIV vaccination administration codes
+LAIV_GROUP,LAIVRX_COD,medication,LATEST_AFTER,LAIV vaccination medication codes 
