@@ -194,16 +194,16 @@ SELECT
     ae.evidence_type,
     ae.reference_date,
     ae.description,
-    demo.birth_date,
-    DATEDIFF('month', demo.birth_date, ae.reference_date) AS age_months_at_ref_date,
-    DATEDIFF('year', demo.birth_date, ae.reference_date) AS age_years_at_ref_date,
+    demo.birth_date_approx,
+    DATEDIFF('month', demo.birth_date_approx, ae.reference_date) AS age_months_at_ref_date,
+    DATEDIFF('year', demo.birth_date_approx, ae.reference_date) AS age_years_at_ref_date,
     {{ get_flu_audit_date(current_campaign) }} AS created_at
 FROM asthma_eligible ae
 JOIN {{ ref('dim_person_demographics') }} demo
     ON ae.person_id = demo.person_id
 WHERE 1=1
     -- Age restrictions: 6 months to 65 years (as per flu_programme_logic.csv)
-    AND DATEDIFF('month', demo.birth_date, ae.reference_date) >= 6
-    AND DATEDIFF('year', demo.birth_date, ae.reference_date) < 65
+    AND DATEDIFF('month', demo.birth_date_approx, ae.reference_date) >= 6
+    AND DATEDIFF('year', demo.birth_date_approx, ae.reference_date) < 65
 
 ORDER BY person_id

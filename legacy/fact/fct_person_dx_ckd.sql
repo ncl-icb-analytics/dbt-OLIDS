@@ -1,5 +1,5 @@
 -- Define or replace the dynamic table in the HEI_MIGRATION schema to store ONLY patients currently on the CKD register.
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_CKD (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_CKD (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the person (>= 18 for this table)
@@ -46,7 +46,7 @@ WITH BaseObservationsAndClusters AS (
         MC.CODE_DESCRIPTION AS CONCEPT_DISPLAY,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID
     FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS AS MC
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS AS MC
         ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP
         ON O."patient_id" = PP."patient_id"
@@ -60,7 +60,7 @@ FilteredByAge AS (
         boc.*,
         age.AGE
     FROM BaseObservationsAndClusters boc
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
+    JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_AGE age
         ON boc.PERSON_ID = age.PERSON_ID
     WHERE age.AGE >= 18
 ),
@@ -118,7 +118,7 @@ SELECT
 FROM PersonLevelCKDCodingAggregation cod_agg
 -- Left join to the intermediate lab inference table to bring in lab results and CKD stage/confirmation details.
 -- This join enriches coded CKD patients with their latest lab-based CKD status.
-LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_CKD_LAB_INFERENCE lab_inf
+LEFT JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_CKD_LAB_INFERENCE lab_inf
     ON cod_agg.PERSON_ID = lab_inf.PERSON_ID
 -- Final filter to ensure only individuals currently on the CKD register (based on coding logic) are included in this fact table.
 WHERE cod_agg.IS_ON_CKD_REGISTER = TRUE;

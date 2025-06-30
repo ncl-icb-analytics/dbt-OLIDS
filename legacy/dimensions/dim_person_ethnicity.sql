@@ -3,7 +3,7 @@
 -- Starts from PATIENT_PERSON and LEFT JOINs the latest ethnicity record if available.
 -- Ethnicity fields display 'Not Recorded' for persons with no recorded ethnicity.
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_ETHNICITY (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_ETHNICITY (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID NUMBER, -- Surrogate key for the patient from the PATIENT table
     LATEST_ETHNICITY_DATE DATE, -- Date of the most recent ethnicity observation for the person; NULL if not recorded
@@ -34,7 +34,7 @@ WITH LatestEthnicityPerPerson AS (
         pea.ethnicity_granular,
         pea.observation_lds_id -- Include for potential tie-breaking
     FROM
-        DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_ETHNICITY_ALL pea -- Read from the intermediate table
+        DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_ETHNICITY_ALL pea -- Read from the intermediate table
     QUALIFY ROW_NUMBER() OVER (
             PARTITION BY pea.person_id
             -- Order by date first, then by observation ID as a tie-breaker

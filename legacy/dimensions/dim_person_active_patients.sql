@@ -3,7 +3,7 @@
 -- Uses Episode of Care table for registration periods instead of practitioner roles.
 -- Filters out deceased patients and dummy patients.
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_ACTIVE_PATIENTS (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_ACTIVE_PATIENTS (
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
     SK_PATIENT_ID NUMBER COMMENT 'Surrogate key for the patient',
     PRIMARY_PATIENT_ID VARCHAR COMMENT 'ID of the primary patient record for this person',

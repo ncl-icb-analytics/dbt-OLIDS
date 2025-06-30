@@ -1,5 +1,5 @@
 -- Staging model for RULESETS.BP_THRESHOLDS
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".RULESETS
+-- Source: "DATA_LAB_OLIDS_UAT".RULESETS
 
 SELECT
     "THRESHOLD_RULE_ID" AS threshold_rule_id,

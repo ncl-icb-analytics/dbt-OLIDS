@@ -1,5 +1,5 @@
 -- Staging model for OLIDS_MASKED.OBSERVATION
--- Source: "Data_Store_OLIDS_Dummy".OLIDS_MASKED
+-- Source: "Data_Store_OLIDS_UAT".OLIDS_MASKED
 
 SELECT
     "lds_id" AS lds_id,
@@ -11,8 +11,9 @@ SELECT
     "lds_start_date_time" AS lds_start_date_time,
     "record_owner_organisation_code" AS record_owner_organisation_code,
     "patient_id" AS patient_id,
+    "person_id" AS person_id,
     "encounter_id" AS encounter_id,
-    "ldsbusinessid_practioner" AS ldsbusinessid_practioner,
+    "practioner_id" AS practioner_id,
     "parent_obervation_id" AS parent_obervation_id,
     "clinical_effective_date" AS clinical_effective_date,
     "date_precision_concept_id" AS date_precision_concept_id,

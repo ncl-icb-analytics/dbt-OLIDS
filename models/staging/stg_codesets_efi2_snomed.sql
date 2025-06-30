@@ -1,5 +1,5 @@
 -- Staging model for CODESETS.EFI2_SNOMED
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
+-- Source: "DATA_LAB_OLIDS_UAT".REFERENCE
 
 SELECT
     "DEFICIT" AS deficit,
@@ -10,4 +10,4 @@ SELECT
     "TIMECONSTRAINTYEARS" AS timeconstraintyears,
     "AGELIMIT" AS agelimit,
     "OTHERINSTRUCTIONS" AS otherinstructions
-FROM {{ source('CODESETS', 'EFI2_SNOMED') }}
+FROM {{ source('REFERENCE', 'EFI2_SNOMED') }}

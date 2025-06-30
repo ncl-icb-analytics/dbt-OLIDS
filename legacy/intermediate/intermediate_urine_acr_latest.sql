@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_LATEST(
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_LATEST(
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     CLINICAL_EFFECTIVE_DATE DATE, -- Date of the latest ACR test
@@ -20,7 +20,7 @@ SELECT
     result_unit_display,
     concept_code,
     code_description
-FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_ALL
+FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_ALL
 -- Uses QUALIFY with ROW_NUMBER() to filter for the latest record per person.
 QUALIFY ROW_NUMBER() OVER (
     -- Partitions the data by person, so ranking is done independently for each individual.

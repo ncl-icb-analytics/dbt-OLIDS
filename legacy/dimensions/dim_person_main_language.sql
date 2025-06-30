@@ -3,7 +3,7 @@
 -- Starts from PATIENT_PERSON and LEFT JOINs the latest language and interpreter records if available.
 -- Language fields display 'Not Recorded' for persons with no recorded preferred language.
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_MAIN_LANGUAGE (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_MAIN_LANGUAGE (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID NUMBER, -- Surrogate key for the patient from the PATIENT table
     LATEST_LANGUAGE_DATE DATE, -- Date of the most recent language observation for the person; NULL if not recorded
@@ -58,7 +58,7 @@ WITH LatestLanguagePerPerson AS (
     FROM
         "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION o
     JOIN
-        DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+        DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc
         ON o."observation_core_concept_id" = mc.source_code_id
     JOIN
         "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
@@ -134,7 +134,7 @@ LatestInterpreterNeeds AS (
     FROM
         "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION o
     JOIN
-        DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+        DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc
         ON o."observation_core_concept_id" = mc.source_code_id
     JOIN
         "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp

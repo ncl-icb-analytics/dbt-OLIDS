@@ -3,7 +3,7 @@
 -- Only includes persons who have a record in ISACARER_COD, NOTACARER_COD, or UNPAIDCARER_COD clusters.
 -- Carer types and details are categorised based on code descriptions to maintain flexibility with changing codes.
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_IS_CARER (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_IS_CARER (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID NUMBER, -- Surrogate key for the patient from the PATIENT table
     LATEST_CARER_STATUS_DATE DATE, -- Date of the most recent carer status observation
@@ -36,7 +36,7 @@ WITH LatestCarerStatusPerPerson AS (
         FROM
             "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION o
         JOIN
-            DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+            DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc
             ON o."observation_core_concept_id" = mc.source_code_id
         WHERE
             mc.cluster_id IN ('ISACARER_COD', 'NOTACARER_COD', 'UNPAIDCARER_COD')
@@ -98,7 +98,7 @@ WITH LatestCarerStatusPerPerson AS (
         ObservationClusters oc
         ON o."id" = oc.observation_id
     JOIN
-        DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+        DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc
         ON o."observation_core_concept_id" = mc.source_code_id
     JOIN
         "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp

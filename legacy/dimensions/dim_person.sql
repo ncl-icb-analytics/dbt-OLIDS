@@ -3,7 +3,7 @@
 -- Aggregates person-to-patient relationships and practice associations
 -- Uses arrays to store multiple patient IDs and practice information per person
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON (
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
     SK_PATIENT_IDS ARRAY COMMENT 'Array of all surrogate patient keys associated with this person',
     PATIENT_IDS ARRAY COMMENT 'Array of all patient IDs associated with this person',
@@ -42,7 +42,7 @@ person_practices AS (
         ARRAY_AGG(DISTINCT PRACTICE_CODE) AS PRACTICE_CODES,
         ARRAY_AGG(DISTINCT PRACTICE_NAME) AS PRACTICE_NAMES,
         COUNT(DISTINCT PRACTICE_ID) AS TOTAL_PRACTICES
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_HISTORICAL_PRACTICE
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_HISTORICAL_PRACTICE
     GROUP BY PERSON_ID
 ),
 current_practices AS (
@@ -52,7 +52,7 @@ current_practices AS (
         PRACTICE_ID AS CURRENT_PRACTICE_ID,
         PRACTICE_CODE AS CURRENT_PRACTICE_CODE,
         PRACTICE_NAME AS CURRENT_PRACTICE_NAME
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_HISTORICAL_PRACTICE
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_HISTORICAL_PRACTICE
     WHERE IS_CURRENT_PRACTICE = TRUE
 )
 -- Final aggregation

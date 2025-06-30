@@ -2,7 +2,7 @@
 -- from the Observation table into single events per person per date.
 -- Filters out readings with NULL dates or implausible values.
 -- Determines context flags (Home/ABPM) based on associated codes.
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_ALL (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_ALL (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     CLINICAL_EFFECTIVE_DATE DATE, -- Date of the blood pressure reading event (ensured to be NOT NULL)
     SYSTOLIC_VALUE NUMBER, -- Consolidated systolic blood pressure value for the event date
@@ -41,7 +41,7 @@ WITH BaseObservationsAndClusters AS (
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP ON O."patient_id" = PP."patient_id"
     JOIN "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT_MAP AS MAP ON O."observation_core_concept_id" = MAP."source_code_id"
     JOIN "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT AS CON ON MAP."target_code_id" = CON."id"
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.PCD_REFSET_LATEST AS C ON CON."code" = TO_VARCHAR(C.SNOMED_CODE)
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.PCD_REFSET_LATEST AS C ON CON."code" = TO_VARCHAR(C.SNOMED_CODE)
     LEFT JOIN "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY.CONCEPT AS UNIT_CON ON O."result_value_unit_concept_id" = UNIT_CON."id"
     WHERE C.CLUSTER_ID IN ('BP_COD', 'SYSBP_COD', 'DIABP_COD', 'HOMEAMBBP_COD', 'ABPM_COD', 'HOMEBP_COD')
       AND O."result_value" IS NOT NULL

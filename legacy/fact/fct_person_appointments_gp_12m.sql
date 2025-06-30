@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_APPOINTMENTS_GP_12M(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_APPOINTMENTS_GP_12M(
 	LDS_PERSON_ID VARCHAR, -- Unique identifier for the person from the source system (linked via APPOINTMENT table)
 	SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient (linked via PATIENT table)
 	MEASURE_ID VARCHAR, -- Identifier for the measure being calculated (fixed as 'LDS_PERSON_GP_APPOINTMENTS_12M')

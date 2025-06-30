@@ -1,5 +1,5 @@
 -- Staging model for OLIDS_MASKED.PRACTITIONER
--- Source: "Data_Store_OLIDS_Dummy".OLIDS_MASKED
+-- Source: "Data_Store_OLIDS_UAT".OLIDS_MASKED
 
 SELECT
     "lds_id" AS lds_id,

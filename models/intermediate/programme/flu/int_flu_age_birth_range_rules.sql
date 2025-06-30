@@ -64,19 +64,19 @@ eligible_children AS (
         r.rule_group_name,
         r.description,
         p.person_id,
-        p.birth_date,
+        p.birth_date_approx,
         cc.reference_date,
         r.birth_start,
         r.birth_end,
-        DATEDIFF('month', p.birth_date, cc.reference_date) AS age_months_at_ref_date,
-        DATEDIFF('year', p.birth_date, cc.reference_date) AS age_years_at_ref_date
+        DATEDIFF('month', p.birth_date_approx, cc.reference_date) AS age_months_at_ref_date,
+        DATEDIFF('year', p.birth_date_approx, cc.reference_date) AS age_years_at_ref_date
     FROM age_birth_range_rules r
     CROSS JOIN {{ ref('dim_person_demographics') }} p
     CROSS JOIN campaign_config cc
-    WHERE p.birth_date IS NOT NULL
+    WHERE p.birth_date_approx IS NOT NULL
         -- Child must be born within the specified birth date range
-        AND p.birth_date >= r.birth_start
-        AND p.birth_date <= r.birth_end
+        AND p.birth_date_approx >= r.birth_start
+        AND p.birth_date_approx <= r.birth_end
 )
 
 SELECT 
@@ -84,7 +84,7 @@ SELECT
     rule_group_id,
     rule_group_name,
     person_id,
-    birth_date,
+    birth_date_approx,
     reference_date,
     birth_start,
     birth_end,

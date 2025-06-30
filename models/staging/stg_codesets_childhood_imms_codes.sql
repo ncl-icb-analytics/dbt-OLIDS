@@ -1,5 +1,5 @@
 -- Staging model for CODESETS.CHILDHOOD_IMMS_CODES
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
+-- Source: "DATA_LAB_OLIDS_UAT".REFERENCE
 
 SELECT
     "VACCINE" AS vaccine,
@@ -10,4 +10,4 @@ SELECT
     "SNOMEDCONCEPTID" AS snomedconceptid,
     "CODEDESCRIPTION" AS codedescription,
     "SOURCE" AS source
-FROM {{ source('CODESETS', 'CHILDHOOD_IMMS_CODES') }}
+FROM {{ source('REFERENCE', 'CHILDHOOD_IMMS_CODES') }}

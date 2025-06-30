@@ -30,18 +30,23 @@ tests:
 models:
   snowflake_hei_migration:
     +materialized: table
-    +database: DATA_LAB_NCL_TRAINING_TEMP
+    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
     staging:
       +materialized: view
-      +database: DATA_LAB_NCL_TRAINING_TEMP
-      # Models reading from Data_Store_OLIDS_Dummy
+      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+      # Models reading from Data_Store_OLIDS_UAT
       olids:
-        +database: DATA_LAB_NCL_TRAINING_TEMP  # Where to create the views
+        +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"  # Where to create the views
         +grants:
-          reference_usage: ["Data_Store_OLIDS_Dummy"]  # Database we need to read from
+          reference_usage: ["{{ env_var('SNOWFLAKE_SOURCE_DATABASE', 'Data_Store_OLIDS_UAT') }}"]  # Database we need to read from
     intermediate:
       +materialized: table
-      +database: DATA_LAB_NCL_TRAINING_TEMP
+      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
     marts:
       +materialized: table
-      +database: DATA_LAB_NCL_TRAINING_TEMP
+      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+
+seeds:
+  snowflake_hei_migration:
+    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+    +schema: REFERENCE

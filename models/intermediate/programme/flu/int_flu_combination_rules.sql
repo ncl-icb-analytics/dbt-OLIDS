@@ -113,9 +113,9 @@ SELECT
     acr.qualifying_event_date,
     acr.reference_date,
     acr.description,
-    demo.birth_date,
-    DATEDIFF('month', demo.birth_date, CURRENT_DATE) AS age_months,
-    DATEDIFF('year', demo.birth_date, CURRENT_DATE) AS age_years,
+    demo.birth_date_approx,
+    DATEDIFF('month', demo.birth_date_approx, CURRENT_DATE) AS age_months,
+    DATEDIFF('year', demo.birth_date_approx, CURRENT_DATE) AS age_years,
     acr.created_at
 FROM all_combination_rules acr
 JOIN combination_rules cr
@@ -124,7 +124,7 @@ LEFT JOIN {{ ref('dim_person_demographics') }} demo
     ON acr.person_id = demo.person_id
 WHERE 1=1
     -- Apply age restrictions if specified
-    AND (cr.age_min_months IS NULL OR DATEDIFF('month', demo.birth_date, CURRENT_DATE) >= cr.age_min_months)
-    AND (cr.age_max_years IS NULL OR DATEDIFF('year', demo.birth_date, CURRENT_DATE) < cr.age_max_years)
+    AND (cr.age_min_months IS NULL OR DATEDIFF('month', demo.birth_date_approx, CURRENT_DATE) >= cr.age_min_months)
+    AND (cr.age_max_years IS NULL OR DATEDIFF('year', demo.birth_date_approx, CURRENT_DATE) < cr.age_max_years)
 
 ORDER BY rule_group_id, person_id

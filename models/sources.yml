@@ -1,8 +1,8 @@
 version: 2
 sources:
-- name: CODESETS
-  database: '"DATA_LAB_NCL_TRAINING_TEMP"'
-  schema: CODESETS
+- name: REFERENCE
+  database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
+  schema: REFERENCE
   tables:
   - name: BNF_LATEST
     columns:
@@ -50,42 +50,6 @@ sources:
       data_type: VARCHAR
     - name: SOURCE
       data_type: VARCHAR
-  - name: CODESET_HISTORY
-    columns:
-    - name: HISTORY_ID
-      data_type: NUMBER(38,0)
-    - name: FILE_TYPE
-      data_type: VARCHAR
-    - name: FILENAME
-      data_type: VARCHAR
-    - name: PROCESSED_DATE
-      data_type: TIMESTAMP_NTZ(9)
-    - name: FILE_DATE
-      data_type: VARCHAR
-    - name: ROW_COUNT
-      data_type: NUMBER(38,0)
-    - name: EFFECTIVE_FROM
-      data_type: DATE
-    - name: EFFECTIVE_TO
-      data_type: DATE
-    - name: IS_CURRENT
-      data_type: BOOLEAN
-    - name: ARCHIVE_PATH
-      data_type: VARCHAR
-    - name: HASH_VALUE
-      data_type: VARCHAR
-  - name: CODESET_METADATA
-    columns:
-    - name: FILE_TYPE
-      data_type: VARCHAR
-    - name: LATEST_FILE_NAME
-      data_type: VARCHAR
-    - name: PROCESSED_DATE
-      data_type: TIMESTAMP_NTZ(9)
-    - name: FILE_DATE
-      data_type: VARCHAR
-    - name: ROW_COUNT
-      data_type: NUMBER(38,0)
   - name: COMBINED_CODESETS
     columns:
     - name: CLUSTER_ID
@@ -98,30 +62,6 @@ sources:
       data_type: VARCHAR
     - name: SOURCE
       data_type: VARCHAR
-  - name: DYNAMIC_TABLE_REFRESH_HISTORY
-    columns:
-    - name: TABLE_NAME
-      data_type: VARCHAR
-    - name: REFRESH_START_TIME
-      data_type: TIMESTAMP_LTZ(9)
-    - name: REFRESH_END_TIME
-      data_type: TIMESTAMP_LTZ(9)
-    - name: REFRESH_DURATION_MS
-      data_type: NUMBER(38,0)
-    - name: CREDITS_USED
-      data_type: FLOAT
-    - name: ROWS_PROCESSED
-      data_type: NUMBER(38,0)
-    - name: NEW_DATA_DETECTED
-      data_type: BOOLEAN
-    - name: REFRESH_STATUS
-      data_type: VARCHAR
-    - name: REFRESH_ACTION
-      data_type: VARCHAR
-    - name: REFRESH_TRIGGER
-      data_type: VARCHAR
-    - name: STATISTICS
-      data_type: OBJECT
   - name: EFI2_SNOMED
     columns:
     - name: DEFICIT
@@ -255,8 +195,8 @@ sources:
     - name: VALPROATE_PRODUCT_TERM
       data_type: VARCHAR
 - name: RULESETS
-  database: '"DATA_LAB_NCL_TRAINING_TEMP"'
-  schema: RULESETS
+  database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
+  schema: REFERENCE
   tables:
   - name: BP_THRESHOLDS
     columns:
@@ -423,7 +363,7 @@ sources:
     - name: INCOMPATIBLE_EXPLANATION
       data_type: VARCHAR
 - name: OLIDS_MASKED
-  database: '"Data_Store_OLIDS_Dummy"'
+  database: '"{{ env_var("SNOWFLAKE_SOURCE_DATABASE", "Data_Store_OLIDS_UAT") }}"'
   schema: OLIDS_MASKED
   tables:
   - name: ALLERGY_INTOLERANCE
@@ -1453,7 +1393,7 @@ sources:
     - name: practitioner_id
       data_type: VARCHAR
 - name: OLIDS_TERMINOLOGY
-  database: '"Data_Store_OLIDS_Dummy"'
+  database: '"{{ env_var("SNOWFLAKE_SOURCE_DATABASE", "Data_Store_OLIDS_UAT") }}"'
   schema: OLIDS_TERMINOLOGY
   tables:
   - name: CONCEPT
@@ -1502,8 +1442,8 @@ sources:
       data_type: TIMESTAMP_NTZ(9)
 
 - name: POPULATION_HEALTH
-  database: '"DATA_LAB_NCL_TRAINING_TEMP"'
-  schema: POPULATION_HEALTH
+  database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
+  schema: REFERENCE
   tables:
   - name: PRACTICE_NEIGHBOURHOOD_LOOKUP
     columns:
@@ -1516,4 +1456,50 @@ sources:
     - name: PRACTICENEIGHBOURHOOD
       data_type: VARCHAR
     - name: PCNCODE
+      data_type: VARCHAR
+  - name: FLU_CAMPAIGN_DATES
+    columns:
+    - name: CAMPAIGN_ID
+      data_type: VARCHAR
+    - name: RULE_GROUP_ID
+      data_type: VARCHAR
+    - name: DATE_TYPE
+      data_type: VARCHAR
+    - name: DATE_VALUE
+      data_type: DATE
+    - name: DESCRIPTION
+      data_type: VARCHAR
+  - name: FLU_CODE_CLUSTERS
+    columns:
+    - name: RULE_GROUP_ID
+      data_type: VARCHAR
+    - name: CLUSTER_ID
+      data_type: VARCHAR
+    - name: DATA_SOURCE_TYPE
+      data_type: VARCHAR
+    - name: DATE_QUALIFIER
+      data_type: VARCHAR
+    - name: CLUSTER_DESCRIPTION
+      data_type: VARCHAR
+  - name: FLU_PROGRAMME_LOGIC
+    columns:
+    - name: CAMPAIGN_ID
+      data_type: VARCHAR
+    - name: RULE_GROUP_ID
+      data_type: VARCHAR
+    - name: RULE_GROUP_NAME
+      data_type: VARCHAR
+    - name: RULE_TYPE
+      data_type: VARCHAR
+    - name: LOGIC_EXPRESSION
+      data_type: VARCHAR
+    - name: EXCLUSION_GROUPS
+      data_type: VARCHAR
+    - name: AGE_MIN_MONTHS
+      data_type: NUMBER
+    - name: AGE_MAX_YEARS
+      data_type: NUMBER
+    - name: BUSINESS_DESCRIPTION
+      data_type: VARCHAR
+    - name: TECHNICAL_DESCRIPTION
       data_type: VARCHAR

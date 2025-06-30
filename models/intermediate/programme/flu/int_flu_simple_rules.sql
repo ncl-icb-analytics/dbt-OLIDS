@@ -1,3 +1,10 @@
+-- depends_on: {{ ref('stg_flu_code_clusters') }}
+-- depends_on: {{ ref('stg_olids_observation') }}
+-- depends_on: {{ ref('stg_olids_patient') }}
+-- depends_on: {{ ref('stg_olids_patient_person') }}
+-- depends_on: {{ ref('stg_olids_term_concept') }}
+-- depends_on: {{ ref('stg_codesets_mapped_concepts') }}
+
 /*
 Flu Simple Rules Intermediate Model
 
@@ -48,6 +55,10 @@ all_observation_events AS (
         {%- set obs_rule_results = run_query(obs_rules_query) -%}
         {%- for row in obs_rule_results.rows -%}
             {%- set rule_group = row[0] -%}
+            {%- if not loop.first %}
+            
+            UNION ALL
+            {%- endif %}
             
             SELECT 
                 '{{ current_campaign }}' AS campaign_id,
@@ -56,10 +67,6 @@ all_observation_events AS (
                 obs.clinical_effective_date AS event_date,
                 obs.cluster_id
             FROM ({{ get_flu_observations_for_rule_group(current_campaign, rule_group) }}) obs
-            
-            {%- if not loop.last -%}
-            UNION ALL
-            {%- endif -%}
         {%- endfor -%}
     {%- else -%}
         -- Compile-time placeholder
@@ -153,16 +160,16 @@ SELECT
     qe.qualifying_event_date,
     qe.resolved_reference_date AS reference_date,
     qe.description,
-    demo.birth_date,
-    DATEDIFF('month', demo.birth_date, {{ get_flu_audit_date(current_campaign) }}) AS age_months,
-    DATEDIFF('year', demo.birth_date, {{ get_flu_audit_date(current_campaign) }}) AS age_years,
+    demo.birth_date_approx,
+    DATEDIFF('month', demo.birth_date_approx, {{ get_flu_audit_date(current_campaign) }}) AS age_months,
+    DATEDIFF('year', demo.birth_date_approx, {{ get_flu_audit_date(current_campaign) }}) AS age_years,
     {{ get_flu_audit_date(current_campaign) }} AS created_at
 FROM qualified_events qe
 LEFT JOIN {{ ref('dim_person_demographics') }} demo
     ON qe.person_id = demo.person_id
 WHERE 1=1
     -- Apply age restrictions if specified
-    AND (qe.age_min_months IS NULL OR DATEDIFF('month', demo.birth_date, {{ get_flu_audit_date(current_campaign) }}) >= qe.age_min_months)
-    AND (qe.age_max_years IS NULL OR DATEDIFF('year', demo.birth_date, {{ get_flu_audit_date(current_campaign) }}) < qe.age_max_years)
+    AND (qe.age_min_months IS NULL OR DATEDIFF('month', demo.birth_date_approx, {{ get_flu_audit_date(current_campaign) }}) >= qe.age_min_months)
+    AND (qe.age_max_years IS NULL OR DATEDIFF('year', demo.birth_date_approx, {{ get_flu_audit_date(current_campaign) }}) < qe.age_max_years)
 
 ORDER BY rule_group_id, person_id

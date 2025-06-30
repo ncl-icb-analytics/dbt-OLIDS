@@ -148,18 +148,18 @@ SELECT
     pce.delivery_date,
     pce.reference_date,
     pce.description,
-    demo.birth_date,
+    demo.birth_date_approx,
     demo.sex AS person_sex,
-    DATEDIFF('month', demo.birth_date, pce.reference_date) AS age_months_at_ref_date,
-    DATEDIFF('year', demo.birth_date, pce.reference_date) AS age_years_at_ref_date,
+    DATEDIFF('month', demo.birth_date_approx, pce.reference_date) AS age_months_at_ref_date,
+    DATEDIFF('year', demo.birth_date_approx, pce.reference_date) AS age_years_at_ref_date,
     {{ get_flu_audit_date(current_campaign) }} AS created_at
 FROM pregnancy_campaign_eligible pce
 JOIN {{ ref('dim_person_demographics') }} demo
     ON pce.person_id = demo.person_id
 WHERE 1=1
     -- Age restrictions: 12-64 years (144 months to 65 years, as per flu_programme_logic.csv)
-    AND DATEDIFF('month', demo.birth_date, pce.reference_date) >= 144  -- 12 years
-    AND DATEDIFF('year', demo.birth_date, pce.reference_date) < 65
+    AND DATEDIFF('month', demo.birth_date_approx, pce.reference_date) >= 144  -- 12 years
+    AND DATEDIFF('year', demo.birth_date_approx, pce.reference_date) < 65
     -- Women only (pregnancy eligibility)
     AND UPPER(demo.sex) IN ('F', 'FEMALE', 'WOMAN')
 

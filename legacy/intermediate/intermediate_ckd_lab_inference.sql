@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_CKD_LAB_INFERENCE (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_CKD_LAB_INFERENCE (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     -- Latest Lab Info
@@ -42,7 +42,7 @@ WITH AllEGFRWithStage AS (
         END AS EGFR_STAGE,
         -- Flag if this specific result is low (< 60)
         (RESULT_VALUE < 60) AS IS_LOW_EGFR
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_EGFR_ALL -- Source: All historical eGFR results
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_EGFR_ALL -- Source: All historical eGFR results
 ),
 AllACRWithStage AS (
     -- Calculates the A-Stage (A1-A3) for every historical Urine ACR result.
@@ -61,7 +61,7 @@ AllACRWithStage AS (
         END AS ACR_STAGE,
         -- Flag if this specific result is high (>= 3)
         (RESULT_VALUE >= 3) AS IS_HIGH_ACR
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_ALL -- Source: All historical ACR results
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_ALL -- Source: All historical ACR results
 ),
 EGFRConfirmationCheck AS (
     -- For each eGFR result that is low (< 60), finds the date of the *immediately preceding* low eGFR result for the same person.
@@ -150,8 +150,8 @@ LatestLabs AS (
             WHEN a.RESULT_VALUE > 30 THEN 'A3'
             ELSE NULL
         END AS LATEST_ACR_STAGE
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_EGFR_LATEST e -- Uses the LATEST eGFR table
-    FULL OUTER JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_LATEST a -- Uses the LATEST ACR table
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_EGFR_LATEST e -- Uses the LATEST eGFR table
+    FULL OUTER JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_URINE_ACR_LATEST a -- Uses the LATEST ACR table
         ON e.PERSON_ID = a.PERSON_ID
 )
 -- Final assembly: Combines the latest lab results/stages with the overall confirmation status for each person.

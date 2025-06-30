@@ -1,5 +1,5 @@
 -- Staging model for CODESETS.BNF_LATEST
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
+-- Source: "DATA_LAB_OLIDS_UAT".REFERENCE
 
 SELECT
     "PRESENTATION_PACK_LEVEL" AS presentation_pack_level,
@@ -15,4 +15,4 @@ SELECT
     "SUB_PACK" AS sub_pack,
     "VTM" AS vtm,
     "VTM_NAME" AS vtm_name
-FROM {{ source('CODESETS', 'BNF_LATEST') }}
+FROM {{ source('REFERENCE', 'BNF_LATEST') }}

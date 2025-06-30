@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_CHILD_ELIG(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PROG_IMM_CHILD_ELIG(
     PERSON_ID VARCHAR, -- Unique identifier for a person
     BIRTH_DATE_APPROX DATE, -- Approximate date of birth from DIM_PROG_IMM_BASE_POP
     AGE NUMBER, -- Age in full years from DIM_PROG_IMM_BASE_POP
@@ -51,12 +51,12 @@ select
              AND p.AGE_DAYS_APPROX <= sched.eligible_age_to_days THEN 'Yes'
         ELSE 'No'
     END AS CURRENTLY_ELIGIBLE
-FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_BASE_POP p
+FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PROG_IMM_BASE_POP p
 CROSS JOIN -- Creates a row for each person for each vaccine dose in the schedule.
-     DATA_LAB_NCL_TRAINING_TEMP.RULESETS.IMMS_SCHEDULE_LATEST sched
+     DATA_LAB_OLIDS_UAT.RULESETS.IMMS_SCHEDULE_LATEST sched
 WHERE
     -- Filters the base population to include only individuals whose current age in days is greater than or equal to
     -- the minimum eligibility start age (in days) defined in the entire immunisation schedule.
     -- This is an optimisation to avoid processing very young individuals for vaccines they are not yet near eligibility for.
-    p.AGE_DAYS_APPROX >= (select min(eligible_age_from_days) from DATA_LAB_NCL_TRAINING_TEMP.RULESETS.IMMS_SCHEDULE_LATEST)
+    p.AGE_DAYS_APPROX >= (select min(eligible_age_from_days) from DATA_LAB_OLIDS_UAT.RULESETS.IMMS_SCHEDULE_LATEST)
 order by p.PERSON_ID, sched.vaccine_id, sched.DOSE_NUMBER; -- Added ORDER BY for consistent output, though not strictly necessary for dynamic table definition

@@ -32,15 +32,15 @@ bmi_values AS (
     SELECT 
         person_id,
         MAX(clinical_effective_date) AS latest_bmi_date,
-        -- Extract BMI value from observation (assuming numeric value in value_quantity)
-        MAX(value_quantity) AS latest_bmi_value
+        -- Extract BMI value from observation (assuming numeric value in result_value)
+        MAX(result_value) AS latest_bmi_value
     FROM ({{ get_flu_observations_for_rule_group(current_campaign, 'BMI_GROUP') }})
     WHERE cluster_id = 'BMI_COD'
         AND clinical_effective_date IS NOT NULL
         AND clinical_effective_date <= {{ get_flu_audit_date(current_campaign) }}
-        AND value_quantity IS NOT NULL
-        AND value_quantity >= 15  -- Reasonable BMI range
-        AND value_quantity <= 80
+        AND result_value IS NOT NULL
+        AND result_value >= 15  -- Reasonable BMI range
+        AND result_value <= 80
     GROUP BY person_id
 ),
 
@@ -144,16 +144,16 @@ SELECT
     bce.eligibility_detail,
     bce.reference_date,
     bce.description,
-    demo.birth_date,
-    DATEDIFF('month', demo.birth_date, bce.reference_date) AS age_months_at_ref_date,
-    DATEDIFF('year', demo.birth_date, bce.reference_date) AS age_years_at_ref_date,
+    demo.birth_date_approx,
+    DATEDIFF('month', demo.birth_date_approx, bce.reference_date) AS age_months_at_ref_date,
+    DATEDIFF('year', demo.birth_date_approx, bce.reference_date) AS age_years_at_ref_date,
     {{ get_flu_audit_date(current_campaign) }} AS created_at
 FROM bmi_campaign_eligible bce
 JOIN {{ ref('dim_person_demographics') }} demo
     ON bce.person_id = demo.person_id
 WHERE 1=1
     -- Age restrictions: 18-64 years (216 months to 65 years, as per flu_programme_logic.csv)
-    AND DATEDIFF('month', demo.birth_date, bce.reference_date) >= 216  -- 18 years
-    AND DATEDIFF('year', demo.birth_date, bce.reference_date) < 65
+    AND DATEDIFF('month', demo.birth_date_approx, bce.reference_date) >= 216  -- 18 years
+    AND DATEDIFF('year', demo.birth_date_approx, bce.reference_date) < 65
 
 ORDER BY person_id

@@ -64,7 +64,7 @@ asthma_symptoms_obs AS (
 asthma_symptoms AS (
 -- Combine medications and symptom observations
     SELECT
-        person_id,
+        cyp_base_population.person_id,
         GREATEST(
             COALESCE(meds.latest_medication_date, '1900-01-01'),
             COALESCE(obs.latest_symptom_date, '1900-01-01')
@@ -73,7 +73,7 @@ asthma_symptoms AS (
     LEFT JOIN
         asthma_medications AS meds
         ON cyp_base_population.person_id = meds.person_id
-    LEFT JOIN asthma_symptoms_obs AS obs USING (person_id)
+    LEFT JOIN asthma_symptoms_obs AS obs ON cyp_base_population.person_id = obs.person_id
     WHERE (meds.person_id IS NOT NULL OR obs.person_id IS NOT NULL)
 ),
 

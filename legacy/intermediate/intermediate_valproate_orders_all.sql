@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_ALL (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_ALL (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for the person
     MEDICATION_ORDER_ID VARCHAR, -- Identifier for the specific medication order
@@ -57,9 +57,9 @@ INNER JOIN
 INNER JOIN
      "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp ON mo."patient_id" = pp."patient_id" -- Link to Person via the Order's patient_id.
 LEFT JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc ON ms."medication_statement_core_concept_id" = mc.SOURCE_CODE_ID -- Attempt to map the Statement's concept ID.
+    DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc ON ms."medication_statement_core_concept_id" = mc.SOURCE_CODE_ID -- Attempt to map the Statement's concept ID.
 LEFT JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.VALPROATE_PROG_CODES vp
+    DATA_LAB_OLIDS_UAT.REFERENCE.VALPROATE_PROG_CODES vp
     -- Join the mapped concept ID to the known list of Valproate codes, filtering for drug codes only.
     ON mc.CONCEPT_ID = vp.CODE
     AND vp.CODE_CATEGORY = 'DRUG'

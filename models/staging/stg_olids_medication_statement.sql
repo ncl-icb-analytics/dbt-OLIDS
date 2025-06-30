@@ -1,5 +1,5 @@
 -- Staging model for OLIDS_MASKED.MEDICATION_STATEMENT
--- Source: "Data_Store_OLIDS_Dummy".OLIDS_MASKED
+-- Source: "Data_Store_OLIDS_UAT".OLIDS_MASKED
 
 SELECT
     "lds_id" AS lds_id,
@@ -18,8 +18,8 @@ SELECT
     "allergy_intolerance_id" AS allergy_intolerance_id,
     "diagnostic_order_id" AS diagnostic_order_id,
     "referral_request_id" AS referral_request_id,
-    "ldsconceptid_authorisationtype" AS ldsconceptid_authorisationtype,
-    "ldsconceptid_dateprecision" AS ldsconceptid_dateprecision,
+    "authorisation_type_concept_id" AS authorisation_type_concept_id,
+    "date_precision_concept_id" AS date_precision_concept_id,
     "medication_statement_core_concept_id"
         AS medication_statement_core_concept_id,
     "clinical_effective_date" AS clinical_effective_date,
@@ -37,5 +37,6 @@ SELECT
     "date_recorded" AS date_recorded,
     "is_active" AS is_active,
     "is_confidential" AS is_confidential,
+    "expiry_date" AS expiry_date,
     "lds_start_date_time" AS lds_start_date_time
 FROM {{ source('OLIDS_MASKED', 'MEDICATION_STATEMENT') }}

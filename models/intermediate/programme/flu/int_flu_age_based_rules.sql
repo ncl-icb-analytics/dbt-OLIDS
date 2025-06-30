@@ -35,14 +35,16 @@ eligible_people AS (
         r.rule_group_id,
         r.rule_group_name,
         r.description,
+        r.age_min_months,
+        r.age_max_years,
         p.person_id,
-        p.birth_date,
+        p.birth_date_approx,
         r.ref_dat AS reference_date,
-        DATEDIFF('month', p.birth_date, r.ref_dat) AS age_months,
-        DATEDIFF('year', p.birth_date, r.ref_dat) AS age_years
+        DATEDIFF('month', p.birth_date_approx, r.ref_dat) AS age_months,
+        DATEDIFF('year', p.birth_date_approx, r.ref_dat) AS age_years
     FROM age_based_rules r
     CROSS JOIN {{ ref('dim_person_demographics') }} p
-    WHERE p.birth_date IS NOT NULL
+    WHERE p.birth_date_approx IS NOT NULL
 )
 
 SELECT 
@@ -50,7 +52,7 @@ SELECT
     rule_group_id,
     rule_group_name,
     person_id,
-    birth_date,
+    birth_date_approx,
     reference_date,
     age_months,
     age_years,

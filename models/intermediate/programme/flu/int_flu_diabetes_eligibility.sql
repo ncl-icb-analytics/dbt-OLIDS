@@ -144,17 +144,17 @@ SELECT
     dce.latest_resolved_date,
     dce.reference_date,
     dce.description,
-    demo.birth_date,
-    DATEDIFF('month', demo.birth_date, dce.reference_date) AS age_months_at_ref_date,
-    DATEDIFF('year', demo.birth_date, dce.reference_date) AS age_years_at_ref_date,
+    demo.birth_date_approx,
+    DATEDIFF('month', demo.birth_date_approx, dce.reference_date) AS age_months_at_ref_date,
+    DATEDIFF('year', demo.birth_date_approx, dce.reference_date) AS age_years_at_ref_date,
     {{ get_flu_audit_date(current_campaign) }} AS created_at
 FROM diabetes_campaign_eligible dce
 JOIN {{ ref('dim_person_demographics') }} demo
     ON dce.person_id = demo.person_id
 WHERE 1=1
     -- Age restrictions: 6 months minimum (infants rely on maternal antibodies)
-    AND DATEDIFF('month', demo.birth_date, dce.reference_date) >= 6
+    AND DATEDIFF('month', demo.birth_date_approx, dce.reference_date) >= 6
     -- Age restrictions: Under 65 years (over 65s covered by separate age-based rule)
-    AND DATEDIFF('year', demo.birth_date, dce.reference_date) < 65
+    AND DATEDIFF('year', demo.birth_date_approx, dce.reference_date) < 65
 
 ORDER BY person_id
