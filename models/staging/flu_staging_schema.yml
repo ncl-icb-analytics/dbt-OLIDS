@@ -1,6 +1,97 @@
 version: 2
 
 models:
+  - name: stg_codesets_ukhsa_flu_latest
+    description: >
+      UKHSA flu vaccination clinical codes for patient eligibility determination.
+      
+      Contains standardized clinical codes from the UK Health Security Agency (UKHSA) 
+      used to identify patients who are eligible for flu vaccination based on clinical 
+      risk factors. These codes cover various clinical conditions, chronic diseases, 
+      procedures, and medication classes that indicate increased flu vaccination priority 
+      according to national health guidelines.
+      
+      The codes are organized into logical groups (e.g., respiratory conditions, 
+      cardiovascular disease, immunocompromised states) and include both SNOMED CT 
+      codes and system-specific mappings for EMIS and TPP clinical systems.
+    columns:
+      - name: coding_scheme
+        description: >
+          The clinical coding scheme or terminology system used (e.g., SNOMED CT, 
+          Read Codes, ICD-10). Indicates the standard against which the clinical 
+          code should be interpreted.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SNOMED CT', 'READ', 'ICD10', 'ICD9', 'OPCS4']
+              quote: false
+      - name: code_library
+        description: >
+          The source code library or collection that this code belongs to within 
+          UKHSA's clinical code repository. Used for organizational and versioning 
+          purposes of different code sets.
+        tests:
+          - not_null
+      - name: code_group
+        description: >
+          Clinical grouping identifier that categorizes related codes together 
+          (e.g., 'RESPIRATORY', 'CARDIAC', 'IMMUNOCOMPROMISED'). Used to logically 
+          organize codes by clinical domain or risk category for flu vaccination.
+        tests:
+          - not_null
+      - name: code_group_description
+        description: >
+          Human-readable description of the clinical code group, explaining the 
+          clinical condition or risk category that the grouped codes represent 
+          (e.g., 'Chronic respiratory disease', 'Immunocompromised conditions').
+        tests:
+          - not_null
+      - name: snomed_code
+        description: >
+          The SNOMED CT concept identifier - a globally standardized clinical 
+          terminology code that uniquely identifies a clinical concept. This is 
+          the primary identifier for interoperability across different health systems.
+        tests:
+          - not_null
+          - unique
+      - name: snomed_description
+        description: >
+          The preferred term or description for the SNOMED CT concept, providing 
+          a standardized human-readable name for the clinical condition, procedure, 
+          or medication represented by the code.
+        tests:
+          - not_null
+      - name: date_created
+        description: >
+          The date when this code entry was created or added to the UKHSA code set. 
+          Stored as text format and used for audit trail and version control purposes.
+      - name: validated_sctid
+        description: >
+          The validated SNOMED CT identifier after quality assurance processes. 
+          May differ from the original snomed_code if corrections or mappings 
+          were applied during validation.
+      - name: emis_astrx
+        description: >
+          EMIS Web clinical system specific code mapping. Used to identify equivalent 
+          codes in EMIS systems for consistent clinical decision support across 
+          different GP practice management systems.
+      - name: unnamed_9
+        description: >
+          Additional metadata field with unclear purpose in source system. 
+          Preserved for completeness but may contain supplementary code information 
+          or system-specific references.
+      - name: tpp_astrx
+        description: >
+          TPP SystmOne clinical system specific code mapping. Used to identify 
+          equivalent codes in TPP systems for consistent clinical decision support 
+          across different GP practice management systems.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - coding_scheme
+            - snomed_code
+            - code_group
+          name: unique_ukhsa_flu_code_combination
   - name: stg_flu_code_clusters
     description: "Clinical code cluster definitions for flu programme rules"
     columns:
