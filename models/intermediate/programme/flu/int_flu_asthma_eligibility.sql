@@ -1,33 +1,64 @@
 /*
+=============================================================================
 Flu Asthma Eligibility Intermediate Model
+=============================================================================
 
 Implements the specific business logic for asthma-related flu vaccination eligibility.
-This replaces the apply_asthma_combination_rule macro functionality.
+This replaces the apply_asthma_combination_rule macro functionality with explicit
+SQL logic for better maintainability and auditability.
 
-Business Logic:
-- Asthma diagnosis (AST_COD) - earliest occurrence
-- AND one of:
-  - Recent asthma medication (ASTMED_COD or ASTRX_COD) since specified lookback date
-  - OR asthma admission (ASTADM_COD) ever
+BUSINESS LOGIC:
+--------------
+1. PRIMARY REQUIREMENT: Asthma diagnosis (AST_COD) - uses earliest occurrence
+2. SECONDARY REQUIREMENT (AND): Evidence of active asthma management or severity:
+   - Recent asthma medication (ASTMED_COD or ASTRX_COD) since specified lookback date
+   - OR asthma admission (ASTADM_COD) at any time in patient history
 
-Age Restrictions: 6 months to 65 years
+AGE RESTRICTIONS:
+----------------
+- Minimum: 6 months of age at reference date
+- Maximum: Under 65 years of age at reference date
+
+EVIDENCE HIERARCHY:
+------------------
+When multiple evidence types exist for the same person, the most recent evidence
+date is selected to represent the qualifying event.
+
+DATA QUALITY NOTES:
+------------------
+- All clinical events must occur on or before the campaign reference date
+- Medication lookback period is campaign-specific (defined in campaign dates)
+- Admission evidence has no time restriction (any historical admission qualifies)
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    persist_docs={"relation": true, "columns": true}
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 
+-- =============================================================================
+-- CAMPAIGN CONFIGURATION
+-- =============================================================================
+-- Extract campaign-specific dates for asthma eligibility rules
 WITH campaign_config AS (
     SELECT 
         campaign_id,
+        -- Medication lookback date: defines how far back to look for asthma medications
         MAX(CASE WHEN rule_group_id = 'AST_GROUP' AND date_type = 'latest_since_date' THEN date_value END) AS medication_lookback_date,
+        -- Reference date: official campaign date for age calculations and event cutoffs
         MAX(CASE WHEN rule_group_id = 'ALL' AND date_type = 'ref_dat' THEN date_value END) AS reference_date
     FROM {{ ref('stg_flu_campaign_dates') }}
     WHERE campaign_id = '{{ current_campaign }}'
     GROUP BY campaign_id
 ),
 
--- Get asthma diagnoses (earliest occurrence)
+-- =============================================================================
+-- PRIMARY REQUIREMENT: ASTHMA DIAGNOSIS
+-- =============================================================================
+-- Get earliest asthma diagnosis (AST_COD) for each person
+-- This establishes the baseline asthma status required for eligibility
 asthma_diagnoses AS (
     SELECT 
         person_id,
@@ -39,8 +70,13 @@ asthma_diagnoses AS (
     GROUP BY person_id
 ),
 
--- Get recent asthma medications (since lookback date)
+-- =============================================================================
+-- SECONDARY EVIDENCE: RECENT ASTHMA MEDICATIONS
+-- =============================================================================
+-- Get recent asthma medications (ASTMED_COD/ASTRX_COD) since lookback date
+-- This provides evidence of active asthma management within the specified timeframe
 recent_asthma_medications AS (
+    -- Asthma medication observations (ASTMED_COD)
     SELECT DISTINCT
         obs.person_id,
         MAX(obs.clinical_effective_date) AS latest_medication_date
@@ -54,6 +90,7 @@ recent_asthma_medications AS (
     
     UNION
     
+    -- Asthma medication orders (ASTRX_COD)
     SELECT DISTINCT
         med.person_id,
         MAX(med.order_date) AS latest_medication_date  
@@ -66,7 +103,11 @@ recent_asthma_medications AS (
     GROUP BY med.person_id
 ),
 
--- Get asthma admissions (any time)
+-- =============================================================================
+-- SECONDARY EVIDENCE: ASTHMA ADMISSIONS
+-- =============================================================================
+-- Get asthma admissions (ASTADM_COD) at any time in patient history
+-- This provides evidence of asthma severity regardless of timing
 asthma_admissions AS (
     SELECT 
         person_id,
@@ -78,8 +119,13 @@ asthma_admissions AS (
     GROUP BY person_id
 ),
 
--- Combine medication and admission evidence
+-- =============================================================================
+-- EVIDENCE COMBINATION
+-- =============================================================================
+-- Combine all evidence types (medications and admissions)
+-- Each person may have multiple evidence types
 asthma_evidence AS (
+    -- Recent medication evidence
     SELECT 
         person_id,
         latest_medication_date AS evidence_date,
@@ -88,6 +134,7 @@ asthma_evidence AS (
     
     UNION ALL
     
+    -- Admission evidence (any time)
     SELECT 
         person_id,
         latest_admission_date AS evidence_date,
@@ -95,7 +142,11 @@ asthma_evidence AS (
     FROM asthma_admissions
 ),
 
--- Get the best evidence per person (most recent)
+-- =============================================================================
+-- EVIDENCE HIERARCHY
+-- =============================================================================
+-- Select the most recent evidence per person when multiple evidence types exist
+-- This creates a single qualifying evidence record per person
 best_evidence AS (
     SELECT 
         person_id,
@@ -105,7 +156,11 @@ best_evidence AS (
     FROM asthma_evidence
 ),
 
--- Final eligibility: asthma diagnosis AND evidence
+-- =============================================================================
+-- ELIGIBILITY COMBINATION
+-- =============================================================================
+-- Combine asthma diagnosis AND evidence to determine final eligibility
+-- This implements the core business logic: diagnosis + (medication OR admission)
 asthma_eligible AS (
     SELECT 
         cc.campaign_id,
@@ -120,11 +175,15 @@ asthma_eligible AS (
     FROM asthma_diagnoses ad
     JOIN best_evidence be
         ON ad.person_id = be.person_id
-        AND be.rn = 1
+        AND be.rn = 1  -- Only the most recent evidence
     CROSS JOIN campaign_config cc
 )
 
--- Apply age restrictions and add demographic info
+-- =============================================================================
+-- FINAL OUTPUT WITH AGE RESTRICTIONS
+-- =============================================================================
+-- Apply age restrictions and add demographic information
+-- Final eligibility requires: asthma diagnosis + evidence + age criteria
 SELECT 
     ae.campaign_id,
     ae.rule_group_id,

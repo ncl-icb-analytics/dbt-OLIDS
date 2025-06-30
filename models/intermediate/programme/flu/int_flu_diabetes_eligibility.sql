@@ -1,19 +1,32 @@
 /*
 Flu Diabetes Eligibility Intermediate Model
 
-Implements the specific business logic for diabetes-related flu vaccination eligibility.
-This replaces the apply_diabetes_exclusion_rule macro functionality.
+Implements diabetes and Addison's disease eligibility logic for flu vaccination program.
+These conditions qualify patients due to increased risk of flu complications from immunocompromise.
 
-Business Logic:
-- Addison's disease (ADDIS_COD) - earliest occurrence, OR
-- Diabetes diagnosis (DIAB_COD) AND either:
-  - No diabetes resolved code (DMRES_COD), OR  
-  - Latest diabetes diagnosis is more recent than latest resolved code
+CLINICAL ELIGIBILITY CRITERIA:
+1. Addison's Disease (ADDIS_COD):
+   - Any diagnosis qualifies (earliest occurrence used)
+   - Adrenal insufficiency causes immunocompromise
+   
+2. Diabetes Type 1/2 (DIAB_COD):
+   - Must have active diabetes diagnosis
+   - Excludes resolved diabetes using hierarchical date logic:
+     * Include if NO diabetes resolved code (DMRES_COD), OR
+     * Include if latest diabetes diagnosis > latest resolved code
+   - Higher infection risk due to hyperglycemia effects on immune system
 
-Age Restrictions: 6 months to 65 years
+AGE RESTRICTIONS:
+- Minimum: 6 months (infants need maternal antibodies first)
+- Maximum: Under 65 years (over 65s eligible via separate age rule)
+
+This model replaces the apply_diabetes_exclusion_rule macro functionality.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    persist_docs={"relation": true, "columns": true}
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 
@@ -27,6 +40,7 @@ WITH campaign_config AS (
 ),
 
 -- Get Addison's disease diagnoses (earliest occurrence)
+-- Addison's patients are immunocompromised due to adrenal insufficiency
 addisons_diagnoses AS (
     SELECT 
         person_id,
@@ -39,7 +53,8 @@ addisons_diagnoses AS (
     GROUP BY person_id
 ),
 
--- Get diabetes diagnoses (latest occurrence)
+-- Get diabetes diagnoses (latest occurrence for most recent clinical status)
+-- Type 1 and Type 2 diabetes increase flu complication risk via immunocompromise
 diabetes_diagnoses AS (
     SELECT 
         person_id,
@@ -51,7 +66,8 @@ diabetes_diagnoses AS (
     GROUP BY person_id
 ),
 
--- Get diabetes resolved codes (latest occurrence)
+-- Get diabetes resolved codes (latest occurrence for exclusion logic)
+-- Some patients may have diabetes recorded as resolved (e.g., gestational diabetes)
 diabetes_resolved AS (
     SELECT 
         person_id,
@@ -63,7 +79,8 @@ diabetes_resolved AS (
     GROUP BY person_id
 ),
 
--- Determine diabetes eligibility (exclusion logic)
+-- Apply diabetes exclusion logic - only include patients with active diabetes
+-- Business rule: diabetes must be more recent than any resolved code
 diabetes_eligible AS (
     SELECT 
         dd.person_id,
@@ -74,7 +91,7 @@ diabetes_eligible AS (
     LEFT JOIN diabetes_resolved dr
         ON dd.person_id = dr.person_id
     WHERE 1=1
-        -- Include if no resolved code OR diabetes is more recent than resolved
+        -- Include if no resolved code OR diabetes diagnosis is more recent than resolved
         AND (dr.latest_resolved_date IS NULL OR dd.latest_diabetes_date > dr.latest_resolved_date)
 ),
 
@@ -115,7 +132,8 @@ diabetes_campaign_eligible AS (
     CROSS JOIN campaign_config cc
 )
 
--- Apply age restrictions and add demographic info
+-- Apply clinical age restrictions and add demographic context
+-- Age limits ensure appropriate targeting within diabetes/Addison's eligibility
 SELECT 
     dce.campaign_id,
     dce.rule_group_id,
@@ -134,8 +152,9 @@ FROM diabetes_campaign_eligible dce
 JOIN {{ ref('dim_person_demographics') }} demo
     ON dce.person_id = demo.person_id
 WHERE 1=1
-    -- Age restrictions: 6 months to 65 years (as per flu_programme_logic.csv)
+    -- Age restrictions: 6 months minimum (infants rely on maternal antibodies)
     AND DATEDIFF('month', demo.birth_date, dce.reference_date) >= 6
+    -- Age restrictions: Under 65 years (over 65s covered by separate age-based rule)
     AND DATEDIFF('year', demo.birth_date, dce.reference_date) < 65
 
 ORDER BY person_id
