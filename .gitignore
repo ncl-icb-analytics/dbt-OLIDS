@@ -55,3 +55,4 @@ dbt_internal_packages/
 # claude
 .claude/
 CLAUDE.md
+CLAUDE.md.save
