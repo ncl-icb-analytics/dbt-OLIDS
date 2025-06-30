@@ -38,6 +38,7 @@ wheels/
 
 # Virtual Environment
 venv/
+venv-wsl/*
 ENV/
 
 # IDE
