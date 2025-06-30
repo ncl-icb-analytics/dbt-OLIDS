@@ -50,15 +50,15 @@ SELECT
     -- Derive smoking status based on the code type
     CASE
         WHEN is_smoker_code THEN 'Current Smoker'
+        WHEN is_general_smoking_code THEN 'Current Smoker'
         WHEN is_ex_smoker_code THEN 'Ex-Smoker'
         WHEN is_never_smoked_code THEN 'Never Smoked'
-        WHEN is_general_smoking_code THEN 'General Smoking Code'
         ELSE 'Unknown'
     END AS smoking_status,
 
-    -- Current smoker indicator
+    -- Current smoker indicator  
     CASE
-        WHEN is_smoker_code THEN TRUE
+        WHEN is_smoker_code OR is_general_smoking_code THEN TRUE
         ELSE FALSE
     END AS is_current_smoker,
 
@@ -76,13 +76,13 @@ SELECT
 
     -- Analytics-ready risk flags
     CASE
-        WHEN is_smoker_code OR is_ex_smoker_code THEN TRUE
+        WHEN is_smoker_code OR is_general_smoking_code OR is_ex_smoker_code THEN TRUE
         ELSE FALSE
     END AS has_smoking_history,
 
     -- QOF-specific categorisation for analytics
     CASE
-        WHEN is_smoker_code THEN 'Active Smoker (QOF Risk)'
+        WHEN is_smoker_code OR is_general_smoking_code THEN 'Active Smoker (QOF Risk)'
         WHEN is_ex_smoker_code THEN 'Ex-Smoker (CVD Risk)'
         WHEN is_never_smoked_code THEN 'Never Smoked (Low Risk)'
         ELSE 'Unknown Risk'
