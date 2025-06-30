@@ -1,5 +1,5 @@
 -- Staging model for OLIDS_TERMINOLOGY.CONCEPT
--- Source: "Data_Store_OLIDS_Dummy".OLIDS_TERMINOLOGY
+-- Source: "Data_Store_OLIDS_UAT".OLIDS_TERMINOLOGY
 
 SELECT
     "id" AS id,

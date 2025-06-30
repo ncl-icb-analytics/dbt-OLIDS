@@ -21,5 +21,5 @@ SELECT
     date_type,
     date_value,
     description
-FROM {{ ref('flu_campaign_dates') }}
+FROM {{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}.DBT_DEV_REFERENCE.FLU_CAMPAIGN_DATES
 ORDER BY campaign_id, rule_group_id, date_type

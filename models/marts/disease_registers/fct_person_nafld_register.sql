@@ -20,7 +20,7 @@ Business Logic:
 - No age restrictions
 - No resolution codes
 
-⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in codesets.
+⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in REFERENCE.
 
 Includes only active patients as per standard population requirements.
 This table provides one row per person for analytical use.

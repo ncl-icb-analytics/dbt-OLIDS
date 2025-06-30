@@ -26,7 +26,7 @@ WITH latest_bp AS (
             FALSE
         ) AS is_home_bp
     FROM {{ ref('int_blood_pressure_all') }} AS bp
-    INNER JOIN {{ ref('int_ltc_lcs_cf_base_population') }} USING (person_id)
+    INNER JOIN {{ ref('int_ltc_lcs_cf_base_population') }} AS base ON bp.person_id = base.person_id
     QUALIFY
         row_number()
             OVER (
@@ -92,7 +92,7 @@ bsa_with_risk_factors AS (
         TRUE AS has_cardiovascular_risk_factors
     FROM {{ ref('int_ltc_lcs_cf_base_population') }} AS base
     INNER JOIN bsa_patients ON base.person_id = bsa_patients.person_id
-    INNER JOIN risk_factor_patients USING (person_id)
+    INNER JOIN risk_factor_patients ON base.person_id = risk_factor_patients.person_id
 ),
 
 eligible_patients AS (

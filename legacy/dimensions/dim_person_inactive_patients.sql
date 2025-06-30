@@ -4,7 +4,7 @@
 -- Includes deceased patients, patients with ended registrations, and patients from closed/obsolete practices.
 -- Excludes dummy patients as they are not considered real inactive patients.
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_INACTIVE_PATIENTS (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_INACTIVE_PATIENTS (
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
     SK_PATIENT_ID NUMBER COMMENT 'Surrogate key for the patient',
     PRIMARY_PATIENT_ID VARCHAR COMMENT 'ID of the primary patient record for this person',

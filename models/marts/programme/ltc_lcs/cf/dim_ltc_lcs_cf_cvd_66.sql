@@ -86,8 +86,8 @@ eligible_patients AS (
         bp.age
     FROM base_population AS bp
     LEFT JOIN statin_medications AS sm ON bp.person_id = sm.person_id
-    LEFT JOIN statin_exclusions AS se USING (person_id)
-    LEFT JOIN health_checks AS hc USING (person_id)
+    LEFT JOIN statin_exclusions AS se ON bp.person_id = se.person_id
+    LEFT JOIN health_checks AS hc ON bp.person_id = hc.person_id
     WHERE
         NOT COALESCE(sm.person_id IS NOT NULL, FALSE)  -- Not on statins
         AND NOT COALESCE(se.latest_statin_allergy_date IS NOT NULL, FALSE)  -- No statin allergies
@@ -152,4 +152,4 @@ SELECT
     aqc.all_qrisk2_displays
 FROM eligible_patients AS ep
 LEFT JOIN latest_qrisk2 AS lq ON ep.person_id = lq.person_id
-LEFT JOIN all_qrisk2_codes AS aqc USING (person_id)
+LEFT JOIN all_qrisk2_codes AS aqc ON ep.person_id = aqc.person_id

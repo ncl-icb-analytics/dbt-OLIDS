@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_WOMEN_CHILD_BEARING_AGE (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_WOMEN_CHILD_BEARING_AGE (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     AGE NUMBER, -- Age of the person
     SEX VARCHAR, -- Sex of the person, will be 'Female' or 'Unknown' due to WHERE clause filtering
@@ -25,10 +25,10 @@ SELECT
     (age.AGE <= 55) AS IS_CHILD_BEARING_AGE_0_55
 FROM
     -- Source table containing calculated age information for each person.
-    DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
+    DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_AGE age
 INNER JOIN
     -- Source table containing resolved sex for each person.
-    DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_SEX sex ON age.PERSON_ID = sex.PERSON_ID
+    DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_SEX sex ON age.PERSON_ID = sex.PERSON_ID
 WHERE
     -- Filter for individuals NOT identified as Male.
     -- This approach ('Not male') is often used for clinical safety to be more inclusive than specifically selecting 'Female'.

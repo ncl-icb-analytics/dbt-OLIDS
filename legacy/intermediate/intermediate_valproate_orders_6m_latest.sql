@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_6M_LATEST (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_6M_LATEST (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     MOST_RECENT_ORDER_DATE DATE, -- Date of the most recent Valproate order in the last 6 months
     MEDICATION_ORDER_ID VARCHAR, -- Identifier for the medication order
@@ -46,7 +46,7 @@ SELECT
     -- Counts the total number of Valproate orders for this person within the last 6 months.
     COUNT(*) OVER (PARTITION BY vmoa.PERSON_ID) as RECENT_ORDER_COUNT
 FROM
-    DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_ALL vmoa
+    DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_VALPROATE_ORDERS_ALL vmoa
 WHERE
     -- Filters for Valproate orders with a clinical effective date within the last 6 months (inclusive of today).
     vmoa.ORDER_CLINICAL_EFFECTIVE_DATE >= DATEADD(month, -6, CURRENT_DATE())

@@ -3,7 +3,7 @@
 -- Core birth and death information for each person
 -- Designed to be reused by other dimension tables for age calculations
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_BIRTH_DEATH (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_BIRTH_DEATH (
     PERSON_ID VARCHAR COMMENT 'Unique identifier for a person',
     SK_PATIENT_ID VARCHAR COMMENT 'Surrogate key for the patient',
     BIRTH_YEAR NUMBER COMMENT 'Year of birth as recorded for the patient',

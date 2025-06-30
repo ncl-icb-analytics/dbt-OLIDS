@@ -10,7 +10,7 @@ from build_dependency_graph import SQLDependencyBuilder
 
 class SQLExecutor:
     def __init__(self, project_root: str, dry_run: bool = False,
-                 connection: str = "data_lab_ncl_training_temp",
+                 connection: str = "data_lab_olids_uat",
                  test_table: Optional[str] = None):
         self.project_root = Path(project_root)
         self.dry_run = dry_run
@@ -188,8 +188,8 @@ def main():
     parser = argparse.ArgumentParser(description='Execute SQL files in dependency order')
     parser.add_argument('--dry-run', action='store_true',
                       help='Show what would be executed without actually running')
-    parser.add_argument('--connection', default='data_lab_ncl_training_temp',
-                      help='Snow CLI connection to use (default: data_lab_ncl_training_temp)')
+    parser.add_argument('--connection', default='data_lab_olids_uat',
+                      help='Snow CLI connection to use (default: data_lab_olids_uat)')
     parser.add_argument('--test-table',
                       help='Execute only this table and its dependencies (e.g., DIM_PERSON_AGE)')
     args = parser.parse_args()

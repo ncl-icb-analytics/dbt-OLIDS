@@ -1,5 +1,5 @@
 -- Staging model for CODESETS.UKHSA_COVID_LATEST
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
+-- Source: "DATA_LAB_OLIDS_UAT".REFERENCE
 
 SELECT
     "CODING_SCHEME" AS coding_scheme,
@@ -9,4 +9,4 @@ SELECT
     "SNOMED_CODE" AS snomed_code,
     "SNOMED_DESCRIPTION" AS snomed_description,
     "CODE_VALIDATED" AS code_validated
-FROM {{ source('CODESETS', 'UKHSA_COVID_LATEST') }}
+FROM {{ source('REFERENCE', 'UKHSA_COVID_LATEST') }}

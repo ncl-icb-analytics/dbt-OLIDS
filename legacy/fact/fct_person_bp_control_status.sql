@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_BP_CONTROL_STATUS (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_BP_CONTROL_STATUS (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
@@ -35,7 +35,7 @@ WITH LatestBP AS (
     -- Selects the most recent blood pressure reading (systolic, diastolic, and date) for each person
     -- from the INTERMEDIATE_BLOOD_PRESSURE_LATEST table.
     SELECT PERSON_ID, CLINICAL_EFFECTIVE_DATE, SYSTOLIC_VALUE, DIASTOLIC_VALUE
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_LATEST
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_LATEST
 ),
 PatientCharacteristics AS (
     -- Gathers key patient characteristics relevant for BP threshold determination and timeliness rules.
@@ -57,11 +57,11 @@ PatientCharacteristics AS (
         COALESCE(htn.IS_ON_HTN_REGISTER, FALSE) AS IS_DIAGNOSED_HTN
     FROM LatestBP bp
     -- Essential joins
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age ON bp.PERSON_ID = age.PERSON_ID
+    JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_AGE age ON bp.PERSON_ID = age.PERSON_ID
     -- Left joins for comorbidities/status
-    LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_DIABETES dm ON bp.PERSON_ID = dm.PERSON_ID
-    LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_CKD ckd ON bp.PERSON_ID = ckd.PERSON_ID -- Join to check existence
-    LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_HYPERTENSION htn ON bp.PERSON_ID = htn.PERSON_ID
+    LEFT JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_DIABETES dm ON bp.PERSON_ID = dm.PERSON_ID
+    LEFT JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_CKD ckd ON bp.PERSON_ID = ckd.PERSON_ID -- Join to check existence
+    LEFT JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_HYPERTENSION htn ON bp.PERSON_ID = htn.PERSON_ID
 ),
 RankedThresholds AS (
     -- Determines the most appropriate BP threshold for each patient based on their characteristics.
@@ -83,7 +83,7 @@ RankedThresholds AS (
             ELSE 99
         END AS priority_rank
     FROM PatientCharacteristics pc
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.RULESETS.BP_THRESHOLDS thr
+    JOIN DATA_LAB_OLIDS_UAT.RULESETS.BP_THRESHOLDS thr
         ON ( -- Defines conditions for matching patients to threshold rules based on their group criteria
             (thr.PATIENT_GROUP = 'AGE_LT_80' AND pc.AGE < 80) OR
             (thr.PATIENT_GROUP = 'AGE_GE_80' AND pc.AGE >= 80) OR

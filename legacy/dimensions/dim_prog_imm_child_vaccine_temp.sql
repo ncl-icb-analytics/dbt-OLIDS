@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_CHILD_VACCINE_TEMP(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PROG_IMM_CHILD_VACCINE_TEMP(
 	PERSON_ID,
 	AGE,
 	VACCINE_ORDER,
@@ -43,8 +43,8 @@ WHEN clut.VACCINE = 'Rotavirus' and clut.dose = '1,2' and sched.dose_number = '1
 WHEN clut.VACCINE = 'Rotavirus' and clut.dose = '1,2' and sched.dose_number = '2' THEN '2'
 WHEN clut.VACCINE = sched.VACCINE_NAME AND clut.DOSE = sched.DOSE_NUMBER THEN clut.dose
 END as DOSE_MATCH
-from DATA_LAB_NCL_TRAINING_TEMP.CODESETS.CHILDHOOD_IMMS_CODES  clut
-inner join DATA_LAB_NCL_TRAINING_TEMP.RULESETS.IMMS_SCHEDULE_LATEST sched ON
+from DATA_LAB_OLIDS_UAT.REFERENCE.CHILDHOOD_IMMS_CODES  clut
+inner join DATA_LAB_OLIDS_UAT.RULESETS.IMMS_SCHEDULE_LATEST sched ON
             (sched.administered_cluster_id = clut.proposedcluster OR
             sched.drug_cluster_id = clut.proposedcluster OR
             sched.declined_cluster_id = clut.proposedcluster OR
@@ -74,7 +74,7 @@ SELECT DISTINCT
     -- Join to PATIENT_PERSON to get the person_id (using INNER JOIN as we need the person)
     JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp on pp."patient_id" = o."patient_id"
     -- Join OBSERVATION to MAPPEDCONCEPTS using the observation_core_concept_id
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc ON o."observation_core_concept_id" = mc.SOURCE_CODE_ID
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc ON o."observation_core_concept_id" = mc.SOURCE_CODE_ID
     -- Join CONCEPT_CODE from the MAPPEDCONCEPTS to the IMMS_CODE_DOSEMATCH making sure clut.code is VARCHAR (currently is number)
     JOIN codecluster clut on mc.CONCEPT_CODE  = CAST(clut.CODE AS VARCHAR)
     WHERE TO_DATE(o."clinical_effective_date") <= CURRENT_DATE
@@ -107,7 +107,7 @@ SELECT DISTINCT
             AND datediff(day,el.BIRTH_DATE_APPROX,clut.event_date) < el.ELIGIBLE_AGE_FROM_DAYS THEN 'Yes'
             ELSE 'No'
         END AS OUT_OF_SCHEDULE
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PROG_IMM_CHILD_ELIG el
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PROG_IMM_CHILD_ELIG el
     INNER JOIN IMMS_CODE_OBS clut on clut.PERSON_ID = el.PERSON_ID
     AND el.DOSE_NUMBER = clut.DOSE_MATCH
     and el.VACCINE_NAME = clut.VACCINE

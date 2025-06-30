@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_LD_DIAGNOSES_ALL (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_LD_DIAGNOSES_ALL (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     CLINICAL_EFFECTIVE_DATE DATE, -- Date the learning disability diagnosis was recorded
@@ -23,7 +23,7 @@ SELECT DISTINCT
 FROM "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION O
 -- Join to MAPPED_CONCEPTS to filter based on the cluster ID and get code details.
 JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS C
+    DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS C
     ON O."observation_core_concept_id" = C.SOURCE_CODE_ID
 -- Join to link observation patient_id to person_id.
 JOIN "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp

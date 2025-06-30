@@ -2,12 +2,19 @@
 
 ## Overview
 
-The `migrate_snowflake_tables.py` script handles the migration of static tables from `DATA_LAB_NCL_TRAINING_TEMP` database to `DATA_LAB_OLIDS_UAT` database using role switching and SSO authentication.
+The `migrate_snowflake_tables.py` script handles the migration of static tables from `DATA_LAB_OLIDS_UAT` database to production environments using role switching and SSO authentication.
+
+**Important**: Our data sources have migrated from dummy data to real patient data:
+- **Source Database**: `Data_Store_OLIDS_UAT` (contains real patient data)
+- **Target Database**: `DATA_LAB_OLIDS_UAT` (UAT environment for transformed models)
+- **Required Role**: `ISL-USERGROUP-SECONDEES-NCL` for accessing real patient data
 
 ## Role Access Pattern
 
-- **NCL-USERGROUP-STAFF-BI-ADMIN**: Has read access to `DATA_LAB_NCL_TRAINING_TEMP`
-- **ISL-USERGROUP-SECONDEES-NCL**: Has write access to `DATA_LAB_OLIDS_UAT`
+- **ISL-USERGROUP-SECONDEES-NCL**: Required role for accessing real patient data in `Data_Store_OLIDS_UAT`
+- **ISL-USERGROUP-SECONDEES-NCL**: Has read/write access to `DATA_LAB_OLIDS_UAT`
+
+**Security Note**: Real patient data requires strict access controls and appropriate role permissions.
 
 The script handles this by creating two separate connections with the appropriate roles.
 
@@ -55,12 +62,11 @@ python scripts/migrate_snowflake_tables.py --schema CODESETS --table your_table_
 
 ## What the Script Does
 
-1. **Discovery**: Connects with `NCL-USERGROUP-STAFF-BI-ADMIN` role to list static tables
-2. **Extraction**: Reads data from source tables using pandas
-3. **Role Switch**: Establishes second connection with `ISL-USERGROUP-SECONDEES-NCL` role
-4. **Schema Creation**: Creates target schemas if they don't exist
-5. **Data Upload**: Uses Snowflake's `write_pandas` for efficient bulk loading
-6. **Logging**: Comprehensive logging to both console and `logs/snowflake_migration.log`
+1. **Discovery**: Connects with `ISL-USERGROUP-SECONDEES-NCL` role to list static tables
+2. **Extraction**: Reads data from source tables using pandas  
+3. **Schema Creation**: Creates target schemas if they don't exist
+4. **Data Upload**: Uses Snowflake's `write_pandas` for efficient bulk loading
+5. **Logging**: Comprehensive logging to both console and `logs/snowflake_migration.log`
 
 ## Important Notes
 

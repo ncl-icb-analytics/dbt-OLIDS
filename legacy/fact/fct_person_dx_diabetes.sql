@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_DIABETES (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_DIABETES (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     AGE NUMBER, -- Age of the person (>= 17 for this table)
@@ -38,7 +38,7 @@ WITH BaseObservationsAndClusters AS (
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID
     FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
     -- Join to the pre-aggregated MAPPED_CONCEPTS table
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS AS MC
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS AS MC
         ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
     -- Standard joins to get person and patient identifiers
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP
@@ -54,7 +54,7 @@ FilteredByAge AS (
         boc.*,
         age.AGE
     FROM BaseObservationsAndClusters boc
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age
+    JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_AGE age
         ON boc.PERSON_ID = age.PERSON_ID -- Use the corrected join key
     WHERE age.AGE >= 17
 ),

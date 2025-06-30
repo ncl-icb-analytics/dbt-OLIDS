@@ -82,7 +82,7 @@ These macros support the campaign-specific model approach while maintaining DRY 
 -- Get observations for a rule group (replaces hardcoded cluster lists)
 {% macro get_flu_observations_for_rule_group(campaign_id, rule_group_id, source='UKHSA_FLU') %}
     {%- set clusters = get_flu_clusters_for_rule_group(campaign_id, rule_group_id, 'observation') -%}
-    SELECT person_id, clinical_effective_date, cluster_id
+    SELECT person_id, clinical_effective_date, cluster_id, result_value, result_text
     FROM ({{ get_observations(clusters, source) }})
     WHERE clinical_effective_date IS NOT NULL
 {% endmacro %}

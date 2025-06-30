@@ -80,7 +80,7 @@ SELECT
         AS has_statin_decision
 FROM base_population AS bp
 LEFT JOIN statin_medications AS sm ON bp.person_id = sm.person_id
-LEFT JOIN statin_exclusions AS se USING (person_id)
+LEFT JOIN statin_exclusions AS se ON bp.person_id = se.person_id
 WHERE
     NOT COALESCE(sm.person_id IS NOT NULL, FALSE)  -- Not on statins
     AND NOT COALESCE(se.latest_statin_allergy_date IS NOT NULL, FALSE)  -- No statin allergies

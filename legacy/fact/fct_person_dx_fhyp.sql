@@ -1,4 +1,4 @@
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_FHYP (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_FHYP (
     PERSON_ID VARCHAR, -- Unique identifier for the person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     IS_ON_FHYP_REGISTER BOOLEAN, -- Flag indicating if the person is on the familial hypercholesterolaemia register
@@ -22,7 +22,7 @@ WITH BaseObservations AS (
         MC.CONCEPT_CODE,
         MC.CODE_DESCRIPTION
     FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS AS MC
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS AS MC
         ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP
         ON O."patient_id" = PP."patient_id"

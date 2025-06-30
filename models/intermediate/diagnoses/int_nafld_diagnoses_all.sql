@@ -7,9 +7,9 @@
 
 /*
 All Non-Alcoholic Fatty Liver Disease (NAFLD) diagnosis observations from clinical records.
-Currently uses hardcoded SNOMED concept codes as no cluster is available in codesets.
+Currently uses hardcoded SNOMED concept codes as no cluster is available in REFERENCE.
 
-⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in codesets.
+⚠️ TODO: Update with proper cluster ID once NAFLD_COD becomes available in REFERENCE.
 
 Clinical Purpose:
 - NAFLD diagnosis tracking

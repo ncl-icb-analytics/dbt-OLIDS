@@ -2,7 +2,7 @@
 -- Includes latest BP reading, its context (Home/ABPM), and an inferred HTN stage
 -- applying NICE-aligned thresholds based on the reading's context.
 -- Inclusion criteria: Patients aged >= 18 with a HYP_COD date later than their latest HYPRES_COD date (or no HYPRES_COD).
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_HYPERTENSION (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_HYPERTENSION (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
@@ -43,7 +43,7 @@ WITH BaseObservationsAndClusters AS (
         MC.CODE_DESCRIPTION AS CONCEPT_DISPLAY,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID
     FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS AS MC ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS AS MC ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP ON O."patient_id" = PP."patient_id"
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" AS P ON O."patient_id" = P."id"
     WHERE MC.CLUSTER_ID IN ('HYP_COD', 'HYPRES_COD')
@@ -54,7 +54,7 @@ FilteredByAge AS (
         boc.*,
         age.AGE
     FROM BaseObservationsAndClusters boc
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE age ON boc.PERSON_ID = age.PERSON_ID
+    JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_AGE age ON boc.PERSON_ID = age.PERSON_ID
     WHERE age.AGE >= 18
 ),
 PersonLevelHTNCodingAggregation AS (
@@ -127,6 +127,6 @@ SELECT
     htn_agg.ALL_HTN_CONCEPT_DISPLAYS,
     htn_agg.ALL_HTN_SOURCE_CLUSTER_IDS
 FROM PersonLevelHTNCodingAggregation htn_agg
-LEFT JOIN DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_LATEST bp
+LEFT JOIN DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_BLOOD_PRESSURE_LATEST bp
     ON htn_agg.PERSON_ID = bp.PERSON_ID
 WHERE htn_agg.IS_ON_HTN_REGISTER = TRUE;

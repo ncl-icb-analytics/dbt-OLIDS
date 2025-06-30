@@ -236,8 +236,8 @@ SELECT
     avs.vaccination_type,
     avs.description,
     avs.status_type,
-    demo.birth_date,
-    DATEDIFF('year', demo.birth_date, {{ get_flu_audit_date(current_campaign) }}) AS age_years,
+    demo.birth_date_approx,
+    DATEDIFF('year', demo.birth_date_approx, {{ get_flu_audit_date(current_campaign) }}) AS age_years,
     {{ get_flu_audit_date(current_campaign) }} AS created_at
 FROM all_vaccination_status avs
 JOIN {{ ref('dim_person_demographics') }} demo

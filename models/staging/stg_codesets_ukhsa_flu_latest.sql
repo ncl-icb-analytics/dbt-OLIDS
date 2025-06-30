@@ -10,7 +10,7 @@
     Purpose: Standardizes and cleans UKHSA flu vaccination clinical codes for use in 
     flu programme eligibility determination and clinical decision support.
     
-    Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS.UKHSA_FLU_LATEST
+    Source: "DATA_LAB_OLIDS_UAT".REFERENCE.UKHSA_FLU_LATEST
     
     Business Context: UKHSA (UK Health Security Agency) provides standardized clinical codes
     for identifying patients eligible for flu vaccination based on clinical risk factors.
@@ -30,4 +30,4 @@ SELECT
     "EMIS_ASTRX" AS emis_astrx,
     "UNNAMED_9" AS unnamed_9,
     "TPP_ASTRX" AS tpp_astrx
-FROM {{ source('CODESETS', 'UKHSA_FLU_LATEST') }}
+FROM {{ source('REFERENCE', 'UKHSA_FLU_LATEST') }}

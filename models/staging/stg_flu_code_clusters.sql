@@ -15,5 +15,5 @@ SELECT
     data_source_type,
     date_qualifier,
     cluster_description
-FROM {{ ref('flu_code_clusters') }}
+FROM {{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}.DBT_DEV_REFERENCE.FLU_CODE_CLUSTERS
 ORDER BY rule_group_id, cluster_id

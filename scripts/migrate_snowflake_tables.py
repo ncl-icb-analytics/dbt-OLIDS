@@ -2,7 +2,7 @@
 """
 Snowflake Table Migration Script
 
-Migrates static tables from DATA_LAB_NCL_TRAINING_TEMP database (CODESETS and RULESETS schemas)
+Migrates static tables from DATA_LAB_OLIDS_UAT database (CODESETS and RULESETS schemas)
 to DATA_LAB_OLIDS_UAT database using role switching and SSO authentication.
 
 Usage:
@@ -14,7 +14,7 @@ Environment Variables (from .env file):
     SNOWFLAKE_WAREHOUSE: Warehouse to use for operations
 
 Roles Used:
-    - NCL-USERGROUP-STAFF-BI-ADMIN: For reading from DATA_LAB_NCL_TRAINING_TEMP
+    - NCL-USERGROUP-STAFF-BI-ADMIN: For reading from DATA_LAB_OLIDS_UAT
     - ISL-USERGROUP-SECONDEES-NCL: For writing to DATA_LAB_OLIDS_UAT
 """
 
@@ -49,7 +49,7 @@ class SnowflakeMigrator:
         self.load_environment()
         self.source_role = "NCL-USERGROUP-STAFF-SNOWFLAKE-BI-ADMIN"
         self.target_role = "ISL-USERGROUP-SECONDEES-NCL"
-        self.source_database = "DATA_LAB_NCL_TRAINING_TEMP"
+        self.source_database = "DATA_LAB_OLIDS_UAT"
         self.target_database = "DATA_LAB_OLIDS_UAT"
         self.schemas = ["CODESETS", "RULESETS"]
         

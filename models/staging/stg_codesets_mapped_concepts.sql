@@ -1,5 +1,5 @@
 -- Staging model for CODESETS.MAPPED_CONCEPTS
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
+-- Source: "DATA_LAB_OLIDS_UAT".REFERENCE
 
 SELECT
     "SOURCE_CODE_ID" AS source_code_id,
@@ -12,4 +12,4 @@ SELECT
     "CLUSTER_DESCRIPTION" AS cluster_description,
     "CODE_DESCRIPTION" AS code_description,
     "SOURCE" AS source
-FROM {{ source('CODESETS', 'MAPPED_CONCEPTS') }}
+FROM {{ source('REFERENCE', 'MAPPED_CONCEPTS') }}

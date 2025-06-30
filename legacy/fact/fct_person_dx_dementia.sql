@@ -1,6 +1,6 @@
 -- Creates a dynamic table identifying patients currently coded as having Dementia (DEM).
 -- Inclusion criteria: Patients with a DEM_COD.
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_PERSON_DX_DEMENTIA (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_PERSON_DX_DEMENTIA (
     -- Identifiers
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
@@ -31,7 +31,7 @@ WITH BaseObservationsAndClusters AS (
         MC.CODE_DESCRIPTION AS CONCEPT_DISPLAY,
         MC.CLUSTER_ID AS SOURCE_CLUSTER_ID
     FROM "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."OBSERVATION" AS O
-    JOIN DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS AS MC ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
+    JOIN DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS AS MC ON O."observation_core_concept_id" = MC.SOURCE_CODE_ID
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT_PERSON" AS PP ON O."patient_id" = PP."patient_id"
     JOIN "Data_Store_OLIDS_Dummy"."OLIDS_MASKED"."PATIENT" AS P ON O."patient_id" = P."id"
     WHERE MC.CLUSTER_ID IN ('DEM_COD')

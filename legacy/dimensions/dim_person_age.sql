@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_AGE(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_AGE(
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID VARCHAR, -- Surrogate key for the patient
     BIRTH_YEAR NUMBER, -- Year of birth as recorded for the patient
@@ -64,7 +64,7 @@ WITH age_calculations AS (
             WHEN EXTRACT(MONTH FROM CURRENT_DATE()) >= 9 THEN EXTRACT(YEAR FROM CURRENT_DATE())
             ELSE EXTRACT(YEAR FROM CURRENT_DATE()) - 1
         END AS ACADEMIC_YEAR_START
-    FROM DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_BIRTH_DEATH bd
+    FROM DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_BIRTH_DEATH bd
 )
 -- Final SELECT statement to assemble all age-related attributes
 SELECT

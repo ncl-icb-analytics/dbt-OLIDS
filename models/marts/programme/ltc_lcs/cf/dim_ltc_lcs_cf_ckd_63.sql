@@ -112,5 +112,5 @@ SELECT
     coalesce(ceg.latest_uacr_value > 70, FALSE) AS meets_criteria
 FROM base_population AS bp
 LEFT JOIN latest_uacr AS ceg ON bp.person_id = ceg.person_id
-LEFT JOIN uacr_codes AS codes USING (person_id)
+LEFT JOIN uacr_codes AS codes ON bp.person_id = codes.person_id
 WHERE ceg.latest_uacr_value > 70

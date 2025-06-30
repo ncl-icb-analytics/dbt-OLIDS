@@ -26,5 +26,5 @@ SELECT
     age_max_years,
     business_description,
     technical_description
-FROM {{ ref('flu_programme_logic') }}
+FROM {{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}.DBT_DEV_REFERENCE.FLU_PROGRAMME_LOGIC
 ORDER BY campaign_id, rule_group_id

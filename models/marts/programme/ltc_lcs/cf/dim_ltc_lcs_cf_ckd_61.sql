@@ -136,7 +136,7 @@ SELECT
     ) AS meets_criteria
 FROM base_population AS bp
 LEFT JOIN egfr_with_lags AS ceg ON bp.person_id = ceg.person_id
-LEFT JOIN egfr_codes AS codes USING (person_id)
+LEFT JOIN egfr_codes AS codes ON bp.person_id = codes.person_id
 WHERE
     ceg.latest_egfr_value < 60
     AND ceg.previous_egfr_value < 60

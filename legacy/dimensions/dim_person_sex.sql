@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_SEX(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_SEX(
 	PERSON_ID VARCHAR, -- Unique identifier for a person
 	SEX VARCHAR -- Derived sex of the person ('Female', 'Male', or 'Unknown')
 )

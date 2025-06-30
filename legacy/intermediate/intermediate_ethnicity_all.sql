@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.INTERMEDIATE_ETHNICITY_ALL(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.INTERMEDIATE_ETHNICITY_ALL(
 	PERSON_ID,
 	SK_PATIENT_ID,
 	CLINICAL_EFFECTIVE_DATE,
@@ -41,7 +41,7 @@ INNER JOIN -- Get details of the mapped target concept (e.g., SNOMED code) from 
 -- Crucial INNER JOIN: Ensures that the mapped concept's code exists in the ETHNICITY_CODES reference table.
 -- This acts as the primary filter, keeping only valid, recognised ethnicity observations.
 INNER JOIN
-    DATA_LAB_NCL_TRAINING_TEMP.CODESETS.ETHNICITY_CODES AS E
+    DATA_LAB_OLIDS_UAT.REFERENCE.ETHNICITY_CODES AS E
     ON E."CODE" = CON."code" -- Compares the mapped code (e.g., SNOMED) to the codes in the reference table.
 WHERE
     O."observation_core_concept_id" IS NOT NULL -- Ensures the original observation had a concept ID to map from.

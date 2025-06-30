@@ -88,7 +88,7 @@ eligible_patients AS (
         qp.latest_qrisk2_value
     FROM qrisk2_patients AS qp
     LEFT JOIN moderate_dose_statins AS mds ON qp.person_id = mds.person_id
-    LEFT JOIN statin_exclusions AS se USING (person_id)
+    LEFT JOIN statin_exclusions AS se ON qp.person_id = se.person_id
     WHERE
         NOT COALESCE(mds.person_id IS NOT NULL, FALSE)  -- Not on moderate-dose statins
         AND NOT COALESCE(se.latest_statin_allergy_date IS NOT NULL, FALSE)  -- No statin allergies

@@ -1,5 +1,5 @@
 -- Staging model for CODESETS.ETHNICITY_CODES
--- Source: "DATA_LAB_NCL_TRAINING_TEMP".CODESETS
+-- Source: "DATA_LAB_OLIDS_UAT".REFERENCE
 
 SELECT
     "CODE" AS code,
@@ -7,4 +7,4 @@ SELECT
     "CATEGORY" AS category,
     "SUBCATEGORY" AS subcategory,
     "GRANULAR" AS granular
-FROM {{ source('CODESETS', 'ETHNICITY_CODES') }}
+FROM {{ source('REFERENCE', 'ETHNICITY_CODES') }}

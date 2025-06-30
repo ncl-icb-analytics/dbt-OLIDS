@@ -1,4 +1,4 @@
-create or replace dynamic table DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.FCT_ORGANISATION_ACTIVE_PATIENTS(
+create or replace dynamic table DATA_LAB_OLIDS_UAT.HEI_MIGRATION.FCT_ORGANISATION_ACTIVE_PATIENTS(
 	LDS_ORGANISATION_ID VARCHAR, -- Unique identifier for the organisation from the source system
 	ODS_CODE VARCHAR, -- ODS (Organisation Data Service) code for the organisation
 	MEASURE_ID VARCHAR, -- Identifier for the measure being calculated (fixed as 'LDS_ORGANISATION_ACTIVE_LIST_SIZE')

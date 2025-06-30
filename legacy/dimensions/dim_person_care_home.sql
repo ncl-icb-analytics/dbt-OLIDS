@@ -3,7 +3,7 @@
 -- Only includes persons who have a recorded care home, nursing home, or temporary care home status.
 -- Uses CAREHOME_COD, NURSEHOME_COD, and TEMPCARHOME_COD clusters.
 -- ==========================================================================
-CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_NCL_TRAINING_TEMP.HEI_MIGRATION.DIM_PERSON_CARE_HOME (
+CREATE OR REPLACE DYNAMIC TABLE DATA_LAB_OLIDS_UAT.HEI_MIGRATION.DIM_PERSON_CARE_HOME (
     PERSON_ID VARCHAR, -- Unique identifier for a person
     SK_PATIENT_ID NUMBER, -- Surrogate key for the patient from the PATIENT table
     LATEST_RESIDENCE_DATE DATE, -- Date of the most recent care home/nursing home observation
@@ -40,7 +40,7 @@ WITH LatestResidenceStatusPerPerson AS (
         FROM
             "Data_Store_OLIDS_Dummy".OLIDS_MASKED.OBSERVATION o
         JOIN
-            DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+            DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc
             ON o."observation_core_concept_id" = mc.source_code_id
         WHERE
             mc.cluster_id IN ('CAREHOME_COD', 'NURSEHOME_COD', 'TEMPCARHOME_COD')
@@ -72,7 +72,7 @@ WITH LatestResidenceStatusPerPerson AS (
         ObservationClusters oc
         ON o."id" = oc.observation_id
     JOIN
-        DATA_LAB_NCL_TRAINING_TEMP.CODESETS.MAPPED_CONCEPTS mc
+        DATA_LAB_OLIDS_UAT.REFERENCE.MAPPED_CONCEPTS mc
         ON o."observation_core_concept_id" = mc.source_code_id
     JOIN
         "Data_Store_OLIDS_Dummy".OLIDS_MASKED.PATIENT_PERSON pp
