@@ -19,11 +19,8 @@ To add a new campaign year:
 
 {{ config(
     materialized='table',
-    indexes=[
-        {'columns': ['person_id'], 'type': 'hash'},
-        {'columns': ['campaign_id'], 'type': 'hash'},
-        {'columns': ['rule_group_id'], 'type': 'hash'}
-    ]
+    persist_docs={"relation": true, "columns": true},
+    cluster_by=['campaign_period', 'person_id']
 ) }}
 
 -- Current campaign (2024-25)

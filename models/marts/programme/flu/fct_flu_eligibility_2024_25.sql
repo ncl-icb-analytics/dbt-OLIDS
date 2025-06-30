@@ -29,11 +29,8 @@ For dynamic/comparative analysis, see fct_flu_eligibility_comparison.sql
 
 {{ config(
     materialized='table',
-    indexes=[
-        {'columns': ['person_id'], 'type': 'hash'},
-        {'columns': ['rule_group_id'], 'type': 'hash'},
-        {'columns': ['campaign_id', 'person_id'], 'unique': false}
-    ]
+    persist_docs={"relation": true, "columns": true},
+    cluster_by=['campaign_id', 'person_id', 'rule_group_id']
 ) }}
 
 {%- set campaign_id = 'flu_2024_25' -%}

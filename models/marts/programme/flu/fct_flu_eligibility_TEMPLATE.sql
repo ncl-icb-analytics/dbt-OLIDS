@@ -18,17 +18,22 @@ The template uses the same structure as existing models but with placeholder cam
 All business logic is driven by the CSV configuration data.
 */
 
+{# 
+=== TEMPLATE PARAMETERS ===
+Replace these placeholders when creating a new campaign model:
+#}
 {%- set campaign_id = 'CAMPAIGN_ID' -%}  {# REPLACE: e.g., 'flu_2025_26' #}
 
 {{ config(
     materialized='table',
-    indexes=[
-        {'columns': ['person_id'], 'type': 'hash'},
-        {'columns': ['rule_group_id'], 'type': 'hash'},
-        {'columns': ['campaign_id', 'person_id'], 'unique': false}
-    ]
+    persist_docs={"relation": true, "columns": true},
+    cluster_by=['campaign_id', 'person_id', 'rule_group_id']
 ) }}
 
+{# 
+=== CAMPAIGN CONFIGURATION ===
+This CTE sets up the campaign parameters and dates for the template
+#}
 WITH campaign_config AS (
     SELECT 
         '{{ campaign_id }}' AS campaign_id,
@@ -255,6 +260,11 @@ remaining_eligibility AS (
     FROM {{ ref('int_flu_carer_exclusion_eligibility') }}
 ),
 
+{# 
+=== ELIGIBILITY CONSOLIDATION ===
+Union all eligibility sources into a single dataset.
+Each CTE above handles a different type of eligibility rule.
+#}
 -- Union all eligibility sources
 all_eligibility AS (
     SELECT * FROM age_based_eligibility
