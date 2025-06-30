@@ -4,3 +4,5 @@ pyyaml
 dbt-core
 dbt-snowflake
 pre-commit
+python-dotenv
+snowflake-connector-python[pandas]

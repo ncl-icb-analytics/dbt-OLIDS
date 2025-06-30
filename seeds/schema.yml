@@ -1,0 +1,195 @@
+version: 2
+
+seeds:
+  - name: flu_programme_logic
+    description: |
+      Campaign-specific business logic and descriptions for flu vaccination eligibility rules.
+      
+      This contains the high-level programme logic that may change between campaigns.
+      New eligibility groups can be added, removed, or modified year-to-year based on 
+      UKHSA guidance changes. Each campaign year has its own set of rules.
+      
+      **Rule Types:**
+      - `SIMPLE`: Single cluster with basic date logic
+      - `COMBINATION`: Multiple clusters with AND/OR logic  
+      - `HIERARCHICAL`: Complex multi-step logic (e.g., CKD staging)
+      - `EXCLUSION`: Latest code determines inclusion/exclusion
+      - `AGE_BASED`: Age-based eligibility at reference date
+      - `AGE_BIRTH_RANGE`: Birth date range eligibility
+      
+      **Adding New Campaigns:**
+      1. Copy all flu_2024_25 rows 
+      2. Change campaign_id to flu_2025_26
+      3. Review and update business rules as needed
+      4. Add/remove rule groups based on UKHSA guidance
+      
+    columns:
+      - name: campaign_id
+        description: "Campaign identifier (e.g., flu_2024_25)"
+        tests:
+          - not_null
+          
+      - name: rule_group_id  
+        description: "Unique identifier for the rule group within a campaign"
+        tests:
+          - not_null
+          
+      - name: rule_group_name
+        description: "Human-readable name for the rule group"
+        tests:
+          - not_null
+          
+      - name: rule_type
+        description: "Type of rule logic to apply"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SIMPLE', 'COMBINATION', 'HIERARCHICAL', 'EXCLUSION', 'AGE_BASED', 'AGE_BIRTH_RANGE']
+              
+      - name: logic_expression
+        description: "Business logic expression in pseudocode"
+        
+      - name: exclusion_groups
+        description: "Pipe-separated list of rule groups that exclude this group"
+        
+      - name: age_min_months
+        description: "Minimum age in months (NULL = no minimum)"
+        
+      - name: age_max_years
+        description: "Maximum age in years (NULL = no maximum)" 
+        
+      - name: business_description
+        description: "Plain English description of who is eligible"
+        tests:
+          - not_null
+          
+      - name: technical_description
+        description: "Technical summary of the rule implementation"
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - rule_group_id
+          name: unique_campaign_rule_group
+
+  - name: flu_code_clusters
+    description: |
+      Technical mapping of UKHSA cluster codes to data sources and date logic.
+      
+      This contains the stable technical mappings between rule groups and UKHSA
+      cluster codes. These mappings rarely change as they represent the technical
+      implementation of how to extract data for each rule type.
+      
+      **Data Source Types:**
+      - `observation`: Clinical observations (get_observations macro)
+      - `medication`: Medication orders (get_medication_orders macro)
+      - `demographic`: Age/birth date calculations
+      
+      **Date Qualifiers:**
+      - `EARLIEST`: First occurrence before reference date
+      - `LATEST`: Most recent occurrence before reference date
+      - `LATEST_SINCE`: Most recent occurrence since specific date
+      - `LATEST_AFTER`: Most recent occurrence after specific date
+      
+    columns:
+      - name: rule_group_id
+        description: "Links to flu_programme_logic.rule_group_id"
+        tests:
+          - not_null
+          
+      - name: cluster_id
+        description: "UKHSA cluster identifier for SNOMED codes"
+        tests:
+          - not_null
+          
+      - name: data_source_type
+        description: "Type of data source to query"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['observation', 'medication', 'demographic']
+              
+      - name: date_qualifier
+        description: "How to filter dates for this cluster"
+        tests:
+          - accepted_values:
+              values: ['EARLIEST', 'LATEST', 'LATEST_SINCE', 'LATEST_AFTER']
+              
+      - name: cluster_description
+        description: "Description of what this cluster contains"
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - rule_group_id
+            - cluster_id
+          name: unique_rule_cluster
+
+  - name: flu_campaign_dates
+    description: |
+      Campaign-specific dates for flu vaccination programmes.
+      
+      This contains all the dates that change each campaign year. To add a new
+      campaign year (e.g., flu_2025_26), simply copy all the flu_2024_25 rows
+      and update the campaign_id and shift the dates by one year.
+      
+      **Date Types:**
+      - `start_dat`: Campaign start date (usually 01/09/YYYY)
+      - `ref_dat`: Campaign reference date (usually 31/03/YYYY+1) 
+      - `child_dat`: Child reference date (usually 31/08/YYYY)
+      - `audit_end_dat`: Campaign end date for audit purposes
+      - `latest_since_date`: Lookback dates for medication rules
+      - `latest_after_date`: Vaccination given after this date
+      - `birth_start`: Birth date range start for age groups
+      - `birth_end`: Birth date range end for age groups
+      
+      **Adding New Campaigns:**
+      1. Copy all flu_2024_25 rows 
+      2. Change campaign_id to flu_2025_26
+      3. Update dates:
+         - start_dat: 2025-09-01
+         - ref_dat: 2026-03-31
+         - child_dat: 2025-08-31  
+         - audit_end_dat: 2026-02-28
+         - Shift birth ranges and lookback dates by 1 year
+      
+    columns:
+      - name: campaign_id
+        description: "Unique identifier for the flu campaign (e.g., flu_2024_25)"
+        tests:
+          - not_null
+          
+      - name: rule_group_id
+        description: "Rule group this date applies to (ALL for campaign-wide dates)"
+        tests:
+          - not_null
+          
+      - name: date_type
+        description: "Type of date parameter"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['start_dat', 'ref_dat', 'child_dat', 'audit_end_dat', 'latest_since_date', 'latest_after_date', 'birth_start', 'birth_end']
+              
+      - name: date_value
+        description: "The actual date value (YYYY-MM-DD format)"
+        tests:
+          - not_null
+          
+      - name: description
+        description: "Human-readable description of what this date represents"
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - campaign_id
+            - rule_group_id
+            - date_type
+          name: unique_campaign_rule_date 

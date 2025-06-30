@@ -1,10 +1,7 @@
 {{
     config(
         materialized='table',
-        indexes=[
-            {'columns': ['person_id'], 'unique': false},
-            {'columns': ['person_id', 'foot_check_completed_in_last_12m'], 'unique': false}
-        ]
+        cluster_by=['person_id']
     )
 }}
 

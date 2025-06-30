@@ -14,6 +14,11 @@ model-paths: ["models"]
 # Configure dbt audit schema naming
 vars:
   dbt_audit_schema: "test_audit"  # Cleaner name instead of dbt_dbt_test_audit
+  
+  # Flu campaign configuration
+  flu_current_campaign: "flu_2024_25"     # Current flu campaign
+  flu_previous_campaign: "flu_2023_24"    # Previous flu campaign (for comparison)
+  flu_audit_end_date: "CURRENT_DATE"      # Default audit end date (override with --vars)
 
 # Configure test failure storage (only for failures)
 # Note: This creates tables for all tests, populated only on failure

@@ -1,12 +1,7 @@
 {{
     config(
         materialized='table',
-        indexes=[
-            {'columns': ['person_id'], 'unique': false},
-            {'columns': ['is_on_register'], 'unique': false},
-            {'columns': ['qof_rule_applied'], 'unique': false},
-            {'columns': ['earliest_unresolved_diagnosis_date'], 'unique': false}
-        ]
+        cluster_by=['person_id', 'is_on_register']
     )
 }}
 
