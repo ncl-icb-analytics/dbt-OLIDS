@@ -6,8 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for helping improve our dbt project!
-        Please provide details about the model issue you've discovered.
+        Report an issue with an existing dbt model or test failure.
 
   - type: input
     id: model-name
@@ -47,9 +46,13 @@ body:
       label: Environment
       placeholder: "e.g., DEV, QA, PROD, All environments"
 
-  - type: checkboxes
-    id: priority
+  - type: dropdown
+    id: urgency
     attributes:
-      label: Priority
+      label: Urgency
+      description: Only change if this needs immediate attention
       options:
-        - label: High priority (affects live reporting or blocks other work)
+        - Standard
+        - Urgent
+        - Critical
+      default: 0
