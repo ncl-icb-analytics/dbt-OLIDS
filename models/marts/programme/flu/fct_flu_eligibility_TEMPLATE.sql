@@ -6,8 +6,8 @@ Copy this file and replace placeholders to create a new campaign year.
 
 INSTRUCTIONS TO CREATE NEW CAMPAIGN:
 1. Copy this file to fct_flu_eligibility_YYYY_YY.sql (e.g., fct_flu_eligibility_2025_26.sql)
-2. Replace CAMPAIGN_ID placeholder with actual campaign ID (e.g., 'flu_2025_26')
-3. Replace CAMPAIGN_NAME with descriptive name (e.g., '2025-26 Flu Vaccination Campaign')
+2. Replace CAMPAIGN_ID_PLACEHOLDER with actual campaign ID (e.g., 'flu_2025_26')
+3. Replace CAMPAIGN_NAME_PLACEHOLDER with descriptive name (e.g., '2025-26 Flu Vaccination Campaign')
 4. Add new CSV data for the campaign to the seed files:
    - flu_campaign_dates.csv: Copy 2024-25 rows, update campaign_id and shift dates +1 year
    - flu_programme_logic.csv: Copy 2024-25 rows, update campaign_id, review business logic
@@ -22,7 +22,7 @@ All business logic is driven by the CSV configuration data.
 === TEMPLATE PARAMETERS ===
 Replace these placeholders when creating a new campaign model:
 #}
-{%- set campaign_id = 'flu_2024_25' -%}  {# REPLACE: e.g., 'flu_2025_26' #}
+{%- set campaign_id = 'CAMPAIGN_ID_PLACEHOLDER' -%}  {# REPLACE: e.g., 'flu_2025_26' #}
 
 {{ config(
     materialized='table',
@@ -37,7 +37,7 @@ This CTE sets up the campaign parameters and dates for the template
 WITH campaign_config AS (
     SELECT 
         '{{ campaign_id }}' AS campaign_id,
-        'CAMPAIGN_NAME' AS campaign_name,  {# REPLACE: e.g., '2025-26 Flu Vaccination Campaign' #}
+        'CAMPAIGN_NAME_PLACEHOLDER' AS campaign_name,  {# REPLACE: e.g., '2025-26 Flu Vaccination Campaign' #}
         {{ get_flu_campaign_date(campaign_id, 'ALL', 'start_dat') }}::DATE AS campaign_start_date,
         {{ get_flu_campaign_date(campaign_id, 'ALL', 'ref_dat') }}::DATE AS campaign_ref_date,
         {{ get_flu_audit_date(campaign_id) }} AS audit_end_date
