@@ -6,7 +6,7 @@ A dbt project for migrating key data models from HealtheIntent (Vertica) to Snow
 
 ## One London Integrated Data Set (OLIDS)
 
-This project aligns with the [One London Integrated Data Set (OLIDS)](https://github.com/NHSISL/Datasets) framework - a canonical data model that transforms multiple healthcare datasets into a standardized format. OLIDS enables data interrogation across London's Integrated Care Systems without being constrained by original source system structures.
+This project aligns with the [One London Integrated Data Set (OLIDS)](https://github.com/NHSISL/Datasets) framework - a canonical data model that transforms data from GP Systems (EMIS and SystmOne) into a standardised format, closely resembling the FHIR specification.
 
 ## Architecture
 
