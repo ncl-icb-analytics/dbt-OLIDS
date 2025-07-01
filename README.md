@@ -129,9 +129,10 @@ dbt docs serve  # Open documentation in browser
 
 **For development:**
 ```bash
-dbt run --select model_name              # Build just one model
-dbt run --select staging                 # Build all staging models
-dbt run --select +model_name             # Build model + everything it depends on
+dbt run -s model_name              # Build just one model
+dbt run -s staging                 # Build all staging models [staging is a directory]
+dbt run -s +model_name             # Build model + everything it depends on
+dbt run -s model_name+             # Build model + everything that depends on it
 ```
 
 **Getting help:**
