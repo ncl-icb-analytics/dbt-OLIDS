@@ -4,7 +4,7 @@
 
 **dbt** (data build tool) is a modern data transformation tool that lets you write SQL models and automatically handles dependencies, testing, and documentation. Think of it as a tool to help bring software engineering best practices to SQL analysts.
 
-This project uses dbt to migrate and transform healthcare data that used to be transformed in HealtheIntent (Vertica) to Snowflake, creating analytics-ready datasets for healthcare analysis.
+This project uses dbt to transform healthcare data in Snowflake, creating analytics-ready datasets for healthcare analysis, based on previous implementations of these data models in HealtheIntent (Vertica).
 
 **Data models included:**
 - Disease registers (diabetes, hypertension, heart failure, etc.)
