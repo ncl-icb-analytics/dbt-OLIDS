@@ -1,0 +1,29 @@
+name: 💬 Quick Issue
+description: Simple issue template for quick reporting
+title: ""
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Quick template for simple issues or questions.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What's the issue or question?
+      placeholder: "Describe what you need help with..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      description: Only change if this needs immediate attention
+      options:
+        - Standard
+        - Urgent
+        - Critical
+      default: 0

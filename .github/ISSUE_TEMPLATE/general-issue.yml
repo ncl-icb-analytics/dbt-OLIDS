@@ -6,7 +6,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for contributing to our dbt project!
         Use this template for issues that don't relate to specific dbt models.
 
   - type: dropdown
@@ -36,9 +35,13 @@ body:
     validations:
       required: true
 
-  - type: checkboxes
-    id: priority
+  - type: dropdown
+    id: urgency
     attributes:
-      label: Priority
+      label: Urgency
+      description: Only change if this needs immediate attention
       options:
-        - label: High priority (blocking development or urgent need)
+        - Standard
+        - Urgent
+        - Critical
+      default: 0

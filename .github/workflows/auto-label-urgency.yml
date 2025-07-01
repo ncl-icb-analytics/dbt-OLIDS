@@ -1,0 +1,49 @@
+name: Auto-label Issue Urgency
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  label-urgency:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Apply urgency labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            
+            // Remove existing urgency labels
+            const existingLabels = issue.labels.map(label => label.name);
+            const urgencyLabels = ['urgent', 'critical'];
+            const labelsToRemove = existingLabels.filter(label => urgencyLabels.includes(label));
+            
+            for (const label of labelsToRemove) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                name: label
+              });
+            }
+            
+            // Apply new urgency label based on form content
+            if (body.includes('### Urgency\n\nUrgent')) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['urgent']
+              });
+            } else if (body.includes('### Urgency\n\nCritical')) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['critical']
+              });
+            }
