@@ -17,12 +17,22 @@ Simple rule examples:
 - CLD_GROUP: Chronic liver disease diagnosis
 
 This model replaces the apply_simple_rule macro functionality.
-Uses dynamic cluster queries from configuration data.
+Uses static configuration to avoid unsafe introspection.
 */
 
 {{ config(materialized='table') }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
+
+{%- set simple_rule_groups = [
+    'CHD_GROUP',
+    'CLD_GROUP', 
+    'CNS_GROUP',
+    'ASPLENIA_GROUP',
+    'LEARNDIS_GROUP',
+    'HHLD_IMDEF_GROUP',
+    'AST_ADM_GROUP'
+] -%}
 
 WITH simple_rules AS (
     SELECT 
@@ -44,40 +54,20 @@ WITH simple_rules AS (
 
 -- Get all observation-based events for SIMPLE rules
 all_observation_events AS (
-    {%- set obs_rules_query -%}
-        SELECT DISTINCT rule_group_id 
-        FROM {{ ref('stg_flu_programme_logic') }}
-        WHERE rule_type = 'SIMPLE' 
-          AND campaign_id = '{{ current_campaign }}'
-    {%- endset -%}
-    
-    {%- if execute -%}
-        {%- set obs_rule_results = run_query(obs_rules_query) -%}
-        {%- for row in obs_rule_results.rows -%}
-            {%- set rule_group = row[0] -%}
-            {%- if not loop.first %}
-            
-            UNION ALL
-            {%- endif %}
-            
-            SELECT 
-                '{{ current_campaign }}' AS campaign_id,
-                '{{ rule_group }}' AS rule_group_id,
-                obs.person_id,
-                obs.clinical_effective_date AS event_date,
-                obs.cluster_id
-            FROM ({{ get_flu_observations_for_rule_group(current_campaign, rule_group) }}) obs
-        {%- endfor -%}
-    {%- else -%}
-        -- Compile-time placeholder
+    {%- for rule_group in simple_rule_groups -%}
+        {%- if not loop.first %}
+        
+        UNION ALL
+        {%- endif %}
+        
         SELECT 
             '{{ current_campaign }}' AS campaign_id,
-            'PLACEHOLDER' AS rule_group_id,
-            'placeholder_person' AS person_id,
-            CURRENT_DATE AS event_date,
-            'PLACEHOLDER_CLUSTER' AS cluster_id
-        WHERE FALSE
-    {%- endif -%}
+            '{{ rule_group }}' AS rule_group_id,
+            obs.person_id,
+            obs.clinical_effective_date AS event_date,
+            obs.cluster_id
+        FROM ({{ get_flu_observations_for_rule_group(current_campaign, rule_group) }}) obs
+    {%- endfor -%}
 ),
 
 -- Join with rule configuration
