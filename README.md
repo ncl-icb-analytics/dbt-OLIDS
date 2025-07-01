@@ -6,7 +6,7 @@
 
 This project uses dbt to migrate and transform healthcare data that used to be transformed in HealtheIntent (Vertica) to Snowflake, creating analytics-ready datasets for healthcare analysis.
 
-**What you'll get:**
+**Data models included:**
 - Disease registers (diabetes, hypertension, heart failure, etc.)
 - Quality measures and clinical indicators  
 - Patient demographics and status tracking
