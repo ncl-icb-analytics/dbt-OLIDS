@@ -17,10 +17,11 @@ CSV Seeds → Staging Models → Intermediate Models → Campaign-Specific Fact 
 ```
 models/
 ├── staging/
-│   ├── stg_flu_code_clusters.sql       # Clinical code definitions
-│   ├── stg_flu_campaign_dates.sql      # Campaign dates & lookbacks  
-│   ├── stg_flu_programme_logic.sql     # Business logic rules
-│   └── stg_flu_programme_rules.sql     # Unified configuration
+│   ├── stg_flu_campaign_dates.sql              # Transforms seed: flu_campaign_dates.csv
+│   ├── stg_flu_code_clusters.sql               # Transforms seed: flu_code_clusters.csv
+│   ├── stg_flu_programme_logic.sql             # Transforms seed: flu_programme_logic.csv
+│   ├── stg_flu_programme_rules.sql             # Unified configuration (joins all staging)
+│   └── stg_codesets_ukhsa_flu_latest.sql       # UKHSA flu codeset mappings
 ├── intermediate/programme/flu/
 │   ├── int_flu_age_based_rules.sql              # Age threshold (Over 65)
 │   ├── int_flu_age_birth_range_rules.sql        # Child age groups (2-3, 4-16)
@@ -35,6 +36,8 @@ models/
 │   ├── int_flu_remaining_combination_eligibility.sql # IMMUNO, RESP
 │   ├── int_flu_carer_exclusion_eligibility.sql  # Carer exclusion logic
 │   └── int_flu_vaccination_status.sql           # Vaccination tracking
+├── macros/flu/
+│   └── flu_campaign_utils.sql                   # Campaign configuration utilities
 └── marts/programme/flu/
     ├── fct_flu_eligibility_2024_25.sql     # Campaign-specific fact
     ├── fct_flu_eligibility_comparison.sql  # Multi-year comparison
@@ -87,8 +90,8 @@ cp models/marts/programme/flu/fct_flu_eligibility_TEMPLATE.sql \
 
 #### 2.2 Update Template Placeholders
 Replace in `fct_flu_eligibility_2025_26.sql`:
-- `CAMPAIGN_ID` → `flu_2025_26`
-- `CAMPAIGN_NAME` → `2025-26 Flu Vaccination Campaign`
+- `CAMPAIGN_ID_PLACEHOLDER` → `flu_2025_26`
+- `CAMPAIGN_NAME_PLACEHOLDER` → `2025-26 Flu Vaccination Campaign`
 
 ### Step 3: Update Comparison Model
 
@@ -121,14 +124,14 @@ vars:
 # Reload seed data
 dbt seed --select flu_code_clusters flu_campaign_dates flu_programme_logic
 
-# Run staging models
-dbt run --select stg_flu_code_clusters stg_flu_campaign_dates stg_flu_programme_logic stg_flu_programme_rules
+# Run all staging models
+dbt run --select stg_flu_campaign_dates stg_flu_code_clusters stg_flu_programme_logic stg_flu_programme_rules
 
 # Test staging data quality
 dbt test --select stg_flu_programme_rules
 
-# Run intermediate models (these use var('flu_current_campaign'))
-dbt run --select int_flu_age_based_rules int_flu_age_birth_range_rules int_flu_simple_rules int_flu_combination_rules int_flu_asthma_eligibility int_flu_diabetes_eligibility int_flu_ckd_hierarchical_eligibility int_flu_bmi_hierarchical_eligibility int_flu_pregnancy_hierarchical_eligibility int_flu_remaining_simple_eligibility int_flu_remaining_combination_eligibility int_flu_carer_exclusion_eligibility int_flu_vaccination_status
+# Run all intermediate models at once (easier than listing each one)
+dbt run --select models/intermediate/programme/flu
 
 # Run campaign-specific fact model
 dbt run --select fct_flu_eligibility_2025_26
@@ -220,6 +223,7 @@ dbt run --vars '{"flu_current_campaign": "flu_2025_26", "flu_previous_campaign":
 2. **Date Format Errors**: Use YYYY-MM-DD format in CSV dates  
 3. **Variable Errors**: Ensure `flu_current_campaign` matches CSV campaign_id
 4. **Missing Rule Groups**: Check that business logic was copied correctly
+5. **Macro Configuration**: The `flu_campaign_utils.sql` macro needs to be updated with new campaign configuration
 
 ### Validation Checklist
 
@@ -229,6 +233,68 @@ dbt run --vars '{"flu_current_campaign": "flu_2025_26", "flu_previous_campaign":
 - [ ] Template placeholders replaced correctly
 - [ ] Comparison model updated to include new campaign
 - [ ] Variables in dbt_project.yml updated
+- [ ] Macro configuration updated in `flu_campaign_utils.sql` (if adding new campaign)
 - [ ] Models run successfully without errors
 - [ ] Expected rule groups present in output
 - [ ] Row counts reasonable compared to previous year
+
+## Model Dependencies Diagram
+
+```mermaid
+graph TD
+    subgraph "CSV Seeds"
+        A[flu_campaign_dates.csv]
+        B[flu_code_clusters.csv]
+        C[flu_programme_logic.csv]
+    end
+    
+    subgraph "Staging Models"
+        D[stg_flu_campaign_dates]
+        E[stg_flu_code_clusters]
+        F[stg_flu_programme_logic]
+        G[stg_flu_programme_rules]
+    end
+    
+    subgraph "Intermediate Models"
+        H[int_flu_age_based_rules]
+        I[int_flu_simple_rules]
+        J[int_flu_combination_rules]
+        K[int_flu_*_eligibility models]
+    end
+    
+    subgraph "Mart Models"
+        L[fct_flu_eligibility_2024_25]
+        M[fct_flu_eligibility_comparison]
+    end
+    
+    A --> D
+    B --> E
+    C --> F
+    D --> G
+    E --> G
+    F --> G
+    G --> H
+    G --> I
+    G --> J
+    G --> K
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+    L --> M
+```
+
+## Important Implementation Notes
+
+### Macro Configuration
+The `flu_campaign_utils.sql` macro contains hardcoded configuration for campaigns. This is a temporary approach to avoid unsafe introspection warnings in dbt. When adding a new campaign:
+
+1. Add the new campaign configuration to the macro
+2. Include cluster mappings, dates, and rule configurations
+3. This ensures stable compilation and consistent behavior
+
+### Template Usage
+The template file uses a hardcoded campaign_id that needs to be replaced. When copying the template:
+1. Replace the campaign_id value in the `set` statement
+2. Update the campaign_name in the CTE
+3. Ensure all references use the new campaign_id

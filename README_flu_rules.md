@@ -17,6 +17,11 @@ The flu vaccination eligibility rules are now managed through CSV seed files rat
 seeds/flu_*.csv → staging models → intermediate models → fact models
                        ↓              ↓                  ↓
                 stg_flu_*_rules → int_flu_*_rules → fct_flu_eligibility_YYYY_YY
+
+Detailed Flow:
+flu_campaign_dates.csv → stg_flu_campaign_dates ┐
+flu_code_clusters.csv → stg_flu_code_clusters   ├→ stg_flu_programme_rules → intermediate models
+flu_programme_logic.csv → stg_flu_programme_logic┘
 ```
 
 ### Legacy Macro-Based Architecture  
@@ -137,6 +142,74 @@ Clinical code clusters are defined separately in `flu_code_clusters.csv` with da
 - **LATEST_SINCE**: Most recent since specified date
 - **LATEST_AFTER**: Most recent after specified date
 
+## Data Flow Diagram
+
+```mermaid
+graph LR
+    subgraph "CSV Seeds"
+        A1[flu_campaign_dates.csv<br/>Campaign dates & lookbacks]
+        A2[flu_code_clusters.csv<br/>Clinical code definitions]
+        A3[flu_programme_logic.csv<br/>Business logic & rules]
+    end
+    
+    subgraph "Staging Layer"
+        B1[stg_flu_campaign_dates]
+        B2[stg_flu_code_clusters]
+        B3[stg_flu_programme_logic]
+        B4[stg_flu_programme_rules<br/>Unified configuration]
+    end
+    
+    subgraph "Intermediate Layer"
+        C1[int_flu_age_based_rules<br/>Over 65]
+        C2[int_flu_age_birth_range_rules<br/>Children 2-3, 4-16]
+        C3[int_flu_simple_rules<br/>CHD, CLD, CNS, etc.]
+        C4[int_flu_combination_rules<br/>Multi-condition logic]
+        C5[int_flu_asthma_eligibility]
+        C6[int_flu_diabetes_eligibility]
+        C7[int_flu_*_hierarchical_eligibility<br/>CKD, BMI, Pregnancy]
+        C8[int_flu_remaining_*_eligibility]
+        C9[int_flu_carer_exclusion_eligibility]
+        C10[int_flu_vaccination_status]
+    end
+    
+    subgraph "Mart Layer"
+        D1[fct_flu_eligibility_2024_25<br/>Campaign-specific]
+        D2[fct_flu_eligibility_comparison<br/>Multi-year analysis]
+    end
+    
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    
+    B1 --> B4
+    B2 --> B4
+    B3 --> B4
+    
+    B4 --> C1
+    B4 --> C2
+    B4 --> C3
+    B4 --> C4
+    B4 --> C5
+    B4 --> C6
+    B4 --> C7
+    B4 --> C8
+    B4 --> C9
+    B4 --> C10
+    
+    C1 --> D1
+    C2 --> D1
+    C3 --> D1
+    C4 --> D1
+    C5 --> D1
+    C6 --> D1
+    C7 --> D1
+    C8 --> D1
+    C9 --> D1
+    C10 --> D1
+    
+    D1 --> D2
+```
+
 ## Editing Rules
 
 Common rule modifications:
@@ -167,11 +240,14 @@ After making changes:
 # Reload all flu seed files
 dbt seed --select flu_code_clusters flu_campaign_dates flu_programme_logic
 
-# Run staging model
-dbt run --select stg_flu_programme_rules
+# Run all staging models
+dbt run --select stg_flu_campaign_dates stg_flu_code_clusters stg_flu_programme_logic stg_flu_programme_rules
 
 # Test configuration
 dbt test --select stg_flu_programme_rules
+
+# Run intermediate models
+dbt run --select tag:flu_intermediate
 
 # Test a specific campaign fact table
 dbt run --select fct_flu_eligibility_2024_25
@@ -189,18 +265,29 @@ The refactored system replaces complex macros with clear dbt model hierarchy:
 ```
 models/
 ├── staging/
-│   ├── stg_flu_code_clusters.sql       # Clinical code definitions
-│   ├── stg_flu_campaign_dates.sql      # Campaign dates & lookbacks  
-│   ├── stg_flu_programme_logic.sql     # Business logic rules
-│   └── stg_flu_programme_rules.sql     # Unified configuration view
+│   ├── stg_flu_campaign_dates.sql              # Transforms seed: flu_campaign_dates.csv
+│   ├── stg_flu_code_clusters.sql               # Transforms seed: flu_code_clusters.csv
+│   ├── stg_flu_programme_logic.sql             # Transforms seed: flu_programme_logic.csv
+│   ├── stg_flu_programme_rules.sql             # Unified configuration view (joins all staging)
+│   └── stg_codesets_ukhsa_flu_latest.sql       # UKHSA flu codeset mappings
 ├── intermediate/programme/flu/
-│   ├── int_flu_age_based_rules.sql     # Age threshold eligibility  
-│   ├── int_flu_simple_rules.sql        # Single condition rules
-│   ├── int_flu_combination_rules.sql   # Multi-condition AND/OR logic
-│   ├── int_flu_asthma_eligibility.sql  # Specific asthma business logic
-│   └── int_flu_diabetes_eligibility.sql # Specific diabetes business logic
+│   ├── int_flu_age_based_rules.sql             # Age threshold eligibility (Over 65)
+│   ├── int_flu_age_birth_range_rules.sql       # Child age groups (2-3, 4-16)
+│   ├── int_flu_simple_rules.sql                # Single condition rules (CHD, CLD, etc.)
+│   ├── int_flu_combination_rules.sql           # Multi-condition AND/OR logic
+│   ├── int_flu_asthma_eligibility.sql          # Specific asthma combination logic
+│   ├── int_flu_diabetes_eligibility.sql        # Diabetes with exclusion logic
+│   ├── int_flu_ckd_hierarchical_eligibility.sql     # CKD staging hierarchy
+│   ├── int_flu_bmi_hierarchical_eligibility.sql     # BMI/obesity hierarchy
+│   ├── int_flu_pregnancy_hierarchical_eligibility.sql # Pregnancy hierarchy
+│   ├── int_flu_remaining_simple_eligibility.sql     # Other simple rules (CNS, ASPLENIA, LEARNDIS)
+│   ├── int_flu_remaining_combination_eligibility.sql # Other combinations (IMMUNO, RESP)
+│   ├── int_flu_carer_exclusion_eligibility.sql      # Carer with exclusion logic
+│   └── int_flu_vaccination_status.sql          # Vaccination tracking
 └── marts/programme/flu/
-    └── fct_flu_eligibility_2024_25.sql # Unified fact table
+    ├── fct_flu_eligibility_2024_25.sql         # Campaign-specific fact table
+    ├── fct_flu_eligibility_TEMPLATE.sql        # Template for new campaigns
+    └── fct_flu_eligibility_comparison.sql      # Multi-year comparison
 ```
 
 ### Benefits of New Architecture
@@ -220,6 +307,23 @@ models/
 4. **Phase 4**: Smart parameter system (✅ Complete)
 5. **Phase 5**: Dynamic cluster queries (✅ Complete)
 6. **Phase 6**: Template-based campaign models (✅ Complete)
+
+### Implementation Notes
+
+#### Macro Configuration Approach
+The `flu_campaign_utils.sql` macro currently contains hardcoded configuration for the flu_2024_25 campaign. This is a temporary solution to avoid unsafe introspection issues while maintaining the ability to reference cluster and date configurations dynamically.
+
+**Why hardcoded?** DBT's introspection capabilities were causing warnings when trying to dynamically query seed data at compile time. The hardcoded approach ensures stable compilation while still providing the benefits of centralized configuration.
+
+**Future improvement:** When DBT provides better support for compile-time seed data access, this can be refactored to dynamically read from the seed files.
+
+#### Model Dependencies
+The intermediate models use several utility macros:
+- `get_flu_clusters_for_rule_group()` - Returns cluster IDs for a rule group
+- `get_flu_campaign_date()` - Returns campaign-specific dates
+- `get_flu_audit_date()` - Returns the audit end date
+- `get_flu_observations_for_rule_group()` - Fetches observations for a rule group
+- `get_flu_medications_for_rule_group()` - Fetches medications for a rule group
 
 ### Campaign Setup Workflow
 
