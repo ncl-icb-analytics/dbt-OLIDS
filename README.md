@@ -1,12 +1,28 @@
 # HealtheIntent -> Snowflake Data Migration
 
-## Overview
+## What This Is
 
-A dbt project for migrating key data models from HealtheIntent (Vertica) to Snowflake.
+**dbt** (data build tool) is a modern data transformation tool that lets you write SQL models and automatically handles dependencies, testing, and documentation. Think of it as a tool to help bring software engineering best practices to SQL analysts.
+
+This project uses dbt to migrate and transform healthcare data that used to be transformed in HealtheIntent (Vertica) to Snowflake, creating analytics-ready datasets for healthcare analysis.
+
+**What you'll get:**
+- Disease registers (diabetes, hypertension, heart failure, etc.)
+- Quality measures and clinical indicators  
+- Patient demographics and status tracking
+- Medication and prescription analytics
+- Data quality monitoring and validation
 
 ## One London Integrated Data Set (OLIDS)
 
 This project is built to use data from the [One London Integrated Data Set (OLIDS)](https://github.com/NHSISL/Datasets) - a canonical data model that transforms data from GP Systems (EMIS and SystmOne) into a standardised format, closely resembling the FHIR specification.
+
+**Key OLIDS tables you'll work with:**
+- `patient` - Patient demographics and registration
+- `person` - Individual person records and identifiers
+- `observation` - Clinical measurements, test results, diagnoses
+- `medication_order` - Prescriptions and medication data
+- `organisation` - GP practices and healthcare providers
 
 ## Architecture
 
@@ -18,34 +34,28 @@ Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
 
 ## Quick Start
 
+**Prerequisites:** Python 3.8+ and access to Snowflake
+
 ```bash
-# Setup
+# 1. Get the code
 git clone https://github.com/ncl-icb-analytics/snowflake-hei-migration
 cd snowflake-hei-migration
+
+# 2. Setup Python environment
 python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt
 
-# Configure environment
-cp profiles.yml.template profiles.yml
+# 3. Configure Snowflake connection
 cp env.example .env
-# Edit .env with your Snowflake credentials (see Environment Setup below)
+# Edit .env file with your Snowflake credentials (see next section)
 
-# Setup commit message enforcement (one-time)
-pre-commit install --hook-type commit-msg
-pre-commit install
-
-# Run
+# 4. Install dbt dependencies and run
 dbt deps
-dbt run         # Safe - always dev environment
-dbt test
+dbt run         # Builds all models in your dev environment (safe)
+dbt test        # Runs data quality tests
 ```
 
-### Prerequisites:
-
-- Python 3.8 or later installed on your system.
-- Your Snowflake role can access the source tables required
-
-If Python is not installed, you can get it from the Microsoft Store.
+**That's it!** You now have disease registers and quality measures ready for analysis.
 
 ## Environment Setup
 
@@ -71,27 +81,9 @@ If Python is not installed, you can get it from the Microsoft Store.
 
 **Important:** Never commit `.env` to version control! The file is already in `.gitignore`.
 
-### **Pre-commit Hooks**
+### **Code Quality**
 
-This project uses pre-commit hooks to enforce code quality and commit message standards:
-
-This project automatically enforces code quality standards:
-
-- **File Cleanup**: Trailing whitespace removed, line endings standardised, files > 500KB prevented
-- **Commit Messages**: Must follow conventional format (`feat:`, `fix:`, `docs:`, etc.)
-- **YAML Validation**: dbt model configurations checked for syntax errors
-
-**Most of the time**, these checks pass silently and fix issues automatically. You'll only see messages if there are issues that need manual attention.
-
-**Note:** Hooks run automatically on commit. Use `git commit --no-verify` to bypass if needed (not recommended).
-
-## Environment Management
-
-**Simple Three-Environment Setup:**
-
-- **`dbt run`** or `dbt build` → `DBT_DEV` schema (safe default)
-- **`dbt build --target qa`** → `DBT_QA` schema (quality assurance)
-- **`dbt build --target prod`** → `DBT_PROD` schema (production)
+This project automatically fixes common issues when you save files (trailing spaces, formatting, etc.). Most of the time this happens silently and you won't notice.
 
 ## Project Structure
 
@@ -126,43 +118,27 @@ legacy/                      # Original SQL scripts for reference
 scripts/                     # Python utilities and automation
 ```
 
-## Development Commands
+## Essential dbt Commands
 
-### **Core Commands**
-
-- **`dbt deps`** - Install package dependencies (run first!)
-- **`dbt parse`** - Parse project files and check for syntax errors
-- **`dbt compile`** - Compile models to SQL (useful for debugging)
-- **`dbt run`** - Runs models only (faster for development iteration)
-- **`dbt test`** - Runs tests only
-- **`dbt build`** - Runs models + tests in dependency order (recommended for qa and prod)
-
-### **Common Workflows**
-
+**For daily use:**
 ```bash
-# First time setup
-dbt deps
-dbt parse  # Check for syntax errors
+dbt run         # Build all models (creates tables/views in Snowflake)
+dbt test        # Run data quality tests
+dbt docs serve  # Open documentation in browser
+```
 
-# Debugging a model
-dbt compile --select dim_person_demographics
-# Check target/compiled/ folder for generated SQL
+**For development:**
+```bash
+dbt run --select model_name              # Build just one model
+dbt run --select staging                 # Build all staging models
+dbt run --select +model_name             # Build model + everything it depends on
+```
 
-# Daily development (fast iteration)
-dbt run
-dbt run --select +dim_person_demographics  # Model + upstream dependencies
-
-# Quality assurance (recommended for qa/prod)
-dbt build
-dbt build --target qa  # Quality assurance testing with tests
-
-# Specific selections
-dbt run --select staging    # All staging models
-dbt test --select marts     # All mart tests
-dbt build --select +fct_person_diabetes_register  # Model + dependencies + tests
-
-# Documentation
-dbt docs generate && dbt docs serve
+**Getting help:**
+```bash
+dbt --help                    # See all commands
+dbt run --help                # Help for specific command
+dbt debug                     # Test your connection to Snowflake
 ```
 
 ## Development Patterns
@@ -209,107 +185,63 @@ models:
           column_name: observation_id
 ```
 
-## Contributing
+## Making Changes
 
-### **Creating a Feature Branch**
+When you run `dbt run`, it creates tables/views in the dev Snowflake environment. To share your SQL code changes with the team, you need to save them to git:
 
-1. **Ensure you're on the latest main branch:**
-
+1. **Get latest code:**
    ```bash
-   git switch main
    git pull origin main
    ```
-2. **Create a descriptive feature branch:**
 
+2. **Make your changes and test:**
    ```bash
-   # Use descriptive branch names following the pattern:
-   git switch -c feature/add-heart-failure-register
-   git switch -c fix/diabetes-type-classification
-   git switch -c refactor/consolidate-person-dimensions
+   dbt run --select +your_model    # Test your changes in dev environment
+   dbt test --select +your_model   # Run quality checks
    ```
-3. **Make your changes following project conventions:**
 
-   - Follow the established naming patterns and folder structure
-   - Add appropriate YAML documentation for all new models
-   - Include relevant tests (not excessive, but in key places)
-
-### **Testing Your Changes**
-
-```bash
-# Parse and compile to check for syntax errors
-dbt parse
-dbt compile --select +your_new_model
-
-# Run your changes in dev environment (always safe)
-dbt run --select +your_new_model
-dbt test --select +your_new_model
-
-# For broader changes, test the entire project
-dbt build  		# Runs models and tests in DAG order for DEV environment
-dbt build --target qa   # Full build in qa environment
-```
-
-### **Commit Message Conventions**
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/) for clear, consistent commit messages:
-
-```bash
-# Format: <type>(<scope>): <description>
-git commit -m "feat(disease-registers): add heart failure register with LVSD classification"
-git commit -m "fix(diabetes): correct type 1/2 classification logic"
-git commit -m "docs: update README with environment setup steps"
-git commit -m "refactor(person): consolidate demographic dimensions"
-git commit -m "test: add validation for medication order macros"
-git commit -m "chore: updated dbt_utils to v1.3.0"
-```
-
-**Common types:**
-
-- `feat`: New feature or model
-- `fix`: Bug fix or correction
-- `docs`: Documentation changes
-- `refactor`: Code restructuring without functionality change
-- `test`: Adding or updating tests
-- `chore`: Maintenance tasks (dependencies, config)
-
-### **Creating a Pull Request**
-
-1. **Commit your changes with clear messages:**
-
+3. **Save and share your code:**
    ```bash
    git add .
-   git commit -m "feat(disease-registers): add heart failure register with LVSD classification"
+   git commit -m "describe what you changed"
+   git push origin main
    ```
-2. **Push your branch and create a PR:**
 
-   ```bash
-   git push origin feature/add-heart-failure-register
-   ```
-3. **Open a Pull Request on GitHub:**
+**Remember:** Running dbt creates tables in Snowflake, but only committing to git saves your SQL code for others to see.
 
-   - Use a descriptive title summarising the change
-   - Include a clear description of what was changed and why
-   - Reference any related issues using `#issue-number`
-   - Request reviews from relevant team members
+## Deploying to QA and Production
 
-### **PR Review Process**
+By default, `dbt run` builds in your dev environment. To deploy to other environments:
 
-**Current State:** This repository is under active development. The following processes are planned but not yet implemented:
+**QA Environment:**
+```bash
+dbt build --target qa    # Builds models AND runs tests in QA
+```
 
-- **Manual Testing Required**: Currently reviewers must manually verify changes work in dev and qa environments
-- **Planned CI/CD**: We're setting up GitHub Actions with a service account for automated testing
-- **Future Branch Protection**: Main branch protection rules will be implemented once CI is ready
+**Production Environment:**
+```bash
+dbt build --target prod  # Builds models AND runs tests in Production
+```
 
-**Current Review Process:**
+**Important:** 
+- Always test in dev first: `dbt build`
+- Deploy to QA for integration testing: `dbt build --target qa`
+- Only deploy to production after QA approval: `dbt build --target prod`
+- Using `dbt build` ensures upstream tests pass before creating downstream tables, in DAG order.
 
-- Manual code review for logic and conventions
-- Test changes locally: `dbt build --select your_model+` (this runs your model + downstream dependencies and tests, in DAG order)
-- Verify changes work in qa environment: `dbt build --target qa --select your_model+`
+## Learning dbt
 
-### **Merging**
+New to dbt? Here are some helpful resources:
 
-- PRs are merged into `main` after manual approval and testing
-- Delete the feature branch after merging: `git branch -d feature/your-branch-name`
+**Getting Started:**
+- [dbt Fundamentals Course](https://courses.getdbt.com/courses/fundamentals) - Free interactive course (3-4 hours)
+- [What is dbt?](https://docs.getdbt.com/docs/introduction) - Official introduction
+- [dbt Best Practices](https://docs.getdbt.com/guides/best-practices) - How to structure projects
+
+**Quick References:**
+- [dbt Command Reference](https://docs.getdbt.com/reference/dbt-commands) - All commands explained
+- [SQL Style Guide](https://docs.getdbt.com/guides/best-practices/how-we-style/2-how-we-style-our-sql) - Writing clean SQL
+- [Testing in dbt](https://docs.getdbt.com/docs/build/tests) - Data quality testing
 
 ## License
 
