@@ -88,7 +88,7 @@ jobs:
               console.log('No new labels to add to PR');
             }
             
-            // Assign referenced issues to PR author and add "Code Review" label
+            // Assign referenced issues to PR author and update status to "Code Review"
             for (const issueNumber of issueNumbers) {
               try {
                 const issue = await github.rest.issues.get({
@@ -109,16 +109,119 @@ jobs:
                   console.log(`Assigned issue #${issueNumber} to ${pr.user.login}`);
                 }
                 
-                // Add "Code Review" label to issue if not present
-                const issueLabels = issue.data.labels.map(label => label.name);
-                if (!issueLabels.includes('Code Review')) {
-                  await github.rest.issues.addLabels({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: issueNumber,
-                    labels: ['Code Review']
-                  });
-                  console.log(`Added 'Code Review' label to issue #${issueNumber}`);
+                // Update issue status to "Code Review" using GitHub Projects API
+                // First, get the project items for this issue
+                const query = `
+                  query($owner: String!, $repo: String!, $issueNumber: Int!) {
+                    repository(owner: $owner, name: $repo) {
+                      issue(number: $issueNumber) {
+                        projectItems(first: 10) {
+                          nodes {
+                            id
+                            project {
+                              id
+                              title
+                            }
+                            fieldValues(first: 20) {
+                              nodes {
+                                ... on ProjectV2ItemFieldSingleSelectValue {
+                                  id
+                                  name
+                                  field {
+                                    ... on ProjectV2SingleSelectField {
+                                      id
+                                      name
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                `;
+                
+                const variables = {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issueNumber: issueNumber
+                };
+                
+                const projectData = await github.graphql(query, variables);
+                const projectItems = projectData.repository.issue.projectItems.nodes;
+                
+                // Update status for each project the issue is in
+                for (const item of projectItems) {
+                  // Find the Status field
+                  const statusField = item.fieldValues.nodes.find(field => 
+                    field.field && field.field.name.toLowerCase() === 'status'
+                  );
+                  
+                  if (statusField && statusField.name !== 'Code Review') {
+                    // Get the project's status field options
+                    const projectQuery = `
+                      query($projectId: ID!) {
+                        node(id: $projectId) {
+                          ... on ProjectV2 {
+                            fields(first: 20) {
+                              nodes {
+                                ... on ProjectV2SingleSelectField {
+                                  id
+                                  name
+                                  options {
+                                    id
+                                    name
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    `;
+                    
+                    const projectInfo = await github.graphql(projectQuery, { projectId: item.project.id });
+                    const statusFieldInfo = projectInfo.node.fields.nodes.find(field => 
+                      field.name.toLowerCase() === 'status'
+                    );
+                    
+                    if (statusFieldInfo) {
+                      const codeReviewOption = statusFieldInfo.options.find(option => 
+                        option.name === 'Code Review'
+                      );
+                      
+                      if (codeReviewOption) {
+                        // Update the status
+                        const updateMutation = `
+                          mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                            updateProjectV2ItemFieldValue(input: {
+                              projectId: $projectId
+                              itemId: $itemId
+                              fieldId: $fieldId
+                              value: $value
+                            }) {
+                              projectV2Item {
+                                id
+                              }
+                            }
+                          }
+                        `;
+                        
+                        await github.graphql(updateMutation, {
+                          projectId: item.project.id,
+                          itemId: item.id,
+                          fieldId: statusFieldInfo.id,
+                          value: {
+                            singleSelectOptionId: codeReviewOption.id
+                          }
+                        });
+                        
+                        console.log(`Updated issue #${issueNumber} status to "Code Review" in project "${item.project.title}"`);
+                      }
+                    }
+                  }
                 }
                 
               } catch (error) {
