@@ -211,7 +211,7 @@ When you run `dbt run`, it creates tables/views in the dev Snowflake environment
 
 ## Deploying to QA and Production
 
-By default, `dbt run` builds in your dev environment. To deploy to other environments:
+By default, `dbt run` builds in the dev environment. To deploy to other environments:
 
 **QA Environment:**
 ```bash
