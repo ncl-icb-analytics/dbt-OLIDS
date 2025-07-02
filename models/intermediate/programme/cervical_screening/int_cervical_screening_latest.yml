@@ -1,0 +1,143 @@
+version: 2
+
+models:
+  - name: int_cervical_screening_latest
+    description: |
+      Latest cervical screening status per person.
+      Simple QUALIFY-based latest record selection from int_cervical_screening_all.
+
+      Business Rules:
+      - Returns the most recent screening observation per person
+      - No date-based business logic (kept in fact layer)
+      - Foundation for person-level screening status analysis
+
+      Used for cervical screening programme analysis and current status determination.
+      
+      Data Grain: One row per person who has had any cervical screening observation.
+
+    columns:
+      - name: observation_id
+        description: "Unique observation identifier for the latest screening observation"
+        tests:
+          - not_null
+
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: clinical_effective_date
+        description: "Date of the latest cervical screening observation"
+        tests:
+          - not_null
+
+      - name: concept_code
+        description: "SNOMED concept code for latest cervical screening observation"
+        tests:
+          - not_null
+
+      - name: concept_display
+        description: "Description of the latest cervical screening code"
+        tests:
+          - not_null
+
+      - name: source_cluster_id
+        description: "QOF cluster ID for latest observation (SMEAR_COD, CSPU_COD, CSDEC_COD, CSPCAINVITE_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SMEAR_COD', 'CSPU_COD', 'CSDEC_COD', 'CSPCAINVITE_COD']
+
+      - name: screening_observation_type
+        description: "Classification of latest screening observation type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Cervical Screening Completed', 'Screening Unsuitable', 'Screening Declined', 
+                      'Non-response to Invitations', 'Unknown']
+
+      - name: is_completed_screening
+        description: "Flag indicating latest observation is completed cervical screening (SMEAR_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_unsuitable_screening
+        description: "Flag indicating latest observation is screening unsuitable status (CSPU_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_declined_screening
+        description: "Flag indicating latest observation is screening declined status (CSDEC_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_non_response_screening
+        description: "Flag indicating latest observation is non-response to invitations (CSPCAINVITE_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: cytology_result_category
+        description: "Comprehensive cytology result categorisation (only populated for completed screenings)"
+        tests:
+          - accepted_values:
+              values: ['Normal', 'Borderline Changes', 'Mild Dyskaryosis', 'Moderate Dyskaryosis', 
+                      'Severe Dyskaryosis', 'Severe Dyskaryosis - ?Invasive', 'Glandular Abnormality', 
+                      'Inflammatory Changes', 'Atrophic Changes', 'Adequate Sample', 'Trichomonas Infection',
+                      'Candida Infection', 'Herpes Infection', 'Actinomyces Infection', 'Gardnerella Infection',
+                      'Viral Changes (HPV)', 'Referral Required', 'Nuclear Abnormality', 'Screening Completed']
+              quote: false
+
+      - name: cervical_screening_risk_category
+        description: "Clinical risk assessment based on cytology results (only populated for completed screenings)"
+        tests:
+          - accepted_values:
+              values: ['Low Risk (Normal)', 'Low-Moderate Risk', 'Moderate Risk', 'High Risk (Abnormal)', 
+                      'Requires Clinical Assessment', 'Risk Assessment Required']
+              quote: false
+
+      - name: abnormality_grade
+        description: |
+          Simplified abnormality grade classification (only populated for completed screenings):
+          - 'Normal': No abnormality detected
+          - 'Low Grade': Borderline changes, mild dyskaryosis
+          - 'Moderate Grade': Moderate dyskaryosis
+          - 'High Grade': Severe dyskaryosis, glandular abnormalities
+          - 'HPV Changes': Viral changes, koilocytosis
+          - 'Infection': Bacterial/fungal infections
+          - 'Inflammatory', 'Atrophic Changes', 'Other Finding'
+        tests:
+          - accepted_values:
+              values: ['Normal', 'Low Grade', 'Moderate Grade', 'High Grade', 'HPV Changes', 'Infection', 'Inflammatory', 'Atrophic Changes', 'Nuclear Abnormality', 'Other Finding']
+
+      - name: sample_adequacy
+        description: |
+          Sample adequacy assessment (only populated for completed screenings):
+          - 'Adequate': Endocervical cells present, suitable for assessment
+          - 'Inadequate': Insufficient sample for assessment
+          - 'Unspecified': No specific adequacy information
+        tests:
+          - accepted_values:
+              values: ['Adequate', 'Inadequate', 'Unspecified']
+
+      - name: clinical_action_required
+        description: |
+          Clinical action required based on screening result (only populated for completed screenings):
+          - 'Routine Follow-up': Normal result, routine interval
+          - 'Repeat Required': Follow-up screening needed
+          - 'Colposcopy Required': Referral for colposcopy indicated
+          - 'Clinical Review': Requires clinical assessment
+        tests:
+          - accepted_values:
+              values: ['Routine Follow-up', 'Repeat Required', 'Colposcopy Required', 'Clinical Review'] 

@@ -1,6 +1,7 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        persist_docs={"relation": true}
     )
 }}
 

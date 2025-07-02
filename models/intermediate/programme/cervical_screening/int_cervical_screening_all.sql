@@ -1,7 +1,8 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        persist_docs={"relation": true}
     )
 }}
 
