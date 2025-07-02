@@ -34,15 +34,13 @@ Clinical Purpose:
 
 WITH person_demographics AS (
     SELECT
-        dp.person_id,
-        dp.birth_date,
-        dp.death_date,
-        CASE WHEN dp.gender_concept_display = 'Female' THEN TRUE ELSE FALSE END AS is_female,
+        dpa.person_id,
+        CASE WHEN dps.sex = 'Female' THEN TRUE ELSE FALSE END AS is_female,
         dpa.age AS current_age,
         
         -- Age-based screening eligibility
         CASE 
-            WHEN dp.gender_concept_display != 'Female' THEN FALSE
+            WHEN dps.sex != 'Female' THEN FALSE
             WHEN dpa.age BETWEEN 25 AND 64 THEN TRUE
             ELSE FALSE
         END AS is_screening_eligible,
@@ -61,9 +59,9 @@ WITH person_demographics AS (
             ELSE NULL
         END AS screening_interval_days
         
-    FROM {{ ref('dim_person') }} dp
-    LEFT JOIN {{ ref('dim_person_age') }} dpa ON dp.person_id = dpa.person_id
-    WHERE dp.gender_concept_display = 'Female'  -- Only include women
+    FROM {{ ref('dim_person_age') }} dpa
+    LEFT JOIN {{ ref('dim_person_sex') }} dps ON dpa.person_id = dps.person_id
+    WHERE dps.sex = 'Female'  -- Only include women
 ),
 
 screening_history AS (
@@ -187,7 +185,7 @@ programme_compliance AS (
         END AS requires_colposcopy_referral,
         
         CASE
-            WHEN cs.programme_compliance_status = 'Overdue' 
+            WHEN cs.days_since_last_completed_screening > cs.screening_interval_days
                 AND cs.years_since_last_completed_screening > 5 THEN TRUE
             ELSE FALSE
         END AS long_term_non_attendance,
