@@ -7,7 +7,7 @@ models:
       - cluster_ids_exist:
           cluster_ids: "SMEAR_COD,CSPU_COD,CSDEC_COD,CSPCAINVITE_COD"
     description: |
-      All cervical screening programme observations with comprehensive analytics features.
+      All cervical screening programme observations from clinical records.
       Uses QOF cervical screening cluster IDs for complete programme tracking.
 
       QOF Cluster IDs Used:
@@ -17,27 +17,19 @@ models:
       - CSPCAINVITE_COD: Not responded to three invitations codes (12-month validity)
 
       Clinical Purpose:
-      - Cervical screening programme monitoring and compliance
-      - Cytology result tracking and clinical follow-up
-      - Risk stratification and referral management
-      - Screening interval adherence (3-year/5-year cycles)
-
-      Enhanced Analytics Features:
-      - Comprehensive cytology result categorisation based on SNOMED descriptions
-      - Clinical risk assessment and abnormality grading
-      - Age-specific screening interval tracking
-      - Status validity rules and business logic implementation
+      - Cervical screening programme data collection
+      - Observation-level screening events tracking
+      - Foundation data for programme analysis
 
       Key Business Rules:
-      - Women aged 25-49: screening interval every 3 years
-      - Women aged 50-64: screening interval every 5 years
+      - Women aged 25-49: invited every 3 years
+      - Women aged 50-64: invited every 5 years
       - Declined/non-response status: valid for 12 months only
       - Unsuitable status: permanent unless superseded by completed screening
-      - Completed screening: always valid for programme compliance
 
       Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
       This is OBSERVATION-LEVEL data - one row per cervical screening observation.
-      Use this model as input for fct_cervical_screening_status.sql which applies person-level aggregation and programme business rules.
+      Use this model as input for int_cervical_screening_latest.sql and fct_cervical_screening_status.sql.
 
     columns:
       - name: observation_id
@@ -75,6 +67,14 @@ models:
           - not_null
           - accepted_values:
               values: ['SMEAR_COD', 'CSPU_COD', 'CSDEC_COD', 'CSPCAINVITE_COD']
+
+      - name: screening_observation_type
+        description: "Classification of screening observation type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Cervical Screening Completed', 'Screening Unsuitable', 'Screening Declined', 
+                      'Non-response to Invitations', 'Unknown']
 
       - name: is_completed_screening
         description: "Flag indicating completed cervical screening (SMEAR_COD)"
@@ -123,34 +123,40 @@ models:
                       'Requires Clinical Assessment', 'Risk Assessment Required']
               quote: false
 
-      - name: screening_observation_type
-        description: "Classification of screening observation type"
+      - name: abnormality_grade
+        description: |
+          Simplified abnormality grade classification:
+          - 'Normal': No abnormality detected
+          - 'Low Grade': Borderline changes, mild dyskaryosis
+          - 'Moderate Grade': Moderate dyskaryosis
+          - 'High Grade': Severe dyskaryosis, glandular abnormalities
+          - 'HPV Changes': Viral changes, koilocytosis
+          - 'Infection': Bacterial/fungal infections
+          - 'Inflammatory', 'Atrophic Changes', 'Other Finding'
         tests:
-          - not_null
           - accepted_values:
-              values: ['Cervical Screening Completed', 'Screening Unsuitable', 'Screening Declined', 
-                      'Non-response to Invitations', 'Unknown']
+              values: ['Normal', 'Low Grade', 'Moderate Grade', 'High Grade', 'HPV Changes', 'Infection', 'Inflammatory', 'Atrophic Changes', 'Nuclear Abnormality', 'Other Finding']
 
-      - name: is_normal_cytology
-        description: "Flag indicating normal cytology result"
+      - name: sample_adequacy
+        description: |
+          Sample adequacy assessment:
+          - 'Adequate': Endocervical cells present, suitable for assessment
+          - 'Inadequate': Insufficient sample for assessment
+          - 'Unspecified': No specific adequacy information
         tests:
-          - not_null
           - accepted_values:
-              values: [true, false]
+              values: ['Adequate', 'Inadequate', 'Unspecified']
 
-      - name: is_high_grade_abnormality
-        description: "Flag indicating high-grade abnormality requiring urgent follow-up"
+      - name: clinical_action_required
+        description: |
+          Clinical action required based on screening result:
+          - 'Routine Follow-up': Normal result, routine interval
+          - 'Repeat Required': Follow-up screening needed
+          - 'Colposcopy Required': Referral for colposcopy indicated
+          - 'Clinical Review': Requires clinical assessment
         tests:
-          - not_null
           - accepted_values:
-              values: [true, false]
-
-      - name: requires_colposcopy_referral
-        description: "Flag indicating colposcopy referral required"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+              values: ['Routine Follow-up', 'Repeat Required', 'Colposcopy Required', 'Clinical Review']
 
       - name: days_since_screening
         description: "Number of days since screening observation"
