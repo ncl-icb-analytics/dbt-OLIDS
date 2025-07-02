@@ -1,0 +1,220 @@
+version: 2
+
+models:
+  - name: int_cervical_screening_all
+
+    tests:
+      - cluster_ids_exist:
+          cluster_ids: "SMEAR_COD,CSPU_COD,CSDEC_COD,CSPCAINVITE_COD"
+    description: |
+      All cervical screening programme observations from clinical records.
+      Uses QOF cervical screening cluster IDs for complete programme tracking.
+
+      QOF Cluster IDs Used:
+      - SMEAR_COD: Cervical screening completed codes (with cytology results)
+      - CSPU_COD: Cervical screening unsuitable codes (permanent status)
+      - CSDEC_COD: Cervical screening declined codes (12-month validity)
+      - CSPCAINVITE_COD: Not responded to three invitations codes (12-month validity)
+
+      Clinical Purpose:
+      - Cervical screening programme data collection
+      - Observation-level screening events tracking
+      - Foundation data for programme analysis
+
+      Key Business Rules:
+      - Women aged 25-49: invited every 3 years
+      - Women aged 50-64: invited every 5 years
+      - Declined/non-response status: valid for 12 months only
+      - Unsuitable status: permanent unless superseded by completed screening
+
+      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+      This is OBSERVATION-LEVEL data - one row per cervical screening observation.
+      Use this model as input for int_cervical_screening_latest.sql and fct_cervical_screening_status.sql.
+
+    columns:
+      - name: observation_id
+        description: "Unique observation identifier"
+        tests:
+          - not_null
+          - unique
+
+      - name: person_id
+        description: "Unique person identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+      - name: clinical_effective_date
+        description: "Date of the cervical screening observation"
+        tests:
+          - not_null
+
+      - name: concept_code
+        description: "SNOMED concept code for cervical screening observation"
+        tests:
+          - not_null
+
+      - name: concept_display
+        description: "Description of the cervical screening code"
+        tests:
+          - not_null
+
+      - name: source_cluster_id
+        description: "QOF cluster ID (SMEAR_COD, CSPU_COD, CSDEC_COD, CSPCAINVITE_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SMEAR_COD', 'CSPU_COD', 'CSDEC_COD', 'CSPCAINVITE_COD']
+
+      - name: screening_observation_type
+        description: "Classification of screening observation type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Cervical Screening Completed', 'Screening Unsuitable', 'Screening Declined', 
+                      'Non-response to Invitations', 'Unknown']
+
+      - name: is_completed_screening
+        description: "Flag indicating completed cervical screening (SMEAR_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_unsuitable_screening
+        description: "Flag indicating screening unsuitable status (CSPU_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_declined_screening
+        description: "Flag indicating screening declined status (CSDEC_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_non_response_screening
+        description: "Flag indicating non-response to invitations (CSPCAINVITE_COD)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: cytology_result_category
+        description: "Comprehensive cytology result categorisation for completed screenings"
+        tests:
+          - accepted_values:
+              values: ['Normal', 'Borderline Changes', 'Mild Dyskaryosis', 'Moderate Dyskaryosis', 
+                      'Severe Dyskaryosis', 'Severe Dyskaryosis - ?Invasive', 'Glandular Abnormality', 
+                      'Inflammatory Changes', 'Atrophic Changes', 'Adequate Sample', 'Trichomonas Infection',
+                      'Candida Infection', 'Herpes Infection', 'Actinomyces Infection', 'Gardnerella Infection',
+                      'Viral Changes (HPV)', 'Referral Required', 'Nuclear Abnormality', 'Screening Completed']
+              quote: false
+
+      - name: cervical_screening_risk_category
+        description: "Clinical risk assessment based on cytology results"
+        tests:
+          - accepted_values:
+              values: ['Low Risk (Normal)', 'Low-Moderate Risk', 'Moderate Risk', 'High Risk (Abnormal)', 
+                      'Requires Clinical Assessment', 'Risk Assessment Required']
+              quote: false
+
+      - name: abnormality_grade
+        description: |
+          Simplified abnormality grade classification:
+          - 'Normal': No abnormality detected
+          - 'Low Grade': Borderline changes, mild dyskaryosis
+          - 'Moderate Grade': Moderate dyskaryosis
+          - 'High Grade': Severe dyskaryosis, glandular abnormalities
+          - 'HPV Changes': Viral changes, koilocytosis
+          - 'Infection': Bacterial/fungal infections
+          - 'Inflammatory', 'Atrophic Changes', 'Other Finding'
+        tests:
+          - accepted_values:
+              values: ['Normal', 'Low Grade', 'Moderate Grade', 'High Grade', 'HPV Changes', 'Infection', 'Inflammatory', 'Atrophic Changes', 'Nuclear Abnormality', 'Other Finding']
+
+      - name: sample_adequacy
+        description: |
+          Sample adequacy assessment:
+          - 'Adequate': Endocervical cells present, suitable for assessment
+          - 'Inadequate': Insufficient sample for assessment
+          - 'Unspecified': No specific adequacy information
+        tests:
+          - accepted_values:
+              values: ['Adequate', 'Inadequate', 'Unspecified']
+
+      - name: clinical_action_required
+        description: |
+          Clinical action required based on screening result:
+          - 'Routine Follow-up': Normal result, routine interval
+          - 'Repeat Required': Follow-up screening needed
+          - 'Colposcopy Required': Referral for colposcopy indicated
+          - 'Clinical Review': Requires clinical assessment
+        tests:
+          - accepted_values:
+              values: ['Routine Follow-up', 'Repeat Required', 'Colposcopy Required', 'Clinical Review']
+
+      - name: days_since_screening
+        description: "Number of days since screening observation"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 50000
+              severity: warn
+
+      - name: years_since_screening
+        description: "Number of years since screening observation (decimal)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+              severity: warn
+
+      - name: screening_current_12m
+        description: "Flag indicating screening within 12 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: screening_current_24m
+        description: "Flag indicating screening within 24 months"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: screening_current_36m
+        description: "Flag indicating screening within 36 months (3-year interval)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: screening_current_60m
+        description: "Flag indicating screening within 60 months (5-year interval)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_status_currently_valid
+        description: "Flag indicating if screening status is currently valid per business rules"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: screening_status_interpretation
+        description: "Clinical interpretation of screening currency and status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Current (within 3 years)', 'Recent (within 5 years)', 'Overdue (>5 years)', 
+                      'Unsuitable for screening', 'Recently declined', 'Non-response (recent)', 'Status expired'] 
