@@ -1,0 +1,250 @@
+{{
+    config(
+        materialized='table'
+    )
+}}
+
+/*
+Cervical Screening Programme Status - Person-Level Analytics
+Comprehensive cervical screening programme tracking with age-specific business rules.
+
+Key Business Rules:
+1. Screening Intervals:
+   - Women aged 25-49: invited every 3 years
+   - Women aged 50-64: invited every 5 years
+   - Women outside 25-64 age range: not eligible for routine screening
+
+2. Status Validity Rules:
+   - Completed screening (SMEAR_COD): Always valid for programme compliance
+   - Unsuitable status (CSPU_COD): Permanent until superseded by completed screening
+   - Declined/Non-response (CSDEC_COD/CSPCAINVITE_COD): Valid for 12 months only
+
+3. Programme Compliance:
+   - Up to date: Completed screening within age-appropriate interval
+   - Overdue: Last screening outside age-appropriate interval but within programme history
+   - Never screened: No completed screening history within eligible age range
+
+Clinical Purpose:
+- Programme compliance monitoring and reporting
+- Risk stratification for population health management
+- Screening interval tracking and invitation planning
+- Quality assurance and outcome monitoring
+*/
+
+WITH person_demographics AS (
+    SELECT
+        dp.person_id,
+        dp.birth_date,
+        dp.death_date,
+        CASE WHEN dp.gender_concept_display = 'Female' THEN TRUE ELSE FALSE END AS is_female,
+        dpa.age AS current_age,
+        
+        -- Age-based screening eligibility
+        CASE 
+            WHEN dp.gender_concept_display != 'Female' THEN FALSE
+            WHEN dpa.age BETWEEN 25 AND 64 THEN TRUE
+            ELSE FALSE
+        END AS is_screening_eligible,
+        
+        -- Age-specific screening interval
+        CASE
+            WHEN dpa.age BETWEEN 25 AND 49 THEN 3  -- 3-year interval
+            WHEN dpa.age BETWEEN 50 AND 64 THEN 5  -- 5-year interval
+            ELSE NULL
+        END AS screening_interval_years,
+        
+        -- Target screening frequency in days
+        CASE
+            WHEN dpa.age BETWEEN 25 AND 49 THEN 1095  -- 3 years
+            WHEN dpa.age BETWEEN 50 AND 64 THEN 1825  -- 5 years
+            ELSE NULL
+        END AS screening_interval_days
+        
+    FROM {{ ref('dim_person') }} dp
+    LEFT JOIN {{ ref('dim_person_age') }} dpa ON dp.person_id = dpa.person_id
+    WHERE dp.gender_concept_display = 'Female'  -- Only include women
+),
+
+screening_history AS (
+    SELECT
+        person_id,
+        
+        -- Latest dates by type
+        MAX(CASE WHEN is_completed_screening THEN clinical_effective_date END) AS latest_completed_date,
+        MAX(CASE WHEN is_unsuitable_screening THEN clinical_effective_date END) AS latest_unsuitable_date,
+        MAX(CASE WHEN is_declined_screening THEN clinical_effective_date END) AS latest_declined_date,
+        MAX(CASE WHEN is_non_response_screening THEN clinical_effective_date END) AS latest_non_response_date,
+        
+        -- Counts by type
+        COUNT(CASE WHEN is_completed_screening THEN 1 END) AS total_completed_screenings,
+        COUNT(CASE WHEN is_unsuitable_screening THEN 1 END) AS total_unsuitable_records,
+        COUNT(CASE WHEN is_declined_screening THEN 1 END) AS total_declined_records,
+        COUNT(CASE WHEN is_non_response_screening THEN 1 END) AS total_non_response_records,
+        
+        -- Overall screening history
+        MIN(clinical_effective_date) AS earliest_screening_date,
+        MAX(clinical_effective_date) AS latest_screening_date,
+        COUNT(*) AS total_screening_observations
+        
+    FROM {{ ref('int_cervical_screening_all') }}
+    GROUP BY person_id
+),
+
+current_status AS (
+    SELECT
+        pd.person_id,
+        pd.current_age,
+        pd.is_screening_eligible,
+        pd.screening_interval_years,
+        pd.screening_interval_days,
+        
+        -- Latest screening information
+        cls.clinical_effective_date AS latest_screening_date,
+        cls.source_cluster_id AS latest_screening_type,
+        cls.screening_observation_type,
+        
+        -- Cytology results (from latest screening)
+        cls.cytology_result_category,
+        cls.cervical_screening_risk_category,
+        cls.abnormality_grade,
+        cls.sample_adequacy,
+        cls.clinical_action_required,
+        
+        -- Screening history
+        sh.latest_completed_date,
+        sh.total_completed_screenings,
+        sh.total_unsuitable_records,
+        sh.total_declined_records,
+        sh.total_non_response_records,
+        
+        -- Time calculations
+        CASE 
+            WHEN sh.latest_completed_date IS NOT NULL 
+            THEN DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE())
+            ELSE NULL
+        END AS days_since_last_completed_screening,
+        
+        CASE 
+            WHEN sh.latest_completed_date IS NOT NULL 
+            THEN ROUND(DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE()) / 365.25, 1)
+            ELSE NULL
+        END AS years_since_last_completed_screening,
+        
+        -- Status validity flags (business rules)
+        CASE
+            WHEN cls.source_cluster_id = 'SMEAR_COD' THEN TRUE  -- Completed screening always valid
+            WHEN cls.source_cluster_id = 'CSPU_COD' THEN TRUE   -- Unsuitable status permanent
+            WHEN cls.source_cluster_id IN ('CSDEC_COD', 'CSPCAINVITE_COD') 
+                AND DATEDIFF(day, cls.clinical_effective_date, CURRENT_DATE()) <= 365 THEN TRUE
+            ELSE FALSE
+        END AS is_current_status_valid,
+        
+        -- Current screening status determination
+        CASE
+            WHEN cls.is_completed_screening THEN 'Up to Date (Screened)'
+            WHEN cls.is_unsuitable_screening THEN 'Unsuitable for Screening'
+            WHEN cls.is_declined_screening 
+                AND DATEDIFF(day, cls.clinical_effective_date, CURRENT_DATE()) <= 365 THEN 'Recently Declined'
+            WHEN cls.is_non_response_screening 
+                AND DATEDIFF(day, cls.clinical_effective_date, CURRENT_DATE()) <= 365 THEN 'Non-responsive'
+            ELSE 'Status Expired'
+        END AS current_screening_status,
+        
+        -- Never screened flag
+        CASE
+            WHEN sh.total_completed_screenings = 0 THEN TRUE
+            ELSE FALSE
+        END AS never_screened
+        
+    FROM person_demographics pd
+    LEFT JOIN {{ ref('int_cervical_screening_latest') }} cls ON pd.person_id = cls.person_id
+    LEFT JOIN screening_history sh ON pd.person_id = sh.person_id
+),
+
+programme_compliance AS (
+    SELECT
+        cs.*,
+        
+        -- Programme compliance determination
+        CASE
+            WHEN NOT cs.is_screening_eligible THEN 'Not Eligible'
+            WHEN cs.never_screened OR cs.latest_completed_date IS NULL THEN 'Never Screened'
+            WHEN cs.days_since_last_completed_screening <= cs.screening_interval_days THEN 'Up to Date'
+            WHEN cs.days_since_last_completed_screening > cs.screening_interval_days THEN 'Overdue'
+            ELSE 'Unknown'
+        END AS programme_compliance_status,
+        
+        -- Risk flags based on abnormality grade
+        CASE
+            WHEN cs.abnormality_grade = 'High Grade' THEN TRUE
+            ELSE FALSE
+        END AS requires_urgent_follow_up,
+        
+        CASE
+            WHEN cs.clinical_action_required = 'Colposcopy Required' THEN TRUE
+            ELSE FALSE
+        END AS requires_colposcopy_referral,
+        
+        CASE
+            WHEN cs.programme_compliance_status = 'Overdue' 
+                AND cs.years_since_last_completed_screening > 5 THEN TRUE
+            ELSE FALSE
+        END AS long_term_non_attendance,
+        
+        -- Next screening due calculation
+        CASE
+            WHEN cs.latest_completed_date IS NOT NULL AND cs.screening_interval_days IS NOT NULL
+            THEN DATEADD(day, cs.screening_interval_days, cs.latest_completed_date)
+            ELSE NULL
+        END AS next_screening_due_date,
+        
+        -- Overdue calculation
+        CASE
+            WHEN cs.latest_completed_date IS NOT NULL AND cs.screening_interval_days IS NOT NULL
+            THEN GREATEST(0, DATEDIFF(day, DATEADD(day, cs.screening_interval_days, cs.latest_completed_date), CURRENT_DATE()))
+            ELSE NULL
+        END AS days_overdue
+        
+    FROM current_status cs
+)
+
+SELECT
+    person_id,
+    current_age,
+    is_screening_eligible,
+    screening_interval_years,
+    
+    -- Programme compliance
+    programme_compliance_status,
+    current_screening_status,
+    
+    -- Latest screening information
+    latest_screening_date,
+    latest_completed_date,
+    years_since_last_completed_screening,
+    next_screening_due_date,
+    days_overdue,
+    
+    -- Cytology results
+    cytology_result_category,
+    cervical_screening_risk_category,
+    abnormality_grade,
+    sample_adequacy,
+    clinical_action_required,
+    
+    -- Programme flags
+    never_screened,
+    requires_urgent_follow_up,
+    requires_colposcopy_referral,
+    long_term_non_attendance,
+    
+    -- Screening history counts
+    total_completed_screenings,
+    total_unsuitable_records,
+    total_declined_records,
+    total_non_response_records
+
+FROM programme_compliance
+WHERE is_screening_eligible = TRUE  -- Only include women eligible for screening
+
+ORDER BY person_id 
