@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Diabetes Triple Target Achievement - Comprehensive diabetes control assessment.
+
+Triple Target Criteria (within 12 months):
+• HbA1c: ≤58 mmol/mol (7.5%) for optimal glycaemic control
+• Blood Pressure: <140/80 mmHg (or patient-specific thresholds)
+• Cholesterol: Total cholesterol <5 mmol/L
+
+Purpose: Holistic diabetes management indicator measuring cardiovascular risk reduction through comprehensive metabolic control.'"
+        ]
     )
 }}
 

@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Diabetes 9 Care Processes Achievement - Enhanced QOF quality measure adding retinal screening.
+
+Key Components (within 12 months):
+• All 8 standard diabetes care processes:
+  - HbA1c, BP, cholesterol, eGFR, urine protein, foot exam, BMI, smoking
+• Plus: Retinal screening (annual diabetic eye screening)
+
+Purpose: Comprehensive QOF indicator tracking complete annual diabetes care including sight-threatening complication prevention.'"
+        ]
     )
 }}
 

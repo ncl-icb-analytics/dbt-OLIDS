@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'CRITICAL Clinical Safety Alert - Pregnant patients with recent valproate prescriptions.
+
+High Risk Criteria:
+• Recent valproate medication (last 6 months)
+• Current pregnancy status OR child-bearing age (0-55 years)
+• TERATOGENIC RISK: Valproate causes significant birth defects
+
+Purpose: Critical safety monitoring for immediate clinical review and urgent medication switching to prevent foetal harm.'"
+        ]
     )
 }}
 

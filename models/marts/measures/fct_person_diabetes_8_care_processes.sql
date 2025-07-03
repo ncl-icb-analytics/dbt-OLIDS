@@ -1,7 +1,22 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care.
+
+Key Components (within 12 months):
+• HbA1c measurement
+• Blood pressure check
+• Cholesterol measurement
+• eGFR/creatinine check
+• Urine albumin/protein test
+• Foot examination
+• BMI measurement
+• Smoking status review
+
+Purpose: QOF indicator tracking comprehensive annual diabetes care for patients on diabetes register.'"
+        ]
     )
 }}
 

@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Current Pregnancy Status - Determines current pregnancy status based on recent codes.
+
+Business Logic:
+• Population: Non-male individuals only
+• Current pregnancy: Latest pregnancy code > latest delivery code
+• Risk assessment: Child-bearing age (0-55 years) for medication safety
+• Clinical codes: Uses pregnancy codes vs delivery/termination codes
+
+Purpose: Clinical decision support for medication safety, care planning, and pregnancy-related interventions.'"
+        ]
     )
 }}
 
