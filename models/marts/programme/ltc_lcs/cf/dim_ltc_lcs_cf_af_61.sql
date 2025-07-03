@@ -3,22 +3,14 @@
     post_hook=[
         "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding AF_61 - Identifies patients on cardiac medications who may have undiagnosed atrial fibrillation.
 
-Business Purpose:
-• Support systematic case finding for undiagnosed atrial fibrillation through medication analysis
-• Enable targeted screening of high-risk populations based on medication profiles
-• Provide clinical decision support for AF screening in patients on relevant cardiac medications
-• Support quality improvement initiatives for cardiovascular risk management and prevention
-
-Data Granularity:
-• One row per person in the LTC case finding base population
-• Includes medication history and exclusion criteria assessment
-• Limited to patients with relevant cardiac medication prescriptions or exclusion conditions
+Population Scope:
+• Patients from LTC case finding base population on anticoagulants, digoxin, or cardiac glycosides
+• Excludes patients with DVT, existing AF/flutter diagnoses
 
 Key Features:
-• Identifies patients on anticoagulants, digoxin, or cardiac glycosides indicating potential AF risk
-• Applies clinical exclusion criteria (DVT, existing AF/flutter diagnoses)
-• Tracks medication history with latest prescription dates and comprehensive medication lists
-• Supports evidence-based case finding aligned with clinical guidelines'"
+• Medication history tracking with latest prescription dates
+• Clinical exclusion criteria assessment
+• Evidence-based case finding for AF screening'"
     ]
 ) }}
 

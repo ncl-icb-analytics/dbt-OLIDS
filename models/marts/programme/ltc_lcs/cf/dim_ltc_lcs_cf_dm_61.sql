@@ -3,22 +3,15 @@
     post_hook=[
         "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding DM_61 - Identifies patients at high risk of diabetes through multiple risk assessment criteria.
 
-Business Purpose:
-• Support systematic case finding for undiagnosed diabetes and pre-diabetes in high-risk populations
-• Enable early intervention and diabetes prevention through risk factor identification
-• Provide clinical decision support for diabetes screening and lifestyle intervention programmes
-• Support quality improvement initiatives for diabetes prevention and early detection
-
-Data Granularity:
-• One row per person aged 17+ meeting any high-risk diabetes criteria
-• Includes patients with elevated HbA1c, high QDiabetes/QRisk2 scores, or gestational diabetes history
+Population Scope:
+• Patients aged 17+ from LTC case finding base population
+• Meeting any high-risk diabetes criteria: HbA1c ≥42, QDiabetes ≥5.6%, QRisk2 >20%, or gestational diabetes history
 • Excludes patients already on diabetes register or with recent NHS Health Check
 
 Key Features:
-• Multi-criteria diabetes risk assessment (HbA1c ≥42, QDiabetes ≥5.6%, QRisk2 >20%, gestational diabetes)
-• Comprehensive risk factor evaluation within 5-year assessment window
-• Evidence-based case finding supporting NICE guidelines for diabetes prevention
-• Integration with diabetes prevention pathways for targeted intervention'"
+• Multi-criteria diabetes risk assessment with 5-year assessment window
+• Evidence-based case finding aligned with NICE guidelines
+• Integration with diabetes prevention pathways'"
     ]
 ) }}
 

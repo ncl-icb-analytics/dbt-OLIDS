@@ -4,24 +4,17 @@
         tags=['dimension', 'person'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Dimension - Core person identity and practice relationships for population health analytics.
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Dimension - Core person identity and practice relationships.
 
-Business Purpose:
-• Support population health analytics by providing single person view across multiple patient records
-• Enable business intelligence reporting on person-level care coordination and practice relationships
-• Provide foundation for longitudinal care analysis and patient journey mapping
-• Support operational analytics for person-centered care and practice management
-
-Data Granularity:
-• One row per person with aggregated patient IDs and practice relationships
+Population Scope:
+• One row per person in the HEI population
+• Aggregates multiple patient IDs per person for unified identity
 • Includes current and historical practice associations
-• Core person identity linking multiple patient records
 
 Key Features:
-• Aggregates multiple patient IDs per person for comprehensive care view
-• Tracks current and historical practice relationships
-• Supports person-centered analytics and longitudinal care assessment
-• Enables business intelligence for care coordination and practice operations'"
+• Person-level identity consolidation across multiple patient records
+• Current and historical practice relationship tracking
+• Core dimension for person-centered analytics'"
         ]
     )
 }}

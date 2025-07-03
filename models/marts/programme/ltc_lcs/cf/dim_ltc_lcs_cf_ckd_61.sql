@@ -33,22 +33,14 @@ Dependencies:
     post_hook=[
         "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CKD_61 - Identifies patients with two consecutive low eGFR readings suggesting undiagnosed chronic kidney disease.
 
-Business Purpose:
-• Support systematic case finding for undiagnosed chronic kidney disease through eGFR monitoring
-• Enable early intervention and clinical management for patients with declining kidney function
-• Provide clinical decision support for CKD screening and prevention programmes
-• Support quality improvement initiatives for cardiovascular and renal disease management
-
-Data Granularity:
-• One row per person aged 17+ with two consecutive eGFR readings below 60
-• Limited to patients meeting strict consecutive low eGFR criteria
+Population Scope:
+• Patients aged 17+ from LTC case finding base population
+• Two consecutive eGFR readings below 60
 • Excludes patients already on CKD or diabetes registers
 
 Key Features:
-• Consecutive eGFR assessment with both latest and previous readings below 60
-• Complete eGFR testing history with all concept codes and clinical displays
-• Age-appropriate eligibility (17+ years) aligned with CKD screening guidelines
-• Evidence-based case finding criteria supporting early CKD detection and management'"
+• Complete eGFR testing history with latest and previous readings
+• Evidence-based case finding criteria for early CKD detection'"
     ]
 ) }}
 

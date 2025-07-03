@@ -6,22 +6,15 @@
         post_hook=[
             "COMMENT ON TABLE {{ this }} IS 'Mart: Person Historical Practice Dimension - Complete practice registration history for each person.
 
-Business Purpose:
-• Support operational analytics for practice list management and patient mobility analysis
-• Enable business intelligence reporting on patient registration patterns and practice transitions
-• Provide foundation for longitudinal population health analytics and care continuity assessment
-• Support commissioning and performance monitoring of practice registration processes
-
-Data Granularity:
+Population Scope:
+• All persons with current and historical practice registrations
 • One row per person per practice registration period
-• Includes all current and historical practice registrations with transition details
 • Complete timeline of practice registration history and patient mobility
 
 Key Features:
 • Tracks all practice registrations with accurate start and end dates
 • Includes practice transition information and registration sequence analysis
-• Supports longitudinal care continuity and patient journey analytics
-• Enables business intelligence for practice operations and patient care coordination'"
+• Supports longitudinal care continuity and patient journey analytics'"
         ]
     )
 }}

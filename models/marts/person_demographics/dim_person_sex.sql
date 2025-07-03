@@ -4,7 +4,17 @@
         tags=['dimension', 'person', 'sex'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Dimension table for person sex. Uses hardcoded gender_concept_id values to determine sex due to issues with Concept Map/Concept tables.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Sex Dimension - Sex demographics for population analysis.
+
+Population Scope:
+• All persons with patient records
+• Derived from gender_concept_id mappings
+• Defaults to \"Unknown\" for unmapped or null values
+
+Key Features:
+• Standardised sex categories (Male, Female, Unknown)
+• Hardcoded concept ID mappings for data consistency
+• One row per person with sex classification'"
         ]
     )
 }}
