@@ -10,7 +10,30 @@ Rule Groups Covered:
 This model implements the proper combination logic as defined in flu_programme_logic.csv.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Remaining Combination Eligibility - Processes remaining combination eligibility rules requiring multiple conditions with AND/OR logic.
+
+Clinical Purpose:
+• Implements immunosuppression eligibility using multiple evidence types (diagnosis OR medication OR treatment)
+• Processes respiratory disease eligibility combining asthma and respiratory diagnoses
+• Supports complex clinical targeting for high-risk patients with multiple qualifying pathways
+• Complements main combination rules model with specific immunosuppression and respiratory logic
+
+Data Granularity:
+• One row per eligible person aged 6 months to 65 years per rule group
+• IMMUNO_GROUP: diagnosis OR medication OR administration OR chemotherapy evidence
+• RESP_GROUP: asthma eligibility OR chronic respiratory disease diagnosis
+• Filtered to current campaign with hierarchical evidence selection
+
+Key Features:
+• Multi-evidence immunosuppression logic with lookback date constraints
+• Respiratory disease union logic combining asthma and respiratory diagnoses
+• Evidence hierarchy selection using most recent qualifying evidence
+• Age restrictions: 6 months to 65 years at reference date'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

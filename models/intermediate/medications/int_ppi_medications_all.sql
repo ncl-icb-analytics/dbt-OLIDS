@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: PPI Medication Orders - All recorded proton pump inhibitor prescriptions.
+
+Clinical Purpose:
+• Tracks PPI therapy for gastric acid suppression and ulcer prevention
+• Supports gastrointestinal medication management and safety monitoring
+• Enables analysis of long-term PPI usage and dosing patterns
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Specific PPI identification (omeprazole, lansoprazole, esomeprazole, etc.)
+• Dose categorisation for therapeutic indication assessment
+• H. pylori eradication therapy identification
+• Long-term therapy flags for medication review and deprescribing'"
+        ]
     )
 }}
 

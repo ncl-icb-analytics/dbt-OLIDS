@@ -12,7 +12,29 @@ This model replaces the apply_age_based_rule macro functionality.
 Campaign is configurable via dbt variables.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Age Based Rules - Age threshold eligibility determination for NHS flu vaccination programme.
+
+Clinical Purpose:
+• NHS flu vaccination programme age-based eligibility calculation
+• OVER65_GROUP population identification and campaign management
+• Age threshold validation against campaign reference dates
+• Foundation for flu vaccination programme coverage and uptake monitoring
+
+Data Granularity:
+• One row per person meeting age-based eligibility criteria
+• Uses campaign-specific age thresholds and reference dates
+• Includes all patients meeting age criteria for comprehensive programme coverage
+
+Key Features:
+• Age 65+ eligibility determination for high-risk population
+• Campaign-configurable reference date calculations
+• Essential for flu vaccination programme targeting and coverage reporting
+• Foundation for age-based vaccination prioritisation and resource planning'"
+    ]
+) }}
 
 WITH age_based_rules AS (
     SELECT 

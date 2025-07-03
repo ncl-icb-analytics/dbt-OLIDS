@@ -4,7 +4,24 @@
         tags=['dimension', 'practice', 'pcn'],
         cluster_by=['practice_code'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Dimension table providing current practice to PCN mapping for NCL practices. Sources from Dictionary schema ServiceProvider and OrganisationMatrixPracticeView tables. Note: PCN names may be limited in dummy data environment.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Practice PCN Dimension - Primary Care Network mapping for organisational hierarchy and network analysis.
+
+Business Purpose:
+• Support operational analytics for Primary Care Network management and practice collaboration
+• Enable business intelligence reporting on PCN-level performance and resource allocation
+• Provide foundation for network-based service planning and commissioning
+• Support population health analytics at PCN level for integrated care delivery
+
+Data Granularity:
+• One row per practice with PCN assignment
+• Includes practice to PCN mapping for organisational hierarchy
+• Current PCN network structure and practice affiliations
+
+Key Features:
+• Links practices to Primary Care Networks for network-level analysis
+• Supports PCN-level reporting and performance monitoring
+• Enables business intelligence for network operations and collaborative care
+• Provides foundation for integrated care delivery and network resource planning'"
         ]
     )
 }}

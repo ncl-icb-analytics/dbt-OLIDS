@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CVD_64 case finding: Patients with specific cardiovascular medication patterns'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CVD_64 - Identifies patients requiring high-dose statin therapy for optimal cardiovascular risk management.
+
+Business Purpose:
+• Support systematic case finding for cardiovascular medication optimisation requiring high-dose statin therapy
+• Enable identification of patients needing intensive lipid management for secondary prevention
+• Provide clinical decision support for evidence-based statin dose escalation
+• Support quality improvement initiatives for cardiovascular risk reduction and medication optimisation
+
+Data Granularity:
+• One row per person in cardiovascular base population requiring high-dose statin therapy
+• Includes current statin prescription patterns and cardiovascular risk indicators
+• Limited to patients meeting criteria for intensive lipid management
+
+Key Features:
+• High-dose statin requirement assessment based on cardiovascular risk profile
+• Current medication pattern analysis for therapeutic optimisation opportunities
+• Evidence-based case finding supporting intensive lipid management protocols
+• Integration with cardiovascular base population for targeted intervention'"
+    ]
 ) }}
 
 -- CVD_64 case finding: High-dose statin case finding

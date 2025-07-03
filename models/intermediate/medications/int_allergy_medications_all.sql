@@ -2,7 +2,26 @@
     config(
         materialized='table',
         cluster_by=['person_id', 'order_date'],
-        tags=['intermediate', 'medication', 'allergy', 'antihistamines']
+        tags=['intermediate', 'medication', 'allergy', 'antihistamines'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Allergy Medication Orders - All recorded antihistamine and allergy treatment prescriptions.
+
+Clinical Purpose:
+• Tracks antihistamine therapy for allergic conditions (rhinitis, urticaria, eczema)
+• Supports allergy management and medication review processes
+• Enables analysis of prescribing patterns by sedation profile and administration route
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by antihistamine type and sedation profile (sedating vs non-sedating)
+• Route of administration categorisation (oral, topical, injection)
+• Clinical indication mapping (allergic rhinitis, urticaria, eczema)
+• Over-the-counter availability and safety warning flags'"
+        ]
     )
 }}
 

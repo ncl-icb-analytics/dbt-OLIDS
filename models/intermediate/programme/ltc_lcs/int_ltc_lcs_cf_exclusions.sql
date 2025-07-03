@@ -1,3 +1,27 @@
+{{ config(
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: LTC LCS CF Exclusions - Identifies patients with existing Long Term Conditions who should be excluded from case finding programmes.
+
+Clinical Purpose:
+• Prevents targeting of patients already diagnosed with LTC conditions for case finding
+• Ensures appropriate population selection for undiagnosed condition identification
+• Supports efficient healthcare resource allocation by avoiding duplicate targeting
+• Maintains data quality in case finding programme reporting
+
+Data Granularity:
+• One row per person with any excluding LTC condition
+• Covers 13 major LTC conditions: CKD, AF, COPD, HTN, CHD, Stroke/TIA, PAD, HF, T2DM, hyperlipidaemia, NAFLD, asthma
+• Includes boolean flags for each condition type and composite exclusion indicator
+• Contains earliest excluding condition date for temporal analysis
+
+Key Features:
+• Comprehensive LTC condition screening across multiple disease registers
+• Boolean aggregation for efficient condition presence checking
+• Composite exclusion flag for simple filtering in downstream models
+• Integration with diabetes register for Type 2 diabetes exclusions'"
+    ]
+) }}
+
 -- Intermediate model for LTC LCS Case Finding Exclusions
 -- Identifies patients with any of the specified conditions that exclude them from the LTC LCS Case Finding programme.
 -- Includes CKD, AF, COPD, Hypertension, CHD, Stroke/TIA, PAD, Heart Failure, Type 2 Diabetes, Hyperlipidaemia, NAFLD, and Asthma (adult and CYP).

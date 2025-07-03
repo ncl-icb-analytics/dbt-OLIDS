@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Chronic Kidney Disease (CKD) Register - Patients aged 18+ with active CKD diagnosis.
+
+Key Inclusion Criteria:
+• Age: 18 years or older
+• Active CKD diagnosis: Latest CKD_COD > latest CKDRES_COD OR no resolution recorded
+• Excludes resolved CKD cases
+
+Purpose: QOF register for CKD management, monitoring progression, and cardiovascular risk reduction. Lab data available separately for clinical monitoring.'"
+        ]
     )
 }}
 

@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Diabetes Medication Orders - All recorded diabetes treatment prescriptions.
+
+Clinical Purpose:
+• Tracks diabetes medication therapy including insulins and antidiabetic drugs
+• Supports diabetes management and medication review processes
+• Enables analysis of treatment patterns by drug class and type
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Comprehensive BNF 6.1.x classification (insulins, antidiabetics, monitoring)
+• Insulin type categorisation (short-acting, long-acting, biphasic)
+• Antidiabetic drug class identification (metformin, SGLT2i, GLP-1, etc.)
+• Modern diabetes therapy flags for treatment pathway analysis'"
+        ]
     )
 }}
 

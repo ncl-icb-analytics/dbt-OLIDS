@@ -1,6 +1,26 @@
 {{ config(
     materialized='table',
-    description='Aggregates ARAF referral-related events for each person, providing analytics-ready person-level ARAF referral event status and history.'
+    description='Aggregates ARAF referral-related events for each person, providing analytics-ready person-level ARAF referral event status and history.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Valproate ARAF Referral Status - Person-level aggregation of ARAF referral events for valproate safety monitoring compliance.
+
+Business Purpose:
+• Support valproate safety monitoring through ARAF referral tracking and specialist engagement
+• Enable systematic monitoring of specialist referral requirements for valproate therapy oversight
+• Provide clinical decision support for ARAF referral compliance and specialist involvement
+• Support quality improvement initiatives for comprehensive valproate safety programme delivery
+
+Data Granularity:
+• One row per person with ARAF referral events in valproate safety monitoring
+• Aggregates all ARAF referral events with earliest and latest referral tracking
+• Includes comprehensive referral history for specialist engagement monitoring
+
+Key Features:
+• Person-level ARAF referral event aggregation with complete specialist engagement history
+• Earliest and latest referral tracking for monitoring specialist involvement effectiveness
+• Evidence-based referral compliance assessment supporting comprehensive safety monitoring
+• Integration with valproate safety pathways for systematic specialist engagement coordination'"
+    ]
 ) }}
 
 WITH person_level_araf_referral_aggregation AS (

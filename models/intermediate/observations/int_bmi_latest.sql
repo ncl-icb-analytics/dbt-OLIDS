@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Latest BMI Observations - Most recent valid BMI measurement per person.
+
+Clinical Purpose:
+• Provides current BMI status for obesity management and clinical decision-making
+• Supports weight management programme eligibility and QOF reporting
+• Enables current health status assessment and risk stratification
+
+Data Granularity:
+• One row per person with their most recent valid BMI
+• Includes only patients with valid BMI measurements
+• Filtered to exclude implausible values for clinical accuracy
+
+Key Features:
+• Latest valid BMI identification using comprehensive filtering
+• Clinical BMI categorisation with obesity class classification
+• Data quality assurance with validation flags
+• Complete observation metadata for clinical context'"
+        ]
     )
 }}
 

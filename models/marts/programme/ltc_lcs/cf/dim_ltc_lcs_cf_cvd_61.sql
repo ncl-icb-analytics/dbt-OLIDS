@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CVD_61 case finding: Patients with cardiovascular risk factors requiring assessment'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CVD_61 - Identifies patients with high cardiovascular risk (QRISK2 ≥20%) requiring primary prevention assessment.
+
+Business Purpose:
+• Support systematic case finding for cardiovascular disease primary prevention in high-risk populations
+• Enable identification of patients requiring cardiovascular risk assessment and management
+• Provide clinical decision support for statin therapy and lifestyle intervention targeting
+• Support quality improvement initiatives for cardiovascular disease prevention programmes
+
+Data Granularity:
+• One row per person with latest QRISK2 score of 20% or higher
+• Includes complete QRISK2 assessment history with latest valid readings
+• Limited to patients meeting high cardiovascular risk thresholds
+
+Key Features:
+• QRISK2-based cardiovascular risk stratification (≥20% threshold)
+• Latest assessment focus for current clinical decision-making
+• Complete cardiovascular risk assessment history with all concept codes
+• Evidence-based case finding supporting NICE guidelines for CVD primary prevention'"
+    ]
 ) }}
 -- Intermediate model for LTC LCS Case Finding CVD_61
 -- Identifies patients with QRISK2 score ≥ 20% (case finding for cardiovascular disease prevention)

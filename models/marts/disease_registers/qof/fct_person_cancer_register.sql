@@ -1,6 +1,17 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Cancer Register - Patients with cancer diagnosis from April 2003 onwards.
+
+Key Inclusion Criteria:
+• Cancer diagnosis (CAN_COD) on/after 1 April 2003
+• No age restrictions
+• No resolution codes (cancer is permanent condition)
+• Excludes non-melanotic skin cancers (handled in cluster definition)
+
+Purpose: QOF register for cancer survivorship care, follow-up monitoring, and quality measures for cancer management.'"
+        ]
     )
 }}
 

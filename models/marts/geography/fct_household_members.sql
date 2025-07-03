@@ -1,7 +1,27 @@
 {{
   config(
     materialized='table',
-    tags=['household', 'geography', 'bridge', 'members']
+    tags=['household', 'geography', 'bridge', 'members'],
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Household Members - Bridge table linking patients to households for geographic and social analysis.
+
+Business Purpose:
+• Support population health teams in analysing household-level health outcomes and social determinants
+• Enable business intelligence reporting on geographic distribution of patients and practice populations
+• Provide foundation for household-based care planning and resource allocation
+• Support neighbourhood-level health analytics and community health assessments
+
+Data Granularity:
+• One row per person per household (UPRN-based dwelling)
+• Includes all patients with valid household addresses
+• Current snapshot of household membership with demographic attributes
+
+Key Features:
+• Links patients to geographic households and practice organisational structures
+• Includes demographic characteristics for household composition analysis
+• Supports spatial analysis combining patient attributes with dwelling location
+• Enables population health reporting at household and neighbourhood levels'"
+    ]
   )
 }}
 

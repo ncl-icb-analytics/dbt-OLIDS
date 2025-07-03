@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Retinal Screening Observations - All completed diabetes retinal screening procedures with result categorisation.
+
+Clinical Purpose:
+• Tracks diabetes retinal screening completions for eye care monitoring and QOF reporting
+• Supports diabetic retinopathy risk assessment and ophthalmology referral processes
+• Enables diabetes care pathway compliance and screening programme analysis
+
+Data Granularity:
+• One row per completed retinal screening observation
+• Includes only completed screenings (excludes declined/unsuitable)
+• Uses RETSCREN_COD cluster for screening completion identification
+
+Key Features:
+• Comprehensive screening result categorisation (normal, background, proliferative, maculopathy)
+• Diabetes eye risk assessment with sight-threatening retinopathy identification
+• QOF screening requirement compliance flags (12m, 24m currency)
+• Clinical interpretation and ophthalmology referral indicators'"
+        ]
     )
 }}
 

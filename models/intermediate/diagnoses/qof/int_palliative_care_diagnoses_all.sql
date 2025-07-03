@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Palliative Care Diagnoses All - Complete history of all palliative care pathway observations for QOF register management.
+
+Clinical Purpose:
+• QOF palliative care register data collection and monitoring (on/after 1 April 2008)
+• End-of-life care pathway coordination and quality assessment
+• Palliative care status tracking and appropriateness evaluation
+• Care transition management between active treatment and end-of-life care
+
+Data Granularity:
+• One row per palliative care pathway observation
+• Uses PALCARE_COD (pathway) and PALCARENI_COD (no longer indicated) clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Time-sensitive register inclusion (on/after 1 April 2008)
+• Exclusion logic for care no longer indicated
+• Critical for end-of-life care quality improvement
+• Essential input for palliative care pathway optimisation'"
+        ]
     )
 }}
 

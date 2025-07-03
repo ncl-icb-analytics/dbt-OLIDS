@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'HTN_66 case finding: Patients without hypertension risk factors (control group)'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding HTN_66 - Identifies patients with stage 1 hypertension without cardiovascular risk factors requiring lifestyle intervention focus.
+
+Business Purpose:
+• Support systematic case finding for stage 1 hypertension without additional cardiovascular risk factors
+• Enable lifestyle-focused intervention for patients with isolated stage 1 hypertension
+• Provide clinical decision support for low-risk hypertension management approaches
+• Support quality improvement initiatives for comprehensive hypertension care across risk categories
+
+Data Granularity:
+• One row per person with stage 1 hypertension without additional cardiovascular risk factors
+• Includes patients suitable for lifestyle intervention rather than immediate pharmacological treatment
+• Limited to patients with isolated stage 1 hypertension requiring monitoring and lifestyle support
+
+Key Features:
+• Stage 1 hypertension identification without cardiovascular risk factor complications
+• Lifestyle intervention focus for patients with lower overall cardiovascular risk
+• Evidence-based case finding supporting risk-stratified hypertension management
+• Integration with lifestyle intervention pathways for comprehensive non-pharmacological care'"
+    ]
 ) }}
 
 -- HTN_66 case finding: Stage 1 hypertension without cardiovascular risk factors

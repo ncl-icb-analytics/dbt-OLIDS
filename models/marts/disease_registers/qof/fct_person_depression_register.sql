@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Depression Register - Patients aged 18+ with active depression diagnosis.
+
+Key Inclusion Criteria:
+• Age: 18 years or older
+• Active depression diagnosis: Latest DEP_COD > latest DEPRES_COD OR no resolution
+• Excludes resolved depression cases
+
+Purpose: QOF register for depression management, monitoring treatment response, and mental health support.'"
+        ]
     )
 }}
 

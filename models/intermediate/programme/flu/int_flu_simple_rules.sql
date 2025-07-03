@@ -20,7 +20,30 @@ This model replaces the apply_simple_rule macro functionality.
 Uses static configuration to avoid unsafe introspection.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Simple Rules - Processes single cluster eligibility rules for flu vaccination programme based on individual clinical conditions.
+
+Clinical Purpose:
+• Evaluates single clinical condition eligibility rules for flu vaccination
+• Supports chronic disease targeting including heart disease, liver disease, CNS conditions
+• Implements learning disability and immunodeficiency flu vaccination criteria
+• Replaces apply_simple_rule macro functionality with explicit SQL logic
+
+Data Granularity:
+• One row per eligible person per rule group with single cluster condition
+• Covers CHD, CLD, CNS, asplenia, learning disability, and immunodeficiency groups
+• Filtered to current campaign with age restrictions applied per rule group
+• Contains qualifying event dates based on earliest or latest occurrence criteria
+
+Key Features:
+• Single cluster evaluation: one clinical condition per rule group
+• Flexible date qualifiers: earliest, latest, latest_since, latest_after
+• Age restrictions applied per rule group from campaign configuration
+• Static configuration to avoid unsafe introspection in macro replacement'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

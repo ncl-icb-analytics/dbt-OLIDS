@@ -12,7 +12,29 @@ This model replaces the age birth range functionality in the apply_flu_rule macr
 Campaign is configurable via dbt variables.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Age Birth Range Rules - Processes birth date range eligibility for flu vaccination programme child populations.
+
+Clinical Purpose:
+• Determines child eligibility based on specific birth date ranges for flu vaccination
+• Supports age-based targeting for child populations aged 2-3 and 4-16 years
+• Ensures accurate campaign-specific date calculations for childhood flu programmes
+
+Data Granularity:
+• One row per eligible child per campaign rule group
+• Covers children aged 2-3 years (born Sept 2020 - Aug 2022 for 2024-25 campaign)
+• Covers school children aged 4-16 years (Reception to Year 11)
+• Filtered to current campaign configuration
+
+Key Features:
+• Campaign-configurable birth date ranges for different child age groups
+• Age calculations in both months and years at reference date
+• Integration with flu programme logic and campaign dates
+• Replacement for age birth range functionality in apply_flu_rule macro'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

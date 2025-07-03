@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Urine ACR Observations - All recorded albumin-to-creatinine ratio measurements for kidney function assessment.
+
+Clinical Purpose:
+• Tracks urine ACR levels for CKD diagnosis, staging and progression monitoring
+• Supports diabetic nephropathy screening and kidney disease management
+• Enables proteinuria assessment and cardiovascular risk stratification
+
+Data Granularity:
+• One row per ACR observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses UACR_TESTING cluster for ACR test result identification
+
+Key Features:
+• Data quality validation with plausible range filtering (0-1000 mg/mmol)
+• Clinical ACR categorisation (normal, mildly/moderately/severely increased)
+• Microalbuminuria and macroalbuminuria classification
+• CKD risk indicators for clinical decision support'"
+        ]
     )
 }}
 

@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: PAD Diagnoses All - Complete history of all peripheral arterial disease diagnosis observations for QOF register management.
+
+Clinical Purpose:
+• QOF peripheral arterial disease register data collection and monitoring
+• Cardiovascular risk stratification and secondary prevention pathway coordination
+• PAD care pathway management and treatment optimisation
+• Long-term cardiovascular outcome tracking and intervention support
+
+Data Granularity:
+• One row per peripheral arterial disease diagnosis observation
+• Uses PAD_COD cluster for QOF-compliant PAD diagnosis identification
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Lifelong condition register for cardiovascular secondary prevention
+• Simple diagnosis-only pattern with no resolution codes
+• Critical for cardiovascular risk management and prevention protocols
+• Essential input for PAD care quality improvement initiatives'"
+        ]
     )
 }}
 

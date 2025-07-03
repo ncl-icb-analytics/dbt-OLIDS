@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Diabetes Diagnoses All - Complete history of all diabetes diagnosis observations with clinical prioritisation for QOF register management.
+
+Clinical Purpose:
+• QOF diabetes register data collection and monitoring
+• Diabetes type classification and clinical decision support
+• Disease progression tracking across diabetes spectrum
+• Resolution and remission status monitoring
+
+Data Granularity:
+• One row per diabetes diagnosis observation with cluster prioritisation
+• Uses DMTYPE1_COD, DMTYPE2_COD, DM_COD, and DMRES_COD clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Clinical prioritisation logic for multiple cluster membership
+• Type 1, Type 2, and general diabetes classification
+• Resolution and remission code tracking
+• Essential input for diabetes care pathway optimisation'"
+        ]
     )
 }}
 

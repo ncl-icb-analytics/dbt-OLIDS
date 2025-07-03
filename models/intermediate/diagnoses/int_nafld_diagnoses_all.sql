@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: NAFLD Diagnoses All - Complete history of all Non-Alcoholic Fatty Liver Disease diagnosis observations from clinical records.
+
+Clinical Purpose:
+• NAFLD diagnosis tracking and liver health assessment
+• Metabolic syndrome monitoring and risk stratification
+• Potential QOF register development preparation
+• Integration with diabetes and obesity management pathways
+
+Data Granularity:
+• One row per NAFLD diagnosis observation
+• Includes all diagnosis dates for complete clinical history
+• Uses hardcoded SNOMED concepts (pending NAFLD_COD cluster availability)
+
+Key Features:
+• Progressive liver disease monitoring capability
+• Links to metabolic risk factors and comorbidities
+• Awaiting formal cluster implementation
+• Supports comprehensive liver health assessment'"
+        ]
     )
 }}
 

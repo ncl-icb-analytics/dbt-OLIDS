@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Pregnancy Status All - Complete history of all pregnancy-related observations with enhanced analytics for maternity care.
+
+Clinical Purpose:
+• Pregnancy status tracking and maternity care pathway coordination
+• Medication safety monitoring during pregnancy and post-pregnancy periods
+• Clinical decision support for pregnancy-contraindicated treatments
+• Maternity care quality improvement and outcome tracking
+
+Data Granularity:
+• One row per pregnancy-related observation with enhanced timeframe analysis
+• Uses PREG_COD (pregnancy status) and PREGDEL_COD (delivery events) QOF clusters
+• Includes all patients regardless of status for comprehensive maternity care
+
+Key Features:
+• Enhanced pregnancy status categorisation and clinical safety context
+• Maternity care timeframe analysis for clinical decision support
+• Pregnancy outcome tracking including live births and terminations
+• Critical for medication safety and reproductive health monitoring'"
+        ]
     )
 }}
 

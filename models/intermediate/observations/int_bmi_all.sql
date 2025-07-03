@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: BMI Observations - All recorded BMI measurements with clinical categorisation.
+
+Clinical Purpose:
+• Tracks BMI measurements for obesity management and health monitoring
+• Supports weight management programmes and QOF reporting
+• Enables longitudinal analysis of BMI trends and clinical outcomes
+
+Data Granularity:
+• One row per BMI observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses BMIVAL_COD cluster for BMI value identification
+
+Key Features:
+• Data quality validation with plausible range filtering (5-400)
+• Clinical BMI categorisation (underweight, normal, overweight, obese classes)
+• Original value preservation for audit and quality assurance
+• Comprehensive observation metadata for traceability'"
+        ]
     )
 }}
 

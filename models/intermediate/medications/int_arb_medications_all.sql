@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: ARB Medication Orders - All recorded angiotensin receptor blocker prescriptions.
+
+Clinical Purpose:
+• Tracks ARB therapy for cardiovascular and renal protection
+• Supports blood pressure management and medication review processes
+• Enables analysis of ARB usage as alternative to ACE inhibitors
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by specific ARB type (losartan, valsartan, candesartan, etc.)
+• Evidence-based medication flags for cardiovascular disease management
+• Clinical trial evidence mapping (LIFE, Val-HeFT, CHARM, ONTARGET trials)
+• Recency indicators for therapy monitoring (3m, 6m, 12m)'"
+        ]
     )
 }}
 

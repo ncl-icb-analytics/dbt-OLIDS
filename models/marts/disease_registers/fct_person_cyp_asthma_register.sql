@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Children and Young People (CYP) Asthma Register - Clinical register for paediatric asthma management.
+
+Key Inclusion Criteria:
+• Age: Under 18 years
+• Active asthma diagnosis: Latest AST_COD > latest ASTRES_COD
+• Recent medication: Asthma medication prescribed within last 12 months
+
+Purpose: Identifies children and young people with asthma requiring regular monitoring and age-appropriate care.'"
+        ]
     )
 }}
 

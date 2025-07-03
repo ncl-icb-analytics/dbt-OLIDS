@@ -20,7 +20,28 @@ To add a new campaign year:
 {{ config(
     materialized='table',
     persist_docs={"relation": true, "columns": true},
-    cluster_by=['campaign_period', 'person_id']
+    cluster_by=['campaign_period', 'person_id'],
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Flu Eligibility Comparison - Multi-campaign comparison fact table enabling year-over-year flu vaccination eligibility analysis.
+
+Business Purpose:
+• Enables comparison between flu campaigns for multi-year analysis and trend identification
+• Supports year-over-year eligibility trends analysis and rule change impact assessment
+• Provides foundation for population health analysis across flu seasons
+• Facilitates coverage and uptake comparisons between campaign periods
+
+Data Granularity:
+• One row per person per eligible rule group per campaign period
+• Currently covers 2024-25 campaign with framework for historical and future campaigns
+• Contains campaign period classification (current, previous, upcoming) for temporal analysis
+• Preserves all eligibility details from campaign-specific fact models
+
+Key Features:
+• Multi-campaign comparison capability with campaign period classification
+• Extensible framework for adding new campaign years through union operations
+• Campaign-specific model approach ensuring data stability and historical preservation
+• Comprehensive eligibility analysis supporting programme planning and evaluation'"
+    ]
 ) }}
 
 -- Current campaign (2024-25)

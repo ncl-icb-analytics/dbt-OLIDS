@@ -1,6 +1,26 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Pregnancy Absence Risk All - Complete history of all observations indicating permanent absence of pregnancy risk for clinical safety.
+
+Clinical Purpose:
+• Valproate medication safety monitoring and pregnancy risk assessment
+• Clinical decision support for contraindicated medications during pregnancy
+• Safety-critical pharmaceutical prescribing and monitoring
+• Reproductive health risk stratification and patient safety protocols
+
+Data Granularity:
+• One row per pregnancy absence risk observation
+• Uses PREGRISK category codes from valproate programme
+• Includes all patients regardless of status for comprehensive safety monitoring
+
+Key Features:
+• Permanent pregnancy risk absence indicators for medication safety
+• Critical for teratogenic medication prescribing decisions
+• Essential for clinical safety and pharmaceutical risk management
+• Supports reproductive health and medication safety protocols'"
+        ]
     )
 }}
 

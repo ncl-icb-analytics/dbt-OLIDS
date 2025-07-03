@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'LTC/LCS case finding summary: Aggregated view of all case finding indicators per person'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding Summary - Comprehensive aggregated view of all case finding indicators and interventions per person.
+
+Business Purpose:
+• Support comprehensive case finding analytics by providing unified view of all LTC/LCS indicators per person
+• Enable population health management through aggregated case finding insights and intervention planning
+• Provide clinical decision support for holistic patient assessment across multiple condition areas
+• Support quality improvement initiatives for systematic case finding programme effectiveness monitoring
+
+Data Granularity:
+• One row per person in the LTC case finding base population
+• Aggregates all case finding indicators across atrial fibrillation, CKD, cardiovascular, diabetes, and hypertension
+• Comprehensive summary of case finding opportunities and intervention requirements
+
+Key Features:
+• Unified case finding summary aggregating all condition-specific indicators and criteria
+• Person-level consolidation of case finding opportunities across multiple clinical domains
+• Evidence-based case finding summary supporting comprehensive population health management
+• Integration with clinical decision support systems for holistic patient care coordination'"
+    ]
 ) }}
 
 -- LTC/LCS case finding summary dimension

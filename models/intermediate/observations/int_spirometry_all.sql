@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Spirometry Observations - All spirometry test results for COPD diagnosis and monitoring.
+
+Clinical Purpose:
+• Tracks spirometry results (FEV1/FVC ratios) for COPD diagnosis and management
+• Supports COPD register eligibility and respiratory disease monitoring
+• Enables airway obstruction assessment and clinical decision support
+
+Data Granularity:
+• One row per spirometry observation
+• Includes both raw FEV1/FVC values and pre-coded ‘<0.7’ observations
+• Uses FEV1FVC_COD and FEV1FVCL70_COD clusters
+
+Key Features:
+• COPD diagnostic threshold assessment (FEV1/FVC <0.7)
+• Spirometry validation and clinical interpretation
+• COPD severity staging and airway obstruction indicators
+• QOF-specific spirometry confirmation flags for register eligibility'"
+        ]
     )
 }}
 

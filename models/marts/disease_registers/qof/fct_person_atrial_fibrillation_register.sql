@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Atrial Fibrillation Register - Patients with active atrial fibrillation diagnosis.
+
+Key Inclusion Criteria:
+• Active AF diagnosis: Latest AFIB_COD > latest AFIBRES_COD OR no resolution recorded
+• No age restrictions
+• No medication validation requirements
+• Excludes resolved AF cases
+
+Purpose: QOF register for AF management, stroke prevention, and anticoagulation monitoring.'"
+        ]
     )
 }}
 

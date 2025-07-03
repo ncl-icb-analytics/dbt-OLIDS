@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'condition_code']
+        cluster_by=['person_id', 'condition_code'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Long-Term Conditions (LTC) Summary - Unified view of all disease registers per person.
+
+Key Features:
+• One row per person per condition
+• Combines all QOF and clinical disease registers
+• Standardised condition codes and clinical domains
+• Includes diagnosis dates and QOF status
+
+Purpose: Analytical table for multi-morbidity analysis, population health management, and comprehensive patient condition profiling.'"
+        ]
     )
 }}
 

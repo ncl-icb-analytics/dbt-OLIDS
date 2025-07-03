@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Creatinine Observations - All recorded serum creatinine measurements with clinical categorisation.
+
+Clinical Purpose:
+• Tracks creatinine levels for kidney function assessment and CKD monitoring
+• Supports renal disease management and medication dosing adjustments
+• Enables chronic kidney disease case finding and progression monitoring
+
+Data Granularity:
+• One row per creatinine observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses CRE_COD cluster for serum creatinine identification
+
+Key Features:
+• Data quality validation with plausible range filtering (20-1000 µmol/L)
+• Clinical creatinine categorisation (normal, mildly/moderately/severely elevated)
+• Elevated creatinine flags for kidney function screening
+• Original value preservation for clinical interpretation'"
+        ]
     )
 }}
 

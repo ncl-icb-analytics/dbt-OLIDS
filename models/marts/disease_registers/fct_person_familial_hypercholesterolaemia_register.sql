@@ -2,7 +2,18 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        pre_hook="DROP TABLE IF EXISTS {{ this }}",
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Familial Hypercholesterolaemia (FH) Register - Patients with genetic lipid disorder diagnosed at age 20+.
+
+Key Inclusion Criteria:
+• FH diagnosis code present (FHYP_COD)
+• Age at first diagnosis: 20 years or older
+• Active patient status required
+• No resolution codes (genetic condition is lifelong)
+
+Purpose: Clinical register for cascade family screening, high-intensity statin monitoring, and inherited cardiovascular risk management.'"
+        ]
     )
 }}
 

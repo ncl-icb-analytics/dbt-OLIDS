@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Smoking Status Facts - Current and historical smoking status for clinical decision support and population health monitoring.
+
+Business Purpose:
+• Support clinical decision-making by providing current smoking status for care delivery
+• Enable population health analytics and smoking cessation programme targeting
+• Provide comprehensive smoking history for longitudinal health trend analysis
+• Support quality measurement and smoking-related health outcomes tracking
+
+Data Granularity:
+• One row per person with smoking observation data
+• Includes current status and complete smoking history
+• Limited to people with recorded smoking observations
+
+Key Features:
+• Current smoking status based on most recent clinical observation
+• Complete smoking history with earliest and all recorded observations
+• Integrated with person demographics for population health analysis
+• Real-time refresh tracking for data currency monitoring'"
+        ]
     )
 }}
 

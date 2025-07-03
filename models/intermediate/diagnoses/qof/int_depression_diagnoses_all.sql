@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Depression Diagnoses All - Complete history of all depression diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF depression register data collection and monitoring
+• Mental health care pathway coordination and clinical decision support
+• Depression severity tracking and treatment response monitoring
+• Resolution status tracking for improved mental health outcomes
+
+Data Granularity:
+• One row per depression diagnosis or resolution observation
+• Uses DEPR_COD (diagnosis) and DEPRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and resolution code classification for register eligibility
+• Age restrictions typically ≥18 years applied in downstream processing
+• Critical for mental health care pathway optimisation
+• Essential input for depression quality improvement initiatives'"
+        ]
     )
 }}
 

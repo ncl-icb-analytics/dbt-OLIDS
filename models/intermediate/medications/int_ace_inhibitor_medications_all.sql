@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: ACE Inhibitor Medication Orders - All recorded ACE inhibitor prescriptions.
+
+Clinical Purpose:
+• Tracks ACE inhibitor therapy for cardiovascular and renal protection
+• Supports clinical monitoring and medication review processes
+• Enables analysis of prescribing patterns by specific ACE inhibitor type
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by specific ACE inhibitor type (ramipril, lisinopril, etc.)
+• Evidence-based medication flags for cardiovascular disease management
+• Recency indicators for therapy monitoring (3m, 6m, 12m)
+• Clinical trial evidence mapping (HOPE, EUROPA, GISSI-3, SOLVD trials)'"
+        ]
     )
 }}
 

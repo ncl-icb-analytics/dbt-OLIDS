@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Dementia Register - Patients with dementia diagnosis.
+
+Key Inclusion Criteria:
+• Dementia diagnosis (DEM_COD) present
+• No age restrictions
+• No resolution codes (dementia is permanent condition)
+
+Purpose: QOF register for dementia care pathway monitoring, cognitive health assessment, memory service referrals, and early detection support.'"
+        ]
     )
 }}
 

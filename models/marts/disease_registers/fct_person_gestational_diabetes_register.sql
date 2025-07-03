@@ -2,7 +2,17 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Gestational Diabetes Register - Patients with pregnancy-related diabetes diagnosis history.
+
+Key Inclusion Criteria:
+• Gestational diabetes diagnosis code present (GESTDIAB_COD)
+• Active patient status required
+• No age or sex restrictions in this implementation
+• Permanent record (no resolution codes)
+
+Purpose: Clinical register for postpartum diabetes risk monitoring and future Type 2 diabetes prevention planning.'"
+        ]
     )
 }}
 

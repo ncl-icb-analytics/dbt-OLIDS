@@ -2,7 +2,18 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        pre_hook="DROP TABLE IF EXISTS {{ this }}",
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Stroke and TIA Register - Patients with stroke or transient ischaemic attack history.
+
+Key Inclusion Criteria:
+• Stroke or TIA diagnosis (STIA_COD) present
+• Not resolved by resolution codes (STIARES_COD)
+• No age restrictions
+• Lifelong condition for secondary prevention
+
+Purpose: QOF register for stroke secondary prevention measures, cardiovascular risk management, and stroke care pathway monitoring.'"
+        ]
     )
 }}
 

@@ -1,4 +1,27 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: LTC LCS CF CVD Base Population - Defines specialised CVD base population for Long Term Conditions case finding indicators with statin exclusions.
+
+Clinical Purpose:
+• Establishes specialised base population for CVD case finding measures requiring statin status filtering
+• Applies comprehensive statin exclusions for patients already on statins, with allergies, or recent decisions
+• Ensures appropriate population selection for CVD primary prevention case finding
+• Provides consistent population denominator for CVD case finding indicators requiring statin-naive patients
+
+Data Granularity:
+• One row per eligible person aged 40-83 years for CVD case finding programmes
+• Excludes patients on statins in last 12 months, with statin allergies/contraindications, or recent statin decisions
+• Builds on standard LTC case finding base population with additional CVD-specific exclusions
+• Includes statin status flags and latest dates for comprehensive filtering
+
+Key Features:
+• Age-specific population: 40-83 years for CVD primary prevention targeting
+• Comprehensive statin exclusion logic: current statins, allergies, contraindications, recent decisions
+• Integration with CVD medications and observations for statin status determination
+• Reusable base population for multiple CVD case finding indicators requiring statin-naive patients'"
+    ]
+) }}
 
 -- General CVD base population for case finding indicators
 -- Includes patients aged 40-83 who are not on statins, have no statin allergies/contraindications, and no recent statin decisions

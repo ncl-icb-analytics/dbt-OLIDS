@@ -25,7 +25,27 @@ This model replaces the apply_diabetes_exclusion_rule macro functionality.
 
 {{ config(
     materialized='table',
-    persist_docs={"relation": true, "columns": true}
+    persist_docs={"relation": true, "columns": true},
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Diabetes Eligibility - Diabetes and Addison disease eligibility determination for NHS flu vaccination programme.
+
+Clinical Purpose:
+• NHS flu vaccination programme diabetes and Addison disease eligibility assessment
+• High-risk population identification due to immunocompromise and infection risk
+• Clinical eligibility validation for diabetes and adrenal insufficiency conditions
+• Age-restricted eligibility determination (6 months to under 65 years)
+
+Data Granularity:
+• One row per person meeting diabetes or Addison disease eligibility criteria
+• Uses hierarchical date logic for active diabetes determination
+• Excludes resolved diabetes using latest diagnosis vs resolution comparison
+
+Key Features:
+• Active diabetes determination with resolution exclusion logic
+• Addison disease immunocompromise risk assessment
+• Age restriction compliance (6 months to under 65 years)
+• Essential for high-risk population vaccination targeting'"
+    ]
 ) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}

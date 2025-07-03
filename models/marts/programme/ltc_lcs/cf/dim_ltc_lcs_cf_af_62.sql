@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'AF_62 case finding: Patients over 65 with missing pulse check at NHS Health Check'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding AF_62 - Identifies patients over 65 with missing pulse checks at NHS Health Check appointments.
+
+Business Purpose:
+• Support systematic case finding for atrial fibrillation through NHS Health Check programme compliance
+• Enable quality improvement monitoring for pulse check completion in high-risk age groups
+• Provide clinical decision support for AF screening in patients over 65 with incomplete assessments
+• Support NHS Health Check programme effectiveness and cardiovascular risk management
+
+Data Granularity:
+• One row per person aged 65+ in the LTC case finding base population
+• Includes pulse check history within 36-month assessment window
+• Tracks NHS Health Check attendance and pulse assessment completion
+
+Key Features:
+• Age-based eligibility (65+ years) aligned with AF screening guidelines
+• 36-month assessment window for pulse check compliance monitoring
+• Integration with NHS Health Check programme data for comprehensive assessment
+• Clinical exclusion criteria applied for appropriate case finding targeting'"
+    ]
 ) }}
 
 -- Intermediate model for LTC LCS Case Finding AF_62: Patients over 65 missing pulse check in last 36 months

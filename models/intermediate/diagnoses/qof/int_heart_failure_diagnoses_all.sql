@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Heart Failure Diagnoses All - Complete history of all heart failure diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF heart failure register data collection and monitoring
+• Heart failure type classification and cardiac function assessment
+• HFrEF vs HFpEF identification and treatment pathway coordination
+• Resolution status tracking for improved cardiac outcomes
+
+Data Granularity:
+• One row per heart failure diagnosis or resolution observation
+• Uses HF_COD, HFRES_COD, HFLVSD_COD, and REDEJCFRAC_COD clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Heart failure type classification with ejection fraction considerations
+• Left ventricular systolic dysfunction and reduced ejection fraction tracking
+• Critical for cardiac care pathway optimisation
+• Essential input for heart failure quality improvement initiatives'"
+        ]
     )
 }}
 

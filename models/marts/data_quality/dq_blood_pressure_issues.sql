@@ -4,7 +4,24 @@
         tags=['data_quality', 'blood_pressure'],
         cluster_by=['person_id', 'clinical_effective_date'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Identifies blood pressure data quality issues: out-of-range values, orphaned readings, coding ambiguity, and missing dates. Supports clinical governance and data validation.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Blood Pressure Data Quality Issues - Business data quality monitoring tool for blood pressure measurements.
+
+Business Purpose:
+• Support clinical governance teams in monitoring data quality and identifying problematic readings
+• Enable data stewards to investigate and resolve blood pressure recording issues
+• Provide quality assurance reporting for clinical audit and business intelligence teams
+• Support population health analytics by identifying patients with unreliable BP data
+
+Data Granularity:
+• One row per person per date with blood pressure data quality issues
+• Includes all problematic readings: out-of-range values, orphaned readings, coding ambiguity, missing dates
+• Covers current patients with BP measurement quality concerns
+
+Key Features:
+• Identifies systolic values outside clinical range (< 40 or > 350 mmHg)
+• Detects diastolic values outside clinical range (< 20 or > 200 mmHg)
+• Flags orphaned readings (systolic without diastolic or vice versa)
+• Highlights coding ambiguity issues in source data systems'"
         ]
     )
 }}

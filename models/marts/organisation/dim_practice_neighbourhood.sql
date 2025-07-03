@@ -4,7 +4,24 @@
         tags=['dimension', 'practice', 'geography'],
         cluster_by=['practice_code'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Dimension table providing practice neighbourhood information. Sources from PRACTICE_NEIGHBOURHOOD_LOOKUP in the POPULATION_HEALTH schema. PCN information is available separately in DIM_PRACTICE_PCN.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Practice Neighbourhood Dimension - Geographic context and neighbourhood classification for GP practices.
+
+Business Purpose:
+• Support operational analytics for practice geographic distribution and catchment area analysis
+• Enable business intelligence reporting on practice locations and local authority contexts
+• Provide foundation for population health analytics and geographic health inequalities assessment
+• Support commissioning and service planning based on practice geographic characteristics
+
+Data Granularity:
+• One row per practice with neighbourhood and local authority information
+• Includes practice geographic context for spatial analysis
+• Current geographic classification and neighbourhood assignment
+
+Key Features:
+• Links practices to local authorities and neighbourhood classifications
+• Supports geographic analysis and spatial reporting for population health
+• Enables business intelligence for practice operations and service planning
+• Provides foundation for health inequalities analysis and resource allocation'"
         ]
     )
 }}

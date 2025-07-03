@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Learning Disability Register - Patients aged 14+ with learning disability diagnosis.
+
+Key Inclusion Criteria:
+• Age: 14 years or older
+• Learning disability diagnosis (LD_COD) present
+• No resolution codes (learning disability is permanent condition)
+
+Purpose: QOF register for learning disability care pathway monitoring, health equity assessment, and ensuring appropriate support services.'"
+        ]
     )
 }}
 

@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Smoking Status All - Complete history of all smoking status observations with enhanced analytics for QOF and cardiovascular risk assessment.
+
+Clinical Purpose:
+• QOF smoking status tracking and cardiovascular risk stratification
+• Smoking cessation programme eligibility and clinical decision support
+• Lifestyle intervention monitoring and health improvement tracking
+• CVD prevention pathway coordination and patient safety protocols
+
+Data Granularity:
+• One row per smoking status observation with analytics-ready categorisation
+• Uses SMOK_COD, LSMOK_COD, EXSMOK_COD, and NSMOK_COD QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Current, ex-smoker, and never-smoked classification with risk categories
+• Analytics-ready flags for cardiovascular risk assessment
+• QOF-compliant smoking status determination
+• Essential for lifestyle intervention and CVD prevention programmes'"
+        ]
     )
 }}
 

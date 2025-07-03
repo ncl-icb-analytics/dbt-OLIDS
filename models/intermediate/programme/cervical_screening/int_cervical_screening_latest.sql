@@ -2,7 +2,27 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        persist_docs={"relation": true}
+        persist_docs={"relation": true},
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Cervical Screening Latest - Most recent cervical screening status per person for current programme management.
+
+Clinical Purpose:
+• Current cervical screening status determination for programme coordination
+• Real-time screening eligibility and invitation management
+• Clinical decision support for current screening requirements
+• Programme monitoring and individual patient pathway management
+
+Data Granularity:
+• One row per person representing most recent cervical screening observation
+• Simple latest record selection without date-based business logic
+• Includes all persons regardless of status for comprehensive programme coverage
+
+Key Features:
+• Latest screening status with comprehensive cytology and risk information
+• Current clinical action requirements and follow-up determination
+• Foundation for person-level screening programme analysis
+• Essential for real-time programme management and patient care coordination'"
+        ]
     )
 }}
 

@@ -2,7 +2,28 @@
     config(
         materialized='table',
         tags=['intermediate', 'ltc_lcs', 'hypertension'],
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: LTC LCS HTN Observations - Collects all hypertension-relevant observations for Long Term Conditions case finding measures including blood pressure measurements.
+
+Clinical Purpose:
+• Gathers comprehensive hypertension-related clinical observation data for case finding algorithms
+• Supports identification of patients with undiagnosed hypertension through blood pressure measurements
+• Enables observation-based risk stratification using clinic, home, and ABPM blood pressure readings
+• Provides foundation data for hypertension case finding indicators with proper BP measurement pairing
+
+Data Granularity:
+• One row per clinical observation for hypertension-relevant observations
+• Covers clinic, home, and ABPM blood pressure events with systolic/diastolic pairing
+• Includes other hypertension-related observations: eGFR, BMI, BSA, cardiovascular complications
+• Sourced from int_blood_pressure_all and LTC_LCS programme observation clusters
+
+Key Features:
+• Cluster IDs: HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM, HYPERTENSION_EGFR, HYPERTENSION_BMI, HYPERTENSION_BSA, HYPERTENSION_MYOCARDIAL, HYPERTENSION_CEREBRAL, HYPERTENSION_CLAUDICATION, HYPERTENSION_DIABETES
+• Proper blood pressure measurement pairing logic with observation type classification
+• Comprehensive hypertension risk factor and diagnostic observation analysis
+• Integration with existing blood pressure intermediate model and LTC_LCS observation clusters'"
+        ]
     )
 }}
 

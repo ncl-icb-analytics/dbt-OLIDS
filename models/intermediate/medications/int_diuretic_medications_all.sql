@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Diuretic Medication Orders - All recorded diuretic prescriptions.
+
+Clinical Purpose:
+• Tracks diuretic therapy for cardiovascular and fluid management
+• Supports heart failure management and blood pressure control processes
+• Enables analysis of diuretic combinations and potassium management
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by diuretic type (thiazide, loop, potassium-sparing)
+• Specific medication identification with evidence-based therapy flags
+• Clinical trial evidence mapping (RALES, EPHESUS trials)
+• Heart failure-specific diuretic indicators for quality monitoring'"
+        ]
     )
 }}
 

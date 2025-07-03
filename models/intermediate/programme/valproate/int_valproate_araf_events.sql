@@ -1,6 +1,27 @@
 {{ config(
     materialized='table',
-    description='Intermediate table extracting all ARAF-related events for each person, using mapped concepts, observation, and valproate program codes. Applies lookback logic as defined in valproate program codes.'
+    description='Intermediate table extracting all ARAF-related events for each person, using mapped concepts, observation, and valproate program codes. Applies lookback logic as defined in valproate program codes.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Valproate ARAF Events - Comprehensive collection of all Annual Risk Acknowledgement Form events for valproate patient safety monitoring.
+
+Clinical Purpose:
+• Gathers all ARAF completion events for patients on valproate therapy
+• Supports annual risk acknowledgement monitoring for valproate clinical safety
+• Enables comprehensive tracking of ARAF completion with lookback logic applied
+• Provides foundation data for valproate programme safety compliance and risk acknowledgement
+
+Data Granularity:
+• One row per ARAF event observation for patients on valproate therapy
+• Applies lookback logic as defined in valproate programme codes for current relevance
+• Includes specific ARAF form code identification flags for detailed analysis
+• Contains clinical effective dates for temporal analysis and programme tracking
+
+Key Features:
+• ARAF code category filtering with specific form code identification
+• Lookback logic application based on valproate programme code configuration
+• Integration with valproate programme codes for comprehensive ARAF tracking
+• Support for valproate patient safety monitoring and annual risk acknowledgement compliance'"
+    ]
 ) }}
 
 SELECT

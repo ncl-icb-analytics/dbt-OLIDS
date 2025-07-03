@@ -1,3 +1,27 @@
+{{ config(
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: LTC LCS CKD Observations - Collects all chronic kidney disease-relevant observations for Long Term Conditions case finding measures.
+
+Clinical Purpose:
+• Gathers comprehensive CKD-related clinical observation data for case finding algorithms
+• Supports identification of patients with undiagnosed chronic kidney disease through laboratory and clinical observations
+• Enables observation-based risk stratification for CKD case finding measures CKD_61 and CKD_62
+• Provides foundation data for CKD case finding indicators including consecutive low eGFR readings
+
+Data Granularity:
+• One row per clinical observation for CKD-relevant observations
+• Covers urine ACR testing, eGFR testing, acute kidney injury, BPH/gout, haematuria, proteinuria
+• Includes medication-related observations: lithium, sulfasalazine, tacrolimus
+• Sourced from LTC_LCS programme observation clusters
+
+Key Features:
+• Cluster IDs: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS
+• Supports CKD_61 (consecutive low eGFR) and CKD_62 (elevated ACR) case finding measures
+• Comprehensive laboratory and clinical observation analysis for undiagnosed CKD detection
+• Integration with LTC_LCS programme clinical observation tracking systems'"
+    ]
+) }}
+
 -- Intermediate model for LTC LCS CKD Observations
 -- Collects all CKD-relevant observations needed for CKD case finding measures
 

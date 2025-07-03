@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Asthma Register - Patients aged 6+ with active asthma requiring ongoing management.
+
+Key Inclusion Criteria:
+• Age: 6 years or older
+• Active asthma diagnosis: Latest AST_COD > latest ASTRES_COD
+• Recent medication: Asthma medication prescribed within last 12 months
+• External validation: Medication requirement ensures active management
+
+Purpose: QOF register identifying patients with asthma requiring regular monitoring and review.'"
+        ]
     )
 }}
 

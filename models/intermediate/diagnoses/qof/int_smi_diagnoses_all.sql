@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: SMI Diagnoses All - Complete history of all serious mental illness diagnosis and remission observations for QOF register management.
+
+Clinical Purpose:
+• QOF serious mental illness register data collection and monitoring
+• Mental health care pathway coordination for schizophrenia, bipolar disorder, and psychoses
+• SMI treatment response monitoring and clinical decision support
+• Remission status tracking for improved mental health outcomes
+
+Data Granularity:
+• One row per serious mental illness diagnosis or remission observation
+• Uses MH_COD (diagnosis) and MHREM_COD (remission) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and remission code classification for register eligibility
+• Age restrictions typically ≥18 years applied in downstream processing
+• Critical for serious mental illness care pathway optimisation
+• Essential input for SMI quality improvement and treatment monitoring'"
+        ]
     )
 }}
 

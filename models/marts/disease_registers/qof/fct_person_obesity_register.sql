@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Obesity Register - Patients aged 18+ with obesity using ethnicity-specific BMI thresholds.
+
+Key Inclusion Criteria:
+• Age: 18 years or older
+• BMI ≥30 (all ethnicities) OR BMI ≥27.5 (BAME populations)
+• Ethnicity-specific thresholds for register inclusion
+
+Purpose: QOF register for obesity management, weight reduction interventions, and ethnicity-appropriate health monitoring.'"
+        ]
     )
 }}
 

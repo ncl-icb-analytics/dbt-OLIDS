@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CVD_66 case finding: Patients without cardiovascular risk factors (control group)'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CVD_66 - Identifies patients aged 75-83 requiring QRISK2 assessment for age-appropriate cardiovascular risk management.
+
+Business Purpose:
+• Support systematic case finding for cardiovascular risk assessment in elderly populations (75-83 years)
+• Enable identification of patients requiring age-appropriate cardiovascular risk evaluation
+• Provide clinical decision support for elderly cardiovascular risk management and statin review
+• Support quality improvement initiatives for age-specific cardiovascular prevention programmes
+
+Data Granularity:
+• One row per person aged 75-83 requiring QRISK2 assessment due to lack of recent evaluation
+• Includes age-specific risk assessment requirements and cardiovascular monitoring needs
+• Limited to elderly patients without recent cardiovascular risk evaluation
+
+Key Features:
+• Age-specific cardiovascular risk assessment (75-83 years) for elderly care optimisation
+• QRISK2 requirement identification for patients lacking recent risk evaluation
+• Evidence-based case finding supporting age-appropriate cardiovascular care
+• Integration with elderly care pathways for comprehensive cardiovascular risk management'"
+    ]
 ) }}
 
 -- CVD_66 case finding: Statin review for patients aged 75-83

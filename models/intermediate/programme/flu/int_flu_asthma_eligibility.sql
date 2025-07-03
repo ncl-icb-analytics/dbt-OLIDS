@@ -33,7 +33,28 @@ DATA QUALITY NOTES:
 
 {{ config(
     materialized='table',
-    persist_docs={"relation": true, "columns": true}
+    persist_docs={"relation": true, "columns": true},
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Asthma Eligibility - Determines flu vaccination eligibility for patients with asthma using hierarchical clinical evidence.
+
+Clinical Purpose:
+• Identifies patients with asthma who qualify for flu vaccination based on diagnosis and active management
+• Implements complex business logic requiring both asthma diagnosis and recent management evidence
+• Supports clinical decision-making for high-risk respiratory disease patients
+• Ensures evidence-based flu vaccination targeting for asthma patients
+
+Data Granularity:
+• One row per eligible person aged 6 months to 65 years with documented asthma
+• Requires both asthma diagnosis and evidence of active management or severity
+• Filtered to current campaign with qualifying clinical evidence
+• Contains hierarchical evidence selection for patients with multiple evidence types
+
+Key Features:
+• Primary requirement: Asthma diagnosis (AST_COD) with earliest occurrence tracking
+• Secondary requirement: Recent medication OR historical admission evidence
+• Age restrictions: 6 months to 65 years at reference date
+• Evidence hierarchy selection using most recent qualifying evidence'"
+    ]
 ) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}

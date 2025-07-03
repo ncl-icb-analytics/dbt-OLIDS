@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Osteoporosis Diagnoses All - Complete history of all osteoporosis diagnosis observations for QOF register management.
+
+Clinical Purpose:
+• QOF osteoporosis register data collection and monitoring
+• Bone health assessment and fracture risk stratification
+• Osteoporosis care pathway coordination and treatment monitoring
+• Integration with DXA scan results for comprehensive bone health evaluation
+
+Data Granularity:
+• One row per osteoporosis diagnosis observation
+• Uses OSTEO_COD cluster for QOF-compliant osteoporosis identification
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Clinical osteoporosis diagnosis tracking
+• Integration with DXA scan confirmation logic (handled in fact layer)
+• Critical for bone health preservation and fracture prevention
+• Essential input for osteoporosis care quality improvement initiatives'"
+        ]
     )
 }}
 

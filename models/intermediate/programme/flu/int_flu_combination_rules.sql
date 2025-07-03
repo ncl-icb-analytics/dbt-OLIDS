@@ -12,7 +12,30 @@ Combination rule examples:
 This model replaces the apply_combination_rule macro functionality.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Combination Rules - Processes complex combination eligibility rules for flu vaccination programme using AND/OR logic.
+
+Clinical Purpose:
+• Implements complex combination rules requiring multiple conditions for flu vaccination eligibility
+• Supports asthma diagnosis AND medication/admission combinations
+• Handles respiratory disease OR immunosuppression complex logic
+• Replaces apply_combination_rule macro functionality with explicit SQL logic
+
+Data Granularity:
+• One row per eligible person per rule group with combination rule logic applied
+• Covers asthma group, respiratory group, and immunosuppression group combinations
+• Filtered to current campaign with age restrictions applied per rule group
+• Contains logic expression evaluation for complex clinical combinations
+
+Key Features:
+• Multi-condition logic: AST_GROUP (diagnosis AND medication/admission)
+• Union logic: RESP_GROUP (asthma OR respiratory disease)
+• Complex combinations: IMMUNO_GROUP (diagnosis OR medication OR treatment)
+• Age restrictions applied per rule group from campaign configuration'"
+    ]
+) }}
 
 WITH combination_rules AS (
     SELECT 

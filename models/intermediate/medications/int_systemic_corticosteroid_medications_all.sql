@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Systemic Corticosteroid Medication Orders - All recorded systemic steroid prescriptions.
+
+Clinical Purpose:
+• Tracks systemic corticosteroid therapy for inflammatory conditions
+• Supports steroid monitoring and safety management processes
+• Enables analysis of high-dose therapy and replacement vs anti-inflammatory usage
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by corticosteroid type (replacement, glucocorticoid, mineralocorticoid)
+• Potency stratification relative to hydrocortisone equivalence
+• High-dose therapy identification for safety monitoring
+• Short-term recency flags for steroid withdrawal assessment'"
+        ]
     )
 }}
 

@@ -1,4 +1,27 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: LTC LCS Ethnicity Observations - Collects ethnicity-relevant observations for Long Term Conditions case finding measures with diabetes screening focus.
+
+Clinical Purpose:
+• Gathers ethnicity classification data for diabetes case finding algorithms
+• Supports ethnicity-based risk stratification for diabetes screening programmes
+• Enables identification of BAME populations at higher risk for Type 2 diabetes
+• Provides foundation data for ethnicity-adjusted diabetes case finding measures
+
+Data Granularity:
+• One row per ethnicity observation for diabetes case finding
+• Covers BAME ethnicity, White British ethnicity, and diabetes screening excluded ethnicities
+• Sourced from LTC_LCS programme observation clusters for ethnicity classification
+• Includes all historical and current ethnicity observations relevant to diabetes screening
+
+Key Features:
+• Cluster IDs: ETHNICITY_BAME, ETHNICITY_WHITE_BRITISH, DIABETES_EXCLUDED_ETHNICITY
+• Supports ethnicity-based diabetes case finding measure requirements
+• Comprehensive ethnicity classification for diabetes risk stratification
+• Integration with LTC_LCS programme ethnicity tracking systems for diabetes screening'"
+    ]
+) }}
 
 -- Intermediate model for ethnicity observations for LTC LCS diabetes case finding
 -- Used for BAME and excluded ethnicity classifications in diabetes screening

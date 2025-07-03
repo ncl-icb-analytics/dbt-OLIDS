@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CVD_63 case finding: Patients aged 40-74 with cardiovascular risk factors'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CVD_63 - Identifies patients on statins with suboptimal cholesterol control requiring medication review.
+
+Business Purpose:
+• Support systematic case finding for cardiovascular medication optimisation in patients on statin therapy
+• Enable identification of patients requiring statin dose adjustment or alternative lipid management
+• Provide clinical decision support for cholesterol management and cardiovascular risk reduction
+• Support quality improvement initiatives for secondary prevention and medication effectiveness monitoring
+
+Data Granularity:
+• One row per person on statin therapy with non-HDL cholesterol above 2.5 mmol/L
+• Includes latest statin prescription and cholesterol assessment data
+• Limited to patients with evidence of suboptimal lipid control despite statin therapy
+
+Key Features:
+• Statin therapy monitoring with non-HDL cholesterol threshold assessment (>2.5 mmol/L)
+• Latest medication and laboratory result integration for current clinical status
+• Complete lipid management history with all relevant concept codes
+• Evidence-based case finding supporting cardiovascular medication optimisation'"
+    ]
 ) }}
 -- Intermediate model for LTC LCS Case Finding CVD_63
 -- Identifies patients on statins with non-HDL cholesterol > 2.5 (statin review needed)

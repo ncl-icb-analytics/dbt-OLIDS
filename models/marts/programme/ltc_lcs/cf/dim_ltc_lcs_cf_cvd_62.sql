@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CVD_62 case finding: Patients with cardiovascular conditions requiring monitoring'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CVD_62 - Identifies patients with moderate cardiovascular risk (QRISK2 15-19.99%) requiring enhanced monitoring.
+
+Business Purpose:
+• Support systematic case finding for cardiovascular disease prevention in moderate-risk populations
+• Enable identification of patients requiring enhanced cardiovascular risk monitoring and lifestyle intervention
+• Provide clinical decision support for cardiovascular risk management below statin threshold
+• Support quality improvement initiatives for comprehensive cardiovascular disease prevention programmes
+
+Data Granularity:
+• One row per person with latest QRISK2 score between 15-19.99%
+• Includes complete QRISK2 assessment history with latest valid readings
+• Limited to patients in moderate cardiovascular risk category
+
+Key Features:
+• QRISK2-based moderate cardiovascular risk stratification (15-19.99% range)
+• Enhanced monitoring focus for patients below immediate intervention threshold
+• Complete cardiovascular risk assessment history with all concept codes
+• Evidence-based case finding supporting comprehensive CVD prevention pathways'"
+    ]
 ) }}
 -- Intermediate model for LTC LCS Case Finding CVD_62
 -- Identifies patients with QRISK2 score between 15-19.99% (case finding for cardiovascular disease prevention)

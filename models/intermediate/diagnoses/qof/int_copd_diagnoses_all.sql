@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: COPD Diagnoses All - Complete history of all COPD diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF COPD register data collection and monitoring
+• Respiratory function assessment and spirometry confirmation requirements
+• COPD management pathway coordination and clinical decision support
+• Resolution status tracking for improved respiratory outcomes
+
+Data Granularity:
+• One row per COPD diagnosis or resolution observation
+• Uses COPD_COD (diagnosis) and COPDRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Post-April 2023 spirometry confirmation requirements (FEV1/FVC <0.7)
+• Integration with unable-to-have-spirometry status tracking
+• Critical for respiratory care pathway optimisation
+• Essential input for COPD quality improvement initiatives'"
+        ]
     )
 }}
 

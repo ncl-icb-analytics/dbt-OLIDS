@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Hypertension Diagnoses All - Complete history of all hypertension diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF hypertension register data collection and monitoring
+• Blood pressure management and cardiovascular risk assessment
+• Hypertension care pathway coordination and clinical decision support
+• Resolution status tracking for improved cardiovascular outcomes
+
+Data Granularity:
+• One row per hypertension diagnosis or resolution observation
+• Uses HYP_COD (diagnosis) and HYPRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and resolution code classification for register eligibility
+• Critical for blood pressure management and cardiovascular risk reduction
+• Supports complex QOF business rules and clinical pathway integration
+• Essential input for hypertension quality improvement initiatives'"
+        ]
     )
 }}
 

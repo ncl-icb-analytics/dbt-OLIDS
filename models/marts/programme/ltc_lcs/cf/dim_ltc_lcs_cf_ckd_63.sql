@@ -33,7 +33,26 @@ Dependencies:
 
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_63 case finding: Patients with elevated UACR (> 70) indicating significant kidney damage'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CKD_63 - Identifies patients with significantly elevated single UACR reading indicating substantial kidney damage.
+
+Business Purpose:
+• Support systematic case finding for undiagnosed chronic kidney disease through single high UACR assessment
+• Enable identification of patients with severe proteinuria requiring immediate clinical attention
+• Provide clinical decision support for urgent nephrology referral and intervention
+• Support quality improvement initiatives for comprehensive kidney damage detection
+
+Data Granularity:
+• One row per person aged 17+ with latest UACR reading above 70
+• Excludes patients already captured in consecutive high UACR cohort (CKD_62)
+• Limited to patients with clinically significant single elevated readings
+
+Key Features:
+• High-threshold UACR assessment (>70) for significant kidney damage identification
+• Exclusion logic to prevent double-counting with consecutive reading cohorts
+• Latest assessment focus for immediate clinical intervention priority
+• Evidence-based case finding supporting urgent clinical review for severe proteinuria'"
+    ]
 ) }}
 
 WITH base_population AS (

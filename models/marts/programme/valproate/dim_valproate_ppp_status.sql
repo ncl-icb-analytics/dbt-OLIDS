@@ -1,6 +1,26 @@
 {{ config(
     materialized='table',
-    description='Aggregates Pregnancy Prevention Programme (PPP) events for each person, providing analytics-ready person-level PPP status and history.'
+    description='Aggregates Pregnancy Prevention Programme (PPP) events for each person, providing analytics-ready person-level PPP status and history.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Valproate PPP Status - Person-level aggregation of Pregnancy Prevention Programme events for valproate safety monitoring and reproductive health management.
+
+Business Purpose:
+• Support valproate safety monitoring through Pregnancy Prevention Programme compliance tracking
+• Enable systematic monitoring of reproductive health safeguards for valproate therapy in women
+• Provide clinical decision support for PPP compliance and contraceptive counselling
+• Support quality improvement initiatives for teratogenicity prevention and reproductive safety
+
+Data Granularity:
+• One row per person with PPP-related events in valproate safety monitoring
+• Aggregates all PPP events with comprehensive reproductive health safeguard tracking
+• Includes complete PPP compliance history for reproductive safety assessment
+
+Key Features:
+• Person-level PPP event aggregation with complete reproductive health safeguard history
+• Comprehensive PPP compliance tracking for monitoring pregnancy prevention effectiveness
+• Evidence-based PPP assessment supporting regulatory compliance and reproductive safety
+• Integration with reproductive health pathways for systematic pregnancy prevention management'"
+    ]
 ) }}
 
 -- PPP events for each person from intermediate table

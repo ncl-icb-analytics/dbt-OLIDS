@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Diabetes 9 Care Processes Achievement - Enhanced QOF quality measure for comprehensive diabetes care assessment.
+
+Business Purpose:
+• Support QOF reporting for diabetes care processes achievement indicators including retinal screening
+• Enable clinical teams to identify patients requiring diabetes care review and eye screening
+• Provide population health analytics for diabetes management programmes
+• Support business intelligence reporting on practice performance and clinical quality
+
+Data Granularity:
+• One row per person on diabetes register
+• Includes completion status for all 9 care processes within 12 months
+• Current assessment of comprehensive diabetes care delivery including sight-threatening complication prevention
+
+Key Features:
+• Tracks all 8 standard diabetes care processes plus retinal screening
+• Calculates overall completion metrics for QOF reporting
+• Supports clinical decision-making and quality improvement initiatives
+• Enables population health management and diabetes care optimisation'"
+        ]
     )
 }}
 

@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Latest Creatinine Observations - Most recent valid creatinine measurement per person.
+
+Clinical Purpose:
+• Provides current kidney function status based on serum creatinine levels
+• Supports renal disease assessment and medication safety monitoring
+• Enables current CKD risk stratification and clinical decision-making
+
+Data Granularity:
+• One row per person with their most recent valid creatinine
+• Includes only patients with valid creatinine measurements
+• Filtered to exclude implausible values for clinical accuracy
+
+Key Features:
+• Latest valid creatinine identification using comprehensive filtering
+• Clinical creatinine categorisation for kidney function assessment
+• Elevated creatinine flags for immediate clinical attention
+• Complete observation metadata for clinical context'"
+        ]
     )
 }}
 
