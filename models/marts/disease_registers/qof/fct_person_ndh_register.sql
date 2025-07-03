@@ -2,7 +2,17 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        pre_hook="DROP TABLE IF EXISTS {{ this }}",
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Non-Diabetic Hyperglycaemia (NDH) Register - Patients with pre-diabetes for prevention interventions.
+
+Key Inclusion Criteria:
+• NDH diagnosis (NDH_COD) present - elevated glucose but not diabetic
+• No age restrictions
+• Excludes those with diabetes diagnosis
+
+Purpose: QOF register for diabetes prevention, lifestyle interventions, and pre-diabetes monitoring to prevent progression to Type 2 diabetes.'"
+        ]
     )
 }}
 

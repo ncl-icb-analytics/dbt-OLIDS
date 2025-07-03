@@ -1,7 +1,17 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Serious Mental Illness (SMI) Register - Patients with active serious mental illness or lithium therapy.
+
+Key Inclusion Criteria:
+• Mental health diagnosis (MH_COD) not in remission: Latest diagnosis > latest remission OR no remission
+• OR lithium therapy in last 6 months and not stopped
+• No age restrictions
+
+Purpose: QOF register for mental health care monitoring, lithium therapy safety, specialist service coordination, and recovery planning.'"
+        ]
     )
 }}
 

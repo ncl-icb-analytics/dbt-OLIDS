@@ -2,7 +2,17 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        pre_hook="DROP TABLE IF EXISTS {{ this }}",
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Rheumatoid Arthritis Register - Patients with rheumatoid arthritis diagnosis.
+
+Key Inclusion Criteria:
+• Rheumatoid arthritis diagnosis (RA_COD) present
+• No age restrictions
+• No resolution codes (RA is lifelong condition)
+
+Purpose: QOF register for musculoskeletal disease management, disease activity monitoring, and treatment pathway optimisation.'"
+        ]
     )
 }}
 

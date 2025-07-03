@@ -2,7 +2,18 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        pre_hook="DROP TABLE IF EXISTS {{ this }}",
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Osteoporosis Register - Complex criteria for fracture prevention in at-risk patients.
+
+Key Inclusion Criteria (ALL must be met):
+• Age: 50-74 years
+• Fragility fracture after April 2012
+• Osteoporosis diagnosis (OSTEO_COD) present
+• DXA confirmation: DXA scan OR T-score ≤ -2.5
+
+Purpose: QOF register for fracture prevention, bone health monitoring, and DXA scanning compliance.'"
+        ]
     )
 }}
 

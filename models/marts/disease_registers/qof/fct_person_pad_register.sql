@@ -2,7 +2,17 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        pre_hook="DROP TABLE IF EXISTS {{ this }}",
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Peripheral Arterial Disease (PAD) Register - Patients with peripheral vascular disease.
+
+Key Inclusion Criteria:
+• PAD diagnosis (PAD_COD) present
+• No age restrictions
+• No resolution codes (PAD is permanent condition)
+
+Purpose: QOF register for cardiovascular disease management, risk stratification, and secondary prevention monitoring.'"
+        ]
     )
 }}
 
