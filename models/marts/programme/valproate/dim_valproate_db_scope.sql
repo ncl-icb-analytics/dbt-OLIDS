@@ -1,6 +1,26 @@
 {{ config(
     materialized='table',
-    description='Cohort of non-male individuals aged 0-55 with a recent (last 6 months) valproate prescription, including details from their most recent order.'
+    description='Cohort of non-male individuals aged 0-55 with a recent (last 6 months) valproate prescription, including details from their most recent order.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Valproate Database Scope - Defines cohort of non-male individuals aged 0-55 with recent valproate prescriptions requiring safety monitoring.
+
+Business Purpose:
+• Support valproate safety monitoring programme by defining target population for regulatory compliance
+• Enable systematic identification of patients requiring valproate-related safety interventions
+• Provide clinical decision support for valproate prescribing safety in reproductive-age populations
+• Support quality improvement initiatives for medication safety and teratogenicity risk management
+
+Data Granularity:
+• One row per non-male person aged 0-55 with valproate prescription in last 6 months
+• Includes most recent valproate prescription details and patient demographics
+• Limited to target population requiring valproate safety monitoring and intervention
+
+Key Features:
+• Age and gender-based cohort definition (non-male, 0-55 years) for appropriate safety monitoring
+• Recent prescription tracking (6 months) for current valproate therapy identification
+• Evidence-based cohort criteria supporting regulatory compliance and patient safety
+• Integration with valproate safety monitoring pathways for systematic patient management'"
+    ]
 ) }}
 
 -- Core cohort: non-male, age 0-55, recent valproate order

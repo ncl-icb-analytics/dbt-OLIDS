@@ -13,7 +13,30 @@ Business Logic:
 Age Restrictions: 5-64 years (60 months to 65 years)
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Carer Exclusion Eligibility - Determines flu vaccination eligibility for unpaid carers with exclusion logic for those already eligible.
+
+Clinical Purpose:
+• Identifies unpaid carers aged 5-64 who qualify for flu vaccination
+• Implements exclusion logic to prevent double-counting carers already eligible under clinical risk groups
+• Ensures accurate targeting of additional vulnerable populations not covered by clinical criteria
+• Supports expansion of flu vaccination programme to include social care roles
+
+Data Granularity:
+• One row per eligible carer aged 5-64 years not already qualifying under clinical conditions
+• Requires latest carer code more recent than any \"not carer\" code
+• Excludes carers already eligible under clinical risk groups, BMI, or pregnancy
+• Filtered to current campaign with qualifying carer status
+
+Key Features:
+• Hierarchical carer status logic prioritising latest carer vs not-carer codes
+• Comprehensive exclusion logic checking all clinical eligibility paths
+• Age restrictions: 5-64 years (60 months to 65 years)
+• Prevents duplicate eligibility for carers with clinical risk factors'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

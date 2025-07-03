@@ -3,14 +3,24 @@
         materialized='table',
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Diabetes Triple Target Achievement - Comprehensive diabetes control assessment.
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Diabetes Triple Target Achievement - Comprehensive diabetes control assessment for cardiovascular risk reduction.
 
-Triple Target Criteria (within 12 months):
-• HbA1c: ≤58 mmol/mol (7.5%) for optimal glycaemic control
-• Blood Pressure: <140/80 mmHg (or patient-specific thresholds)
-• Cholesterol: Total cholesterol <5 mmol/L
+Business Purpose:
+• Support QOF reporting for diabetes triple target achievement indicators
+• Enable clinical teams to identify patients requiring comprehensive diabetes management review
+• Provide population health analytics for diabetes cardiovascular risk management programmes
+• Support business intelligence reporting on diabetes care quality and holistic management
 
-Purpose: Holistic diabetes management indicator measuring cardiovascular risk reduction through comprehensive metabolic control.'"
+Data Granularity:
+• One row per person on diabetes register
+• Includes achievement status for HbA1c, blood pressure, and cholesterol targets
+• Current assessment of comprehensive diabetes control and cardiovascular risk management
+
+Key Features:
+• Tracks HbA1c ≤58 mmol/mol, BP <130/80 mmHg, and cholesterol <5 mmol/L targets
+• Calculates overall triple target achievement for holistic diabetes management
+• Supports clinical decision-making for cardiovascular risk reduction
+• Enables population health management and diabetes care optimisation'"
         ]
     )
 }}

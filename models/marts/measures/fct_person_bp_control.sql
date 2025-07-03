@@ -3,7 +3,24 @@
         materialized='table',
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Blood Pressure control status using patient-specific thresholds based on NICE NG136. Applies priority-ranked thresholds for age, T2DM, CKD, and ACR levels. Includes control status and timeliness assessment based on risk factors.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Blood Pressure Control Status - Patient-level blood pressure control assessment for QOF reporting and clinical management.
+
+Business Purpose:
+• Support QOF reporting for blood pressure control achievement indicators
+• Enable clinical teams to identify patients requiring blood pressure management review
+• Provide population health analytics for cardiovascular risk management programmes
+• Support business intelligence reporting on practice performance and patient outcomes
+
+Data Granularity:
+• One row per patient with blood pressure readings
+• Includes patient-specific BP thresholds based on NICE NG136 guidelines
+• Current assessment of BP control status and monitoring timeliness
+
+Key Features:
+• Applies priority-ranked thresholds for age, Type 2 diabetes, CKD, and ACR levels
+• Calculates overall BP control status (both systolic and diastolic)
+• Includes risk-based timeliness assessment for monitoring frequency
+• Supports clinical decision-making and population health management'"
         ]
     )
 }}

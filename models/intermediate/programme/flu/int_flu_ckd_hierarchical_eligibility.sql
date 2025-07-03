@@ -14,7 +14,30 @@ even if they have older general CKD codes.
 Age Restrictions: 6 months to 65 years
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu CKD Hierarchical Eligibility - Determines flu vaccination eligibility for patients with chronic kidney disease using hierarchical staging logic.
+
+Clinical Purpose:
+• Identifies patients with chronic kidney disease who qualify for flu vaccination
+• Implements hierarchical logic prioritising more recent severe CKD stages over general CKD codes
+• Supports clinical targeting for high-risk renal disease patients
+• Ensures evidence-based flu vaccination for CKD patients with appropriate staging
+
+Data Granularity:
+• One row per eligible person aged 6 months to 65 years with documented CKD
+• Requires CKD diagnosis OR CKD stage 3-5 more recent than any-stage CKD code
+• Filtered to current campaign with qualifying CKD clinical evidence
+• Contains hierarchical evidence selection for patients with multiple CKD records
+
+Key Features:
+• Multi-path eligibility: CKD diagnosis OR hierarchical stage 3-5 evidence
+• Hierarchical staging logic ensuring severe stages take precedence
+• Age restrictions: 6 months to 65 years at reference date
+• Evidence dating logic to prioritise recent severe CKD stages'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

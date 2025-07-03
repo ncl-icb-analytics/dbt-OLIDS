@@ -4,7 +4,24 @@
         tags=['dimension', 'person', 'demographics', 'comprehensive'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Comprehensive demographics dimension table providing a single source of truth for person demographics. Consolidates information from multiple dimension tables: Age and birth/death information, Sex demographics, Ethnicity details, Language and communication needs, Current practice registration, Practice neighbourhood and organisational hierarchy, Geographic placeholders for future LSOA, ward, and deprivation data. Serves as the primary demographics reference for analytics and reporting.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Demographics - Comprehensive single source of truth for person demographics and practice registration information.
+
+Business Purpose:
+• Support population health analytics by providing comprehensive demographic profiles for health outcomes analysis
+• Enable business intelligence reporting on demographic trends, health inequalities, and service utilisation patterns
+• Provide foundation for population-based planning, resource allocation, and health needs assessment
+• Support operational analytics for demographic-specific service delivery and clinical pathways
+
+Data Granularity:
+• One row per person with comprehensive demographic and practice information
+• Includes age, sex, ethnicity, language, current practice registration, and geographic context
+• Primary demographics reference for analytics and reporting across all business areas
+
+Key Features:
+• Consolidates demographics from multiple dimension tables into single comprehensive view
+• Includes practice organisational hierarchy and geographic context for population analysis
+• Supports demographic trend analysis and health inequalities assessment
+• Enables business intelligence for population-based planning and service delivery'"
         ]
     )
 }}

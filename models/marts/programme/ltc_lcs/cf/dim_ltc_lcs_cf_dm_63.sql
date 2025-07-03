@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'DM_63 case finding: Patients with diabetes medication patterns'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding DM_63 - Identifies patients with borderline HbA1c levels requiring diabetes surveillance and intervention.
+
+Business Purpose:
+• Support systematic case finding for patients with HbA1c in pre-diabetic range requiring ongoing monitoring
+• Enable early intervention for diabetes prevention in patients with borderline glucose control
+• Provide clinical decision support for diabetes surveillance in high-risk populations
+• Support quality improvement initiatives for diabetes prevention and early detection programmes
+
+Data Granularity:
+• One row per person aged 17+ with latest HbA1c between 46-47 mmol/mol lacking recent monitoring
+• Includes patients with borderline glycaemic control requiring enhanced surveillance
+• Limited to patients in pre-diabetic range without recent diabetes assessment
+
+Key Features:
+• Borderline HbA1c identification (46-47 mmol/mol) for enhanced diabetes surveillance
+• Monitoring gap detection for patients requiring ongoing diabetes risk assessment
+• Evidence-based case finding supporting diabetes prevention in borderline glycaemic populations
+• Integration with diabetes prevention pathways for targeted lifestyle and medical intervention'"
+    ]
 ) }}
 
 -- Intermediate model for LTC LCS CF DM_63 case finding

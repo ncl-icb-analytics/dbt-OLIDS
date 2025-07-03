@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: CHD Diagnoses All - Complete history of all coronary heart disease diagnosis observations for QOF register management.
+
+Clinical Purpose:
+• QOF coronary heart disease register data collection and monitoring
+• Cardiovascular risk stratification and secondary prevention
+• CHD care pathway coordination and treatment optimisation
+• Long-term cardiovascular outcome tracking
+
+Data Granularity:
+• One row per coronary heart disease diagnosis observation
+• Uses CHD_COD cluster for QOF-compliant CHD diagnosis identification
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Lifelong condition register for cardiovascular secondary prevention
+• Simple diagnosis-only pattern with no resolution codes
+• Critical for cardiovascular risk management protocols
+• Essential input for secondary prevention quality indicators'"
+        ]
     )
 }}
 

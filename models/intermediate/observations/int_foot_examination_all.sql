@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Foot Examination Observations - All recorded foot examination procedures with risk assessment.
+
+Clinical Purpose:
+• Tracks diabetic foot examinations for diabetes care monitoring and QOF reporting
+• Supports foot risk stratification and ulcer prevention programmes
+• Enables comprehensive foot health assessment and care pathway management
+
+Data Granularity:
+• One row per foot examination event (aggregated by person and date)
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses multiple foot-related clusters (FEPU, FEDEC, FRC, CONABL, CONABR, AMPL, AMPR)
+
+Key Features:
+• Comprehensive foot examination status (completed, declined, unsuitable)
+• Bilateral foot assessment with individual risk level classification
+• Townson scale integration and diabetes foot risk categorisation
+• Foot status tracking (absent, amputated) for clinical context'"
+        ]
     )
 }}
 

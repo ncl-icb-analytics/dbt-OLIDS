@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Antidepressant Medication Orders - All recorded antidepressant prescriptions.
+
+Clinical Purpose:
+• Tracks antidepressant therapy for mental health conditions
+• Supports depression management and medication review processes
+• Enables analysis of prescribing patterns by antidepressant class and NICE guidance compliance
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by antidepressant class (SSRI, SNRI, tricyclic, MAOI)
+• Specific medication mapping with first-line therapy indicators
+• NICE guidance compliance flags for treatment recommendations
+• Recency indicators for therapy monitoring (3m, 6m, 12m)'"
+        ]
     )
 }}
 

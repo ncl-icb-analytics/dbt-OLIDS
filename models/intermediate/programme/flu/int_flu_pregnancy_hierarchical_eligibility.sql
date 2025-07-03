@@ -14,7 +14,30 @@ were pregnant at the start of the campaign period.
 Age Restrictions: 12-64 years (144 months to 65 years)
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Pregnancy Hierarchical Eligibility - Determines flu vaccination eligibility for pregnant women using hierarchical pregnancy evidence.
+
+Clinical Purpose:
+• Identifies pregnant women who qualify for flu vaccination based on hierarchical pregnancy evidence
+• Prioritises current pregnancies since campaign start over historical pregnancy status
+• Supports clinical targeting for high-risk maternal and foetal health protection
+• Ensures evidence-based flu vaccination for pregnant women with appropriate timing logic
+
+Data Granularity:
+• One row per eligible woman aged 12-64 years with documented pregnancy
+• Group 1: Pregnancy since campaign start date (highest priority)
+• Group 2: Latest pregnancy before start where pregnancy is more recent than delivery
+• Filtered to current campaign with qualifying pregnancy evidence
+
+Key Features:
+• Hierarchical pregnancy logic prioritising current over historical pregnancies
+• Campaign timing logic ensuring pregnancy relevance to flu season
+• Age and sex restrictions: women aged 12-64 years (144 months to 65 years)
+• Evidence dating logic comparing pregnancy vs delivery events for historical cases'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

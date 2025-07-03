@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: CKD Diagnoses All - Complete history of all chronic kidney disease diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF chronic kidney disease register data collection and monitoring
+• Kidney function deterioration tracking and staging
+• CKD progression monitoring and clinical decision support
+• Resolution status tracking for improved clinical outcomes
+
+Data Granularity:
+• One row per chronic kidney disease diagnosis or resolution observation
+• Uses CKD_COD (diagnosis) and CKDRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and resolution code classification for register eligibility
+• Age restrictions typically ≥18 years applied in downstream processing
+• Critical for kidney function monitoring and preservation protocols
+• Essential input for CKD care pathway optimisation'"
+        ]
     )
 }}
 

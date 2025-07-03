@@ -2,7 +2,26 @@
     config(
         materialized='table',
         cluster_by=['person_id', 'order_date'],
-        tags=['intermediate', 'medication', 'asthma', 'qof']
+        tags=['intermediate', 'medication', 'asthma', 'qof'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Asthma Medication Orders (12 months) - Recent asthma treatment prescriptions for QOF monitoring.
+
+Clinical Purpose:
+• Tracks asthma medication orders for QOF asthma care monitoring
+• Supports asthma register maintenance and quality indicator reporting
+• Enables analysis of controller vs reliever medication patterns
+
+Data Granularity:
+• One row per medication order from last 12 months
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses ASTRX_COD cluster for asthma treatment identification
+
+Key Features:
+• Classification by asthma medication type (SABA, LABA, ICS, combinations)
+• Controller vs reliever medication categorisation
+• Inhaler device type identification for technique assessment
+• QOF-specific indicators including repeat prescription tracking'"
+        ]
     )
 }}
 

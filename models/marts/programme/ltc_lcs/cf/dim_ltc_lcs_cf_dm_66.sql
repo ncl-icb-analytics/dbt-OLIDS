@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'DM_66 case finding: Patients without diabetes risk factors (control group)'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding DM_66 - Identifies patients with elevated HbA1c in pre-diabetic range with recent monitoring requiring continued surveillance.
+
+Business Purpose:
+• Support systematic case finding for patients with pre-diabetic HbA1c levels requiring ongoing monitoring
+• Enable continued diabetes surveillance in patients with recent elevated glucose control
+• Provide clinical decision support for diabetes prevention in patients with active monitoring
+• Support quality improvement initiatives for diabetes prevention through enhanced surveillance
+
+Data Granularity:
+• One row per person with latest HbA1c between 42-46 mmol/mol assessed within 12 months
+• Includes patients with pre-diabetic glucose control undergoing active monitoring
+• Limited to patients with recent assessment showing elevated glucose levels
+
+Key Features:
+• Pre-diabetic HbA1c range identification (42-46 mmol/mol) for active diabetes prevention
+• Recent monitoring confirmation (within 12 months) for current clinical status
+• Evidence-based case finding supporting diabetes prevention in actively monitored populations
+• Integration with diabetes prevention pathways for sustained intervention and monitoring'"
+    ]
 ) }}
 
 -- Intermediate model for LTC LCS CF DM_66 case finding

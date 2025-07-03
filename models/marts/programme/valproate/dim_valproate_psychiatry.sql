@@ -1,6 +1,26 @@
 {{ config(
     materialized='table',
-    description='Aggregates psychiatry-related events for each person, providing analytics-ready person-level psychiatry event status and history.'
+    description='Aggregates psychiatry-related events for each person, providing analytics-ready person-level psychiatry event status and history.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Valproate Psychiatry Status - Person-level aggregation of psychiatry-related events for valproate therapy monitoring and mental health care coordination.
+
+Business Purpose:
+• Support valproate safety monitoring through psychiatry specialist engagement tracking and care coordination
+• Enable systematic monitoring of mental health care requirements for valproate therapy management
+• Provide clinical decision support for psychiatry specialist involvement and treatment oversight
+• Support quality improvement initiatives for comprehensive mental health care and medication safety
+
+Data Granularity:
+• One row per person with psychiatry-related events in valproate therapy monitoring
+• Aggregates all psychiatry events with earliest and latest specialist engagement tracking
+• Includes comprehensive psychiatry care history for specialist coordination assessment
+
+Key Features:
+• Person-level psychiatry event aggregation with complete mental health specialist care history
+• Earliest and latest psychiatry engagement tracking for monitoring care coordination effectiveness
+• Evidence-based psychiatry care assessment supporting comprehensive valproate therapy management
+• Integration with mental health care pathways for systematic specialist engagement and monitoring'"
+    ]
 ) }}
 
 WITH person_level_psych_aggregation AS (

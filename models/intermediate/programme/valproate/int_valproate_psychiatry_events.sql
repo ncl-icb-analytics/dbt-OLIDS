@@ -1,6 +1,27 @@
 {{ config(
     materialized='table',
-    description='Intermediate table extracting all psychiatry-related events for each person, using mapped concepts, observation, and valproate program codes (category PSYCH).'
+    description='Intermediate table extracting all psychiatry-related events for each person, using mapped concepts, observation, and valproate program codes (category PSYCH).',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Valproate Psychiatry Events - Comprehensive collection of all psychiatry-related events for valproate patient safety monitoring.
+
+Clinical Purpose:
+• Gathers all psychiatry specialty events for patients on valproate therapy
+• Supports psychiatry pathway tracking for valproate patient safety monitoring
+• Enables comprehensive monitoring of psychiatric care in valproate safety programme
+• Provides foundation data for valproate programme psychiatry specialty analysis
+
+Data Granularity:
+• One row per psychiatry event observation for patients on valproate therapy
+• Covers all psychiatry-related observations using PSYCH code category
+• Includes clinical effective dates for temporal analysis and psychiatry pathway tracking
+• Contains concept codes and descriptions for detailed psychiatry event documentation
+
+Key Features:
+• PSYCH code category filtering for comprehensive psychiatry event capture
+• Integration with valproate programme codes for psychiatry pathway tracking
+• Support for psychiatry specialty monitoring in valproate safety programme
+• Foundation data for psychiatric care pathway analysis in valproate patients'"
+    ]
 ) }}
 
 SELECT

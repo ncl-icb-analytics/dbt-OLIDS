@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Asthma Diagnoses - All recorded asthma diagnosis and resolution codes for QOF register management.
+
+Clinical Purpose:
+• Tracks asthma diagnoses for QOF asthma register inclusion and respiratory care pathways
+• Supports asthma management programmes and clinical monitoring
+• Enables childhood and adult asthma care coordination and quality improvement
+
+Data Granularity:
+• One row per asthma diagnosis or resolution code
+• Uses AST_COD (diagnosis) and ASTRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and resolution code classification for register eligibility
+• QOF-compliant asthma register logic with resolution tracking
+• Age and clinical context considerations for downstream processing
+• Essential input for QOF asthma register and respiratory care analytics'"
+        ]
     )
 }}
 

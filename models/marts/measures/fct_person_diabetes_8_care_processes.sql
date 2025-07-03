@@ -3,19 +3,24 @@
         materialized='table',
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care.
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care assessment.
 
-Key Components (within 12 months):
-• HbA1c measurement
-• Blood pressure check
-• Cholesterol measurement
-• eGFR/creatinine check
-• Urine albumin/protein test
-• Foot examination
-• BMI measurement
-• Smoking status review
+Business Purpose:
+• Support QOF reporting for diabetes care processes achievement indicators
+• Enable clinical teams to identify patients requiring diabetes care review
+• Provide population health analytics for diabetes management programmes
+• Support business intelligence reporting on practice performance and clinical quality
 
-Purpose: QOF indicator tracking comprehensive annual diabetes care for patients on diabetes register.'"
+Data Granularity:
+• One row per person on diabetes register
+• Includes completion status for all 8 care processes within 12 months
+• Current assessment of comprehensive diabetes care delivery
+
+Key Features:
+• Tracks HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status
+• Calculates overall completion metrics for QOF reporting
+• Supports clinical decision-making and quality improvement initiatives
+• Enables population health management and diabetes care optimisation'"
         ]
     )
 }}

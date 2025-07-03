@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Cholesterol Observations - All recorded total cholesterol measurements with clinical categorisation.
+
+Clinical Purpose:
+• Tracks cholesterol measurements for cardiovascular risk assessment and management
+• Supports lipid management programmes and statin therapy monitoring
+• Enables cardiovascular disease prevention and QOF reporting
+
+Data Granularity:
+• One row per cholesterol observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses CHOL2_COD cluster for total cholesterol identification
+
+Key Features:
+• Data quality validation with plausible range filtering (0.5-20 mmol/L)
+• Clinical cholesterol categorisation (desirable, borderline high, high)
+• Original value preservation for audit and unit conversion
+• Comprehensive observation metadata for traceability'"
+        ]
     )
 }}
 

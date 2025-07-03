@@ -2,7 +2,27 @@
     config(
         materialized='table',
         cluster_by=['person_id', 'clinical_effective_date'],
-        persist_docs={"relation": true}
+        persist_docs={"relation": true},
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Cervical Screening All - Complete history of all cervical screening programme observations with comprehensive cytology analytics.
+
+Clinical Purpose:
+• NHS cervical screening programme data collection and monitoring
+• Cytology result interpretation and clinical risk assessment
+• Screening programme quality improvement and outcome tracking
+• Clinical decision support for cervical cancer prevention
+
+Data Granularity:
+• One row per cervical screening observation with detailed cytology analysis
+• Uses SMEAR_COD, CSPU_COD, CSDEC_COD, and CSPCAINVITE_COD clusters
+• Includes all patients regardless of status for comprehensive programme monitoring
+
+Key Features:
+• Comprehensive cytology result categorisation and risk stratification
+• Screening completion, decline, and unsuitable status tracking
+• Clinical action determination and follow-up requirements
+• Essential for cervical cancer prevention and screening programme optimisation'"
+        ]
     )
 }}
 

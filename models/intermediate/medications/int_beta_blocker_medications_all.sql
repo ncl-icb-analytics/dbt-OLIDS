@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Beta Blocker Medication Orders - All recorded beta-adrenoceptor blocking drug prescriptions.
+
+Clinical Purpose:
+• Tracks beta blocker therapy for cardiovascular protection and rate control
+• Supports heart failure management and post-MI medication review processes
+• Enables analysis of cardioselective vs non-selective beta blocker usage
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by selectivity (cardioselective vs non-selective)
+• Specific beta blocker type identification (bisoprolol, carvedilol, metoprolol, etc.)
+• Evidence-based therapy flags for heart failure management
+• Clinical trial evidence mapping (CIBIS, COPERNICUS, MERIT-HF, SENIORS trials)'"
+        ]
     )
 }}
 

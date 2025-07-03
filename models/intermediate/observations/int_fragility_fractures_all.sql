@@ -2,7 +2,26 @@
     config(
         materialized='table',
         tags=['intermediate', 'observations', 'fractures'],
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Fragility Fracture Observations - All recorded fragility fractures for osteoporosis monitoring.
+
+Clinical Purpose:
+• Tracks fragility fractures for QOF osteoporosis register data collection
+• Supports bone health monitoring and fracture pattern analysis
+• Enables osteoporosis risk assessment and clinical decision support
+
+Data Granularity:
+• One row per fracture observation
+• Includes fractures after April 2012 as per QOF requirements
+• Uses FF_COD cluster for fragility fracture identification
+
+Key Features:
+• Fracture site classification (hip, wrist, spine, humerus, pelvis, femur)
+• QOF-compliant date filtering for osteoporosis register eligibility
+• Clinical fracture coding validation and categorisation
+• Essential input for osteoporosis register and bone health analytics'"
+        ]
     )
 }}
 
@@ -15,7 +34,7 @@ Clinical Purpose:
 - Fracture site and pattern tracking
 - Bone health monitoring support
 
-This is OBSERVATION-LEVEL data - one row per fracture observation.
+One row per fracture observation.
 Use this model as input for osteoporosis register and bone health models.
 */
 

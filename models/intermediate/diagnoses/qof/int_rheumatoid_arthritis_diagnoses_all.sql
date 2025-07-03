@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Rheumatoid Arthritis Diagnoses All - Complete history of all rheumatoid arthritis diagnosis observations for QOF register management.
+
+Clinical Purpose:
+• QOF rheumatoid arthritis register data collection and monitoring
+• Musculoskeletal disease management and inflammatory arthritis care pathway
+• Disease activity monitoring and treatment response assessment
+• Long-term joint health and mobility outcome tracking
+
+Data Granularity:
+• One row per rheumatoid arthritis diagnosis observation
+• Uses RA_COD cluster for QOF-compliant RA diagnosis identification
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Lifelong condition register for ongoing disease management
+• Simple diagnosis-only pattern with no resolution codes
+• Critical for inflammatory arthritis treatment optimisation
+• Essential input for rheumatoid arthritis care quality improvement initiatives'"
+        ]
     )
 }}
 

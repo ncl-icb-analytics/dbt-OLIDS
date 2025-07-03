@@ -2,7 +2,26 @@
     config(
         materialized='table',
         cluster_by=['person_id', 'order_date'],
-        tags=['intermediate', 'medication', 'epilepsy', 'seizure_management']
+        tags=['intermediate', 'medication', 'epilepsy', 'seizure_management'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Epilepsy Medication Orders (6 months) - Recent anti-epileptic drug prescriptions for seizure management.
+
+Clinical Purpose:
+• Tracks anti-epileptic drug (AED) therapy for seizure management monitoring
+• Supports epilepsy register maintenance and therapeutic drug monitoring
+• Enables analysis of polytherapy patterns and teratogenicity risk
+
+Data Granularity:
+• One row per medication order from last 6 months
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses EPILDRUG_COD cluster for anti-epileptic drug identification
+
+Key Features:
+• Classification by AED generation and seizure type indication
+• Therapeutic drug monitoring (TDM) requirement flags
+• Teratogenicity risk assessment and brand consistency indicators
+• Polytherapy identification for complex epilepsy management'"
+        ]
     )
 }}
 

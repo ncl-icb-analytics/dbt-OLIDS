@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Stroke TIA Diagnoses All - Complete history of all stroke and TIA diagnosis observations for QOF register management.
+
+Clinical Purpose:
+• QOF stroke register data collection and monitoring
+• Cerebrovascular event tracking and secondary prevention pathway coordination
+• Stroke care pathway management and rehabilitation support
+• Long-term cardiovascular outcome tracking and intervention assessment
+
+Data Granularity:
+• One row per stroke or TIA diagnosis observation
+• Uses STRK_COD (stroke) and TIA_COD (TIA) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Permanent cardiovascular event tracking with no resolution codes
+• No specific age restrictions for stroke register inclusion
+• Critical for cerebrovascular secondary prevention protocols
+• Essential input for stroke care quality improvement initiatives'"
+        ]
     )
 }}
 

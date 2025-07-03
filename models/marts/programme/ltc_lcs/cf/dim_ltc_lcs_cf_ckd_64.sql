@@ -35,7 +35,26 @@ Dependencies:
 
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CKD_64 case finding: Patients with conditions and medications suggesting chronic kidney disease'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CKD_64 - Identifies patients with specific conditions requiring eGFR monitoring who lack recent kidney function assessment.
+
+Business Purpose:
+• Support systematic case finding for chronic kidney disease in patients with high-risk conditions
+• Enable identification of patients requiring eGFR monitoring based on clinical risk factors
+• Provide clinical decision support for appropriate kidney function surveillance
+• Support quality improvement initiatives for condition-specific CKD prevention and early detection
+
+Data Granularity:
+• One row per person aged 17+ with high-risk conditions but no recent eGFR testing
+• Includes patients with AKI history, BPH/gout, nephrotoxic medications, or microhaematuria
+• Limited to patients lacking eGFR assessment within 12 months
+
+Key Features:
+• Multi-condition risk assessment (AKI, BPH/gout, lithium/nephrotoxic drugs, microhaematuria)
+• Time-based surveillance monitoring (12-month eGFR testing gap identification)
+• Complex microhaematuria validation with UACR correlation
+• Evidence-based case finding supporting condition-specific kidney function monitoring'"
+    ]
 ) }}
 
 WITH base_population AS (

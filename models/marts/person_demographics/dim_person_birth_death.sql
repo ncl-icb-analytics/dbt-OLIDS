@@ -4,7 +4,24 @@
         tags=['dimension', 'person', 'birth_death'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Core birth and death information for each person. Provides foundation data for age calculations and demographic analysis. Calculates birth/death dates as the exact midpoint of the recorded month for optimal statistical precision.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Birth Death Dimension - Core vital statistics for population health analytics and demographic analysis.
+
+Business Purpose:
+• Support population health analytics by providing foundation data for age calculations and mortality analysis
+• Enable business intelligence reporting on demographic trends and life expectancy analysis
+• Provide foundation for population-based planning and service delivery modelling
+• Support operational analytics for age-appropriate service delivery and clinical pathways
+
+Data Granularity:
+• One row per person with birth and death information
+• Includes calculated birth/death dates using statistical midpoint methodology
+• Foundation data for demographic analysis and population health management
+
+Key Features:
+• Provides core vital statistics for age and mortality calculations
+• Uses statistical midpoint methodology for optimal demographic precision
+• Supports population health analytics and demographic trend analysis
+• Enables business intelligence for population-based planning and service delivery'"
         ]
     )
 }}

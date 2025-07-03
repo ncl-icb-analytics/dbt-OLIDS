@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'DM_62 case finding: Patients with gestational diabetes history'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding DM_62 - Identifies patients with gestational diabetes history requiring ongoing diabetes surveillance.
+
+Business Purpose:
+• Support systematic case finding for diabetes development in women with gestational diabetes history
+• Enable ongoing diabetes monitoring and prevention in high-risk post-pregnancy populations
+• Provide clinical decision support for diabetes screening in women with pregnancy-related diabetes risk
+• Support quality improvement initiatives for maternal health and diabetes prevention programmes
+
+Data Granularity:
+• One row per person aged 17+ with gestational diabetes history lacking recent HbA1c assessment
+• Includes patients with documented gestational diabetes and pregnancy risk factors
+• Limited to patients requiring diabetes surveillance but lacking recent monitoring
+
+Key Features:
+• Gestational diabetes history identification for ongoing diabetes risk monitoring
+• HbA1c surveillance gap detection (>12 months since last assessment)
+• Evidence-based case finding supporting diabetes prevention in post-pregnancy care
+• Integration with maternal health pathways for comprehensive diabetes risk management'"
+    ]
 ) }}
 
 -- Intermediate model for LTC LCS CF DM_62 case finding

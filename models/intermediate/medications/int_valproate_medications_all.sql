@@ -2,7 +2,26 @@
     config(
         materialized='table',
         cluster_by=['person_id', 'order_date'],
-        tags=['intermediate', 'medication', 'valproate', 'pregnancy_safety']
+        tags=['intermediate', 'medication', 'valproate', 'pregnancy_safety'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Valproate Medication Orders - All recorded valproate prescriptions for pregnancy safety monitoring.
+
+Clinical Purpose:
+• Tracks valproate therapy for seizure management and bipolar disorder treatment
+• Supports pregnancy safety monitoring and teratogenicity risk assessment
+• Enables valproate programme oversight and clinical safety interventions
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal safety analysis
+
+Key Features:
+• Dual matching logic (medication name patterns and concept ID validation)
+• High teratogenic risk flagging with clinical indication classification
+• Dose categorisation and formulation type for bioequivalence monitoring
+• Critical for pregnancy + valproate safety combination detection'"
+        ]
     )
 }}
 

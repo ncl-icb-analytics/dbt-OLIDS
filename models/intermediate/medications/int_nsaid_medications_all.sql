@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: NSAID Medication Orders - All recorded non-steroidal anti-inflammatory drug prescriptions.
+
+Clinical Purpose:
+• Tracks NSAID therapy for pain and inflammation management
+• Supports cardiovascular risk assessment and medication safety monitoring
+• Enables analysis of COX-2 selective vs non-selective NSAID usage
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by NSAID type (COX-2 selective, non-selective, topical)
+• Specific NSAID identification with cardiovascular risk stratification
+• High-dose therapy flags for safety monitoring
+• Cardiovascular risk assessment based on drug type and dosing'"
+        ]
     )
 }}
 

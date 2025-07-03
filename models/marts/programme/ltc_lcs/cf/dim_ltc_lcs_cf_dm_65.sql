@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'DM_65 case finding: Patients with multiple diabetes risk factors'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding DM_65 - Identifies patients with moderate-high BMI requiring diabetes screening using ethnicity-specific thresholds.
+
+Business Purpose:
+• Support systematic case finding for diabetes in moderate-risk BMI populations using ethnicity-specific criteria
+• Enable diabetes screening in patients with moderate obesity-related risk lacking recent assessment
+• Provide clinical decision support for comprehensive diabetes screening across BMI risk categories
+• Support quality improvement initiatives for inclusive diabetes prevention and early detection
+
+Data Granularity:
+• One row per person with ethnicity-adjusted moderate-high BMI lacking HbA1c assessment in 24 months
+• Includes BAME patients with BMI 27.5-32.5 and non-BAME patients with BMI 30-35
+• Limited to patients with moderate obesity-related diabetes risk requiring screening
+
+Key Features:
+• Ethnicity-adjusted moderate BMI thresholds (27.5-32.5 BAME, 30-35 non-BAME) for inclusive risk assessment
+• Extended monitoring gap detection (24 months) for moderate-risk diabetes surveillance
+• Evidence-based case finding supporting comprehensive diabetes screening in moderate-risk populations
+• Integration with diabetes prevention pathways for risk-stratified intervention'"
+    ]
 ) }}
 
 -- Intermediate model for LTC LCS CF DM_65 case finding

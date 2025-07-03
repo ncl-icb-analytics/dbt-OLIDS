@@ -1,7 +1,28 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: NHS Health Check All - Comprehensive collection of all NHS Health Check completion events with enhanced analytics features.
+
+Clinical Purpose:
+• Gathers all NHS Health Check completion events for programme analysis and reporting
+• Supports health check type classification and eligibility assessment for 40-74 age group
+• Enables comprehensive time-based analysis and currency tracking for health checks
+• Provides foundation data for QOF prevention pathway integration and risk factor assessment
+
+Data Granularity:
+• One row per NHS Health Check completion observation for all persons (active, inactive, deceased)
+• Covers standard, initial, follow-up health checks, and cardiovascular risk assessments
+• Includes enhanced time calculations and health check currency flags (12m, 24m, 5y intervals)
+• Contains health check type classification and clinical context information
+
+Key Features:
+• Cluster ID: HEALTH_CHECK_COMP with validated SNOMED codes for completed health checks
+• Enhanced analytics: type classification, eligibility assessment, timeframe analysis
+• QOF prevention pathway integration support with 5-year cycle tracking
+• Comprehensive health check status interpretation and clinical context flags'"
+        ]
     )
 }}
 

@@ -1,6 +1,26 @@
 {{ config(
     materialized='table',
-    description='Implements clinical decision logic for Valproate safety monitoring, determining recommended actions for each patient based on clinical status and dependencies.'
+    description='Implements clinical decision logic for Valproate safety monitoring, determining recommended actions for each patient based on clinical status and dependencies.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Valproate Action Status - Clinical decision support for valproate safety monitoring with recommended actions based on patient status.
+
+Business Purpose:
+• Support valproate safety monitoring programme through clinical decision logic and action recommendations
+• Enable systematic patient assessment and appropriate clinical intervention for valproate-related risks
+• Provide clinical decision support for valproate prescribing safety and monitoring compliance
+• Support quality improvement initiatives for medication safety and regulatory compliance
+
+Data Granularity:
+• One row per patient on valproate therapy with clinical action recommendations
+• Includes comprehensive status assessment and clinical decision logic
+• Limited to patients requiring valproate safety monitoring and intervention
+
+Key Features:
+• Clinical decision logic for valproate safety monitoring and intervention recommendations
+• Comprehensive patient status assessment including PPP status and clinical dependencies
+• Evidence-based action recommendations supporting regulatory compliance and patient safety
+• Integration with valproate safety monitoring pathways for systematic clinical management'"
+    ]
 ) }}
 
 WITH db_scope AS (

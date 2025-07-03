@@ -1,6 +1,27 @@
 {{ config(
     materialized='table',
-    description='Intermediate table containing all Pregnancy Prevention Programme (PPP) events from source systems. Raw data collection layer that feeds the PPP dimension table.'
+    description='Intermediate table containing all Pregnancy Prevention Programme (PPP) events from source systems. Raw data collection layer that feeds the PPP dimension table.',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: PPP Status All - Comprehensive collection of all Pregnancy Prevention Programme status events for valproate patient safety monitoring.
+
+Clinical Purpose:
+• Gathers all PPP status events for women of childbearing potential on valproate therapy
+• Supports pregnancy prevention programme monitoring for valproate clinical safety
+• Enables comprehensive tracking of PPP enrollment, discontinuation, and clinical decisions
+• Provides foundation data for valproate programme safety compliance reporting
+
+Data Granularity:
+• One row per PPP status observation for patients on valproate therapy
+• Covers PPP enrolled, discontinued, not needed, and declined status events
+• Includes clinical effective dates for temporal analysis and programme tracking
+• Contains concept codes and descriptions for detailed clinical documentation
+
+Key Features:
+• PPP status categorisation: enrolled, discontinued, not needed, declined
+• Integration with valproate programme codes for comprehensive status tracking
+• Raw data collection layer feeding downstream PPP dimension table
+• Support for valproate patient safety monitoring and regulatory compliance'"
+    ]
 ) }}
 
 SELECT

@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'CYP_AST_61 case finding: Children and young people (18 months to under 18 years) with asthma symptoms but no formal diagnosis'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CYP_AST_61 - Identifies children and young people with asthma symptoms requiring formal diagnosis and management.
+
+Business Purpose:
+• Support systematic case finding for undiagnosed asthma in children and young people aged 18 months to under 18 years
+• Enable early asthma diagnosis and management to prevent complications and improve outcomes
+• Provide clinical decision support for paediatric asthma screening and diagnostic pathways
+• Support quality improvement initiatives for childhood asthma care and respiratory health
+
+Data Granularity:
+• One row per child/young person aged 18 months to under 18 years with asthma symptoms but no formal diagnosis
+• Includes patients with clinical indicators suggesting asthma requiring diagnostic assessment
+• Limited to paediatric population requiring asthma evaluation and formal diagnosis
+
+Key Features:
+• Age-specific asthma case finding for children and young people (18 months to <18 years)
+• Symptom-based identification of patients requiring formal asthma diagnosis
+• Evidence-based case finding supporting paediatric asthma diagnostic guidelines
+• Integration with childhood respiratory health pathways for comprehensive asthma management'"
+    ]
 ) }}
 
 -- CYP_AST_61 case finding: Children and young people with asthma symptoms but no formal diagnosis

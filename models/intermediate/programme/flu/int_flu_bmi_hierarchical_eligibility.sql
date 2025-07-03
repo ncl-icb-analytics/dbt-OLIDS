@@ -14,7 +14,30 @@ The hierarchy ensures that the most recent and severe obesity status is used.
 Age Restrictions: 18-64 years (216 months to 65 years)
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu BMI Hierarchical Eligibility - Determines flu vaccination eligibility for adults with severe obesity using hierarchical BMI evidence.
+
+Clinical Purpose:
+• Identifies adults with severe obesity (BMI 40+) who qualify for flu vaccination
+• Implements complex hierarchical logic prioritising most recent and severe obesity evidence
+• Supports clinical targeting for high-risk metabolic disease patients
+• Ensures evidence-based flu vaccination for morbidly obese patients
+
+Data Granularity:
+• One row per eligible adult aged 18-64 years with severe obesity evidence
+• Requires BMI >= 40 or severe obesity clinical coding
+• Filtered to current campaign with qualifying clinical evidence
+• Contains hierarchical evidence selection for patients with multiple BMI records
+
+Key Features:
+• Multi-path eligibility: BMI >= 40 values OR severe obesity diagnostic codes
+• Hierarchical logic ensuring most recent and severe evidence takes precedence
+• Age restrictions: 18-64 years (216 months to 65 years)
+• Evidence dating logic to prioritise clinical codes over measured BMI values'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

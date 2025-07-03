@@ -3,15 +3,24 @@
         materialized='table',
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'QOF Diabetes Register - Patients aged 17+ with active diabetes diagnosis and type classification.
+            "COMMENT ON TABLE {{ this }} IS 'Mart: QOF Diabetes Register - Core diabetes patient register for QOF reporting and diabetes management programmes.
 
-Key Inclusion Criteria:
-• Age: 17 years or older
-• Active diabetes diagnosis: Latest DM_COD > latest DMRES_COD
-• Type classification: Type 1, Type 2, or Unknown
-• Type hierarchy: Type 1 takes precedence if both types coded on same date
+Business Purpose:
+• Support QOF reporting for diabetes achievement indicators and financial incentives
+• Enable clinical teams to identify diabetes patients requiring management review and care planning
+• Provide population health analytics for diabetes prevalence and service planning
+• Support business intelligence reporting on diabetes care quality and practice performance
 
-Purpose: Core QOF register for diabetes management, monitoring, and outcome measurement.'"
+Data Granularity:
+• One row per person aged 17+ with active diabetes diagnosis
+• Includes diabetes type classification (Type 1, Type 2, or Unknown)
+• Current register status with type hierarchy prioritisation
+
+Key Features:
+• Active diabetes diagnosis with latest DM_COD > latest DMRES_COD logic
+• Type classification supporting clinical pathway and treatment decisions
+• Supports QOF achievement reporting and diabetes care quality measurement
+• Enables population health management and diabetes service optimisation'"
         ]
     )
 }}

@@ -27,7 +27,28 @@ Replace these placeholders when creating a new campaign model:
 {{ config(
     materialized='table',
     persist_docs={"relation": true, "columns": true},
-    cluster_by=['campaign_id', 'person_id', 'rule_group_id']
+    cluster_by=['campaign_id', 'person_id', 'rule_group_id'],
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: Flu Eligibility Template - Template for creating new campaign-specific flu vaccination eligibility fact tables.
+
+Business Purpose:
+• Provides standardised template for creating new campaign-specific flu eligibility models
+• Ensures consistency across campaign years with established patterns and business logic
+• Facilitates rapid deployment of new flu vaccination campaigns with minimal configuration changes
+• Supports campaign planning and development with proven model structure
+
+Data Granularity:
+• Template structure for one row per person per eligible rule group per campaign
+• Placeholder configuration requiring campaign ID and name replacement
+• Maintains same rule coverage as established models: age-based, clinical, hierarchical, exclusion
+• Contains all standard eligibility fields and priority scoring framework
+
+Key Features:
+• Template-driven approach for new campaign creation with clear replacement instructions
+• Campaign configuration driven by CSV seed files for business logic and dates
+• Standardised structure ensuring consistency across campaign years
+• Comprehensive documentation and instructions for campaign deployment'"
+    ]
 ) }}
 
 {# 

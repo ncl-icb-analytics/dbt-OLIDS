@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Epilepsy Diagnoses All - Complete history of all epilepsy diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF epilepsy register data collection and monitoring
+• Epilepsy care pathway coordination and seizure management tracking
+• Neurological treatment monitoring and clinical decision support
+• Resolution status tracking for improved neurological outcomes
+
+Data Granularity:
+• One row per epilepsy diagnosis or resolution observation
+• Uses EPI_COD (diagnosis) and EPIRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and resolution code classification for register eligibility
+• Age restrictions typically ≥18 years applied in downstream processing
+• Critical for epilepsy care pathway optimisation
+• Essential input for neurological quality improvement initiatives'"
+        ]
     )
 }}
 

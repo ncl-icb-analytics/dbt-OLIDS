@@ -1,4 +1,27 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: LTC LCS CVD Medications - Collects all cardiovascular disease-relevant medications for Long Term Conditions case finding measures.
+
+Clinical Purpose:
+• Gathers comprehensive CVD-related medication data for case finding algorithms
+• Supports identification of patients requiring CVD risk assessment through medication patterns
+• Enables medication-based risk stratification for CVD case finding measures
+• Provides foundation data for CVD_63, CVD_64, CVD_65, and related case finding indicators
+
+Data Granularity:
+• One row per medication order for CVD-relevant medications
+• Covers statin medications across multiple CVD case finding indicators
+• Includes statin allergies, contraindications, and clinical decisions
+• Sourced from LTC_LCS programme medication clusters
+
+Key Features:
+• Cluster IDs: STATIN_CVD_MEDICATIONS, STATIN_CVD_63_MEDICATIONS, STATIN_CVD_64_MEDICATIONS, STATIN_CVD_65_MEDICATIONS
+• Supports cardiovascular risk assessment and primary prevention case finding
+• Comprehensive medication pattern analysis for CVD risk stratification
+• Integration with LTC_LCS programme medication tracking systems'"
+    ]
+) }}
 
 -- Intermediate model for CVD-related medications for LTC LCS case finding
 -- Includes statin medications, statin allergies/contraindications, and statin decisions

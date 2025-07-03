@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Valproate Medication Orders (6 months latest) - Most recent valproate prescription per person for safety monitoring.
+
+Clinical Purpose:
+• Tracks latest valproate therapy for pregnancy safety and teratogenicity monitoring
+• Supports valproate programme safety initiatives and clinical oversight
+• Enables person-level analysis of current valproate exposure status
+
+Data Granularity:
+• One row per person with latest valproate order in last 6 months
+• Includes all patients regardless of status (active/inactive/deceased)
+• Critical for pregnancy + valproate safety combinations
+
+Key Features:
+• Latest order identification with recency count tracking
+• Valproate product classification for brand consistency monitoring
+• Focused dataset for clinical safety interventions
+• Essential input for valproate programme risk assessment'"
+        ]
     )
 }}
 

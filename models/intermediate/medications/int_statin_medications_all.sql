@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Statin Medication Orders - All recorded statin prescriptions for cholesterol management.
+
+Clinical Purpose:
+• Tracks statin therapy for cholesterol management and cardiovascular risk reduction
+• Supports lipid management monitoring and medication review processes
+• Enables analysis of high-intensity vs standard statin usage patterns
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Specific statin identification (atorvastatin, simvastatin, rosuvastatin, etc.)
+• High-intensity statin classification for cardiovascular risk management
+• Combination therapy identification (statin with ezetimibe)
+• Long-term therapy monitoring indicators for compliance assessment'"
+        ]
     )
 }}
 

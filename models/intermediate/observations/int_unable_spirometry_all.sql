@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Unable Spirometry Observations - All records where spirometry testing was unsuitable or contraindicated.
+
+Clinical Purpose:
+• Tracks spirometry contraindications for COPD register confirmation requirements
+• Supports alternative pathway for COPD register inclusion when spirometry cannot be performed
+• Enables documentation of clinical assessment limitations and patient factors
+
+Data Granularity:
+• One row per unable spirometry observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses SPIRPU_COD cluster for spirometry unsuitability identification
+
+Key Features:
+• Comprehensive documentation of spirometry contraindications
+• Alternative evidence pathway for COPD register eligibility
+• Clinical assessment limitation tracking for quality assurance
+• Essential for COPD register spirometry validation processes'"
+        ]
     )
 }}
 
@@ -15,7 +34,7 @@ Clinical Purpose:
 - Documentation of contraindications or patient inability
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-This is OBSERVATION-LEVEL data - one row per unable spirometry observation.
+One row per unable spirometry observation.
 Use this model as input for COPD register spirometry validation.
 */
 

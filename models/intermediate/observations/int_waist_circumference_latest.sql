@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Latest Waist Circumference Observations - Most recent valid waist circumference measurement per person.
+
+Clinical Purpose:
+• Provides current abdominal obesity status for cardiovascular risk assessment
+• Supports metabolic syndrome screening and obesity management programmes
+• Enables current anthropometric status evaluation and health risk stratification
+
+Data Granularity:
+• One row per person with their most recent valid waist circumference
+• Includes only patients with valid measurements
+• Filtered to exclude implausible values for clinical accuracy
+
+Key Features:
+• Latest valid waist circumference identification using comprehensive filtering
+• Clinical risk categorisation for cardiovascular and metabolic assessment
+• High-risk threshold flags for immediate clinical attention
+• Complete measurement metadata for clinical context'"
+        ]
     )
 }}
 

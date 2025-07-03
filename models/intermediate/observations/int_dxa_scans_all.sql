@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: DXA Scan Observations - All recorded DXA scan procedures and T-score measurements.
+
+Clinical Purpose:
+• Tracks DXA scans for osteoporosis diagnosis and bone health monitoring
+• Supports osteoporosis register eligibility and fracture risk assessment
+• Enables bone density monitoring and treatment response evaluation
+
+Data Granularity:
+• One row per DXA observation (procedures and T-score measurements)
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses DXA_COD (procedures) and DXA2_COD (T-scores) clusters
+
+Key Features:
+• DXA scan procedure identification and T-score measurement validation
+• Clinical T-score interpretation (osteoporosis, osteopenia, normal)
+• QOF osteoporosis confirmation flags (T-score ≤ -2.5)
+• Comprehensive bone health assessment for clinical decision support'"
+        ]
     )
 }}
 

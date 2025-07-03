@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Latest QRISK Observations - Most recent valid cardiovascular risk score per person.
+
+Clinical Purpose:
+• Provides current cardiovascular risk status for primary prevention strategies
+• Supports statin therapy decision-making and CVD risk management
+• Enables current risk stratification and population health assessment
+
+Data Granularity:
+• One row per person with their most recent valid QRISK score
+• Includes only patients with valid QRISK measurements
+• Filtered to exclude implausible values for clinical accuracy
+
+Key Features:
+• Latest valid QRISK identification with type preservation (QRISK2/3)
+• Clinical cardiovascular risk categorisation for treatment planning
+• Statin consideration flags based on prevention guidelines
+• Complete risk assessment metadata for clinical context'"
+        ]
     )
 }}
 

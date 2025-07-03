@@ -13,7 +13,29 @@ This information is used for:
 - Monitoring vaccination uptake
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Vaccination Status - Flu vaccination status tracking for programme monitoring and coverage reporting.
+
+Clinical Purpose:
+• NHS flu vaccination programme status monitoring and coverage reporting
+• Vaccination uptake tracking and campaign effectiveness measurement
+• Identification of vaccinated populations for programme planning
+• LAIV (Live Attenuated Influenza Vaccine) administration tracking
+
+Data Granularity:
+• One row per person with vaccination status information
+• Includes vaccination received, declined, and LAIV administration
+• Uses campaign-specific date thresholds for status determination
+
+Key Features:
+• Comprehensive vaccination status tracking (received, declined, LAIV)
+• Campaign-configurable date ranges for status validation
+• Essential for coverage reporting and programme effectiveness monitoring
+• Critical for identifying populations still requiring vaccination'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

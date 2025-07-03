@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Latest Foot Examination Observations - Most recent foot examination status per person.
+
+Clinical Purpose:
+• Provides current diabetic foot examination status for diabetes care monitoring
+• Supports foot risk assessment and QOF diabetes indicator reporting
+• Enables current foot health status evaluation and care planning
+
+Data Granularity:
+• One row per person with their most recent foot examination
+• Includes all patients with foot examination records
+• Comprehensive examination status and risk assessment data
+
+Key Features:
+• Latest foot examination identification with completion status
+• Current foot risk level assessment for clinical decision-making
+• Bilateral foot status with anatomical considerations
+• Complete examination metadata for clinical context'"
+        ]
     )
 }}
 

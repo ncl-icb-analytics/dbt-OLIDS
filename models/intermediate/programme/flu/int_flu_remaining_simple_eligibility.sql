@@ -12,7 +12,30 @@ Rule Groups Covered:
 This model uses the same pattern as int_flu_simple_rules but focuses on these specific groups.
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Intermediate: Flu Remaining Simple Eligibility - Processes remaining single-cluster eligibility rules for specific flu vaccination clinical conditions.
+
+Clinical Purpose:
+• Evaluates chronic neurological disease eligibility for flu vaccination
+• Processes asplenia and spleen dysfunction eligibility criteria
+• Implements learning disability flu vaccination targeting
+• Complements main simple rules model with specific clinical condition groups
+
+Data Granularity:
+• One row per eligible person aged 6 months to 65 years per rule group
+• CNS_GROUP: chronic neurological conditions (MS, motor neurone disease)
+• ASPLENIA_GROUP: asplenia or splenic dysfunction
+• LEARNDIS_GROUP: learning disabilities
+
+Key Features:
+• Single-cluster evaluation per rule group with specific clinical conditions
+• Date qualifier logic: earliest for CNS/asplenia, latest for learning disabilities
+• Age restrictions: 6 months to 65 years at reference date
+• Complements main simple rules model with targeted clinical groups'"
+    ]
+) }}
 
 {%- set current_campaign = var('flu_current_campaign') -%}
 

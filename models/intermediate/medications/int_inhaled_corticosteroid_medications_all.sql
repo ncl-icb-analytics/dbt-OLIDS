@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Inhaled Corticosteroid Medication Orders - All recorded ICS prescriptions for respiratory conditions.
+
+Clinical Purpose:
+• Tracks inhaled corticosteroid therapy for asthma and COPD management
+• Supports respiratory disease monitoring and medication review processes
+• Enables analysis of single agent vs combination therapy patterns
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by ICS type (single agent vs combination preparations)
+• Specific corticosteroid identification (beclometasone, budesonide, fluticasone)
+• Combination therapy mapping (ICS/LABA preparations)
+• MART therapy eligibility flags for asthma management'"
+        ]
     )
 }}
 

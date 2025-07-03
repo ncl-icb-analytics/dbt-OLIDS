@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Mart: NHS Health Check Eligibility - Eligibility assessment and due status for NHS Health Check programme participation.
+
+Business Purpose:
+• Support NHS Health Check programme management and invitation planning
+• Enable cardiovascular risk assessment programme delivery and population health monitoring
+• Provide clinical decision support for health check eligibility and scheduling
+• Support quality improvement initiatives for preventive care programme effectiveness
+
+Data Granularity:
+• One row per person with NHS Health Check eligibility assessment
+• Includes eligibility criteria evaluation and due status for health check scheduling
+• Comprehensive programme participation tracking with invitation and completion history
+
+Key Features:
+• NHS Health Check eligibility assessment based on age and exclusion criteria
+• Due status calculation for health check invitation and scheduling
+• Programme participation history with completion and invitation tracking
+• Evidence-based eligibility criteria supporting NICE guidelines for cardiovascular prevention'"
+        ]
     )
 }}
 

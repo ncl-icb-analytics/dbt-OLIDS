@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        persist_docs={"relation": true}
+        persist_docs={"relation": true},
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Cervical Screening Programme Status - Comprehensive screening programme tracking with age-specific compliance and risk stratification.
+
+Business Purpose:
+• Support cervical screening programme management and compliance monitoring
+• Enable population health analytics and risk stratification for screening programmes
+• Provide comprehensive screening history for clinical decision support and care coordination
+• Support quality assurance and programme outcome monitoring across age cohorts
+
+Data Granularity:
+• One row per eligible female person (aged 25-64)
+• Age-specific screening intervals and compliance rules applied
+• Comprehensive screening history with latest status and risk indicators
+
+Key Features:
+• Age-appropriate screening interval tracking (3-year for 25-49, 5-year for 50-64)
+• Programme compliance status with overdue and never-screened identification
+• Clinical risk stratification based on cytology results and abnormality grades
+• Next screening due dates and follow-up requirement flags'"
+        ]
     )
 }}
 

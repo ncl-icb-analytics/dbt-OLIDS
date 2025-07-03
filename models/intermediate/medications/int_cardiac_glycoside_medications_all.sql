@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Cardiac Glycoside Medication Orders - All recorded cardiac glycoside prescriptions.
+
+Clinical Purpose:
+• Tracks cardiac glycoside therapy for heart failure and arrhythmia management
+• Supports therapeutic drug monitoring and medication safety processes
+• Enables analysis of dosing patterns for elderly and renal impairment
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Specific cardiac glycoside identification (primarily digoxin)
+• Dose categorisation with clinical indication mapping
+• Special population dosing flags (elderly/renal impairment)
+• Therapeutic monitoring indicators for safety management'"
+        ]
     )
 }}
 

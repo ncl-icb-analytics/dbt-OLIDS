@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: HbA1c Observations - All recorded HbA1c measurements with diabetes assessment.
+
+Clinical Purpose:
+• Tracks HbA1c levels for diabetes diagnosis, monitoring and management
+• Supports diabetes care pathways and QOF target achievement monitoring
+• Enables glycaemic control assessment and treatment optimisation
+
+Data Granularity:
+• One row per HbA1c observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Handles both IFCC (mmol/mol) and DCCT (%) measurement types
+
+Key Features:
+• Dual measurement type support with proper unit validation
+• Clinical HbA1c categorisation (normal, prediabetes, diabetes control levels)
+• QOF target achievement flags for diabetes quality indicators
+• Diabetes diagnostic thresholds and clinical decision support'"
+        ]
     )
 }}
 

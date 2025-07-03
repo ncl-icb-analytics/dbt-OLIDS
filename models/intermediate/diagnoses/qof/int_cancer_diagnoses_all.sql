@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Cancer Diagnoses All - Complete history of all cancer diagnosis observations for QOF register management.
+
+Clinical Purpose:
+• QOF cancer register data collection and monitoring
+• Cancer care pathway coordination and treatment tracking
+• Oncology service utilisation and quality improvement
+• Resolution and remission status tracking
+
+Data Granularity:
+• One row per cancer diagnosis observation
+• Uses CAN_COD cluster for QOF-compliant cancer diagnosis identification
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Comprehensive cancer diagnosis tracking across all age groups
+• No specific age restrictions for cancer register inclusion
+• Resolution and remission monitoring capability
+• Critical for cancer care quality indicators and pathway management'"
+        ]
     )
 }}
 

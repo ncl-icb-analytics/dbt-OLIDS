@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: BMI QOF Observations - BMI measurements with QOF-specific obesity register logic.
+
+Clinical Purpose:
+• Tracks BMI measurements for QOF obesity register eligibility and reporting
+• Supports obesity programme management with ethnicity-adjusted thresholds
+• Enables QOF indicator monitoring and obesity prevalence analysis
+
+Data Granularity:
+• One row per person with latest BMI observation and aggregated QOF flags
+• Combines numeric BMI values (BMIVAL_COD) and BMI30+ codes (BMI30_COD)
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• QOF-specific BMI thresholds (25+, 27.5+, 30+ for different populations)
+• Ever-flags for obesity register inclusion criteria
+• Latest valid BMI with person-level aggregation
+• Comprehensive concept tracking for audit and quality assurance'"
+        ]
     )
 }}
 

@@ -1,7 +1,27 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Atrial Fibrillation Diagnoses All - Complete history of all atrial fibrillation diagnosis and resolution observations for QOF register management.
+
+Clinical Purpose:
+• QOF atrial fibrillation register data collection and monitoring
+• Stroke risk assessment and anticoagulation therapy management
+• Cardiovascular rhythm disorder tracking and care coordination
+• Resolution status monitoring for clinical decision support
+
+Data Granularity:
+• One row per atrial fibrillation diagnosis or resolution observation
+• Uses AFIB_COD (diagnosis) and AFIBRES_COD (resolved) QOF clusters
+• Includes all patients regardless of status for comprehensive QOF reporting
+
+Key Features:
+• Diagnosis and resolution code classification for register eligibility
+• Critical for stroke prevention and anticoagulation protocols
+• Supports complex QOF business rules and age restrictions
+• Essential input for cardiovascular risk stratification'"
+        ]
     )
 }}
 

@@ -1,4 +1,26 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding HTN_62 - Identifies patients with stage 2 hypertension requiring blood pressure management and cardiovascular risk assessment.
+
+Business Purpose:
+• Support systematic case finding for stage 2 hypertension requiring clinical intervention and management
+• Enable hypertension management and cardiovascular risk reduction in high-risk populations
+• Provide clinical decision support for blood pressure monitoring and treatment optimisation
+• Support quality improvement initiatives for comprehensive hypertension management programmes
+
+Data Granularity:
+• One row per person with latest blood pressure readings meeting stage 2 hypertension criteria
+• Excludes patients already captured in severe hypertension category (HTN_61)
+• Limited to patients requiring stage 2 hypertension intervention and monitoring
+
+Key Features:
+• Stage 2 hypertension identification with exclusion of severe hypertension cases
+• Latest blood pressure assessment focus for appropriate clinical intervention
+• Evidence-based case finding supporting staged hypertension management protocols
+• Integration with cardiovascular risk management pathways for risk-stratified intervention'"
+    ]
+) }}
 
 -- HTN_62 case finding: Stage 2 hypertension (excluding severe hypertension HTN_61)
 -- Identifies patients with stage 2 hypertension who are not in the severe hypertension category

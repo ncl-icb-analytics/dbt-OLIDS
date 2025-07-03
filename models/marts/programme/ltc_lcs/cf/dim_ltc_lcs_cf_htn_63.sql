@@ -1,4 +1,26 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding HTN_63 - Identifies Black and South Asian patients with cardiovascular risk factors and elevated blood pressure requiring culturally appropriate intervention.
+
+Business Purpose:
+• Support systematic case finding for hypertension in Black and South Asian populations with enhanced cardiovascular risk
+• Enable ethnicity-specific hypertension management aligned with higher cardiovascular risk profiles
+• Provide clinical decision support for culturally appropriate blood pressure management
+• Support quality improvement initiatives for equitable hypertension care and cardiovascular disease prevention
+
+Data Granularity:
+• One row per Black or South Asian person with elevated blood pressure and cardiovascular risk factors
+• Includes ethnicity-specific risk assessment and blood pressure threshold evaluation
+• Limited to patients requiring culturally appropriate hypertension intervention
+
+Key Features:
+• Ethnicity-specific hypertension case finding for Black and South Asian populations
+• Cardiovascular risk factor integration for comprehensive risk assessment
+• Evidence-based case finding supporting ethnicity-appropriate hypertension management
+• Integration with culturally sensitive cardiovascular risk management pathways'"
+    ]
+) }}
 
 -- HTN_63 case finding: Black/South Asian patients with cardiovascular risk factors and elevated BP
 -- Identifies BSA patients with risk factors and elevated blood pressure

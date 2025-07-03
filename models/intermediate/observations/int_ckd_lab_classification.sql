@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: CKD Lab Classification - Laboratory-based CKD staging and criteria assessment.
+
+Clinical Purpose:
+• Classifies CKD stage based on latest eGFR and ACR laboratory results
+• Supports CKD case finding and clinical audit processes
+• Enables identification of patients meeting CKD criteria regardless of diagnosis
+
+Data Granularity:
+• One row per person with comprehensive CKD laboratory assessment
+• Combines latest eGFR and ACR results with confirmation logic
+• Includes all patients with relevant laboratory data
+
+Key Features:
+• CKD staging using G-stage (G1-G5) and A-stage (A1-A3) classification
+• Persistent abnormal result confirmation (>90 days apart)
+• Combined inferred CKD stage and criteria assessment
+• Laboratory-based CKD identification for clinical decision support'"
+        ]
     )
 }}
 

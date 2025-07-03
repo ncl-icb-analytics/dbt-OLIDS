@@ -1,6 +1,25 @@
 {{ config(
     materialized='table',
-    post_hook="ALTER TABLE {{ this }} SET COMMENT = 'HTN_65 case finding: Patients with multiple hypertension risk factors'"
+    post_hook=[
+        "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding HTN_65 - Identifies patients with stage 1 hypertension and cardiovascular risk factors requiring comprehensive management.
+
+Business Purpose:
+• Support systematic case finding for stage 1 hypertension with cardiovascular risk factors requiring intervention
+• Enable risk-stratified hypertension management based on overall cardiovascular risk profile
+• Provide clinical decision support for stage 1 hypertension treatment decisions
+• Support quality improvement initiatives for comprehensive cardiovascular risk management
+
+Data Granularity:
+• One row per person with stage 1 hypertension and additional cardiovascular risk factors
+• Includes patients requiring intervention based on combined hypertension and cardiovascular risk
+• Limited to patients meeting stage 1 hypertension criteria with additional risk factors
+
+Key Features:
+• Stage 1 hypertension identification with cardiovascular risk factor assessment
+• Risk-stratified approach to hypertension management and intervention
+• Evidence-based case finding supporting risk-based treatment guidelines
+• Integration with cardiovascular risk management pathways for comprehensive care'"
+    ]
 ) }}
 
 -- HTN_65 case finding: Stage 1 hypertension with cardiovascular risk factors

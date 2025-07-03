@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: QRISK Observations - All recorded cardiovascular risk scores with clinical categorisation.
+
+Clinical Purpose:
+• Tracks QRISK scores for cardiovascular disease risk assessment and management
+• Supports primary prevention strategies and statin therapy decision-making
+• Enables cardiovascular risk stratification and population health monitoring
+
+Data Granularity:
+• One row per QRISK observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses QRISKSCORE_COD cluster for cardiovascular risk score identification
+
+Key Features:
+• QRISK type identification (QRISK2, QRISK3) with score validation
+• Clinical risk categorisation (low, moderate, high CVD risk)
+• Statin consideration thresholds and treatment decision support
+• Cardiovascular prevention guideline compliance indicators'"
+        ]
     )
 }}
 

@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'order_date']
+        cluster_by=['person_id', 'order_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Lithium Medication Orders - All recorded lithium prescriptions for bipolar disorder.
+
+Clinical Purpose:
+• Tracks lithium therapy for bipolar disorder and severe depression management
+• Supports therapeutic drug monitoring and medication safety processes
+• Enables analysis of brand consistency and bioequivalence considerations
+
+Data Granularity:
+• One row per medication order
+• Includes all patients regardless of status (active/inactive/deceased)
+• Historical data maintained for longitudinal analysis
+
+Key Features:
+• Classification by lithium preparation type (carbonate vs citrate)
+• Brand identification for bioequivalence monitoring (Priadel, Camcolit)
+• Dose categorisation for therapeutic range assessment
+• Mandatory monitoring requirement flags for patient safety'"
+        ]
     )
 }}
 

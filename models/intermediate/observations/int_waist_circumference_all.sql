@@ -1,7 +1,26 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'clinical_effective_date']
+        cluster_by=['person_id', 'clinical_effective_date'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Intermediate: Waist Circumference Observations - All recorded waist circumference measurements with cardiovascular risk assessment.
+
+Clinical Purpose:
+• Tracks waist circumference for cardiovascular and metabolic risk assessment
+• Supports obesity management and metabolic syndrome screening
+• Enables abdominal obesity monitoring and health risk stratification
+
+Data Granularity:
+• One row per waist circumference observation
+• Includes all patients regardless of status (active/inactive/deceased)
+• Uses WAIST_COD cluster for waist circumference measurement identification
+
+Key Features:
+• Data quality validation with plausible range filtering (30-250 cm)
+• Clinical risk categorisation based on cardiovascular risk thresholds
+• High-risk and very high-risk indicators for clinical intervention
+• Comprehensive anthropometric assessment for metabolic health'"
+        ]
     )
 }}
 
