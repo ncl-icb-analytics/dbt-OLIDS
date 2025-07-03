@@ -65,12 +65,12 @@ WITH practice_demographics AS (
         COUNT(CASE WHEN demo.ethnicity_category IS NULL OR demo.ethnicity_category = 'Unknown' THEN 1 END) AS pop_ethnicity_unknown,
         
         -- Deprivation quintiles (when available)
-        COUNT(CASE WHEN demo.imd_2019_quintile = 1 THEN 1 END) AS pop_imd_quintile_1_most_deprived,
-        COUNT(CASE WHEN demo.imd_2019_quintile = 2 THEN 1 END) AS pop_imd_quintile_2,
-        COUNT(CASE WHEN demo.imd_2019_quintile = 3 THEN 1 END) AS pop_imd_quintile_3,
-        COUNT(CASE WHEN demo.imd_2019_quintile = 4 THEN 1 END) AS pop_imd_quintile_4,
-        COUNT(CASE WHEN demo.imd_2019_quintile = 5 THEN 1 END) AS pop_imd_quintile_5_least_deprived,
-        COUNT(CASE WHEN demo.imd_2019_quintile IS NULL THEN 1 END) AS pop_imd_unknown
+        COUNT(CASE WHEN demo.imd_quintile_19 = 1 THEN 1 END) AS pop_imd_quintile_1_most_deprived,
+        COUNT(CASE WHEN demo.imd_quintile_19 = 2 THEN 1 END) AS pop_imd_quintile_2,
+        COUNT(CASE WHEN demo.imd_quintile_19 = 3 THEN 1 END) AS pop_imd_quintile_3,
+        COUNT(CASE WHEN demo.imd_quintile_19 = 4 THEN 1 END) AS pop_imd_quintile_4,
+        COUNT(CASE WHEN demo.imd_quintile_19 = 5 THEN 1 END) AS pop_imd_quintile_5_least_deprived,
+        COUNT(CASE WHEN demo.imd_quintile_19 IS NULL THEN 1 END) AS pop_imd_unknown
         
     FROM {{ ref('dim_person_current_practice') }} AS prac
     INNER JOIN {{ ref('dim_person_demographics') }} AS demo

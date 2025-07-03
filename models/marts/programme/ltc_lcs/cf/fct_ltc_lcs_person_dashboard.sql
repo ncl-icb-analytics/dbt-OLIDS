@@ -63,17 +63,17 @@ SELECT
     -- Geographic and deprivation context
     demo.post_code_hash,
     demo.uprn_hash,
-    demo.lsoa_2021_code,
-    demo.lsoa_2021_name,
-    demo.imd_2019_decile,
-    demo.imd_2019_quintile,
+    demo.lsoa_code_21,
+    demo.lsoa_name_21,
+    demo.imd_decile_19,
+    demo.imd_quintile_19,
     CASE 
-        WHEN demo.imd_2019_quintile IS NULL THEN 'Unknown'
-        WHEN demo.imd_2019_quintile = 1 THEN 'Quintile 1 (Most Deprived)'
-        WHEN demo.imd_2019_quintile = 2 THEN 'Quintile 2'
-        WHEN demo.imd_2019_quintile = 3 THEN 'Quintile 3'
-        WHEN demo.imd_2019_quintile = 4 THEN 'Quintile 4'
-        WHEN demo.imd_2019_quintile = 5 THEN 'Quintile 5 (Least Deprived)'
+        WHEN demo.imd_quintile_19 IS NULL THEN 'Unknown'
+        WHEN demo.imd_quintile_19 = 1 THEN 'Quintile 1 (Most Deprived)'
+        WHEN demo.imd_quintile_19 = 2 THEN 'Quintile 2'
+        WHEN demo.imd_quintile_19 = 3 THEN 'Quintile 3'
+        WHEN demo.imd_quintile_19 = 4 THEN 'Quintile 4'
+        WHEN demo.imd_quintile_19 = 5 THEN 'Quintile 5 (Least Deprived)'
     END AS imd_quintile_label,
     
     -- Case finding summary flags

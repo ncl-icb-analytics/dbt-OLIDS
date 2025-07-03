@@ -37,7 +37,7 @@ WITH demographic_population AS (
     SELECT
         demo.age_band_10y,
         demo.ethnicity_category,
-        COALESCE(demo.imd_2019_quintile, 0) AS imd_quintile,  -- 0 = Unknown
+        COALESCE(demo.imd_quintile_19, 0) AS imd_quintile,  -- 0 = Unknown
         demo.local_authority,
         demo.practice_neighbourhood,
         
@@ -57,7 +57,7 @@ WITH demographic_population AS (
     GROUP BY 
         demo.age_band_10y,
         demo.ethnicity_category,
-        COALESCE(demo.imd_2019_quintile, 0),
+        COALESCE(demo.imd_quintile_19, 0),
         demo.local_authority,
         demo.practice_neighbourhood
 ),
@@ -67,7 +67,7 @@ case_finding_demographics AS (
     SELECT
         demo.age_band_10y,
         demo.ethnicity_category,
-        COALESCE(demo.imd_2019_quintile, 0) AS imd_quintile,
+        COALESCE(demo.imd_quintile_19, 0) AS imd_quintile,
         demo.local_authority,
         demo.practice_neighbourhood,
         
@@ -126,7 +126,7 @@ case_finding_demographics AS (
     GROUP BY 
         demo.age_band_10y,
         demo.ethnicity_category,
-        COALESCE(demo.imd_2019_quintile, 0),
+        COALESCE(demo.imd_quintile_19, 0),
         demo.local_authority,
         demo.practice_neighbourhood
 )

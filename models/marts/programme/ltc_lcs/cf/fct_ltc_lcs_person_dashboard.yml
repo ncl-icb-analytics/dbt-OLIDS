@@ -108,7 +108,7 @@ models:
         description: Type of interpreter needed (if any)
 
       # Deprivation
-      - name: imd_2019_quintile
+      - name: imd_quintile_19
         description: Index of Multiple Deprivation 2019 quintile (1=Most deprived, 5=Least deprived)
         tests:
           - dbt_utils.accepted_range:
