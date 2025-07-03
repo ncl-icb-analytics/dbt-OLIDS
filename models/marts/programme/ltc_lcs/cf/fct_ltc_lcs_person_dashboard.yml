@@ -1,0 +1,277 @@
+version: 2
+
+models:
+  - name: fct_ltc_lcs_person_dashboard
+    description: |
+      Enhanced person-level case finding data with demographics for PowerBI analytics and clinical workflows.
+      
+      This fact table provides comprehensive person-level case finding data enriched with demographics,
+      practice context, and calculated risk categories. Optimised for PowerBI drill-through capabilities
+      and direct care use cases.
+      
+      **PowerBI Dashboard Use Cases:**
+      - Person-level drill-through from aggregate dashboards
+      - Patient lists for direct care and case finding workflows  
+      - Re-identification support for clinical teams
+      - Individual patient journey analysis and case management
+      - Detailed case finding indicator review per person
+      
+      **Key Features:**
+      - Filtered to case finding eligible population only (performance optimisation)
+      - All 25+ case finding indicator flags from summary table maintained
+      - Full demographic enrichment (age, ethnicity, deprivation, practice)
+      - Calculated risk categories and priority flags for clinical workflow
+      - Geographic and practice context for population health analysis
+      
+      **Population Scope:**
+      - One row per person meeting any LTC case finding criteria
+      - Excludes patients already in LTC programmes
+      - Current practice registrations only
+      - Comprehensive demographic and clinical context per person
+      
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        tests:
+          - not_null
+          - unique
+
+      - name: sk_patient_id
+        description: Surrogate key patient identifier
+        tests:
+          - not_null
+
+      - name: practice_code
+        description: Current registered practice code
+        tests:
+          - not_null
+
+      - name: practice_name
+        description: Current registered practice name
+        tests:
+          - not_null
+
+      - name: practice_postcode
+        description: Practice postcode
+
+      - name: pcn_code
+        description: Primary Care Network code
+
+      - name: pcn_name
+        description: Primary Care Network name
+
+      - name: local_authority
+        description: Local authority area
+
+      - name: practice_neighbourhood
+        description: Practice neighbourhood classification
+
+      # Demographics
+      - name: age
+        description: Current age
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: cf_eligibility_age
+        description: Age used for case finding eligibility assessment
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 120
+
+      - name: age_band_10y
+        description: 10-year age band
+        tests:
+          - accepted_values:
+              values: ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+']
+
+      - name: age_life_stage
+        description: Life stage classification
+        tests:
+          - accepted_values:
+              values: ['Infant', 'Toddler', 'Child', 'Adolescent', 'Young Adult', 'Adult', 'Middle-aged Adult', 'Older Adult', 'Elderly']
+
+      - name: ethnicity_category
+        description: High-level ethnicity category
+        tests:
+          - accepted_values:
+              values: ['White', 'Mixed', 'Asian', 'Black', 'Other', 'Unknown', null]
+
+      - name: main_language
+        description: Main language spoken
+
+      - name: interpreter_type
+        description: Type of interpreter needed (if any)
+
+      # Deprivation
+      - name: imd_quintile_19
+        description: Index of Multiple Deprivation 2019 quintile (1=Most deprived, 5=Least deprived)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 5
+
+      - name: imd_quintile_label
+        description: Descriptive label for IMD quintile
+        tests:
+          - accepted_values:
+              values: ['Unknown', 'Quintile 1 (Most Deprived)', 'Quintile 2', 'Quintile 3', 'Quintile 4', 'Quintile 5 (Least Deprived)']
+
+      # Case finding indicators
+      - name: in_any_case_finding
+        description: Flag indicating if person meets any case finding criteria
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: case_finding_count
+        description: Total number of case finding indicators this person meets
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 30
+
+      # Key indicator flags
+      - name: in_cvd_61
+        description: Meets CVD_61 criteria (high QRISK2 ≥20%)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: in_cvd_62
+        description: Meets CVD_62 criteria (moderate QRISK2 10-19%)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: in_dm_61
+        description: Meets DM_61 criteria (diabetes risk factors)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: in_htn_61
+        description: Meets HTN_61 criteria (hypertension risk factors)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      # Condition groupings
+      - name: has_cvd_indicators
+        description: Has any cardiovascular case finding indicators
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_dm_indicators
+        description: Has any diabetes case finding indicators
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_htn_indicators
+        description: Has any hypertension case finding indicators
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      # Risk categorisation
+      - name: risk_category
+        description: Overall risk category based on number of indicators
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Risk (5+ indicators)', 'Medium Risk (3-4 indicators)', 'Low Risk (1-2 indicators)', 'No Case Finding']
+
+      # Priority flags
+      - name: high_priority_cvd
+        description: High priority cardiovascular case finding flag
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: high_priority_diabetes
+        description: High priority diabetes case finding flag
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: high_priority_hypertension
+        description: High priority hypertension case finding flag
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      # Age categories
+      - name: is_elderly
+        description: Flag for elderly patients (age 75+)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_working_age
+        description: Flag for working age patients (age 40-64)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_child_young_person
+        description: Flag for children and young people (age <18)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      # Registration context
+      - name: registration_start_date
+        description: Date patient registered at current practice
+        tests:
+          - not_null
+
+      - name: days_registered
+        description: Number of days registered at current practice
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: registration_duration_category
+        description: Registration duration category
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['New Patient (<1 year)', 'Recent Patient (1-5 years)', 'Established Patient (5+ years)']
+
+      - name: data_refresh_date
+        description: Date when data was last refreshed
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - person_id
+      
+      # Ensure all records have case finding eligibility
+      - dbt_utils.expression_is_true:
+          expression: "in_any_case_finding = TRUE"
+          config:
+            severity: error
