@@ -6,22 +6,15 @@
         post_hook=[
             "COMMENT ON TABLE {{ this }} IS 'Mart: Person Current Practice Dimension - Current practice registration details for each person.
 
-Business Purpose:
-• Support operational analytics for practice list management and patient attribution
-• Enable business intelligence reporting on practice populations and patient distribution
-• Provide foundation for QOF reporting and practice performance analysis
-• Support population health analytics and practice-level resource allocation
-
-Data Granularity:
-• One row per person with current practice registration
+Population Scope:
+• All persons with current practice registrations
+• One row per person with active practice registration status
 • Includes practice organisational details and registration timeline
-• Current snapshot of practice registration status and relationships
 
 Key Features:
-• Links patients to their current registered practice with full organisational context
+• Links patients to their current registered practice with organisational context
 • Includes practice operational status and hierarchy information
-• Supports practice-level reporting and population health management
-• Enables business intelligence for practice operations and patient care coordination'"
+• Supports practice-level reporting and population health management'"
         ]
     )
 }}

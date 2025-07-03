@@ -4,24 +4,17 @@
         tags=['dimension', 'person', 'age'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Age Dimension - Comprehensive age-related attributes for population health analytics and service planning.
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Age Dimension - Age-related attributes for population health analytics.
 
-Business Purpose:
-• Support population health analytics by providing age-stratified health outcomes and service utilisation
-• Enable business intelligence reporting on age-based service planning and resource allocation
-• Provide foundation for age-specific quality indicators and population health management
-• Support operational analytics for age-appropriate service delivery and clinical pathways
-
-Data Granularity:
-• One row per person with comprehensive age-related attributes
-• Includes multiple age bands, life stages, and UK school stages for diverse reporting needs
+Population Scope:
+• All persons with recorded birth dates
 • Current age for living persons, age at death for deceased persons
+• One row per person with comprehensive age-related attributes
 
 Key Features:
-• Provides multiple standard age bands (5-year, 10-year, NHS, ONS) for flexible reporting
-• Includes UK school stages and education levels for children and young people services
-• Supports age-stratified analytics and population health management
-• Enables business intelligence for age-appropriate service planning and delivery'"
+• Multiple standard age bands (5-year, 10-year, NHS, ONS)
+• UK school stages and education levels
+• Life stage categories for demographic analysis'"
         ]
     )
 }}

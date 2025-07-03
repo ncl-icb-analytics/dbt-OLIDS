@@ -36,22 +36,15 @@ Dependencies:
     post_hook=[
         "COMMENT ON TABLE {{ this }} IS 'Mart: LTC LCS Case Finding CKD_62 - Identifies patients with two consecutive high UACR readings suggesting kidney damage and undiagnosed CKD.
 
-Business Purpose:
-• Support systematic case finding for undiagnosed chronic kidney disease through urine albumin-creatinine ratio monitoring
-• Enable early detection of kidney damage and proteinuria in high-risk populations
-• Provide clinical decision support for CKD screening and nephrology referral pathways
-• Support quality improvement initiatives for diabetes and cardiovascular complication prevention
-
-Data Granularity:
-• One row per person aged 17+ with two consecutive UACR readings above 3
-• Includes maximum daily UACR values to handle multiple same-day readings
+Population Scope:
+• Patients aged 17+ from LTC case finding base population
+• Two consecutive UACR readings above 4
 • Excludes patients already on CKD or diabetes registers
 
 Key Features:
-• Consecutive high UACR assessment with both latest and previous readings above threshold
-• Adjacent day duplicate filtering to ensure distinct assessment episodes
-• Complete UACR testing history with all concept codes and clinical displays
-• Evidence-based case finding criteria supporting early kidney damage detection'"
+• Maximum daily UACR values with adjacent day duplicate filtering
+• Complete UACR testing history with latest and previous readings
+• Evidence-based case finding criteria for early kidney damage detection'"
     ]
 ) }}
 

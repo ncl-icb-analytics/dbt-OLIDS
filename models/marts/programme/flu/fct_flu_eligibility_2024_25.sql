@@ -34,23 +34,18 @@ For dynamic/comparative analysis, see fct_flu_eligibility_comparison.sql
     post_hook=[
         "COMMENT ON TABLE {{ this }} IS 'Mart: Flu Eligibility 2024-25 Campaign - Comprehensive fact table consolidating all flu vaccination eligibility rules for the 2024-25 campaign.
 
-Business Purpose:
-• Provides unified view of all flu vaccination eligibility criteria for 2024-25 campaign
-• Supports flu programme planning, patient targeting, and vaccination campaign analysis
-• Enables comprehensive eligibility reporting across age groups, clinical conditions, and special populations
-• Replaces complex macro-based approach with clear, testable model hierarchy for stable analysis
-
-Data Granularity:
-• One row per person per eligible rule group for 2024-25 flu vaccination campaign
-• Covers age-based (65+), child age groups (2-3, 4-16), clinical conditions, and special populations
-• Includes all rule types: simple, combination, hierarchical, exclusion logic
-• Contains qualifying event dates, eligibility reasons, and priority scoring for multiple eligibilities
+Population Scope:
+• All persons eligible for flu vaccination in 2024-25 campaign
+• Age-based eligibility: 65+ years, children 2-3 years, children 4-16 years
+• Clinical conditions: asthma, diabetes, CKD, immunosuppression, pregnancy
+• Special populations: carers, healthcare workers, residents in care homes
+• One row per person per eligible rule group with priority scoring
 
 Key Features:
-• Campaign-specific stability: dedicated model for 2024-25 campaign ensuring historical preservation
-• Multi-rule eligibility: persons may qualify under multiple rules with priority scoring
-• Comprehensive rule coverage: age-based, clinical conditions, pregnancy, carers, exclusion logic
-• Clear business logic: replaces complex macros with explicit intermediate model references'"
+• Campaign-specific stability ensuring historical preservation
+• Multi-rule eligibility with priority scoring for multiple qualifications
+• Comprehensive rule coverage including exclusion logic
+• Clear business logic with explicit intermediate model references'"
     ]
 ) }}
 

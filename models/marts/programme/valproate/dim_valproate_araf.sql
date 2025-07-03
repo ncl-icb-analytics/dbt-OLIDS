@@ -4,22 +4,15 @@
     post_hook=[
         "COMMENT ON TABLE {{ this }} IS 'Mart: Valproate ARAF Status - Person-level aggregation of Annual Risk Acknowledgement Form events for valproate safety monitoring.
 
-Business Purpose:
-• Support valproate safety monitoring through ARAF completion tracking and compliance assessment
-• Enable systematic monitoring of annual risk acknowledgement requirements for valproate therapy
-• Provide clinical decision support for ARAF compliance and patient safety management
-• Support quality improvement initiatives for regulatory compliance and medication safety programmes
-
-Data Granularity:
-• One row per person with ARAF-related events in valproate safety monitoring
-• Aggregates all ARAF events with earliest and latest completion tracking
-• Includes comprehensive ARAF history for compliance monitoring and assessment
+Population Scope:
+• Patients with ARAF-related events in valproate safety monitoring
+• All persons with recorded Annual Risk Acknowledgement Form interactions
+• One row per person with ARAF events and completion tracking
 
 Key Features:
 • Person-level ARAF event aggregation with complete compliance history
-• Earliest and latest ARAF completion tracking for monitoring programme effectiveness
-• Evidence-based ARAF compliance assessment supporting regulatory requirements
-• Integration with valproate safety monitoring pathways for comprehensive patient management'"
+• Earliest and latest ARAF completion tracking for monitoring effectiveness
+• Evidence-based ARAF compliance assessment supporting regulatory requirements'"
     ]
 ) }}
 

@@ -5,13 +5,12 @@
         post_hook=[
             "COMMENT ON TABLE {{ this }} IS 'QOF Hypertension Register - Patients aged 18+ with active hypertension diagnosis and clinical staging.
 
-Key Inclusion Criteria:
-• Age: 18 years or older
-• Active hypertension diagnosis: Latest HTN_COD > latest HTNRES_COD
-• Clinical staging: Based on latest BP with NICE-aligned thresholds
-• Context-aware: Different thresholds for Home/ABPM vs Clinic readings
-
-Purpose: QOF register for hypertension management with BP control monitoring and staging.'"
+Population Scope:
+• Age 18+ years
+• Active hypertension diagnosis: latest HTN_COD > latest HTNRES_COD
+• Clinical staging based on latest BP with NICE-aligned thresholds
+• Context-aware thresholds: Home/ABPM vs Clinic readings
+• One row per person with current register status'"
         ]
     )
 }}

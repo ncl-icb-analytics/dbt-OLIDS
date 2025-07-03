@@ -4,7 +4,17 @@
         tags=['dimension', 'person', 'ethnicity'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Dimension table providing the latest recorded ethnicity for every person. If no ethnicity is recorded for a person, ethnicity-related fields default to Not Recorded.'"
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Ethnicity Dimension - Latest recorded ethnicity for population analysis.
+
+Population Scope:
+• All persons regardless of ethnicity record availability
+• Latest ethnicity record per person where available
+• Defaults to \"Not Recorded\" for persons without ethnicity data
+
+Key Features:
+• Ethnicity category, subcategory, and granular classifications
+• SNOMED coding for clinical interoperability
+• Clinical effective date for data quality assessment'"
         ]
     )
 }}

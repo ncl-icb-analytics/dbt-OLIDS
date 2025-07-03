@@ -4,24 +4,18 @@
         tags=['dimension', 'person', 'demographics', 'comprehensive'],
         cluster_by=['person_id'],
         post_hook=[
-            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Demographics - Comprehensive single source of truth for person demographics and practice registration information.
+            "COMMENT ON TABLE {{ this }} IS 'Mart: Person Demographics - Comprehensive demographic profiles for population health analytics.
 
-Business Purpose:
-• Support population health analytics by providing comprehensive demographic profiles for health outcomes analysis
-• Enable business intelligence reporting on demographic trends, health inequalities, and service utilisation patterns
-• Provide foundation for population-based planning, resource allocation, and health needs assessment
-• Support operational analytics for demographic-specific service delivery and clinical pathways
-
-Data Granularity:
-• One row per person with comprehensive demographic and practice information
-• Includes age, sex, ethnicity, language, current practice registration, and geographic context
-• Primary demographics reference for analytics and reporting across all business areas
+Population Scope:
+• All persons with recorded birth dates
+• Includes both active and inactive patients
+• One row per person with comprehensive demographic information
 
 Key Features:
-• Consolidates demographics from multiple dimension tables into single comprehensive view
-• Includes practice organisational hierarchy and geographic context for population analysis
-• Supports demographic trend analysis and health inequalities assessment
-• Enables business intelligence for population-based planning and service delivery'"
+• Consolidated demographics from multiple dimension tables
+• Age, sex, ethnicity, language, and geographic information
+• Current practice registration and organisational hierarchy
+• Address and household linkage capability'"
         ]
     )
 }}
