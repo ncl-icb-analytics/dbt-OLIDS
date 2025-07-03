@@ -2,7 +2,19 @@
     config(
         materialized='table',
         cluster_by=['person_id'],
-        pre_hook="DROP TABLE IF EXISTS {{ this }}"
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'Non-Alcoholic Fatty Liver Disease (NAFLD) Register - Patients with NAFLD diagnosis.
+
+Key Inclusion Criteria:
+• NAFLD diagnosis code present (hardcoded SNOMED concepts)
+• Active patient status required
+• No age restrictions
+• No resolution codes
+
+Purpose: Clinical register for liver health monitoring, metabolic risk assessment, and NAFLD progression tracking.
+
+Note: Currently using hardcoded SNOMED codes - awaiting NAFLD_COD cluster in reference data.'"
+        ]
     )
 }}
 

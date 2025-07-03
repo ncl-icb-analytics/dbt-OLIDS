@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Diabetes Register - Patients aged 17+ with active diabetes diagnosis and type classification.
+
+Key Inclusion Criteria:
+• Age: 17 years or older
+• Active diabetes diagnosis: Latest DM_COD > latest DMRES_COD
+• Type classification: Type 1, Type 2, or Unknown
+• Type hierarchy: Type 1 takes precedence if both types coded on same date
+
+Purpose: Core QOF register for diabetes management, monitoring, and outcome measurement.'"
+        ]
     )
 }}
 

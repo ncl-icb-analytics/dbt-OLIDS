@@ -1,6 +1,16 @@
 {{
     config(
-        materialized='table'
+        materialized='table',
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Coronary Heart Disease (CHD) Register - Patients with coronary heart disease diagnosis.
+
+Key Inclusion Criteria:
+• Active CHD diagnosis: CHD_COD present (includes MI, angina, coronary atherosclerosis)
+• No age restriction
+• Includes historical MI events
+
+Purpose: QOF register for CHD management, secondary prevention, and cardiovascular risk reduction.'"
+        ]
     )
 }}
 

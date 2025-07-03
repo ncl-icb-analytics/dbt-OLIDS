@@ -1,7 +1,20 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id', 'is_on_register']
+        cluster_by=['person_id', 'is_on_register'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF COPD Register - Complex rules-based register for chronic obstructive pulmonary disease.
+
+Key Inclusion Criteria:
+• RULE 1: Automatic inclusion if earliest unresolved COPD diagnosis < 01/04/2023
+• RULE 2: For diagnoses ≥ 01/04/2023, requires spirometry confirmation:
+  - FEV1/FVC < 0.7 within 93 days before to 186 days after diagnosis
+  - Uses FEV1FVCDIAG_DAT or FEV1FVCL70DIAG_DAT fields
+• RULE 3: Additional spirometry pathway for post-April 2023 patients
+• Excludes: Resolved COPD cases where resolution date > diagnosis date
+
+Purpose: QOF register implementing exact business rules for COPD identification and spirometry validation.'"
+        ]
     )
 }}
 
