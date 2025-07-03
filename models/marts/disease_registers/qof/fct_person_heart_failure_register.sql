@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Heart Failure Register - Patients with active heart failure and subtype classification.
+
+Key Inclusion Criteria:
+• Active heart failure diagnosis: Latest HF_COD > latest HFRES_COD OR no resolution
+• Subtype classification: General HF vs HF with LVSD/Reduced EF
+• No age restrictions
+• Excludes resolved heart failure cases
+
+Purpose: QOF register for heart failure management with subtype-specific monitoring and treatment optimisation.'"
+        ]
     )
 }}
 

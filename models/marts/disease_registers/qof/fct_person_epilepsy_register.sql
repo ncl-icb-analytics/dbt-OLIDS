@@ -1,7 +1,18 @@
 {{
     config(
         materialized='table',
-        cluster_by=['person_id']
+        cluster_by=['person_id'],
+        post_hook=[
+            "COMMENT ON TABLE {{ this }} IS 'QOF Epilepsy Register - Patients aged 18+ with active epilepsy requiring ongoing management.
+
+Key Inclusion Criteria:
+• Age: 18 years or older
+• Active epilepsy diagnosis: Latest EPIL_COD > latest EPILRES_COD
+• Recent medication: Epilepsy medication prescribed within last 6 months
+• External validation: Medication requirement ensures active management
+
+Purpose: QOF register for epilepsy management, seizure monitoring, and medication optimisation in adults.'"
+        ]
     )
 }}
 
