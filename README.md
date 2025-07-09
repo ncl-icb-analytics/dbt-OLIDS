@@ -38,8 +38,8 @@ Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
 
 ```bash
 # 1. Get the code
-git clone https://github.com/ncl-icb-analytics/snowflake-hei-migration
-cd snowflake-hei-migration
+git clone https://github.com/ncl-icb-analytics/dbt-olids
+cd dbt-olids
 
 # 2. Setup Python environment
 python -m venv venv && venv\Scripts\activate
