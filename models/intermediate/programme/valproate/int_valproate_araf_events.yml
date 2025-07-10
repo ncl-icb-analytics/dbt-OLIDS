@@ -4,10 +4,15 @@ models:
   description: 'Extracts all ARAF events from observations using valproate programme codes.
 
     Business Logic:
+
     • Joins observations with mapped concepts and valproate programme codes
+
     • Filters to ARAF code category only
+
     • One row per ARAF observation with person, date, concept details
+
     • Includes specific ARAF form code identification and lookback logic
+
     • Foundation data for ARAF dimension aggregation'
 
   columns:

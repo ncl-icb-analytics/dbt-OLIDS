@@ -28,7 +28,6 @@ models:
 
     Key Features:
 
-
     • Cluster IDs: AF_OBSERVATIONS, AF_EXCLUSIONS, DEEP_VEIN_THROMBOSIS, ATRIAL_FLUTTER, ATRIAL_FIBRILLATION_61_EXCLUSIONS, PULSE_RATE, PULSE_RHYTHM
 
     • Supports both AF_61 and AF_62 case finding measure requirements

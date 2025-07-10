@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_htn_63
   description: 'Case finding for hypertension in Black and South Asian patients with cardiovascular risk factors.
 
+
     Business Logic:
-    
+
     • Targets Black and South Asian patients with elevated blood pressure and cardiovascular risk factors
-    
+
     • Uses ethnicity-specific risk thresholds recognising higher cardiovascular risk in these populations
-    
+
     • Identifies patients requiring culturally appropriate hypertension intervention
-    
+
     • One row per eligible person with ethnicity, BP readings, and risk factor assessment'
 
   columns:

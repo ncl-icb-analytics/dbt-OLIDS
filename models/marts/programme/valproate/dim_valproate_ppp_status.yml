@@ -4,10 +4,15 @@ models:
   description: 'Person-level aggregation of Pregnancy Prevention Programme (PPP) events for valproate monitoring.
 
     Business Logic:
+
     • Aggregates all PPP events per person from intermediate PPP status table
+
     • Determines latest PPP status and enrollment (is_currently_ppp_enrolled from most recent event)
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
+
     • Provides current PPP status description with formatted date
+
     • Only includes people who have PPP events (has_ppp_event always TRUE)'
 
   columns:

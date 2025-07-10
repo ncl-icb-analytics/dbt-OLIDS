@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_htn_65
   description: 'Case finding for stage 1 hypertension with cardiovascular risk factors.
 
+
     Business Logic:
-    
+
     • Identifies patients with stage 1 hypertension who also have cardiovascular risk factors
-    
+
     • Targets higher-risk patients requiring comprehensive management rather than lifestyle-only
-    
+
     • Combines blood pressure thresholds with cardiovascular risk assessment
-    
+
     • One row per eligible person with BP readings and risk factor status'
 
   columns:

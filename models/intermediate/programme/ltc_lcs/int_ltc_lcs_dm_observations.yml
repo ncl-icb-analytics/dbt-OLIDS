@@ -28,7 +28,6 @@ models:
 
     Key Features:
 
-
     • Cluster IDs: HBA1C_LEVEL, QDIABETES_RISK, QRISK2_10YEAR, HISTORY_GESTATIONAL_DIABETES, GESTATIONAL_DIABETES_PREGNANCY_RISK, BMI_MEASUREMENT
 
     • Supports diabetes case finding measures using laboratory and risk assessment data

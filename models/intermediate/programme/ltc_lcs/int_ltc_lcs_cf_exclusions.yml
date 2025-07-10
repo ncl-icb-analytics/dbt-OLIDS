@@ -19,7 +19,6 @@ models:
 
     • One row per person with any excluding LTC condition
 
-
     • Covers 13 major LTC conditions: CKD, AF, COPD, HTN, CHD, Stroke/TIA, PAD, HF, T2DM, hyperlipidaemia, NAFLD, asthma
 
     • Includes boolean flags for each condition type and composite exclusion indicator

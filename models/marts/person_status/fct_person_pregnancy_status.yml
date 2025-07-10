@@ -6,15 +6,11 @@ models:
 
     Business Logic:
 
-
     • Population: Non-male individuals only
-
 
     • Current pregnancy: Latest pregnancy code > latest delivery code
 
-
     • Risk assessment: Child-bearing age (0-55 years) for medication safety
-
 
     • Clinical codes: Uses pregnancy codes vs delivery/termination codes
 

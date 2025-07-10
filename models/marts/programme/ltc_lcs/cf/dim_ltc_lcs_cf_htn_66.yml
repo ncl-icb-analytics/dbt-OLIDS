@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_htn_66
   description: 'Case finding for stage 1 hypertension without cardiovascular risk factors.
 
+
     Business Logic:
-    
+
     • Identifies patients with stage 1 hypertension (clinic BP 140-159/90-99, home/ABPM 135-149/85-94)
-    
+
     • Excludes patients with existing cardiovascular risk factors or complications
-    
+
     • Targets patients suitable for lifestyle intervention rather than immediate drug treatment
-    
+
     • One row per eligible person with latest blood pressure readings and risk factor status'
 
   columns:

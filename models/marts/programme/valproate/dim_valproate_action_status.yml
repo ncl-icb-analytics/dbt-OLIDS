@@ -4,9 +4,13 @@ models:
   description: 'Clinical decision support table implementing valproate safety monitoring logic with recommended actions.
 
     Business Logic:
+
     • Joins database scope with all dimension tables (PPP, ARAF, referrals, specialists, pregnancy)
+
     • Implements CASE-based decision logic for recommended actions based on patient status
+
     • Actions include: pregnancy review, PPP enrollment check, ARAF compliance, specialist monitoring
+
     • Provides consolidated view of all patient safety monitoring dimensions for decision support'
 
   columns:

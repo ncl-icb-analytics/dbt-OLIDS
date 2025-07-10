@@ -5,15 +5,11 @@ models:
 
     Key Inclusion Criteria:
 
-
     • Age: 18 years or older
-
 
     • Active epilepsy diagnosis: Latest EPIL_COD > latest EPILRES_COD
 
-
     • Recent medication: Epilepsy medication prescribed within last 6 months
-
 
     • External validation: Medication requirement ensures active management
 

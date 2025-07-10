@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_cvd_66
   description: 'Case finding for patients aged 75-83 requiring QRISK2 cardiovascular risk assessment.
 
+
     Business Logic:
-    
+
     • Identifies patients aged 75-83 years requiring QRISK2 assessment for cardiovascular risk
-    
+
     • Targets elderly patients lacking recent cardiovascular risk evaluation
-    
+
     • Supports age-appropriate cardiovascular risk management and statin review decisions
-    
+
     • One row per eligible elderly person requiring cardiovascular risk assessment'
 
   columns:

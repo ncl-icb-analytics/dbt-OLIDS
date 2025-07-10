@@ -6,14 +6,11 @@ models:
 
     Population Scope:
 
-
     • RULE 1: Automatic inclusion if earliest unresolved COPD diagnosis < 01/04/2023
-
 
     • RULE 2: For diagnoses ≥ 01/04/2023, requires spirometry confirmation:
 
     - FEV1/FVC < 0.7 within 93 days before to 186 days after diagnosis
-
 
     • RULE 3: Additional spirometry pathway for post-April 2023 patients
 

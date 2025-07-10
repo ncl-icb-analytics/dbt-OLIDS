@@ -6,7 +6,6 @@ models:
 
     Population Scope:
 
-
     • Active CHD diagnosis: CHD_COD present (includes MI, angina, coronary atherosclerosis)
 
     • No age restriction

@@ -3,6 +3,7 @@ models:
 - name: dim_ltc_lcs_cf_ckd_64
   description: 'Case finding for patients with specific conditions requiring eGFR monitoring who lack recent kidney function assessment.
 
+
     Business Logic:
 
     • Identifies patients aged 17+ with high-risk conditions but no eGFR test in last 12 months

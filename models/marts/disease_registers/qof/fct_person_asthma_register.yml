@@ -7,12 +7,9 @@ models:
 
     • Age 6+ years
 
-
     • Active asthma diagnosis: latest AST_COD > latest ASTRES_COD
 
-
     • Recent medication: asthma medication prescribed within last 12 months
-
 
     • External validation: medication requirement ensures active management
 

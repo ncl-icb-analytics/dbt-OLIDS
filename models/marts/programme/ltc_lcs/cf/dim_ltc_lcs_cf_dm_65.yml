@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_dm_65
   description: 'Case finding for diabetes screening in patients with moderate-high BMI using ethnicity-specific thresholds.
 
+
     Business Logic:
-    
+
     • Identifies patients with moderate BMI requiring diabetes screening (BAME: 27.5-32.5, non-BAME: 30-35)
-    
+
     • Targets patients lacking HbA1c assessment in the last 24 months
-    
+
     • Uses ethnicity-specific BMI thresholds recognising different diabetes risk profiles
-    
+
     • One row per eligible person with BMI, ethnicity data, and HbA1c monitoring gap'
 
   columns:

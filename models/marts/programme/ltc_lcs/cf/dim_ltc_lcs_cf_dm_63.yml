@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_dm_63
   description: 'Case finding for patients with borderline HbA1c levels requiring diabetes surveillance.
 
+
     Business Logic:
-    
+
     • Identifies patients aged 17+ with latest HbA1c between 46-47 mmol/mol (borderline pre-diabetic)
-    
+
     • Targets patients lacking recent diabetes monitoring and requiring enhanced surveillance
-    
+
     • Focuses on borderline glycaemic control requiring ongoing diabetes risk assessment
-    
+
     • One row per eligible person with borderline HbA1c requiring intervention'
 
   columns:

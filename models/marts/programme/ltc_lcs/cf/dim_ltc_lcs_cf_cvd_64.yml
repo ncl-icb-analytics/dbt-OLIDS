@@ -3,6 +3,7 @@ models:
 - name: dim_ltc_lcs_cf_cvd_64
   description: 'Case finding for patients from CVD base population requiring high-dose statin therapy.
 
+
     Business Logic:
 
     • Identifies all patients from cardiovascular base population needing high-dose statins

@@ -62,21 +62,15 @@ models:
 
       Categorizes the complexity and logic type of each rule:
 
-
       - AGE_BASED: Simple age threshold rules (priority 1)
-
 
       - AGE_BIRTH_RANGE: Child age ranges (priority 2)
 
-
       - HIERARCHICAL: Complex hierarchical conditions (priority 3)
-
 
       - COMBINATION: Multi-condition logic (priority 4)
 
-
       - EXCLUSION: Exclusion-based rules (priority 5)
-
 
       - SIMPLE: Single condition rules (priority 6)'
   - name: person_id

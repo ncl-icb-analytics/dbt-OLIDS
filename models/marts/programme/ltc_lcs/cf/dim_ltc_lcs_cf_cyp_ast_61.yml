@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_cyp_ast_61
   description: 'Case finding for children and young people with asthma symptoms requiring formal diagnosis.
 
+
     Business Logic:
-    
+
     • Identifies children/young people aged 18 months to under 18 years with asthma symptoms but no formal diagnosis
-    
+
     • Targets paediatric population with clinical indicators suggesting asthma requiring assessment
-    
+
     • Supports early asthma diagnosis and management to prevent complications
-    
+
     • One row per eligible child/young person requiring asthma evaluation and formal diagnosis'
 
   columns:

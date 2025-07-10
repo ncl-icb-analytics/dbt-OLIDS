@@ -21,14 +21,12 @@ models:
 
     • Covers clinic, home, and ABPM blood pressure events with systolic/diastolic pairing
 
-
     • Includes other hypertension-related observations: eGFR, BMI, BSA, cardiovascular complications
 
     • Sourced from int_blood_pressure_all and LTC_LCS programme observation clusters
 
 
     Key Features:
-
 
     • Cluster IDs: HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM, HYPERTENSION_EGFR, HYPERTENSION_BMI, HYPERTENSION_BSA, HYPERTENSION_MYOCARDIAL, HYPERTENSION_CEREBRAL, HYPERTENSION_CLAUDICATION, HYPERTENSION_DIABETES
 

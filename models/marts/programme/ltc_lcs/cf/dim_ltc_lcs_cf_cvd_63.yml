@@ -3,6 +3,7 @@ models:
 - name: dim_ltc_lcs_cf_cvd_63
   description: 'Case finding for patients on statins with elevated non-HDL cholesterol requiring medication review.
 
+
     Business Logic:
 
     • Identifies patients aged 40-83 on statins with latest non-HDL cholesterol > 2.5 mmol/L

@@ -8,7 +8,6 @@ models:
 
     • Eligible females aged 25-64 years for cervical screening programme
 
-
     • Age-specific screening intervals: 3-year for 25-49, 5-year for 50-64
 
     • Includes all women with screening history and current programme status
@@ -64,15 +63,11 @@ models:
 
     description: 'Overall programme compliance status:
 
-
       - ''Up to Date'': Screening current within age-appropriate interval
-
 
       - ''Overdue'': Screening overdue based on age-specific interval
 
-
       - ''Never Screened'': No completed screening history
-
 
       - ''Not Eligible'': Outside eligible age range'
 
@@ -90,18 +85,13 @@ models:
 
     description: 'Current screening status based on latest observation:
 
-
       - ''Up to Date (Screened)'': Latest observation is completed screening
-
 
       - ''Unsuitable for Screening'': Latest valid status is unsuitable
 
-
       - ''Recently Declined'': Declined screening within last 12 months
 
-
       - ''Non-responsive'': Non-response to invitations within last 12 months
-
 
       - ''Status Expired'': Latest status no longer valid'
 
@@ -146,21 +136,15 @@ models:
 
     description: 'Simplified abnormality grade classification:
 
-
       - ''Normal'': No abnormality detected
-
 
       - ''Low Grade'': Borderline changes, mild dyskaryosis
 
-
       - ''Moderate Grade'': Moderate dyskaryosis
-
 
       - ''High Grade'': Severe dyskaryosis, glandular abnormalities
 
-
       - ''HPV Changes'': Viral changes, koilocytosis
-
 
       - ''Infection'': Bacterial/fungal infections
 
@@ -186,12 +170,9 @@ models:
 
     description: 'Sample adequacy assessment:
 
-
       - ''Adequate'': Endocervical cells present, suitable for assessment
 
-
       - ''Inadequate'': Insufficient sample for assessment
-
 
       - ''Unspecified'': No specific adequacy information
 
@@ -208,15 +189,11 @@ models:
 
     description: 'Clinical action required based on latest screening:
 
-
       - ''Routine Follow-up'': Normal result, routine interval
-
 
       - ''Repeat Required'': Follow-up screening needed
 
-
       - ''Colposcopy Required'': Referral for colposcopy indicated
-
 
       - ''Clinical Review'': Requires clinical assessment
 

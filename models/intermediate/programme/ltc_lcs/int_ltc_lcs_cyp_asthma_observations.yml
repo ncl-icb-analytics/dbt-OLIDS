@@ -28,7 +28,6 @@ models:
 
     Key Features:
 
-
     • Cluster IDs: SUSPECTED_ASTHMA, VIRAL_WHEEZE, ASTHMA_DIAGNOSIS, ASTHMA_RESOLVED
 
     • Supports CYP-specific asthma case finding measure requirements

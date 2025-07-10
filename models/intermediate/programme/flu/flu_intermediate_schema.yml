@@ -108,11 +108,9 @@ models:
 
     Key Features:
 
-
     • Multi-path eligibility: CKD diagnosis OR hierarchical stage 3-5 evidence
 
     • Hierarchical staging logic ensuring severe stages take precedence
-
 
     • Age restrictions: 6 months to 65 years at reference date
 
@@ -178,11 +176,9 @@ models:
 
     Key Features:
 
-
     • Multi-path eligibility: BMI >= 40 values OR severe obesity diagnostic codes
 
     • Hierarchical logic ensuring most recent and severe evidence takes precedence
-
 
     • Age restrictions: 18-64 years (216 months to 65 years)
 
@@ -239,9 +235,7 @@ models:
 
     • One row per eligible woman aged 12-64 years with documented pregnancy
 
-
     • Group 1: Pregnancy since campaign start date (highest priority)
-
 
     • Group 2: Latest pregnancy before start where pregnancy is more recent than delivery
 
@@ -253,7 +247,6 @@ models:
     • Hierarchical pregnancy logic prioritising current over historical pregnancies
 
     • Campaign timing logic ensuring pregnancy relevance to flu season
-
 
     • Age and sex restrictions: women aged 12-64 years (144 months to 65 years)
 
@@ -318,12 +311,9 @@ models:
 
     • One row per eligible person aged 6 months to 65 years per rule group
 
-
     • CNS_GROUP: chronic neurological conditions (MS, motor neurone disease)
 
-
     • ASPLENIA_GROUP: asplenia or splenic dysfunction
-
 
     • LEARNDIS_GROUP: learning disabilities
 
@@ -332,9 +322,7 @@ models:
 
     • Single-cluster evaluation per rule group with specific clinical conditions
 
-
     • Date qualifier logic: earliest for CNS/asplenia, latest for learning disabilities
-
 
     • Age restrictions: 6 months to 65 years at reference date
 
@@ -389,9 +377,7 @@ models:
 
     • One row per eligible person aged 6 months to 65 years per rule group
 
-
     • IMMUNO_GROUP: diagnosis OR medication OR administration OR chemotherapy evidence
-
 
     • RESP_GROUP: asthma eligibility OR chronic respiratory disease diagnosis
 
@@ -405,7 +391,6 @@ models:
     • Respiratory disease union logic combining asthma and respiratory diagnoses
 
     • Evidence hierarchy selection using most recent qualifying evidence
-
 
     • Age restrictions: 6 months to 65 years at reference date'
 
@@ -471,7 +456,6 @@ models:
     • Hierarchical carer status logic prioritising latest carer vs not-carer codes
 
     • Comprehensive exclusion logic checking all clinical eligibility paths
-
 
     • Age restrictions: 5-64 years (60 months to 65 years)
 
@@ -689,9 +673,7 @@ models:
 
     Key Features:
 
-
     • Single cluster evaluation: one clinical condition per rule group
-
 
     • Flexible date qualifiers: earliest, latest, latest_since, latest_after
 
@@ -770,12 +752,9 @@ models:
 
     Key Features:
 
-
     • Multi-condition logic: AST_GROUP (diagnosis AND medication/admission)
 
-
     • Union logic: RESP_GROUP (asthma OR respiratory disease)
-
 
     • Complex combinations: IMMUNO_GROUP (diagnosis OR medication OR treatment)
 
@@ -985,12 +964,9 @@ models:
 
     Key Features:
 
-
     • Primary requirement: Asthma diagnosis (AST_COD) with earliest occurrence tracking
 
-
     • Secondary requirement: Recent medication OR historical admission evidence
-
 
     • Age restrictions: 6 months to 65 years at reference date
 
@@ -1073,9 +1049,7 @@ models:
 
       Categorizes the evidence that qualified the patient:
 
-
       - ''Recent asthma medication'': Medication prescribed/ordered since lookback date
-
 
       - ''Asthma admission'': Hospital admission for asthma at any time
 

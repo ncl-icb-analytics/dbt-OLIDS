@@ -4,9 +4,13 @@ models:
   description: 'Person-level aggregation of ARAF referral events for valproate monitoring.
 
     Business Logic:
+
     • Aggregates all ARAF referral events per person from intermediate ARAF referral events table
+
     • Provides earliest and latest ARAF referral event dates for timeline analysis
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
+
     • Only includes people who have ARAF referral events (has_araf_referral_event always TRUE)'
 
   columns:

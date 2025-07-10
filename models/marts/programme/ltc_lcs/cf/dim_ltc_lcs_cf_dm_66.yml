@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_dm_66
   description: 'Case finding for patients with pre-diabetic HbA1c levels requiring continued surveillance.
 
+
     Business Logic:
-    
+
     • Identifies patients with latest HbA1c between 42-46 mmol/mol (pre-diabetic range)
-    
+
     • Requires HbA1c assessment within the last 12 months for current status
-    
+
     • Targets patients for diabetes prevention interventions and ongoing monitoring
-    
+
     • One row per eligible person with recent HbA1c results and monitoring history'
 
   columns:

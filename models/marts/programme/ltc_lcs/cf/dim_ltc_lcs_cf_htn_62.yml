@@ -3,14 +3,15 @@ models:
 - name: dim_ltc_lcs_cf_htn_62
   description: 'Case finding for stage 2 hypertension requiring blood pressure management.
 
+
     Business Logic:
-    
+
     • Identifies patients with stage 2 hypertension (clinic BP 160-179/100-109, home/ABPM 150-164/95-99)
-    
+
     • Excludes patients already captured in severe hypertension category (HTN_61)
-    
+
     • Targets patients requiring clinical intervention and cardiovascular risk assessment
-    
+
     • One row per person with latest blood pressure readings meeting stage 2 criteria'
 
   columns:

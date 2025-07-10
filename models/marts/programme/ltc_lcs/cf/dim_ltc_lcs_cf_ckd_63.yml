@@ -3,6 +3,7 @@ models:
 - name: dim_ltc_lcs_cf_ckd_63
   description: 'Case finding for patients with significantly elevated single UACR reading indicating substantial kidney damage.
 
+
     Business Logic:
 
     • Identifies patients aged 17+ with latest UACR reading > 70 (excludes patients from CKD_62)

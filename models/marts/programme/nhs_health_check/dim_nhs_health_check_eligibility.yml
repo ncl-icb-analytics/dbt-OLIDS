@@ -4,13 +4,13 @@ models:
   description: 'Eligibility assessment and due status for NHS Health Check programme.
 
     Business Logic:
-    
+
     • Determines eligibility based on age 40-74 and absence of excluding chronic conditions
-    
+
     • Checks for excluding conditions: CHD, diabetes, stroke, CKD, AF, heart failure, familial hypercholesterolaemia
-    
+
     • Calculates due status: eligible patients who never had a check or last check >5 years ago (1825 days)
-    
+
     • One row per person with eligibility flags and latest health check date'
 
   config:

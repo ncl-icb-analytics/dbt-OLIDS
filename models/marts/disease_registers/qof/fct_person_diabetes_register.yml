@@ -7,9 +7,7 @@ models:
 
     • Age 17+ years
 
-
     • Active diabetes diagnosis: latest DM_COD > latest DMRES_COD
-
 
     • Type classification: Type 1, Type 2, or Unknown (Type 1 takes precedence)
 

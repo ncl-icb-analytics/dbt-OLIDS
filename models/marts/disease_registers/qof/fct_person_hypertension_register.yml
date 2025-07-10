@@ -8,11 +8,9 @@ models:
 
     • Age 18+ years
 
-
     • Active hypertension diagnosis: latest HTN_COD > latest HTNRES_COD
 
     • Clinical staging based on latest BP with NICE-aligned thresholds
-
 
     • Context-aware thresholds: Home/ABPM vs Clinic readings
 

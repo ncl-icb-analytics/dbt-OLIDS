@@ -4,9 +4,13 @@ models:
   description: 'Extracts all ARAF referral events from observations using valproate programme codes.
 
     Business Logic:
+
     • Joins observations with mapped concepts and valproate programme codes
+
     • Filters to REFERRAL code category only
+
     • One row per ARAF referral observation with person, date, concept details
+
     • Foundation data for ARAF referral dimension aggregation'
 
   columns:
