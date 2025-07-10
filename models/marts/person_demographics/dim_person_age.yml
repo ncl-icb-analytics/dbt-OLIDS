@@ -1,153 +1,148 @@
 version: 2
-
 models:
-  - name: dim_person_age
-    description: |
-      Comprehensive age-related dimension providing various age calculations, bands, and life stage classifications.
-      Uses dim_person_birth_death as source, calculating ages based on death date for deceased persons
-      or current date for living persons. Birth and death dates are calculated as mathematical midpoints
-      of each month for optimal statistical precision.
+- name: dim_person_age
+  description: 'Mart: Person Age Dimension - Age-related attributes for population health analytics.
 
-      **Age Calculation Logic:**
-      - For deceased persons: Age calculated to death date
-      - For living persons: Age calculated to current date
-      - Birth/death dates use month midpoints for statistical accuracy
 
-      **Age Band Standards:**
-      - NHS Digital bands (Health Survey for England)
-      - ONS (Office for National Statistics) bands
-      - Standard 5-year and 10-year bands
-      - Life stage classifications
-      - UK school year/education level mappings
+    Population Scope:
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier - primary key"
-        tests:
-          - not_null
-          - unique
+    • All persons with recorded birth dates
 
-      - name: sk_patient_id
-        description: "Surrogate patient key from birth/death dimension"
-        tests:
-          - not_null
+    • Current age for living persons, age at death for deceased persons
 
-      - name: birth_year
-        description: "Year of birth (YYYY format)"
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 1900
-              max_value: 2030
+    • One row per person with comprehensive age-related attributes
 
-      - name: birth_month
-        description: "Month of birth (1-12)"
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 12
 
-      - name: birth_date_approx
-        description: "Approximate birth date calculated as midpoint of birth month"
-        tests:
-          - not_null
+    Key Features:
 
-      - name: death_year
-        description: "Year of death (YYYY format, NULL if alive)"
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 1900
-              max_value: 2030
+    • Multiple standard age bands (5-year, 10-year, NHS, ONS)
 
-      - name: death_month
-        description: "Month of death (1-12, NULL if alive)"
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 12
+    • UK school stages and education levels
 
-      - name: death_date_approx
-        description: "Approximate death date calculated as midpoint of death month (NULL if alive)"
-
-      - name: is_deceased
-        description: "Boolean flag indicating if person is deceased"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: age
-        description: "Age in completed years (age at death for deceased, current age for living)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 120
-
-      - name: age_months
-        description: "Age in completed months"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 1440
-
-      - name: age_weeks_approx
-        description: "Approximate age in weeks"
-        tests:
-          - not_null
-
-      - name: age_days_approx
-        description: "Approximate age in days"
-        tests:
-          - not_null
-
-      - name: age_band_5y
-        description: "5-year age bands (0-4, 5-9, 10-14, etc., 100+)"
-        tests:
-          - not_null
-
-      - name: age_band_10y
-        description: "10-year age bands (0-9, 10-19, 20-29, etc., 100+)"
-        tests:
-          - not_null
-
-      - name: age_band_nhs
-        description: "NHS Digital age bands used in Health Survey for England (0-4, 5-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, 85+)"
-        tests:
-          - not_null
-
-      - name: age_band_ons
-        description: "ONS (Office for National Statistics) 5-year age bands (0-4, 5-9, 10-14, ..., 80-84, 85+)"
-        tests:
-          - not_null
-
-      - name: age_life_stage
-        description: "Life stage classification (Infant, Toddler, Child, Adolescent, Young Adult, Adult, Older Adult, Elderly, Very Elderly)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Unknown', 'Infant', 'Toddler', 'Child', 'Adolescent', 'Young Adult', 'Adult', 'Older Adult', 'Elderly', 'Very Elderly']
-
-      - name: age_school_stage
-        description: "UK school year stage based on age at academic year start (Nursery, Reception, Year 1-13, etc.)"
-        tests:
-          - not_null
-
-      - name: age_education_level
-        description: "Broader education level category (Pre-school, Nursery, Primary School, Secondary School - KS3/KS4, Secondary School - Sixth Form, Post-secondary)"
-        tests:
-          - not_null
-
-      - name: is_primary_school_age
-        description: "Boolean flag for primary school age (ages 4-11)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_secondary_school_age
-        description: "Boolean flag for secondary school age including sixth form (ages 11-18)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Life stage categories for demographic analysis'
+  columns:
+  - name: person_id
+    description: Unique person identifier - primary key
+    tests:
+    - not_null
+    - unique
+  - name: sk_patient_id
+    description: Surrogate patient key from birth/death dimension
+    tests:
+    - not_null
+  - name: birth_year
+    description: Year of birth (YYYY format)
+    tests:
+    - dbt_utils.accepted_range:
+        min_value: 1900
+        max_value: 2030
+  - name: birth_month
+    description: Month of birth (1-12)
+    tests:
+    - dbt_utils.accepted_range:
+        min_value: 1
+        max_value: 12
+  - name: birth_date_approx
+    description: Approximate birth date calculated as midpoint of birth month
+    tests:
+    - not_null
+  - name: death_year
+    description: Year of death (YYYY format, NULL if alive)
+    tests:
+    - dbt_utils.accepted_range:
+        min_value: 1900
+        max_value: 2030
+  - name: death_month
+    description: Month of death (1-12, NULL if alive)
+    tests:
+    - dbt_utils.accepted_range:
+        min_value: 1
+        max_value: 12
+  - name: death_date_approx
+    description: Approximate death date calculated as midpoint of death month (NULL if alive)
+  - name: is_deceased
+    description: Boolean flag indicating if person is deceased
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: age
+    description: Age in completed years (age at death for deceased, current age for living)
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 120
+  - name: age_months
+    description: Age in completed months
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 1440
+  - name: age_weeks_approx
+    description: Approximate age in weeks
+    tests:
+    - not_null
+  - name: age_days_approx
+    description: Approximate age in days
+    tests:
+    - not_null
+  - name: age_band_5y
+    description: 5-year age bands (0-4, 5-9, 10-14, etc., 100+)
+    tests:
+    - not_null
+  - name: age_band_10y
+    description: 10-year age bands (0-9, 10-19, 20-29, etc., 100+)
+    tests:
+    - not_null
+  - name: age_band_nhs
+    description: NHS Digital age bands used in Health Survey for England (0-4, 5-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, 85+)
+    tests:
+    - not_null
+  - name: age_band_ons
+    description: ONS (Office for National Statistics) 5-year age bands (0-4, 5-9, 10-14, ..., 80-84, 85+)
+    tests:
+    - not_null
+  - name: age_life_stage
+    description: Life stage classification (Infant, Toddler, Child, Adolescent, Young Adult, Adult, Older Adult, Elderly, Very Elderly)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Unknown
+        - Infant
+        - Toddler
+        - Child
+        - Adolescent
+        - Young Adult
+        - Adult
+        - Older Adult
+        - Elderly
+        - Very Elderly
+  - name: age_school_stage
+    description: UK school year stage based on age at academic year start (Nursery, Reception, Year 1-13, etc.)
+    tests:
+    - not_null
+  - name: age_education_level
+    description: Broader education level category (Pre-school, Nursery, Primary School, Secondary School - KS3/KS4, Secondary School - Sixth Form, Post-secondary)
+    tests:
+    - not_null
+  - name: is_primary_school_age
+    description: Boolean flag for primary school age (ages 4-11)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_secondary_school_age
+    description: Boolean flag for secondary school age including sixth form (ages 11-18)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

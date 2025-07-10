@@ -1,12 +1,21 @@
 version: 2
 models:
 - name: fct_person_depression_register
-  description: "**Depression Register - QOF Mental Health Quality Measures**\n
-    \ + resolution logic.\n\nQOF Business Logic:\n- Age \u226518 years (QOF requirement)\n- Latest depression episode on/after\
-    \ 1 April 2006 (QOF date threshold)\n- Unresolved: latest_diagnosis_date > latest_resolved_date OR no resolved code\n\
-    - Includes ALL persons (active, inactive, deceased) for comprehensive reporting\n\nQOF Context:\nUsed for depression quality\
-    \ measures including:\n- Depression care pathways and treatment monitoring\n- Recovery planning and review scheduling\n\
-    - Psychological therapy access monitoring\n- Medication management and compliance"
+  description: 'QOF Depression Register - Patients aged 18+ with active depression diagnosis.
+
+
+    Key Inclusion Criteria:
+
+
+    • Age: 18 years or older
+
+
+    • Active depression diagnosis: Latest DEP_COD > latest DEPRES_COD OR no resolution
+
+    • Excludes resolved depression cases
+
+
+    Purpose: QOF register for depression management, monitoring treatment response, and mental health support.'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -15,12 +24,6 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-#   - name: age
-#     description: Current age of person in years
-#     tests:
-#     - dbt_utils.accepted_range:
-#         min_value: 18
-#         max_value: 120
   - name: is_on_register
     description: 'Register flag: meets QOF depression criteria (always TRUE for this table)'
     tests:

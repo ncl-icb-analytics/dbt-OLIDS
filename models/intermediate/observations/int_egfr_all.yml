@@ -1,51 +1,89 @@
 version: 2
-
 models:
-  - name: int_egfr_all
+- name: int_egfr_all
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: EGFR_COD
+  description: 'Intermediate: eGFR Observations - All recorded estimated glomerular filtration rate measurements with CKD staging.
 
+
+    Clinical Purpose:
+
+    • Tracks eGFR measurements for kidney function assessment and CKD staging
+
+    • Supports chronic kidney disease monitoring and progression tracking
+
+    • Enables CKD case finding and clinical decision support
+
+
+    Data Granularity:
+
+    • One row per eGFR observation
+
+    • Includes all patients regardless of status (active/inactive/deceased)
+
+    • Uses EGFR_COD cluster for eGFR value identification
+
+
+    Key Features:
+
+    • Data quality validation with plausible range filtering (1-200 mL/min/1.73m²)
+
+    • CKD stage classification (stages 1-5) based on eGFR thresholds
+
+    • CKD indicator flags for values <60 suggesting kidney disease
+
+    • Comprehensive kidney function assessment for clinical management'
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "EGFR_COD"
-    description: |
-      All estimated Glomerular Filtration Rate (eGFR) measurements from observations.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the eGFR measurement"
-        tests:
-          - not_null
-      - name: egfr_value
-        description: "eGFR value in mL/min/1.73m²"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 250
-              severity: warn
-      - name: result_unit_display
-        description: "Display value for the result unit (e.g., 'mL/min/1.73m²')"
-      - name: is_valid_egfr
-        description: "Flag indicating if eGFR is within valid range (1-200)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: ckd_stage
-        description: "CKD stage classification based on eGFR"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Invalid', 'Normal/High (≥90)', 'Mild decrease (60-89)', 'CKD Stage 3a (45-59)', 'CKD Stage 3b (30-44)', 'CKD Stage 4 (15-29)', 'CKD Stage 5 (<15)', 'Unknown']
-      - name: is_ckd_indicator
-        description: "Flag indicating CKD (eGFR < 60)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the eGFR measurement
+    tests:
+    - not_null
+  - name: egfr_value
+    description: eGFR value in mL/min/1.73m²
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 1
+        max_value: 250
+        severity: warn
+  - name: result_unit_display
+    description: Display value for the result unit (e.g., 'mL/min/1.73m²')
+  - name: is_valid_egfr
+    description: Flag indicating if eGFR is within valid range (1-200)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: ckd_stage
+    description: CKD stage classification based on eGFR
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Invalid
+        - Normal/High (≥90)
+        - Mild decrease (60-89)
+        - CKD Stage 3a (45-59)
+        - CKD Stage 3b (30-44)
+        - CKD Stage 4 (15-29)
+        - CKD Stage 5 (<15)
+        - Unknown
+  - name: is_ckd_indicator
+    description: Flag indicating CKD (eGFR < 60)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

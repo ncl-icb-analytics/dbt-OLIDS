@@ -1,42 +1,59 @@
 version: 2
-
 models:
-  - name: dim_ltc_lcs_cf_dm_66
-    description: "DM_66 case finding: Patients without diabetes risk factors (control group)"
+- name: dim_ltc_lcs_cf_dm_66
+  description: 'Mart: LTC LCS Case Finding DM_66 - Identifies patients with elevated HbA1c in pre-diabetic range with recent monitoring requiring continued surveillance.
 
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
 
-      - name: age
-        description: "Age of the patient (17+)"
-        tests:
-          - not_null
+    Business Purpose:
 
-      - name: has_no_risk_factors
-        description: "Boolean flag indicating person has no diabetes risk factors"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-        #   - accepted_values:
-        #       values: [true, false]
+    • Support systematic case finding for patients with pre-diabetic HbA1c levels requiring ongoing monitoring
 
-      - name: latest_bmi_date
-        description: "Date of most recent BMI measurement (if available)"
+    • Enable continued diabetes surveillance in patients with recent elevated glucose control
 
-      - name: latest_bmi_value
-        description: "Most recent BMI value (should be below risk thresholds)"
+    • Provide clinical decision support for diabetes prevention in patients with active monitoring
 
-      - name: latest_hba1c_date
-        description: "Date of most recent HbA1c reading (if available)"
+    • Support quality improvement initiatives for diabetes prevention through enhanced surveillance
 
-      - name: latest_hba1c_value
-        description: "Most recent HbA1c value (should be below risk thresholds)"
 
-      - name: all_bmi_codes
-        description: "Array of all BMI concept codes for the patient"
+    Data Granularity:
 
-      - name: all_bmi_displays
-        description: "Array of all BMI concept display terms for the patient"
+    • One row per person with latest HbA1c between 42-46 mmol/mol assessed within 12 months
+
+    • Includes patients with pre-diabetic glucose control undergoing active monitoring
+
+    • Limited to patients with recent assessment showing elevated glucose levels
+
+
+    Key Features:
+
+    • Pre-diabetic HbA1c range identification (42-46 mmol/mol) for active diabetes prevention
+
+    • Recent monitoring confirmation (within 12 months) for current clinical status
+
+    • Evidence-based case finding supporting diabetes prevention in actively monitored populations
+
+    • Integration with diabetes prevention pathways for sustained intervention and monitoring'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Age of the patient (17+)
+    tests:
+    - not_null
+  - name: has_no_risk_factors
+    description: Boolean flag indicating person has no diabetes risk factors
+  - name: latest_bmi_date
+    description: Date of most recent BMI measurement (if available)
+  - name: latest_bmi_value
+    description: Most recent BMI value (should be below risk thresholds)
+  - name: latest_hba1c_date
+    description: Date of most recent HbA1c reading (if available)
+  - name: latest_hba1c_value
+    description: Most recent HbA1c value (should be below risk thresholds)
+  - name: all_bmi_codes
+    description: Array of all BMI concept codes for the patient
+  - name: all_bmi_displays
+    description: Array of all BMI concept display terms for the patient

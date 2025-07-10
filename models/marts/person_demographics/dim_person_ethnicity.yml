@@ -1,23 +1,34 @@
 version: 2
-
 models:
-  - name: dim_person_ethnicity
-    description: |
-      Person ethnicity dimension providing NHS standard ethnicity classifications.
-      Uses QOF-compatible ethnicity mappings for clinical reporting.
+- name: dim_person_ethnicity
+  description: 'Mart: Person Ethnicity Dimension - Latest recorded ethnicity for population analysis.
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier - primary key"
-        tests:
-          - not_null
-          - unique
 
-      - name: ethnicity_code
-        description: "NHS ethnicity code"
+    Population Scope:
 
-      - name: ethnicity_description
-        description: "NHS ethnicity description"
+    • All persons regardless of ethnicity record availability
 
-      - name: ethnicity_group
-        description: "High-level ethnicity grouping"
+    • Latest ethnicity record per person where available
+
+    • Defaults to \"Not Recorded\" for persons without ethnicity data
+
+
+    Key Features:
+
+    • Ethnicity category, subcategory, and granular classifications
+
+    • SNOMED coding for clinical interoperability
+
+    • Clinical effective date for data quality assessment'
+  columns:
+  - name: person_id
+    description: Unique person identifier - primary key
+    tests:
+    - not_null
+    - unique
+  - name: ethnicity_code
+    description: NHS ethnicity code
+  - name: ethnicity_description
+    description: NHS ethnicity description
+  - name: ethnicity_group
+    description: High-level ethnicity grouping

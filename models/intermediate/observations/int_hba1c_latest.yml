@@ -1,11 +1,36 @@
 version: 2
 models:
 - name: int_hba1c_latest
-  description: 'Latest valid HbA1c measurement per person.
+  description: 'Intermediate: Latest HbA1c Observations - Most recent valid HbA1c measurement per person.
 
-    Filters to most recent valid HbA1c in appropriate ranges.
 
-    '
+    Clinical Purpose:
+
+    • Provides current glycaemic control status for diabetes management
+
+    • Supports diabetes care decision-making and QOF reporting
+
+    • Enables current diabetes control assessment and treatment planning
+
+
+    Data Granularity:
+
+    • One row per person with their most recent valid HbA1c
+
+    • Includes only patients with valid HbA1c measurements
+
+    • Supports both IFCC and DCCT measurement formats
+
+
+    Key Features:
+
+    • Latest valid HbA1c identification with measurement type preservation
+
+    • Clinical diabetes control categorisation for care pathway management
+
+    • QOF target achievement flags for quality indicator reporting
+
+    • Diabetes diagnostic indicators for clinical decision support'
   columns:
   - name: person_id
     description: Unique person identifier

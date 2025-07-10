@@ -1,181 +1,147 @@
 version: 2
-
 models:
-  - name: dim_person_demographics
-    description: |
-      Comprehensive demographics dimension table providing a single source of truth for person demographics.
+- name: dim_person_demographics
+  description: 'Mart: Person Demographics - Comprehensive demographic profiles for population health analytics.
 
-      Consolidates information from multiple dimension tables:
-      - Age and birth/death information
-      - Sex demographics
-      - Ethnicity details
-      - Language and communication needs
-      - Current practice registration
-      - Practice neighbourhood and organisational hierarchy
-      - Current address hashes for privacy-preserving geographic linking
-      - Geographic placeholders for future LSOA, ward, and deprivation data
 
-      Serves as the primary demographics reference for analytics and reporting.
-      Note: Working with dummy data so some geographic fields will be NULL until proper data is available.
+    Population Scope:
 
-    columns:
-      # Core Identifiers
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
+    • All persons with recorded birth dates
 
-      - name: sk_patient_id
-        description: "Surrogate key for the patient"
-        tests:
-          - not_null
+    • Includes both active and inactive patients
 
-      # Status Flags
-      - name: is_active
-        description: "Whether the person is an active patient (registered, not deceased, not dummy)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • One row per person with comprehensive demographic information
 
-      - name: is_deceased
-        description: "Whether the person is recorded as deceased"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
 
-      # Basic Demographics
-      - name: sex
-        description: "Sex of the person (Female, Male, Unknown)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Female', 'Male', 'Unknown']
+    Key Features:
 
-      - name: birth_year
-        description: "Year of birth"
-        tests:
-          - not_null
+    • Consolidated demographics from multiple dimension tables
 
-      - name: birth_date_approx
-        description: "Approximate date of birth (midpoint of birth month/year)"
+    • Age, sex, ethnicity, language, and geographic information
 
-      - name: death_year
-        description: "Year of death (NULL if alive)"
+    • Current practice registration and organisational hierarchy
 
-      - name: death_date_approx
-        description: "Approximate date of death (midpoint of death month/year)"
-
-      # Age and Age Bands
-      - name: age
-        description: "Current age in years (or age at death if deceased)"
-        tests:
-          - not_null
-
-      - name: age_life_stage
-        description: "Life stage categorisation (e.g., Child, Adult, Elderly)"
-        tests:
-          - not_null
-
-      - name: age_band_5y
-        description: "5-year age band (e.g., 0-4, 5-9)"
-        tests:
-          - not_null
-
-      - name: age_band_10y
-        description: "10-year age band (e.g., 0-9, 10-19)"
-        tests:
-          - not_null
-
-      - name: age_band_nhs
-        description: "NHS standard age bands for healthcare reporting"
-        tests:
-          - not_null
-
-      - name: age_band_ons
-        description: "ONS (Office for National Statistics) standard 5-year age bands"
-        tests:
-          - not_null
-
-      # Ethnicity
-      - name: ethnicity_category
-        description: "Broad ethnicity category (e.g., White, Asian, Not Recorded)"
-
-      - name: ethnicity_subcategory
-        description: "More specific ethnicity subcategory"
-
-      - name: ethnicity_granular
-        description: "Most granular ethnicity detail available"
-
-      # Language and Communication
-      - name: main_language
-        description: "Main spoken language"
-
-      - name: language_category
-        description: "Language category (e.g., English, Other)"
-
-      - name: interpreter_needed
-        description: "Whether an interpreter is needed"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: interpreter_type
-        description: "Type of interpreter needed"
-
-      # Current Practice Registration
-      - name: current_practice_code
-        description: "Organisation code of current registered practice"
-
-      - name: current_practice_name
-        description: "Name of current registered practice"
-
-      - name: current_practice_postcode
-        description: "Postcode of current practice"
-
-      - name: registration_start_date
-        description: "Start date of current practice registration"
-
-      # Practice Neighbourhood and Organisational Hierarchy
-      - name: pcn_code
-        description: "Primary Care Network code"
-
-      - name: pcn_name
-        description: "Primary Care Network name"
-
-      - name: local_authority
-        description: "Local authority area based on practice"
-
-      - name: practice_neighbourhood
-        description: "Practice neighbourhood classification"
-
-      # Geographic Information (Current and placeholders for future data)
-      - name: post_code_hash
-        description: "Hashed postcode for current address (for privacy-preserving geographic linking)"
-
-      - name: uprn_hash
-        description: "Hashed Unique Property Reference Number for current address (placeholder - NULL in dummy data, available in real data)"
-
-      - name: household_id
-        description: "Foreign key to dim_households - enables household-level analytics and multi-person dwelling insights (will be populated when real UPRN data available)"
-
-      - name: lsoa_code_21
-        description: "Lower Super Output Area code from 2021 boundaries (placeholder - NULL in dummy data)"
-
-      - name: lsoa_name_21
-        description: "Lower Super Output Area name from 2021 boundaries (placeholder - NULL in dummy data)"
-
-      - name: ward_code
-        description: "Electoral ward code (placeholder - NULL in dummy data)"
-
-      - name: ward_name
-        description: "Electoral ward name (placeholder - NULL in dummy data)"
-
-      - name: imd_decile_19
-        description: "Index of Multiple Deprivation 2019 decile (1=most deprived, 10=least deprived) (placeholder - NULL in dummy data)"
-
-      - name: imd_quintile_19
-        description: "Index of Multiple Deprivation 2019 quintile (1=most deprived, 5=least deprived) (placeholder - NULL in dummy data)"
+    • Address and household linkage capability'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+    - unique
+  - name: sk_patient_id
+    description: Surrogate key for the patient
+    tests:
+    - not_null
+  - name: is_active
+    description: Whether the person is an active patient (registered, not deceased, not dummy)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_deceased
+    description: Whether the person is recorded as deceased
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: sex
+    description: Sex of the person (Female, Male, Unknown)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Female
+        - Male
+        - Unknown
+  - name: birth_year
+    description: Year of birth
+    tests:
+    - not_null
+  - name: birth_date_approx
+    description: Approximate date of birth (midpoint of birth month/year)
+  - name: death_year
+    description: Year of death (NULL if alive)
+  - name: death_date_approx
+    description: Approximate date of death (midpoint of death month/year)
+  - name: age
+    description: Current age in years (or age at death if deceased)
+    tests:
+    - not_null
+  - name: age_life_stage
+    description: Life stage categorisation (e.g., Child, Adult, Elderly)
+    tests:
+    - not_null
+  - name: age_band_5y
+    description: 5-year age band (e.g., 0-4, 5-9)
+    tests:
+    - not_null
+  - name: age_band_10y
+    description: 10-year age band (e.g., 0-9, 10-19)
+    tests:
+    - not_null
+  - name: age_band_nhs
+    description: NHS standard age bands for healthcare reporting
+    tests:
+    - not_null
+  - name: age_band_ons
+    description: ONS (Office for National Statistics) standard 5-year age bands
+    tests:
+    - not_null
+  - name: ethnicity_category
+    description: Broad ethnicity category (e.g., White, Asian, Not Recorded)
+  - name: ethnicity_subcategory
+    description: More specific ethnicity subcategory
+  - name: ethnicity_granular
+    description: Most granular ethnicity detail available
+  - name: main_language
+    description: Main spoken language
+  - name: language_category
+    description: Language category (e.g., English, Other)
+  - name: interpreter_needed
+    description: Whether an interpreter is needed
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: interpreter_type
+    description: Type of interpreter needed
+  - name: current_practice_code
+    description: Organisation code of current registered practice
+  - name: current_practice_name
+    description: Name of current registered practice
+  - name: current_practice_postcode
+    description: Postcode of current practice
+  - name: registration_start_date
+    description: Start date of current practice registration
+  - name: pcn_code
+    description: Primary Care Network code
+  - name: pcn_name
+    description: Primary Care Network name
+  - name: local_authority
+    description: Local authority area based on practice
+  - name: practice_neighbourhood
+    description: Practice neighbourhood classification
+  - name: post_code_hash
+    description: Hashed postcode for current address (for privacy-preserving geographic linking)
+  - name: uprn_hash
+    description: Hashed Unique Property Reference Number for current address (placeholder - NULL in dummy data, available in real data)
+  - name: household_id
+    description: Foreign key to dim_households - enables household-level analytics and multi-person dwelling insights (will be populated when real UPRN data available)
+  - name: lsoa_code_21
+    description: Lower Super Output Area code from 2021 boundaries (placeholder - NULL in dummy data)
+  - name: lsoa_name_21
+    description: Lower Super Output Area name from 2021 boundaries (placeholder - NULL in dummy data)
+  - name: ward_code
+    description: Electoral ward code (placeholder - NULL in dummy data)
+  - name: ward_name
+    description: Electoral ward name (placeholder - NULL in dummy data)
+  - name: imd_decile_19
+    description: Index of Multiple Deprivation 2019 decile (1=most deprived, 10=least deprived) (placeholder - NULL in dummy data)
+  - name: imd_quintile_19
+    description: Index of Multiple Deprivation 2019 quintile (1=most deprived, 5=least deprived) (placeholder - NULL in dummy data)

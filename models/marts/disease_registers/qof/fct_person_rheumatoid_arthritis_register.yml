@@ -1,12 +1,19 @@
 version: 2
 models:
 - name: fct_person_rheumatoid_arthritis_register
-  description: "**Rheumatoid Arthritis Register - QOF Quality Measures**\n\nFact table for RA register with age filter. All\
-    \ patients aged 16+ with RA diagnosis \nare included on the register.\n\nSimple Register Business Logic with Age Filter:\n\
-    - RA diagnosis for age \u226516 = on register\n- No resolution codes (RA is permanent)\n- Age restriction: patients must\
-    \ be 16+ years\n- Important for DMARDs monitoring\n\nQOF Context:\nUsed for rheumatoid arthritis quality measures including:\n\
-    - DMARDs therapy monitoring and joint health assessment\n- Disease progression monitoring\n- Specialist rheumatology care\
-    \ coordination\n- Treatment response evaluation\n"
+  description: 'QOF Rheumatoid Arthritis Register - Patients with rheumatoid arthritis diagnosis.
+
+
+    Key Inclusion Criteria:
+
+    • Rheumatoid arthritis diagnosis (RA_COD) present
+
+    • No age restrictions
+
+    • No resolution codes (RA is lifelong condition)
+
+
+    Purpose: QOF register for musculoskeletal disease management, disease activity monitoring, and treatment pathway optimisation.'
   columns:
   - name: person_id
     description: Unique person identifier

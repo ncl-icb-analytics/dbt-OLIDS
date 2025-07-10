@@ -1,36 +1,62 @@
 version: 2
-
 models:
-  - name: dim_ltc_lcs_cf_cvd_66
-    description: "CVD_66 case finding intermediate model. Identifies patients aged 75-83 who need statin review (no recent QRISK2 assessment)."
-    columns:
-      - name: person_id
-        description: "Unique patient identifier"
-        tests:
-          - not_null
-          - unique
-      - name: age
-        description: "Patient age (75-83)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 75
-              max_value: 83
-      - name: needs_statin_review
-        description: "Whether patient needs statin review (TRUE for all)"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-        #   - accepted_values:
-        #       values: [true]
-      - name: latest_qrisk2_date
-        description: "Date of latest QRISK2 assessment (should be NULL for all)"
-      - name: latest_qrisk2_value
-        description: "Latest QRISK2 value (should be NULL for all)"
-      - name: latest_qrisk2_code
-        description: "Concept code of latest QRISK2 (should be NULL for all)"
-      - name: latest_qrisk2_display
-        description: "Concept display of latest QRISK2 (should be NULL for all)"
-      - name: all_qrisk2_codes
-        description: "Array of all QRISK2 concept codes for patient (should be NULL for all)"
-      - name: all_qrisk2_displays
-        description: "Array of all QRISK2 concept displays for patient (should be NULL for all)"
+- name: dim_ltc_lcs_cf_cvd_66
+  description: 'Mart: LTC LCS Case Finding CVD_66 - Identifies patients aged 75-83 requiring QRISK2 assessment for age-appropriate cardiovascular risk management.
+
+
+    Business Purpose:
+
+    • Support systematic case finding for cardiovascular risk assessment in elderly populations (75-83 years)
+
+    • Enable identification of patients requiring age-appropriate cardiovascular risk evaluation
+
+    • Provide clinical decision support for elderly cardiovascular risk management and statin review
+
+    • Support quality improvement initiatives for age-specific cardiovascular prevention programmes
+
+
+    Data Granularity:
+
+    • One row per person aged 75-83 requiring QRISK2 assessment due to lack of recent evaluation
+
+    • Includes age-specific risk assessment requirements and cardiovascular monitoring needs
+
+    • Limited to elderly patients without recent cardiovascular risk evaluation
+
+
+    Key Features:
+
+    • Age-specific cardiovascular risk assessment (75-83 years) for elderly care optimisation
+
+    • QRISK2 requirement identification for patients lacking recent risk evaluation
+
+    • Evidence-based case finding supporting age-appropriate cardiovascular care
+
+    • Integration with elderly care pathways for comprehensive cardiovascular risk management'
+  columns:
+  - name: person_id
+    description: Unique patient identifier
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Patient age (75-83)
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 75
+        max_value: 83
+  - name: needs_statin_review
+    description: Whether patient needs statin review (TRUE for all)
+  - name: latest_qrisk2_date
+    description: Date of latest QRISK2 assessment (should be NULL for all)
+  - name: latest_qrisk2_value
+    description: Latest QRISK2 value (should be NULL for all)
+  - name: latest_qrisk2_code
+    description: Concept code of latest QRISK2 (should be NULL for all)
+  - name: latest_qrisk2_display
+    description: Concept display of latest QRISK2 (should be NULL for all)
+  - name: all_qrisk2_codes
+    description: Array of all QRISK2 concept codes for patient (should be NULL for all)
+  - name: all_qrisk2_displays
+    description: Array of all QRISK2 concept displays for patient (should be NULL for all)

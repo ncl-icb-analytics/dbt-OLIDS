@@ -1,36 +1,56 @@
 version: 2
-
 models:
-  - name: dim_practice_pcn
-    description: |
-      Dimension table providing current practice to PCN mapping for NCL practices.
-      Sources from PRACTICE_NEIGHBOURHOOD_LOOKUP which contains PCN codes.
+- name: dim_practice_pcn
+  description: 'Mart: Practice PCN Dimension - Primary Care Network mapping for organisational hierarchy and network analysis.
 
-      Provides practice to PCN mapping for organisational hierarchy.
-      Note: In dummy data environment, PCN names may be placeholder values (using PCN code as name).
 
+    Business Purpose:
+
+    • Support operational analytics for Primary Care Network management and practice collaboration
+
+    • Enable business intelligence reporting on PCN-level performance and resource allocation
+
+    • Provide foundation for network-based service planning and commissioning
+
+    • Support population health analytics at PCN level for integrated care delivery
+
+
+    Data Granularity:
+
+    • One row per practice with PCN assignment
+
+    • Includes practice to PCN mapping for organisational hierarchy
+
+    • Current PCN network structure and practice affiliations
+
+
+    Key Features:
+
+    • Links practices to Primary Care Networks for network-level analysis
+
+    • Supports PCN-level reporting and performance monitoring
+
+    • Enables business intelligence for network operations and collaborative care
+
+    • Provides foundation for integrated care delivery and network resource planning'
+  tests:
+  - dbt_utils.at_least_one:
+      column_name: practice_code
+  columns:
+  - name: practice_code
+    description: GP practice code (ServiceProviderCode)
     tests:
-      - dbt_utils.at_least_one:
-          column_name: practice_code  # Check the table has at least one row
-
-    columns:
-      - name: practice_code
-        description: "GP practice code (ServiceProviderCode)"
-        tests:
-          - not_null
-          - unique
-
-      - name: practice_name
-        description: "GP practice name (ServiceProviderName)"
-        tests:
-          - not_null
-
-      - name: pcn_code
-        description: "Primary Care Network code"
-        tests:
-          - not_null
-
-      - name: pcn_name
-        description: "Primary Care Network name (uses PCN code as fallback in dummy data)"
-        tests:
-          - not_null
+    - not_null
+    - unique
+  - name: practice_name
+    description: GP practice name (ServiceProviderName)
+    tests:
+    - not_null
+  - name: pcn_code
+    description: Primary Care Network code
+    tests:
+    - not_null
+  - name: pcn_name
+    description: Primary Care Network name (uses PCN code as fallback in dummy data)
+    tests:
+    - not_null

@@ -1,110 +1,138 @@
 version: 2
-
 models:
-  - name: int_anticoagulant_medications_all
-    description: |
-      All oral anticoagulant medication orders for thrombosis prevention and atrial fibrillation management.
-      Uses BNF classification (2.8.2) for oral anticoagulants.
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+- name: int_anticoagulant_medications_all
+  description: 'Intermediate: Anticoagulant Medication Orders - All recorded oral anticoagulant prescriptions.
 
-      Clinical Purpose:
-      - Stroke prevention in atrial fibrillation
-      - Venous thromboembolism treatment and prevention
-      - Post-operative thrombosis prevention
-      - Mechanical heart valve anticoagulation
 
-      Key Features:
-      - DOAC vs VKA classification for modern vs traditional therapy
-      - Evidence-based anticoagulants from major atrial fibrillation trials
-      - Individual anticoagulant type identification
-      - Long-term therapy recency tracking
+    Clinical Purpose:
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
+    • Tracks anticoagulant therapy for thrombosis prevention and atrial fibrillation management
 
-      - name: medication_order_id
-        description: "Unique identifier for the medication order record"
-        tests:
-          - not_null
-          - unique
+    • Supports anticoagulation monitoring and medication review processes
 
-      - name: anticoagulant_type
-        description: "High-level anticoagulant type classification"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['DOAC', 'VKA', 'OTHER_ANTICOAGULANT']
+    • Enables analysis of prescribing patterns between DOACs and VKAs
 
-      - name: specific_anticoagulant
-        description: "Specific anticoagulant medication type"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['APIXABAN', 'DABIGATRAN', 'EDOXABAN', 'RIVAROXABAN', 'WARFARIN', 'ACENOCOUMAROL', 'PHENINDIONE', 'PHENPROCOUMON', 'OTHER_ANTICOAGULANT']
 
-      - name: is_evidence_based_af
-        description: "Boolean flag indicating evidence-based anticoagulant for atrial fibrillation"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    Data Granularity:
 
-      - name: is_warfarin
-        description: "Boolean flag indicating warfarin use (gold standard VKA)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • One row per medication order
 
-      - name: is_apixaban
-        description: "Boolean flag indicating apixaban use (ARISTOTLE trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Includes all patients regardless of status (active/inactive/deceased)
 
-      - name: is_rivaroxaban
-        description: "Boolean flag indicating rivaroxaban use (ROCKET-AF trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Historical data maintained for longitudinal analysis
 
-      - name: is_dabigatran
-        description: "Boolean flag indicating dabigatran use (RE-LY trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
 
-      - name: is_edoxaban
-        description: "Boolean flag indicating edoxaban use (ENGAGE-AF trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    Key Features:
 
-      - name: is_doac
-        description: "Boolean flag indicating Direct Oral Anticoagulant (DOAC)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Classification by anticoagulant type (DOAC vs VKA)
 
-      - name: is_vka
-        description: "Boolean flag indicating Vitamin K Antagonist (VKA)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Specific medication mapping (warfarin, apixaban, rivaroxaban, etc.)
 
+    • Evidence-based therapy flags with clinical trial references
+
+    • Recency indicators for therapy monitoring (3m, 6m, 12m)'
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - medication_order_id
-      - bnf_codes_exist:
-          bnf_codes: "020802"
+    - not_null
+  - name: medication_order_id
+    description: Unique identifier for the medication order record
+    tests:
+    - not_null
+    - unique
+  - name: anticoagulant_type
+    description: High-level anticoagulant type classification
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - DOAC
+        - VKA
+        - OTHER_ANTICOAGULANT
+  - name: specific_anticoagulant
+    description: Specific anticoagulant medication type
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - APIXABAN
+        - DABIGATRAN
+        - EDOXABAN
+        - RIVAROXABAN
+        - WARFARIN
+        - ACENOCOUMAROL
+        - PHENINDIONE
+        - PHENPROCOUMON
+        - OTHER_ANTICOAGULANT
+  - name: is_evidence_based_af
+    description: Boolean flag indicating evidence-based anticoagulant for atrial fibrillation
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_warfarin
+    description: Boolean flag indicating warfarin use (gold standard VKA)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_apixaban
+    description: Boolean flag indicating apixaban use (ARISTOTLE trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_rivaroxaban
+    description: Boolean flag indicating rivaroxaban use (ROCKET-AF trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_dabigatran
+    description: Boolean flag indicating dabigatran use (RE-LY trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_edoxaban
+    description: Boolean flag indicating edoxaban use (ENGAGE-AF trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_doac
+    description: Boolean flag indicating Direct Oral Anticoagulant (DOAC)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_vka
+    description: Boolean flag indicating Vitamin K Antagonist (VKA)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - person_id
+      - medication_order_id
+  - bnf_codes_exist:
+      bnf_codes: 020802

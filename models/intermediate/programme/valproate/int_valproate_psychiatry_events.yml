@@ -1,20 +1,52 @@
 version: 2
-
 models:
-  - name: int_valproate_psychiatry_events
-    description: "Intermediate table extracting all psychiatry-related events for each person, using mapped concepts, observation, and valproate program codes (category PSYCH)."
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person."
-        tests:
-          - not_null
-      - name: psych_event_date
-        description: "Date of the psychiatry-related observation."
-      - name: psych_observation_id
-        description: "Identifier for the psychiatry observation."
-      - name: psych_concept_code
-        description: "Medical concept code for the psychiatry event."
-      - name: psych_concept_display
-        description: "Display term for the psychiatry concept code."
-      - name: psych_code_category
-        description: "Code category for the psychiatry event (should be 'PSYCH')."
+- name: int_valproate_psychiatry_events
+  description: 'Intermediate: Valproate Psychiatry Events - Comprehensive collection of all psychiatry-related events for valproate patient safety monitoring.
+
+
+    Clinical Purpose:
+
+    • Gathers all psychiatry specialty events for patients on valproate therapy
+
+    • Supports psychiatry pathway tracking for valproate patient safety monitoring
+
+    • Enables comprehensive monitoring of psychiatric care in valproate safety programme
+
+    • Provides foundation data for valproate programme psychiatry specialty analysis
+
+
+    Data Granularity:
+
+    • One row per psychiatry event observation for patients on valproate therapy
+
+    • Covers all psychiatry-related observations using PSYCH code category
+
+    • Includes clinical effective dates for temporal analysis and psychiatry pathway tracking
+
+    • Contains concept codes and descriptions for detailed psychiatry event documentation
+
+
+    Key Features:
+
+    • PSYCH code category filtering for comprehensive psychiatry event capture
+
+    • Integration with valproate programme codes for psychiatry pathway tracking
+
+    • Support for psychiatry specialty monitoring in valproate safety programme
+
+    • Foundation data for psychiatric care pathway analysis in valproate patients'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person.
+    tests:
+    - not_null
+  - name: psych_event_date
+    description: Date of the psychiatry-related observation.
+  - name: psych_observation_id
+    description: Identifier for the psychiatry observation.
+  - name: psych_concept_code
+    description: Medical concept code for the psychiatry event.
+  - name: psych_concept_display
+    description: Display term for the psychiatry concept code.
+  - name: psych_code_category
+    description: Code category for the psychiatry event (should be 'PSYCH').

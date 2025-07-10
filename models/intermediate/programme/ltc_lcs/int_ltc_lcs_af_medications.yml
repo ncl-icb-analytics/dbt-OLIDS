@@ -1,34 +1,68 @@
 version: 2
 models:
-  - name: int_ltc_lcs_af_medications
-    description: "Intermediate model for LTC LCS AF Medications. Collects all medication orders relevant to atrial fibrillation (AF) case finding, using mapped concepts with source = 'LTC_LCS'."
+- name: int_ltc_lcs_af_medications
+  description: 'Intermediate: LTC LCS AF Medications - Collects all atrial fibrillation-relevant medications for Long Term Conditions case finding measures.
+
+
+    Clinical Purpose:
+
+    • Gathers comprehensive AF-related medication data for case finding algorithms
+
+    • Supports identification of patients with undiagnosed atrial fibrillation through medication patterns
+
+    • Enables medication-based risk stratification for AF case finding measures
+
+    • Provides foundation data for AF_61 and AF_62 case finding indicators
+
+
+    Data Granularity:
+
+    • One row per medication order for AF-relevant medications
+
+    • Covers oral anticoagulants, AF medications, digoxin, and cardiac glycosides
+
+    • Sourced from LTC_LCS programme medication clusters
+
+    • Includes all historical and current AF medication patterns
+
+
+    Key Features:
+
+
+    • Cluster IDs: ORAL_ANTICOAGULANT_2_8_2, AF_MEDICATIONS, DIGOXIN_MEDICATIONS, CARDIAC_GLYCOSIDES
+
+    • Supports both AF_61 and AF_62 case finding measure requirements
+
+    • Comprehensive medication pattern analysis for undiagnosed AF detection
+
+    • Integration with LTC_LCS programme medication tracking systems'
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: ORAL_ANTICOAGULANT_2_8_2,AF_MEDICATIONS,DIGOXIN_MEDICATIONS,CARDIAC_GLYCOSIDES
+  columns:
+  - name: medication_order_id
+    description: Unique identifier for the medication order
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "ORAL_ANTICOAGULANT_2_8_2,AF_MEDICATIONS,DIGOXIN_MEDICATIONS,CARDIAC_GLYCOSIDES"
-    columns:
-      - name: medication_order_id
-        description: "Unique identifier for the medication order"
-        tests:
-          - not_null
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-      - name: order_date
-        description: "Date of the medication order"
-      - name: mapped_concept_code
-        description: "Mapped concept code for the medication order"
-      - name: mapped_concept_display
-        description: "Display term for the mapped concept"
-      - name: cluster_id
-        description: "Cluster ID for the medication order (AF, exclusions, etc.)"
-      - name: order_medication_name
-        description: "Medication name on order"
-      - name: order_dose
-        description: "Dose for the medication order"
-      - name: order_quantity_value
-        description: "Quantity value for the medication order"
-      - name: order_quantity_unit
-        description: "Quantity unit for the medication order"
-      - name: order_duration_days
-        description: "Duration in days for the medication order"
+    - not_null
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+  - name: order_date
+    description: Date of the medication order
+  - name: mapped_concept_code
+    description: Mapped concept code for the medication order
+  - name: mapped_concept_display
+    description: Display term for the mapped concept
+  - name: cluster_id
+    description: Cluster ID for the medication order (AF, exclusions, etc.)
+  - name: order_medication_name
+    description: Medication name on order
+  - name: order_dose
+    description: Dose for the medication order
+  - name: order_quantity_value
+    description: Quantity value for the medication order
+  - name: order_quantity_unit
+    description: Quantity unit for the medication order
+  - name: order_duration_days
+    description: Duration in days for the medication order

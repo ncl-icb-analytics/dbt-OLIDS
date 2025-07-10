@@ -4,10 +4,7 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: ABPM_COD, BP_COD, DIABP_COD, HOMEAMBBP_COD, HOMEBP_COD, SYSBP_COD
-  description: 'Consolidates blood pressure readings from multiple sources into a single comprehensive view per person per
-    date. Combines systolic and diastolic readings, identifies home/ABPM readings, and validates against clinical ranges.
-
-    '
+  description: 'Event-based blood pressure consolidation: one row per person per date with paired systolic/diastolic values, clinical context flags (Home/ABPM), and rich traceability metadata. Filters implausible values and NULL dates.'
   columns:
   - name: person_id
     description: Unique identifier for the person

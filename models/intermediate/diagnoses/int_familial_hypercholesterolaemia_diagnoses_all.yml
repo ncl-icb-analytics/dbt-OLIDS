@@ -4,15 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: FHYP_COD
-  description: "All familial hypercholesterolaemia (FH) diagnoses from clinical records.\nUses QOF cluster ID FHYP_COD for\
-    \ familial hypercholesterolaemia diagnosis codes.\n\nClinical Purpose:\n- FH register inclusion for QOF quality measures\n\
-    - Familial hypercholesterolaemia cascade screening\n- High-intensity statin therapy monitoring\n\nQOF Context:\nFH register\
-    \ follows simple diagnosis-only pattern - any FH diagnosis qualifies for \nregister inclusion. No resolution codes or\
-    \ complex criteria.\nThis supports FH quality measures and cascade family screening programmes.\n\nKey Clinical Notes:\n\
-    - FH is considered a permanent genetic condition (no resolution codes)\n- Register inclusion based purely on presence\
-    \ of diagnostic codes\n- Important for cascade family screening programmes\n- Critical for high-intensity statin therapy\
-    \ decisions\n\nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model\
-    \ as input for FH register.\n"
+  description: 'Intermediate: Familial Hypercholesterolaemia Diagnoses All - Complete history of all FH diagnosis observations from clinical records.
+
+
+    Clinical Purpose:
+
+    • QOF FH register data collection and monitoring
+
+    • Genetic cardiovascular risk assessment for familial hypercholesterolaemia
+
+    • Family screening pathway identification and cascade testing
+
+    • Lipid management and statin therapy decision support
+
+
+    Data Granularity:
+
+    • One row per FH diagnosis observation
+
+    • Includes all diagnosis dates for complete clinical history
+
+    • Uses FHYP_COD cluster for QOF-compliant diagnosis identification
+
+
+    Key Features:
+
+    • Genetic condition tracking with no resolution codes
+
+    • Age restrictions (typically ≥20 years for QOF)
+
+    • Essential for family screening programmes
+
+    • Supports intensive cholesterol management protocols'
   columns:
   - name: person_id
     description: Unique person identifier

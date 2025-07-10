@@ -4,48 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: DEM_COD
-  description: 'All dementia diagnosis observations from clinical records using QOF cluster IDs.
-
-    Provides comprehensive data collection for dementia register and cognitive health monitoring.
-
-
-    QOF Cluster IDs Used:
-
-    - DEM_COD: Dementia diagnoses
+  description: 'Intermediate: Dementia Diagnoses All - Complete history of all dementia diagnosis observations for QOF register management.
 
 
     Clinical Purpose:
 
-    - QOF dementia register data collection (presence of DEM_COD)
+    • QOF dementia register data collection and monitoring
 
-    - Dementia care pathway monitoring
+    • Dementia care pathway coordination and cognitive assessment tracking
 
-    - Cognitive health assessment support
+    • Mental health service utilisation and quality improvement
 
-    - Memory service referral tracking
-
-
-    Key QOF Requirements:
-
-    - Register inclusion: Presence of any dementia diagnosis code (DEM_COD)
-
-    - No age restrictions for dementia register
-
-    - No resolution codes - dementia is considered permanent condition
-
-    - Focus on early detection and ongoing care
+    • Long-term care planning and support service coordination
 
 
-    Note: Dementia does not have resolved codes as it is considered a permanent condition.
+    Data Granularity:
 
-    The register is based purely on the presence of diagnostic codes.
+    • One row per dementia diagnosis observation
+
+    • Uses DEM_COD cluster for QOF-compliant dementia diagnosis identification
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
 
 
-    Includes ALL persons following intermediate layer principles.
+    Key Features:
 
-    Use as input for fct_person_dementia_register.sql which applies QOF business rules.
+    • Permanent condition tracking with no resolution codes
 
-    '
+    • No specific age restrictions for dementia register inclusion
+
+    • Critical for cognitive assessment and care pathway management
+
+    • Essential input for dementia care quality indicators'
   columns:
   - name: person_id
     description: Unique person identifier

@@ -4,27 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: IGT_COD, NDH_COD, PRD_COD
-  description: 'All non-diabetic hyperglycaemia (NDH) diagnosis observations from clinical records.
-
-    Complex register requiring integration with diabetes diagnosis history for eligibility.
+  description: 'Intermediate: NDH Diagnoses All - Complete history of all non-diabetic hyperglycaemia diagnosis observations for QOF register management.
 
 
-    QOF Register Logic:
+    Clinical Purpose:
 
-    - NDH/IGT/PRD diagnosis for patients aged 18+
+    • QOF non-diabetic hyperglycaemia register data collection and monitoring
 
-    - Exclusion: Current unresolved diabetes (handled in fact layer)
+    • Pre-diabetes identification and diabetes prevention pathway coordination
 
-    - Requires diabetes history integration for eligibility
+    • Glucose metabolism disorder tracking and intervention support
 
-    - Important for diabetes prevention programmes
+    • Early intervention and lifestyle modification programme eligibility
 
 
-    Includes ALL persons following intermediate layer principles.
+    Data Granularity:
 
-    Use as input for fct_person_ndh_register.sql which applies QOF business rules and diabetes exclusions.
+    • One row per NDH, IGT, or pre-diabetes diagnosis observation
 
-    '
+    • Uses NDH_COD, IGT_COD, and PRD_COD clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Pre-diabetes and impaired glucose tolerance identification
+
+    • Age restrictions (typically ≥18 years) applied in downstream processing
+
+    • Diabetes prevention programme eligibility determination
+
+    • Critical for early intervention and diabetes prevention strategies'
   columns:
   - name: person_id
     description: Unique person identifier

@@ -4,16 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: DEPRES_COD, DEPR_COD
-  description: "All depression diagnosis and care pathway observations from clinical records using QOF cluster IDs.\nProvides\
-    \ comprehensive data collection for depression register and care monitoring.\n\nQOF Cluster IDs Used:\n- DEPR_COD: Depression\
-    \ diagnoses\n- DEPRES_COD: Depression resolved/remission codes\n- DEPRVW_COD: Depression review codes (QOF timing: 10-56\
-    \ days post-diagnosis)\n- DEPRINVITE_COD: Depression invite codes\n- DEPRPCADEC_COD: Depression PCA decline codes  \n\
-    - DEPRPCAPU_COD: Depression PCA unsuitable codes\n\nClinical Purpose:\n- QOF depression register data collection (aged\
-    \ 18+, unresolved episode since 1 April 2006)\n- Depression care pathway monitoring\n- Review and invitation tracking\
-    \  \n- Resolution status monitoring\n\nKey QOF Requirements:\n- Register inclusion: Age \u226518, latest unresolved episode\
-    \ since 1 April 2006\n- Recent episode tracking (12, 15, 24 months)\n- Review timing validation (10-56 days post-diagnosis)\n\
-    \nIncludes ALL persons following intermediate layer principles.\nUse as input for fct_person_depression_register.sql which\
-    \ applies QOF business rules.\n"
+  description: 'Intermediate: Depression Diagnoses All - Complete history of all depression diagnosis and resolution observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF depression register data collection and monitoring
+
+    • Mental health care pathway coordination and clinical decision support
+
+    • Depression severity tracking and treatment response monitoring
+
+    • Resolution status tracking for improved mental health outcomes
+
+
+    Data Granularity:
+
+    • One row per depression diagnosis or resolution observation
+
+    • Uses DEPR_COD (diagnosis) and DEPRES_COD (resolved) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Diagnosis and resolution code classification for register eligibility
+
+    • Age restrictions typically ≥18 years applied in downstream processing
+
+    • Critical for mental health care pathway optimisation
+
+    • Essential input for depression quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

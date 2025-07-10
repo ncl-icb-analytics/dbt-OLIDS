@@ -1,143 +1,142 @@
 version: 2
-
 models:
-  - name: fct_household_members
-    description: >
-      Household members bridge table linking people to households (dwellings).
-      Provides the "who lives where" information along with their demographics,
-      practice registrations, and organisational context.
+- name: fct_household_members
+  description: 'Mart: Household Members - Bridge table linking patients to households for geographic and social analysis.
 
-      This table separates concerns from dim_households (physical dwelling properties)
-      by focusing on the people and their attributes within each household.
 
-    columns:
-      # Keys and identifiers
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
+    Business Purpose:
 
-      - name: household_id
-        description: "Foreign key to dim_households"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_households')
-              field: household_id
+    • Support population health teams in analysing household-level health outcomes and social determinants
 
-      - name: uprn_hash
-        description: "Hashed UPRN - natural key for the dwelling"
-        tests:
-          - not_null
+    • Enable business intelligence reporting on geographic distribution of patients and practice populations
 
-      # Person demographics and status
-      - name: is_active
-        description: "Whether the person is an active patient"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Provide foundation for household-based care planning and resource allocation
 
-      - name: is_deceased
-        description: "Whether the person is recorded as deceased"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Support neighbourhood-level health analytics and community health assessments
 
-      - name: sex
-        description: "Sex of the person"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Female', 'Male', 'Unknown']
 
-      - name: age
-        description: "Current age in years (or age at death if deceased)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
+    Data Granularity:
 
-      - name: age_life_stage
-        description: "Life stage categorisation"
-        tests:
-          - not_null
+    • One row per person per household (UPRN-based dwelling)
 
-      - name: age_band_ons
-        description: "ONS standard 5-year age bands"
-        tests:
-          - not_null
+    • Includes all patients with valid household addresses
 
-      # Ethnicity and language
-      - name: ethnicity_category
-        description: "Broad ethnicity category"
+    • Current snapshot of household membership with demographic attributes
 
-      - name: main_language
-        description: "Main spoken language"
 
-      - name: interpreter_needed
-        description: "Whether an interpreter is needed"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    Key Features:
 
-      # Practice registration
-      - name: current_practice_code
-        description: "Organisation code of current registered practice"
+    • Links patients to geographic households and practice organisational structures
 
-      - name: current_practice_name
-        description: "Name of current registered practice"
+    • Includes demographic characteristics for household composition analysis
 
-      - name: registration_start_date
-        description: "Start date of current practice registration"
+    • Supports spatial analysis combining patient attributes with dwelling location
 
-      # Practice organisational context
-      - name: pcn_code
-        description: "Primary Care Network code"
-
-      - name: pcn_name
-        description: "Primary Care Network name"
-
-      - name: local_authority
-        description: "Local authority area based on practice"
-
-      - name: practice_neighbourhood
-        description: "Practice neighbourhood classification"
-
-      # Temporal context
-      - name: snapshot_date
-        description: "Date this snapshot was taken"
-        tests:
-          - not_null
-
-      - name: created_at
-        description: "Timestamp when this record was created"
-        tests:
-          - not_null
-
+    • Enables population health reporting at household and neighbourhood levels'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
     tests:
-      # Data quality tests
-      - dbt_utils.expression_is_true:
-          name: "active_people_have_practice"
-          expression: "not is_active or current_practice_code is not null"
-
-      - dbt_utils.expression_is_true:
-          name: "deceased_people_not_active"
-          expression: "not (is_deceased and is_active)"
-
-      - dbt_utils.expression_is_true:
-          name: "registration_date_reasonable"
-          expression: "registration_start_date is null or registration_start_date <= current_date()"
-
-      - dbt_utils.at_least_one:
-          name: "has_at_least_one_member"
-          column_name: person_id  # Check the table has at least one row
-
-      # Referential integrity
-      - dbt_utils.expression_is_true:
-          name: "all_household_ids_exist"
-          expression: "household_id in (select household_id from {{ ref('dim_households') }})"
+    - not_null
+    - unique
+  - name: household_id
+    description: Foreign key to dim_households
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_households')
+        field: household_id
+  - name: uprn_hash
+    description: Hashed UPRN - natural key for the dwelling
+    tests:
+    - not_null
+  - name: is_active
+    description: Whether the person is an active patient
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_deceased
+    description: Whether the person is recorded as deceased
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: sex
+    description: Sex of the person
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Female
+        - Male
+        - Unknown
+  - name: age
+    description: Current age in years (or age at death if deceased)
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 150
+  - name: age_life_stage
+    description: Life stage categorisation
+    tests:
+    - not_null
+  - name: age_band_ons
+    description: ONS standard 5-year age bands
+    tests:
+    - not_null
+  - name: ethnicity_category
+    description: Broad ethnicity category
+  - name: main_language
+    description: Main spoken language
+  - name: interpreter_needed
+    description: Whether an interpreter is needed
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: current_practice_code
+    description: Organisation code of current registered practice
+  - name: current_practice_name
+    description: Name of current registered practice
+  - name: registration_start_date
+    description: Start date of current practice registration
+  - name: pcn_code
+    description: Primary Care Network code
+  - name: pcn_name
+    description: Primary Care Network name
+  - name: local_authority
+    description: Local authority area based on practice
+  - name: practice_neighbourhood
+    description: Practice neighbourhood classification
+  - name: snapshot_date
+    description: Date this snapshot was taken
+    tests:
+    - not_null
+  - name: created_at
+    description: Timestamp when this record was created
+    tests:
+    - not_null
+  tests:
+  - dbt_utils.expression_is_true:
+      name: active_people_have_practice
+      expression: not is_active or current_practice_code is not null
+  - dbt_utils.expression_is_true:
+      name: deceased_people_not_active
+      expression: not (is_deceased and is_active)
+  - dbt_utils.expression_is_true:
+      name: registration_date_reasonable
+      expression: registration_start_date is null or registration_start_date <= current_date()
+  - dbt_utils.at_least_one:
+      name: has_at_least_one_member
+      column_name: person_id
+  - dbt_utils.expression_is_true:
+      name: all_household_ids_exist
+      expression: household_id in (select household_id from {{ ref('dim_households') }})

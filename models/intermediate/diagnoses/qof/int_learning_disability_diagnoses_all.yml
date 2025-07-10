@@ -4,16 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: LD_COD
-  description: "All learning disability diagnosis observations from clinical records using QOF cluster ID.\nProvides comprehensive\
-    \ data collection for learning disability register and special needs service planning.\n\nQOF Cluster IDs Used:\n- LD_DIAGNOSIS_COD:\
-    \ Learning disability diagnoses\n\nClinical Purpose:\n- QOF learning disability register data collection (age \u226514)\n\
-    - Learning disability care pathway monitoring\n- Special needs service planning\n- Health equity monitoring\n\nKey QOF\
-    \ Requirements:\n- Register inclusion: Age \u226514 and presence of learning disability diagnosis (LD_DIAGNOSIS_COD)\n\
-    - No resolution codes - learning disability is considered permanent condition\n- Age threshold of 14 years for register\
-    \ inclusion\n- No upper age limit\n\nNote: Learning disability does not have resolved codes as it is considered a permanent\
-    \ condition.\nThe register is based purely on the presence of diagnostic codes and age criteria.\n\nIncludes ALL persons\
-    \ following intermediate layer principles.\nUse as input for fct_person_learning_disability_register.sql which applies\
-    \ QOF business rules and age filtering.\n"
+  description: 'Intermediate: Learning Disability Diagnoses All - Complete history of all learning disability diagnosis observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF learning disability register data collection and monitoring
+
+    • Learning disability support service coordination and annual health checks
+
+    • Disability support pathway management and clinical decision support
+
+    • Learning disability care quality improvement and outcome tracking
+
+
+    Data Granularity:
+
+    • One row per learning disability diagnosis observation
+
+    • Uses LD_COD cluster for QOF-compliant learning disability identification
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Annual health check eligibility determination (typically ≥14 years)
+
+    • Learning disability support service coordination
+
+    • Critical for disability care pathway optimisation
+
+    • Essential input for learning disability quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

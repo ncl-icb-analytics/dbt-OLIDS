@@ -4,11 +4,7 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: PREFLANG_COD, REQINTERPRETER_COD
-  description: 'Person main language dimension for cultural competency and communication
-
-    planning in healthcare delivery.
-
-    '
+  description: Dimension table providing the latest recorded preferred language and interpreter needs for every person. If no preferred language is recorded for a person, language-related fields default to Not Recorded. The LANGUAGE field provides a clean version of the language name without prefixes or suffixes. Includes both preferred language (PREFLANG_COD) and interpreter requirements (REQINTERPRETER_COD).
   columns:
   - name: person_id
     description: Unique person identifier - primary key

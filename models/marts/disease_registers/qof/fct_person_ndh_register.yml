@@ -1,19 +1,18 @@
 models:
 - name: fct_person_ndh_register
-  description: "QOF Non-Diabetic Hyperglycaemia (NDH) Register - Complex type classification register with diabetes exclusion\
-    \ logic.\n\n**Business Logic (Pattern 4):**\n- Age \u226518 years (adult hyperglycaemia monitoring)\n- NDH diagnosis:\
-    \ Any of NDH, IGT (Impaired Glucose Tolerance), or PRD (Pre-diabetes) codes\n- Complex diabetes exclusion: Has NDH AND\
-    \ (never had diabetes OR diabetes is resolved)\n- Multi-condition tracking: NDH subtypes and diabetes status interaction\n\
-    \n**Clinical Context:**\nThis register identifies patients with non-diabetic hyperglycaemia who require monitoring\nand\
-    \ lifestyle intervention to prevent progression to Type 2 diabetes. The complex logic\nensures patients are removed from\
-    \ the NDH register if they develop diabetes, but can\nreturn if diabetes is subsequently resolved.\n\n**QOF Requirements:**\n\
-    - NDH001: Practice can produce a register of patients with non-diabetic hyperglycaemia\n- Supports diabetes prevention\
-    \ and lifestyle intervention indicators\n- Links to HbA1c monitoring and cardiovascular risk assessment\n\n**Exclusion\
-    \ Logic:**\n- Rule 1: Age \u226518 years (rejects patients under 18)\n- Rule 2: Has NDH diagnosis AND never had diabetes\n\
-    - Rule 3: Has NDH diagnosis AND diabetes is resolved\n\n**Data Sources:**\n- NDH codes: int_ndh_diagnoses_all (NDH_COD,\
-    \ IGT_COD, PRD_COD cluster IDs)\n- Diabetes exclusion: int_diabetes_diagnoses_all (DM_COD, DMRES_COD cluster IDs)\n- Age\
-    \ filtering: dim_person_age (\u226518 years requirement)\n\nIncludes ALL persons (active, inactive, deceased) for comprehensive\
-    \ reporting.\n"
+  description: 'QOF Non-Diabetic Hyperglycaemia (NDH) Register - Patients with pre-diabetes for prevention interventions.
+
+
+    Key Inclusion Criteria:
+
+    • NDH diagnosis (NDH_COD) present - elevated glucose but not diabetic
+
+    • No age restrictions
+
+    • Excludes those with diabetes diagnosis
+
+
+    Purpose: QOF register for diabetes prevention, lifestyle interventions, and pre-diabetes monitoring to prevent progression to Type 2 diabetes.'
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system

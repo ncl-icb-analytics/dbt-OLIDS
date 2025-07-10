@@ -4,16 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: MH_COD, MHREM_COD
-  description: "All serious mental illness diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive\
-    \ data collection for SMI register and mental health care monitoring.\n\nQOF Cluster IDs Used:\n- MH_COD: Mental health\
-    \ diagnoses\n- MHREM_COD: Mental health remission codes\n\nClinical Purpose:\n- QOF SMI register data collection (mental\
-    \ health diagnosis not in remission OR recent lithium therapy)\n- Mental health care pathway monitoring\n- Treatment response\
-    \ tracking\n- Lithium therapy integration support\n\nKey QOF Requirements:\n- Register inclusion: Mental health diagnosis\
-    \ (MH_COD) not in remission (latest MH_COD > latest MHREM_COD)\n- OR recent lithium therapy (handled separately in medication\
-    \ models)\n- No age restrictions for SMI register\n- Requires integration with lithium medication orders for complete\
-    \ register\n\nNote: This model provides diagnosis codes only. Lithium therapy integration is handled \nin the corresponding\
-    \ fact table which joins to int_lithium_medications_all.\n\nIncludes ALL persons following intermediate layer principles.\n\
-    Use as input for fct_person_smi_register.sql which applies QOF business rules and medication integration.\n"
+  description: 'Intermediate: SMI Diagnoses All - Complete history of all serious mental illness diagnosis and remission observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF serious mental illness register data collection and monitoring
+
+    • Mental health care pathway coordination for schizophrenia, bipolar disorder, and psychoses
+
+    • SMI treatment response monitoring and clinical decision support
+
+    • Remission status tracking for improved mental health outcomes
+
+
+    Data Granularity:
+
+    • One row per serious mental illness diagnosis or remission observation
+
+    • Uses MH_COD (diagnosis) and MHREM_COD (remission) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Diagnosis and remission code classification for register eligibility
+
+    • Age restrictions typically ≥18 years applied in downstream processing
+
+    • Critical for serious mental illness care pathway optimisation
+
+    • Essential input for SMI quality improvement and treatment monitoring'
   columns:
   - name: person_id
     description: Unique person identifier

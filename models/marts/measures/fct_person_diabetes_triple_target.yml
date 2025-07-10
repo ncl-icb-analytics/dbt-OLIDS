@@ -1,25 +1,38 @@
 version: 2
 models:
 - name: fct_person_diabetes_triple_target
-  description: 'Fact table for diabetes triple target achievement tracking for people on the diabetes register.
+  description: 'Mart: Diabetes Triple Target Achievement - Comprehensive diabetes control assessment for cardiovascular risk reduction.
 
-    **Triple Target Goals:**
-    1. **HbA1c**: < 58 mmol/mol (IFCC) or < 7.5% (DCCT)
-    2. **Blood Pressure**: Systolic < 140 mmHg AND Diastolic < 80 mmHg
-    3. **Total Cholesterol**: < 5 mmol/L
 
-    **Business Logic:**
-    - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
-    - Uses latest available values for each measurement
-    - HbA1c type detection: IFCC (mmol/mol) vs DCCT (%)
-    - Tracks both target achievement and measurement recency (last 12 months)
-    - Includes flags for recent measurements that are out of target range
+    Business Purpose:
 
-    **Clinical Context:**
-    Essential for diabetes outcome monitoring and quality improvement initiatives.
-    Based on NICE diabetes guidelines for optimal diabetes management targets.
+    • Support QOF reporting for diabetes triple target achievement indicators
 
-    '
+    • Enable clinical teams to identify patients requiring comprehensive diabetes management review
+
+    • Provide population health analytics for diabetes cardiovascular risk management programmes
+
+    • Support business intelligence reporting on diabetes care quality and holistic management
+
+
+    Data Granularity:
+
+    • One row per person on diabetes register
+
+    • Includes achievement status for HbA1c, blood pressure, and cholesterol targets
+
+    • Current assessment of comprehensive diabetes control and cardiovascular risk management
+
+
+    Key Features:
+
+    • Tracks HbA1c ≤58 mmol/mol, BP <130/80 mmHg, and cholesterol <5 mmol/L targets
+
+    • Calculates overall triple target achievement for holistic diabetes management
+
+    • Supports clinical decision-making for cardiovascular risk reduction
+
+    • Enables population health management and diabetes care optimisation'
   columns:
   - name: person_id
     description: Unique person identifier

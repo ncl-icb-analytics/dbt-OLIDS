@@ -4,41 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: COPDRES_COD, COPD_COD
-  description: 'All COPD diagnosis observations from clinical records using QOF cluster IDs.
-
-    Provides comprehensive data collection for COPD register including temporal QOF rules.
-
-
-    QOF Cluster IDs Used:
-
-    - COPD_COD: COPD diagnoses
-
-    - COPDRES_COD: COPD resolved/remission codes
+  description: 'Intermediate: COPD Diagnoses All - Complete history of all COPD diagnosis and resolution observations for QOF register management.
 
 
     Clinical Purpose:
 
-    - QOF COPD register data collection
+    • QOF COPD register data collection and monitoring
 
-    - COPD spirometry confirmation requirements (post-April 2023)
+    • Respiratory function assessment and spirometry confirmation requirements
 
-    - Respiratory management monitoring
+    • COPD management pathway coordination and clinical decision support
 
-    - Resolution status tracking
-
-
-    Key QOF Requirements:
-
-    - Pre-April 2023: Diagnosis alone sufficient for register
-
-    - Post-April 2023: Requires spirometry confirmation (FEV1/FVC <0.7) OR unable-to-have-spirometry status
+    • Resolution status tracking for improved respiratory outcomes
 
 
-    Includes ALL persons following intermediate layer principles.
+    Data Granularity:
 
-    Use as input for fct_person_copd_register.sql which applies QOF business rules and spirometry requirements.
+    • One row per COPD diagnosis or resolution observation
 
-    '
+    • Uses COPD_COD (diagnosis) and COPDRES_COD (resolved) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Post-April 2023 spirometry confirmation requirements (FEV1/FVC <0.7)
+
+    • Integration with unable-to-have-spirometry status tracking
+
+    • Critical for respiratory care pathway optimisation
+
+    • Essential input for COPD quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

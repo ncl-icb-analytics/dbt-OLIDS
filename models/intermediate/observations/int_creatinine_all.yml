@@ -1,51 +1,87 @@
 version: 2
-
 models:
-  - name: int_creatinine_all
+- name: int_creatinine_all
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: CRE_COD
+  description: 'Intermediate: Creatinine Observations - All recorded serum creatinine measurements with clinical categorisation.
 
+
+    Clinical Purpose:
+
+    • Tracks creatinine levels for kidney function assessment and CKD monitoring
+
+    • Supports renal disease management and medication dosing adjustments
+
+    • Enables chronic kidney disease case finding and progression monitoring
+
+
+    Data Granularity:
+
+    • One row per creatinine observation
+
+    • Includes all patients regardless of status (active/inactive/deceased)
+
+    • Uses CRE_COD cluster for serum creatinine identification
+
+
+    Key Features:
+
+    • Data quality validation with plausible range filtering (20-1000 µmol/L)
+
+    • Clinical creatinine categorisation (normal, mildly/moderately/severely elevated)
+
+    • Elevated creatinine flags for kidney function screening
+
+    • Original value preservation for clinical interpretation'
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "CRE_COD"
-    description: |
-      All serum creatinine measurements from observations.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the creatinine measurement"
-        tests:
-          - not_null
-      - name: creatinine_value
-        description: "Serum creatinine value in µmol/L"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 10
-              max_value: 1500
-              severity: warn
-      - name: result_unit_display
-        description: "Display value for the result unit (e.g., 'µmol/L')"
-      - name: is_valid_creatinine
-        description: "Flag indicating if creatinine is within valid range (20-1000)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: creatinine_category
-        description: "Clinical creatinine category"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Invalid', 'Normal', 'Mildly Elevated', 'Moderately Elevated', 'Severely Elevated', 'Unknown']
-      - name: is_elevated_creatinine
-        description: "Flag indicating elevated creatinine (>120 µmol/L)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the creatinine measurement
+    tests:
+    - not_null
+  - name: creatinine_value
+    description: Serum creatinine value in µmol/L
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 10
+        max_value: 1500
+        severity: warn
+  - name: result_unit_display
+    description: Display value for the result unit (e.g., 'µmol/L')
+  - name: is_valid_creatinine
+    description: Flag indicating if creatinine is within valid range (20-1000)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: creatinine_category
+    description: Clinical creatinine category
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Invalid
+        - Normal
+        - Mildly Elevated
+        - Moderately Elevated
+        - Severely Elevated
+        - Unknown
+  - name: is_elevated_creatinine
+    description: Flag indicating elevated creatinine (>120 µmol/L)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

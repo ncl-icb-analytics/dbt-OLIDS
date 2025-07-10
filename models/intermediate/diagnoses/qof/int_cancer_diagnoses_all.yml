@@ -4,15 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: CAN_COD
-  description: "All cancer diagnoses from clinical records.\nUses QOF cluster ID CAN_COD for cancer diagnosis codes (excluding\
-    \ non-melanotic skin cancers).\n\nClinical Purpose:\n- Cancer register inclusion for QOF quality measures\n- Cancer care\
-    \ pathway tracking\n- Survivorship care planning\n\nQOF Context:\nCancer register follows simple diagnosis-only pattern\
-    \ with date restriction - any cancer \ndiagnosis on/after April 1, 2003 qualifies for register inclusion. No resolution\
-    \ codes.\nThis supports cancer care quality measures and survivorship monitoring.\n\nKey Clinical Notes:\n- Excludes non-melanotic\
-    \ skin cancers as per QOF guidelines\n- Register eligibility requires diagnosis on/after 1 April 2003\n- Cancer is considered\
-    \ a permanent condition (no resolution codes)\n- Important for survivorship care and follow-up monitoring\n\nIncludes\
-    \ ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model as input for cancer\
-    \ register.\n"
+  description: 'Intermediate: Cancer Diagnoses All - Complete history of all cancer diagnosis observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF cancer register data collection and monitoring
+
+    • Cancer care pathway coordination and treatment tracking
+
+    • Oncology service utilisation and quality improvement
+
+    • Resolution and remission status tracking
+
+
+    Data Granularity:
+
+    • One row per cancer diagnosis observation
+
+    • Uses CAN_COD cluster for QOF-compliant cancer diagnosis identification
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Comprehensive cancer diagnosis tracking across all age groups
+
+    • No specific age restrictions for cancer register inclusion
+
+    • Resolution and remission monitoring capability
+
+    • Critical for cancer care quality indicators and pathway management'
   columns:
   - name: person_id
     description: Unique person identifier

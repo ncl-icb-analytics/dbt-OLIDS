@@ -1,13 +1,7 @@
 version: 2
 models:
 - name: dim_person_women_child_bearing_age
-  description: 'Dimension identifying women of child-bearing age for clinical safety monitoring
-
-    and reproductive health programmes. Uses extended age range of 0-55 to capture all
-
-    potential reproductive health scenarios.
-
-    '
+  description: Dimension table identifying individuals who are not male and are aged 55 or younger. Includes flags for standard child-bearing age ranges.
   columns:
   - name: person_id
     description: Unique person identifier - primary key

@@ -4,13 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: BMI30_COD, BMIVAL_COD
-  description: 'QOF-specific BMI measurements with obesity register business logic.
+  description: 'Intermediate: BMI QOF Observations - BMI measurements with QOF-specific obesity register logic.
 
-    Follows the legacy intermediate_bmi_values.sql patterns with age validation
 
-    and QOF obesity register rules. Includes ALL persons following intermediate layer principles.
+    Clinical Purpose:
 
-    '
+    • Tracks BMI measurements for QOF obesity register eligibility and reporting
+
+    • Supports obesity programme management with ethnicity-adjusted thresholds
+
+    • Enables QOF indicator monitoring and obesity prevalence analysis
+
+
+    Data Granularity:
+
+    • One row per person with latest BMI observation and aggregated QOF flags
+
+    • Combines numeric BMI values (BMIVAL_COD) and BMI30+ codes (BMI30_COD)
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • QOF-specific BMI thresholds (25+, 27.5+, 30+ for different populations)
+
+    • Ever-flags for obesity register inclusion criteria
+
+    • Latest valid BMI with person-level aggregation
+
+    • Comprehensive concept tracking for audit and quality assurance'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -25,7 +48,7 @@ models:
     tests:
     - not_null
   - name: bmi_value
-    description: "BMI value in kg/m\xB2"
+    description: BMI value in kg/m²
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -37,7 +60,7 @@ models:
     tests:
     - not_null:
         config:
-          where: "source_cluster_id != 'BMI30_COD'"
+          where: source_cluster_id != 'BMI30_COD'
   - name: is_valid_bmi
     description: Flag indicating if BMI is within valid range (10-80)
     tests:

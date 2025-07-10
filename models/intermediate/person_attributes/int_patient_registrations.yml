@@ -1,13 +1,7 @@
 version: 2
 models:
 - name: int_patient_registrations
-  description: 'Comprehensive patient registration history across practices.
-
-    Tracks all practice registrations including start/end dates and registration status.
-
-    Includes ALL persons following intermediate layer principles.
-
-    '
+  description: Intermediate table containing clean patient registration periods derived from episode_of_care. Each row represents a registration period at a specific practice, with proper handling of overlapping periods and current registrations.
   columns:
   - name: person_id
     description: Unique person identifier

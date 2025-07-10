@@ -4,13 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: FEV1FVCL70_COD, FEV1FVC_COD
-  description: 'All spirometry test results for COPD diagnosis (FEV1/FVC ratios).
+  description: 'Intermediate: Spirometry Observations - All spirometry test results for COPD diagnosis and monitoring.
 
-    Includes both raw FEV1/FVC values and pre-coded "less than 0.7" observations.
 
-    Includes ALL persons following intermediate layer principles.
+    Clinical Purpose:
 
-    '
+    • Tracks spirometry results (FEV1/FVC ratios) for COPD diagnosis and management
+
+    • Supports COPD register eligibility and respiratory disease monitoring
+
+    • Enables airway obstruction assessment and clinical decision support
+
+
+    Data Granularity:
+
+    • One row per spirometry observation
+
+    • Includes both raw FEV1/FVC values and pre-coded ‘<0.7’ observations
+
+    • Uses FEV1FVC_COD and FEV1FVCL70_COD clusters
+
+
+    Key Features:
+
+    • COPD diagnostic threshold assessment (FEV1/FVC <0.7)
+
+    • Spirometry validation and clinical interpretation
+
+    • COPD severity staging and airway obstruction indicators
+
+    • QOF-specific spirometry confirmation flags for register eligibility'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -38,7 +61,7 @@ models:
     tests:
     - not_null:
         config:
-          where: "source_cluster_id != 'FEV1FVCL70_COD'"
+          where: source_cluster_id != 'FEV1FVCL70_COD'
   - name: concept_code
     description: SNOMED concept code for spirometry
     tests:
@@ -75,5 +98,5 @@ models:
         values:
         - COPD Indicated (Coded <0.7)
         - COPD Indicated (Measured <0.7)
-        - "Normal (\u22650.7)"
+        - Normal (≥0.7)
         - Invalid

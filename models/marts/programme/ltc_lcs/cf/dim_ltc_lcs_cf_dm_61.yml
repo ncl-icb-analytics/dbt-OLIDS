@@ -1,55 +1,65 @@
 version: 2
-
 models:
-  - name: dim_ltc_lcs_cf_dm_61
-    description: "Intermediate model for LTC/LCS case finding DM_61. Identifies patients at risk of diabetes based on HbA1c levels, diabetes risk scores, cardiovascular risk, or gestational diabetes history."
+- name: dim_ltc_lcs_cf_dm_61
+  description: 'Mart: LTC LCS Case Finding DM_61 - Identifies patients at high risk of diabetes through multiple risk assessment criteria.
 
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
 
-      - name: age
-        description: "Age of the patient (17+)"
-        tests:
-          - not_null
+    Population Scope:
 
-      - name: has_diabetes_risk
-        description: "Boolean flag indicating if person meets any diabetes risk criteria"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Patients aged 17+ from LTC case finding base population
 
-      - name: latest_hba1c_date
-        description: "Date of most recent HbA1c reading within last 5 years"
 
-      - name: latest_hba1c_value
-        description: "Most recent HbA1c value (mmol/mol)"
+    • Meeting any high-risk diabetes criteria: HbA1c ≥42, QDiabetes ≥5.6%, QRisk2 >20%, or gestational diabetes history
 
-      - name: latest_qdiabetes_date
-        description: "Date of most recent QDiabetes risk score"
+    • Excludes patients already on diabetes register or with recent NHS Health Check
 
-      - name: latest_qdiabetes_value
-        description: "Most recent QDiabetes risk score (%)"
 
-      - name: latest_qrisk_date
-        description: "Date of most recent QRisk2 cardiovascular risk score"
+    Key Features:
 
-      - name: latest_qrisk_value
-        description: "Most recent QRisk2 cardiovascular risk score (%)"
+    • Multi-criteria diabetes risk assessment with 5-year assessment window
 
-      - name: has_gestational_diabetes
-        description: "Boolean flag indicating history of gestational diabetes"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Evidence-based case finding aligned with NICE guidelines
 
-      - name: all_hba1c_codes
-        description: "Array of all HbA1c concept codes for the patient"
-
-      - name: all_hba1c_displays
-        description: "Array of all HbA1c concept display terms for the patient"
+    • Integration with diabetes prevention pathways'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Age of the patient (17+)
+    tests:
+    - not_null
+  - name: has_diabetes_risk
+    description: Boolean flag indicating if person meets any diabetes risk criteria
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_hba1c_date
+    description: Date of most recent HbA1c reading within last 5 years
+  - name: latest_hba1c_value
+    description: Most recent HbA1c value (mmol/mol)
+  - name: latest_qdiabetes_date
+    description: Date of most recent QDiabetes risk score
+  - name: latest_qdiabetes_value
+    description: Most recent QDiabetes risk score (%)
+  - name: latest_qrisk_date
+    description: Date of most recent QRisk2 cardiovascular risk score
+  - name: latest_qrisk_value
+    description: Most recent QRisk2 cardiovascular risk score (%)
+  - name: has_gestational_diabetes
+    description: Boolean flag indicating history of gestational diabetes
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: all_hba1c_codes
+    description: Array of all HbA1c concept codes for the patient
+  - name: all_hba1c_displays
+    description: Array of all HbA1c concept display terms for the patient

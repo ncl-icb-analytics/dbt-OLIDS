@@ -4,15 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: AST_COD, ASTRES_COD
-  description: "All asthma diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive data\
-    \ collection for asthma register and respiratory management.\n\nQOF Cluster IDs Used:\n- AST_COD: Asthma diagnoses\n-\
-    \ ASTRES_COD: Asthma resolved/remission codes\n\nClinical Purpose:\n- QOF asthma register data collection (aged 6+, active\
-    \ asthma diagnosis + recent medication)\n- Asthma care pathway monitoring\n- Resolution status tracking\n- Medication\
-    \ therapy integration support\n\nKey QOF Requirements:\n- Register inclusion: Age \u22656, active asthma diagnosis (latest\
-    \ AST_COD > latest ASTRES_COD)\n- AND recent asthma medication order (within last 12 months)\n- Pediatric and adult asthma\
-    \ management differentiation\n\nNote: This model provides diagnosis codes only. Medication integration is handled \nin\
-    \ the corresponding fact table which joins to intermediate_asthma_orders_12m.\n\nIncludes ALL persons following intermediate\
-    \ layer principles.\nUse as input for fct_person_asthma_register.sql which applies QOF business rules and medication integration.\n"
+  description: 'Intermediate: Asthma Diagnoses - All recorded asthma diagnosis and resolution codes for QOF register management.
+
+
+    Clinical Purpose:
+
+    • Tracks asthma diagnoses for QOF asthma register inclusion and respiratory care pathways
+
+    • Supports asthma management programmes and clinical monitoring
+
+    • Enables childhood and adult asthma care coordination and quality improvement
+
+
+    Data Granularity:
+
+    • One row per asthma diagnosis or resolution code
+
+    • Uses AST_COD (diagnosis) and ASTRES_COD (resolved) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Diagnosis and resolution code classification for register eligibility
+
+    • QOF-compliant asthma register logic with resolution tracking
+
+    • Age and clinical context considerations for downstream processing
+
+    • Essential input for QOF asthma register and respiratory care analytics'
   columns:
   - name: person_id
     description: Unique person identifier

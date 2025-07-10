@@ -4,15 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: STRK_COD, TIA_COD
-  description: "All stroke and transient ischaemic attack (TIA) diagnoses from clinical records.\nUses QOF cluster ID STIA_COD\
-    \ for stroke and TIA diagnosis codes.\n\nClinical Purpose:\n- Stroke/TIA register inclusion for QOF quality measures\n\
-    - Stroke secondary prevention monitoring\n- Cardiovascular risk management post-stroke\n\nQOF Context:\nStroke/TIA register\
-    \ follows simple diagnosis-only pattern - any stroke or TIA diagnosis \nqualifies for register inclusion. No resolution\
-    \ codes or complex criteria.\nThis is a lifelong condition register for stroke secondary prevention.\n\nKey Clinical Notes:\n\
-    - Stroke/TIA are considered permanent conditions (no resolution codes)\n- Register inclusion based purely on presence\
-    \ of diagnostic codes\n- Critical for secondary prevention and anticoagulation decisions\n- No age restrictions for stroke/TIA\
-    \ register\n\nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model\
-    \ as input for stroke/TIA register.\n"
+  description: 'Intermediate: Stroke TIA Diagnoses All - Complete history of all stroke and TIA diagnosis observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF stroke register data collection and monitoring
+
+    • Cerebrovascular event tracking and secondary prevention pathway coordination
+
+    • Stroke care pathway management and rehabilitation support
+
+    • Long-term cardiovascular outcome tracking and intervention assessment
+
+
+    Data Granularity:
+
+    • One row per stroke or TIA diagnosis observation
+
+    • Uses STRK_COD (stroke) and TIA_COD (TIA) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Permanent cardiovascular event tracking with no resolution codes
+
+    • No specific age restrictions for stroke register inclusion
+
+    • Critical for cerebrovascular secondary prevention protocols
+
+    • Essential input for stroke care quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

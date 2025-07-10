@@ -4,38 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: HFLVSD_COD, HFRES_COD, HF_COD, REDEJCFRAC_COD
-  description: 'All heart failure diagnosis observations from clinical records using QOF cluster IDs.
-
-    Provides comprehensive data collection for heart failure register and type classification.
-
-
-    QOF Cluster IDs Used:
-
-    - HF_COD: Heart failure diagnoses
-
-    - HFRES_COD: Heart failure resolved/remission codes
-
-    - HFLVSD_COD: Heart failure with left ventricular systolic dysfunction
-
-    - REDEJCFRAC_COD: Reduced ejection fraction diagnoses
+  description: 'Intermediate: Heart Failure Diagnoses All - Complete history of all heart failure diagnosis and resolution observations for QOF register management.
 
 
     Clinical Purpose:
 
-    - QOF heart failure register data collection
+    • QOF heart failure register data collection and monitoring
 
-    - Heart failure type classification (HFrEF vs HFpEF identification)
+    • Heart failure type classification and cardiac function assessment
 
-    - Cardiac function monitoring
+    • HFrEF vs HFpEF identification and treatment pathway coordination
 
-    - Resolution status tracking
+    • Resolution status tracking for improved cardiac outcomes
 
 
-    Includes ALL persons following intermediate layer principles.
+    Data Granularity:
 
-    Use as input for fct_person_heart_failure_register.sql which applies QOF business rules.
+    • One row per heart failure diagnosis or resolution observation
 
-    '
+    • Uses HF_COD, HFRES_COD, HFLVSD_COD, and REDEJCFRAC_COD clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Heart failure type classification with ejection fraction considerations
+
+    • Left ventricular systolic dysfunction and reduced ejection fraction tracking
+
+    • Critical for cardiac care pathway optimisation
+
+    • Essential input for heart failure quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

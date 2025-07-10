@@ -4,15 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: RARTH_COD
-  description: "All rheumatoid arthritis (RA) diagnoses from clinical records.\nUses QOF cluster ID RARTH_COD for rheumatoid\
-    \ arthritis diagnosis codes.\n\nClinical Purpose:\n- RA register inclusion for QOF quality measures\n- Rheumatoid arthritis\
-    \ disease management monitoring\n- DMARDs (Disease-Modifying Anti-Rheumatic Drugs) prescribing support\n\nQOF Context:\n\
-    RA register follows simple diagnosis-only pattern with age restriction - any RA diagnosis \nfor patients aged 16+ qualifies\
-    \ for register inclusion. No resolution codes.\nThis supports RA quality measures and specialist care monitoring.\n\n\
-    Key Clinical Notes:\n- RA is considered a permanent condition (no resolution codes)\n- Register inclusion requires age\
-    \ \u226516 years at diagnosis\n- Important for DMARDs therapy monitoring\n- Supports rheumatology care pathways\n\nIncludes\
-    \ ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this model as input for RA register\
-    \ (with age filtering applied in fact layer).\n"
+  description: 'Intermediate: Rheumatoid Arthritis Diagnoses All - Complete history of all rheumatoid arthritis diagnosis observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF rheumatoid arthritis register data collection and monitoring
+
+    • Musculoskeletal disease management and inflammatory arthritis care pathway
+
+    • Disease activity monitoring and treatment response assessment
+
+    • Long-term joint health and mobility outcome tracking
+
+
+    Data Granularity:
+
+    • One row per rheumatoid arthritis diagnosis observation
+
+    • Uses RA_COD cluster for QOF-compliant RA diagnosis identification
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Lifelong condition register for ongoing disease management
+
+    • Simple diagnosis-only pattern with no resolution codes
+
+    • Critical for inflammatory arthritis treatment optimisation
+
+    • Essential input for rheumatoid arthritis care quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

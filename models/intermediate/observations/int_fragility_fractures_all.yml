@@ -4,37 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: FF_COD
-  description: 'Intermediate model collecting all fragility fracture observations using QOF cluster FF_COD.
-
-    Only includes fractures after April 2012 as per QOF guidelines for osteoporosis register.
-
-    Provides foundation data for osteoporosis register with fracture site classification
-
-    and person-level aggregations.
+  description: 'Intermediate: Fragility Fracture Observations - All recorded fragility fractures for osteoporosis monitoring.
 
 
-    **QOF Context:**
+    Clinical Purpose:
 
-    - Uses cluster ID FF_COD for fragility fracture codes
+    • Tracks fragility fractures for QOF osteoporosis register data collection
 
-    - Filters to fractures after April 2012 (QOF requirement)
+    • Supports bone health monitoring and fracture pattern analysis
 
-    - Classifies fracture sites for clinical analysis
-
-    - Supports osteoporosis register business rules
+    • Enables osteoporosis risk assessment and clinical decision support
 
 
-    **Key Features:**
+    Data Granularity:
 
-    - One row per fracture observation
+    • One row per fracture observation
 
-    - Fracture site classification (Hip, Wrist, Spine, Humerus, Pelvis, Femur, Other)
+    • Includes fractures after April 2012 as per QOF requirements
 
-    - Person-level aggregates for comprehensive fracture history
+    • Uses FF_COD cluster for fragility fracture identification
 
-    - Timeline context for fracture progression analysis
 
-    '
+    Key Features:
+
+    • Fracture site classification (hip, wrist, spine, humerus, pelvis, femur)
+
+    • QOF-compliant date filtering for osteoporosis register eligibility
+
+    • Clinical fracture coding validation and categorisation
+
+    • Essential input for osteoporosis register and bone health analytics'
   columns:
   - name: person_id
     description: Unique person identifier

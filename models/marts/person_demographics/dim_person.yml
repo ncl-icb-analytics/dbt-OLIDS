@@ -1,70 +1,62 @@
 version: 2
-
 models:
-  - name: dim_person
-    description: |
-      Simplified person dimension providing aggregated patient and practice relationships.
-      Uses arrays to efficiently store multiple patient IDs and practice associations per person.
-      This is the core dimension for person-level analytics across the healthcare data warehouse.
+- name: dim_person
+  description: 'Mart: Person Dimension - Core person identity and practice relationships.
 
-      **Key Features:**
-      - One row per unique person_id
-      - Aggregates all patient identifiers associated with each person
-      - Stores all practice relationships (current and historical)
-      - Uses Snowflake arrays for efficient storage of one-to-many relationships
 
-      **Business Logic:**
-      - Aggregates from person-patient mappings via stg_olids_patient_person
-      - Links to practice relationships via dim_person_historical_practice
-      - Maintains current practice as a separate denormalised field
+    Population Scope:
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier - primary key for the dimension"
-        tests:
-          - not_null
-          - unique
+    • One row per person in the HEI population
 
-      - name: sk_patient_ids
-        description: "Array of all surrogate patient IDs (sk_patient_id) associated with this person"
-        tests:
-          - not_null
+    • Aggregates multiple patient IDs per person for unified identity
 
-      - name: patient_ids
-        description: "Array of all patient IDs associated with this person across different practice registrations"
-        tests:
-          - not_null
+    • Includes current and historical practice associations
 
-      - name: practice_ids
-        description: "Array of all practice IDs where this person has been registered (current and historical)"
 
-      - name: practice_codes
-        description: "Array of all practice codes where this person has been registered"
+    Key Features:
 
-      - name: practice_names
-        description: "Array of all practice names where this person has been registered"
+    • Person-level identity consolidation across multiple patient records
 
-      - name: current_practice_id
-        description: "Practice ID where the person is currently registered (NULL if not currently registered)"
+    • Current and historical practice relationship tracking
 
-      - name: current_practice_code
-        description: "Practice code where the person is currently registered"
-
-      - name: current_practice_name
-        description: "Practice name where the person is currently registered"
-
-      - name: total_patients
-        description: "Count of distinct patient IDs associated with this person"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 20
-
-      - name: total_practices
-        description: "Count of distinct practices where this person has been registered"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 50
+    • Core dimension for person-centered analytics'
+  columns:
+  - name: person_id
+    description: Unique person identifier - primary key for the dimension
+    tests:
+    - not_null
+    - unique
+  - name: sk_patient_ids
+    description: Array of all surrogate patient IDs (sk_patient_id) associated with this person
+    tests:
+    - not_null
+  - name: patient_ids
+    description: Array of all patient IDs associated with this person across different practice registrations
+    tests:
+    - not_null
+  - name: practice_ids
+    description: Array of all practice IDs where this person has been registered (current and historical)
+  - name: practice_codes
+    description: Array of all practice codes where this person has been registered
+  - name: practice_names
+    description: Array of all practice names where this person has been registered
+  - name: current_practice_id
+    description: Practice ID where the person is currently registered (NULL if not currently registered)
+  - name: current_practice_code
+    description: Practice code where the person is currently registered
+  - name: current_practice_name
+    description: Practice name where the person is currently registered
+  - name: total_patients
+    description: Count of distinct patient IDs associated with this person
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 1
+        max_value: 20
+  - name: total_practices
+    description: Count of distinct practices where this person has been registered
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 50

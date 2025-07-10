@@ -1,47 +1,59 @@
 version: 2
-
 models:
-  - name: fct_organisation_active_patients
-    description: |
-      Organisation active patients fact table providing list size metrics per organisation.
+- name: fct_organisation_active_patients
+  description: 'Mart: Organisation Active Patients - Current active patient list size per organisation for capacity planning and performance monitoring.
 
-      **Business Logic:**
-      - Current active patient count per non-obsolete organisation
-      - Active defined as: lds_end_date_time < lds_start_date_time (legacy rule)
-      - Excludes patients with recorded death year or month
 
-      **Population Coverage:**
-      Active patients only, linked to their record owner organisation.
-      Provides current snapshot for capacity and funding calculations.
+    Business Purpose:
 
-      **Operational Context:**
-      Critical for NHS funding calculations based on registered patient lists.
-      Supports practice management, commissioning, and resource allocation.
+    • Support operational analytics for practice list management and capacity planning
 
-    config:
-      materialized: table
+    • Enable business intelligence reporting on practice list sizes and patient distribution
 
-    columns:
-      - name: organisation_id
-        description: "Unique organisation identifier"
-        tests:
-          - not_null
+    • Provide foundation for commissioning and resource allocation based on patient volumes
 
-      - name: ods_code
-        description: "ODS (Organisation Data Service) code for the organisation"
-        tests:
-          - not_null
+    • Support population health analytics and practice performance monitoring
 
-      - name: measure_id
-        description: "Metric identifier (always 'ORGANISATION_ACTIVE_LIST_SIZE')"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['ORGANISATION_ACTIVE_LIST_SIZE']
 
-      - name: active_patient_count
-        description: "Current number of active patients registered with this organisation"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
+    Data Granularity:
+
+    • One row per organisation with active patient count
+
+    • Includes current active patient list size for operational planning
+
+    • Current snapshot of organisation patient volumes and list management
+
+
+    Key Features:
+
+    • Tracks active patient count per organisation for capacity planning
+
+    • Supports practice-level reporting and operational management
+
+    • Enables business intelligence for resource allocation and service planning
+
+    • Provides foundation for performance monitoring and commissioning analytics'
+  config:
+    materialized: table
+  columns:
+  - name: organisation_id
+    description: Unique organisation identifier
+    tests:
+    - not_null
+  - name: ods_code
+    description: ODS (Organisation Data Service) code for the organisation
+    tests:
+    - not_null
+  - name: measure_id
+    description: Metric identifier (always 'ORGANISATION_ACTIVE_LIST_SIZE')
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - ORGANISATION_ACTIVE_LIST_SIZE
+  - name: active_patient_count
+    description: Current number of active patients registered with this organisation
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0

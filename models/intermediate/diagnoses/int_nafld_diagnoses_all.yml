@@ -1,15 +1,38 @@
 version: 2
 models:
 - name: int_nafld_diagnoses_all
-  description: "Intermediate model collecting all Non-Alcoholic Fatty Liver Disease (NAFLD) diagnosis observations.\n\n**Important\
-    \ Note**: This model currently uses hardcoded SNOMED concept codes as no \nNAFLD cluster is available in the codesets\
-    \ mapping. This should be updated to use \na proper cluster ID (e.g., 'NAFLD_COD') once available.\n\n**Hardcoded SNOMED\
-    \ Codes Used:**\n- 197315008: Non-alcoholic fatty liver disease\n- 1197739005: NAFLD related code\n- 1231824009: NAFLD\
-    \ related code  \n- 442685003: NAFLD related code\n- 722866000: NAFLD related code\n- 503681000000108: NAFLD related code\n\
-    \n**Clinical Context:**\nNAFLD is a common liver condition associated with metabolic syndrome, diabetes, and obesity.\n\
-    Important for liver health monitoring and cardiovascular risk assessment.\n\n**Data Collection Pattern:**\n- One row per\
-    \ NAFLD diagnosis observation\n- All observations flagged as NAFLD diagnoses (is_nafld_diagnosis = TRUE)\n- No resolved\
-    \ or exclusion codes (none available for NAFLD)\n- Simplified pattern for incremental refresh efficiency\n"
+  description: 'Intermediate: NAFLD Diagnoses All - Complete history of all Non-Alcoholic Fatty Liver Disease diagnosis observations from clinical records.
+
+
+    Clinical Purpose:
+
+    • NAFLD diagnosis tracking and liver health assessment
+
+    • Metabolic syndrome monitoring and risk stratification
+
+    • Potential QOF register development preparation
+
+    • Integration with diabetes and obesity management pathways
+
+
+    Data Granularity:
+
+    • One row per NAFLD diagnosis observation
+
+    • Includes all diagnosis dates for complete clinical history
+
+    • Uses hardcoded SNOMED concepts (pending NAFLD_COD cluster availability)
+
+
+    Key Features:
+
+    • Progressive liver disease monitoring capability
+
+    • Links to metabolic risk factors and comorbidities
+
+    • Awaiting formal cluster implementation
+
+    • Supports comprehensive liver health assessment'
   columns:
   - name: person_id
     description: Unique person identifier

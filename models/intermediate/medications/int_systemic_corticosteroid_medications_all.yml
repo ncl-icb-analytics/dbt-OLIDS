@@ -1,103 +1,132 @@
 version: 2
-
 models:
-  - name: int_systemic_corticosteroid_medications_all
-    description: |
-      All systemic corticosteroid medication orders for inflammatory conditions.
-      Uses BNF classification (6.3) for corticosteroids and corticotropins.
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+- name: int_systemic_corticosteroid_medications_all
+  description: 'Intermediate: Systemic Corticosteroid Medication Orders - All recorded systemic steroid prescriptions.
 
-      Clinical Purpose:
-      - Anti-inflammatory treatment for acute and chronic conditions
-      - Immunosuppression therapy
-      - Hormone replacement therapy (Addison's disease)
-      - Emergency treatment for severe allergic reactions
 
-      Key Features:
-      - Potency classification for dose equivalence
-      - High-dose identification for monitoring requirements
-      - Replacement vs therapeutic therapy classification
-      - Short-term recency tracking for steroid monitoring
+    Clinical Purpose:
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
+    • Tracks systemic corticosteroid therapy for inflammatory conditions
 
-      - name: medication_order_id
-        description: "Unique identifier for the medication order record"
-        tests:
-          - not_null
-          - unique
+    • Supports steroid monitoring and safety management processes
 
-      - name: corticosteroid_type
-        description: "Corticosteroid therapy type classification"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['REPLACEMENT', 'GLUCOCORTICOID', 'MINERALOCORTICOID', 'OTHER_CORTICOSTEROID']
+    • Enables analysis of high-dose therapy and replacement vs anti-inflammatory usage
 
-      - name: specific_corticosteroid
-        description: "Specific corticosteroid medication type"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['PREDNISOLONE', 'HYDROCORTISONE', 'DEXAMETHASONE', 'METHYLPREDNISOLONE', 'BETAMETHASONE', 'DEFLAZACORT', 'FLUDROCORTISONE', 'OTHER_CORTICOSTEROID']
 
-      - name: potency_classification
-        description: "Corticosteroid potency relative to hydrocortisone"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['LOW_POTENCY', 'MEDIUM_POTENCY', 'HIGH_POTENCY', 'UNKNOWN_POTENCY']
+    Data Granularity:
 
-      - name: is_prednisolone
-        description: "Boolean flag indicating prednisolone use (most common oral steroid)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • One row per medication order
 
-      - name: is_hydrocortisone
-        description: "Boolean flag indicating hydrocortisone use"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Includes all patients regardless of status (active/inactive/deceased)
 
-      - name: is_replacement_therapy
-        description: "Boolean flag indicating replacement therapy use"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Historical data maintained for longitudinal analysis
 
-      - name: is_anti_inflammatory
-        description: "Boolean flag indicating anti-inflammatory therapy use"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
 
-      - name: is_high_dose
-        description: "Boolean flag indicating high-dose steroid therapy requiring monitoring"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    Key Features:
 
-      - name: is_recent_1m
-        description: "Boolean flag indicating if order was within the last month"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Classification by corticosteroid type (replacement, glucocorticoid, mineralocorticoid)
 
+    • Potency stratification relative to hydrocortisone equivalence
+
+    • High-dose therapy identification for safety monitoring
+
+    • Short-term recency flags for steroid withdrawal assessment'
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - medication_order_id
-      - bnf_codes_exist:
-          bnf_codes: "0603"
+    - not_null
+  - name: medication_order_id
+    description: Unique identifier for the medication order record
+    tests:
+    - not_null
+    - unique
+  - name: corticosteroid_type
+    description: Corticosteroid therapy type classification
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - REPLACEMENT
+        - GLUCOCORTICOID
+        - MINERALOCORTICOID
+        - OTHER_CORTICOSTEROID
+  - name: specific_corticosteroid
+    description: Specific corticosteroid medication type
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - PREDNISOLONE
+        - HYDROCORTISONE
+        - DEXAMETHASONE
+        - METHYLPREDNISOLONE
+        - BETAMETHASONE
+        - DEFLAZACORT
+        - FLUDROCORTISONE
+        - OTHER_CORTICOSTEROID
+  - name: potency_classification
+    description: Corticosteroid potency relative to hydrocortisone
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - LOW_POTENCY
+        - MEDIUM_POTENCY
+        - HIGH_POTENCY
+        - UNKNOWN_POTENCY
+  - name: is_prednisolone
+    description: Boolean flag indicating prednisolone use (most common oral steroid)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_hydrocortisone
+    description: Boolean flag indicating hydrocortisone use
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_replacement_therapy
+    description: Boolean flag indicating replacement therapy use
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_anti_inflammatory
+    description: Boolean flag indicating anti-inflammatory therapy use
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_high_dose
+    description: Boolean flag indicating high-dose steroid therapy requiring monitoring
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_recent_1m
+    description: Boolean flag indicating if order was within the last month
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - person_id
+      - medication_order_id
+  - bnf_codes_exist:
+      bnf_codes: '0603'

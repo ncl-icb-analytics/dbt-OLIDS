@@ -1,115 +1,82 @@
 models:
-  - name: fct_person_diabetes_register
-    description: |
-      QOF Diabetes Register - Type classification register with diabetes subtype determination.
+- name: fct_person_diabetes_register
+  description: 'QOF Diabetes Register - Patients aged 17+ with active diabetes diagnosis including type classification.
 
-      **Business Logic (Pattern 4):**
-      - Age ≥17 years (QOF requirement for diabetes monitoring)
-      - Active diabetes diagnosis: latest DM_COD > latest DMRES_COD OR no resolution recorded
-      - Type classification: Type 1 vs Type 2 vs Unknown based on latest specific type codes
-      - Type hierarchy: Type 1 takes precedence if both types coded on same date
 
-      **Clinical Context:**
-      This register identifies patients with active diabetes and classifies them by diabetes type
-      for appropriate clinical management. Type classification supports different care pathways
-      and QOF monitoring requirements for Type 1 and Type 2 diabetes.
+    Population Scope:
 
-      **QOF Requirements:**
-      - DM014: Practice can produce a register of patients with diabetes mellitus (all types)
-      - Supports type-specific indicators for HbA1c monitoring, care processes, and complications screening
-      - Type classification enables appropriate clinical review frequencies and targets
+    • Age 17+ years
 
-      **Type Classification Logic:**
-      - Type 1: Latest DMTYPE1_COD ≥ latest DMTYPE2_COD (precedence rule)
-      - Type 2: Latest DMTYPE2_COD > latest DMTYPE1_COD
-      - Unknown: No specific type codes or general DM_COD only
 
-      **Data Sources:**
-      - Diagnosis codes: int_diabetes_diagnoses_all (DM_COD, DMRES_COD, DMTYPE1_COD, DMTYPE2_COD cluster IDs)
-      - Age filtering: dim_person_age (≥17 years requirement)
+    • Active diabetes diagnosis: latest DM_COD > latest DMRES_COD
 
-      Includes ALL persons (active, inactive, deceased) for comprehensive reporting.
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
-          - unique
+    • Type classification: Type 1, Type 2, or Unknown (Type 1 takes precedence)
 
-#       - name: age
-#         description: "Current age of person (≥17 years for diabetes register eligibility)"
-#         tests:
-#           - not_null
-#           - dbt_utils.accepted_range:
-#               min_value: 17
-#               max_value: 120
-
-      - name: is_on_register
-        description: "QOF register inclusion flag - TRUE for all persons in this table"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: diabetes_type
-        description: "Classified diabetes type based on latest specific coding (Type 1 takes precedence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Type 1', 'Type 2', 'Unknown']
-
-      - name: earliest_diagnosis_date
-        description: "Date of first recorded diabetes diagnosis code (any type)"
-        tests:
-          - dbt_utils.not_accepted_values:
-              values: ['1900-01-01']
-
-      - name: latest_diagnosis_date
-        description: "Date of most recent diabetes diagnosis code (any type)"
-        tests:
-          - not_null
-
-      - name: latest_resolved_date
-        description: "Date of most recent diabetes resolved code (DMRES_COD) - NULL if never resolved"
-
-      - name: earliest_type1_date
-        description: "Date of first recorded Type 1 diabetes diagnosis code (DMTYPE1_COD)"
-
-      - name: latest_type1_date
-        description: "Date of most recent Type 1 diabetes diagnosis code (DMTYPE1_COD)"
-
-      - name: earliest_type2_date
-        description: "Date of first recorded Type 2 diabetes diagnosis code (DMTYPE2_COD)"
-
-      - name: latest_type2_date
-        description: "Date of most recent Type 2 diabetes diagnosis code (DMTYPE2_COD)"
-
-      - name: all_diabetes_concept_codes
-        description: "Array of all diabetes diagnosis concept codes recorded for this person"
-
-      - name: all_diabetes_concept_displays
-        description: "Array of all diabetes diagnosis concept display terms"
-
-      - name: all_type1_concept_codes
-        description: "Array of all Type 1 diabetes concept codes"
-
-      - name: all_type2_concept_codes
-        description: "Array of all Type 2 diabetes concept codes"
-
-      - name: all_resolved_concept_codes
-        description: "Array of all diabetes resolved concept codes"
-
-      - name: meets_age_criteria
-        description: "Boolean flag: TRUE if person meets age ≥17 requirement"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
-
-      - name: has_active_diabetes_diagnosis
-        description: "Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
+    • One row per person with current register status'
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
+    tests:
+    - not_null
+    - unique
+  - name: is_on_register
+    description: QOF register inclusion flag - TRUE for all persons in this table
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: diabetes_type
+    description: Classified diabetes type based on latest specific coding (Type 1 takes precedence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Type 1
+        - Type 2
+        - Unknown
+  - name: earliest_diagnosis_date
+    description: Date of first recorded diabetes diagnosis code (any type)
+    tests:
+    - dbt_utils.not_accepted_values:
+        values:
+        - '1900-01-01'
+  - name: latest_diagnosis_date
+    description: Date of most recent diabetes diagnosis code (any type)
+    tests:
+    - not_null
+  - name: latest_resolved_date
+    description: Date of most recent diabetes resolved code (DMRES_COD) - NULL if never resolved
+  - name: earliest_type1_date
+    description: Date of first recorded Type 1 diabetes diagnosis code (DMTYPE1_COD)
+  - name: latest_type1_date
+    description: Date of most recent Type 1 diabetes diagnosis code (DMTYPE1_COD)
+  - name: earliest_type2_date
+    description: Date of first recorded Type 2 diabetes diagnosis code (DMTYPE2_COD)
+  - name: latest_type2_date
+    description: Date of most recent Type 2 diabetes diagnosis code (DMTYPE2_COD)
+  - name: all_diabetes_concept_codes
+    description: Array of all diabetes diagnosis concept codes recorded for this person
+  - name: all_diabetes_concept_displays
+    description: Array of all diabetes diagnosis concept display terms
+  - name: all_type1_concept_codes
+    description: Array of all Type 1 diabetes concept codes
+  - name: all_type2_concept_codes
+    description: Array of all Type 2 diabetes concept codes
+  - name: all_resolved_concept_codes
+    description: Array of all diabetes resolved concept codes
+  - name: meets_age_criteria
+    description: 'Boolean flag: TRUE if person meets age ≥17 requirement'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: has_active_diabetes_diagnosis
+    description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
