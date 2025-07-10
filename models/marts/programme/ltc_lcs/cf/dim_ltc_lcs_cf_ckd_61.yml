@@ -18,14 +18,17 @@ models:
     • Complete eGFR testing history with latest and previous readings
 
     • Evidence-based case finding criteria for early CKD detection'
+
   columns:
   - name: person_id
     description: The unique identifier for the patient
+
     tests:
     - not_null
     - unique
   - name: age
     description: The patient's age in years (must be >= 17)
+
     tests:
     - not_null
   - name: has_ckd
@@ -44,5 +47,6 @@ models:
     description: Array of all eGFR display terms for traceability
   - name: meets_criteria
     description: Boolean flag indicating if the patient meets all CKD_61 criteria
+
     tests:
     - not_null

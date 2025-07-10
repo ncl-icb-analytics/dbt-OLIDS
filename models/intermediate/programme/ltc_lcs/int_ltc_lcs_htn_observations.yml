@@ -21,14 +21,12 @@ models:
 
     • Covers clinic, home, and ABPM blood pressure events with systolic/diastolic pairing
 
-
     • Includes other hypertension-related observations: eGFR, BMI, BSA, cardiovascular complications
 
     • Sourced from int_blood_pressure_all and LTC_LCS programme observation clusters
 
 
     Key Features:
-
 
     • Cluster IDs: HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM, HYPERTENSION_EGFR, HYPERTENSION_BMI, HYPERTENSION_BSA, HYPERTENSION_MYOCARDIAL, HYPERTENSION_CEREBRAL, HYPERTENSION_CLAUDICATION, HYPERTENSION_DIABETES
 
@@ -37,19 +35,24 @@ models:
     • Comprehensive hypertension risk factor and diagnostic observation analysis
 
     • Integration with existing blood pressure intermediate model and LTC_LCS observation clusters'
+
   tests:
   - cluster_ids_exist:
       cluster_ids: HYPERTENSION_EGFR,HYPERTENSION_BMI,HYPERTENSION_BSA,HYPERTENSION_MYOCARDIAL,HYPERTENSION_CEREBRAL,HYPERTENSION_CLAUDICATION,HYPERTENSION_DIABETES
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: cluster_id
     description: Cluster identifier for the observation type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HYPERTENSION_BP_CLINIC
         - HYPERTENSION_BP_HOME
@@ -63,6 +66,7 @@ models:
         - HYPERTENSION_DIABETES
   - name: clinical_effective_date
     description: Date when the observation was clinically effective
+
     tests:
     - not_null
   - name: result_value
@@ -73,9 +77,11 @@ models:
     description: Array of mapped concept display terms for the observation
   - name: observation_type
     description: 'Type of observation: BP_SYSTOLIC, BP_DIASTOLIC, or OTHER'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - BP_SYSTOLIC
         - BP_DIASTOLIC

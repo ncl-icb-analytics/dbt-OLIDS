@@ -8,6 +8,7 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique

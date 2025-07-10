@@ -34,126 +34,158 @@ models:
     • Townson scale integration and diabetes foot risk categorisation
 
     • Foot status tracking (absent, amputated) for clinical context'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the foot examination
+
     tests:
     - not_null
     - test_no_future_dates
   - name: is_unsuitable
     description: Flag indicating foot check deemed unsuitable
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_declined
     description: Flag indicating patient declined foot check
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: left_foot_checked
     description: Flag indicating left foot was checked
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: right_foot_checked
     description: Flag indicating right foot was checked
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: both_feet_checked
     description: Flag indicating both feet were checked (Townson scale)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: left_foot_absent
     description: Flag indicating congenital absence of left foot
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: right_foot_absent
     description: Flag indicating congenital absence of right foot
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: left_foot_amputated
     description: Flag indicating left foot amputation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: right_foot_amputated
     description: Flag indicating right foot amputation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: left_foot_risk_level
     description: Risk level for left foot
+
     tests:
     - accepted_values:
+
         values:
         - Low
         - Moderate
         - High
         - Ulcerated
+
         config:
           where: left_foot_risk_level IS NOT NULL
   - name: right_foot_risk_level
     description: Risk level for right foot
+
     tests:
     - accepted_values:
+
         values:
         - Low
         - Moderate
         - High
         - Ulcerated
+
         config:
           where: right_foot_risk_level IS NOT NULL
   - name: townson_scale_level
     description: Young Townson footskin scale level
+
     tests:
     - accepted_values:
+
         values:
         - Level 1
         - Level 2
         - Level 3
         - Level 4
+
         config:
           where: townson_scale_level IS NOT NULL
   - name: examination_status
     description: Overall status of foot examination
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Unsuitable
         - Declined

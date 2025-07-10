@@ -34,32 +34,40 @@ models:
     • Clinical assessment limitation tracking for quality assurance
 
     • Essential for COPD register spirometry validation processes'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the unable-to-have-spirometry observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for unable spirometry
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the unable spirometry code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: Source cluster ID (UNABLESPI_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - UNABLESPI_COD
   - name: earliest_unable_spirometry_date
@@ -68,16 +76,20 @@ models:
     description: Latest unable spirometry date for this person
   - name: is_unable_spirometry_record
     description: Flag indicating this is an unable spirometry record (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: spirometry_observation_type
     description: Classification of this spirometry observation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Unable to Perform Spirometry
   - name: all_unable_spirometry_concept_codes

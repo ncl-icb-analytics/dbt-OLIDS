@@ -36,9 +36,11 @@ models:
     • Critical for cardiovascular risk management and prevention protocols
 
     • Essential input for PAD care quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:

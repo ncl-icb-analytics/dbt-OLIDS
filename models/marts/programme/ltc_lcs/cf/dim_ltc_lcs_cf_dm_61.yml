@@ -8,7 +8,6 @@ models:
 
     • Patients aged 17+ from LTC case finding base population
 
-
     • Meeting any high-risk diabetes criteria: HbA1c ≥42, QDiabetes ≥5.6%, QRisk2 >20%, or gestational diabetes history
 
     • Excludes patients already on diabetes register or with recent NHS Health Check
@@ -21,21 +20,26 @@ models:
     • Evidence-based case finding aligned with NICE guidelines
 
     • Integration with diabetes prevention pathways'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_diabetes_risk
     description: Boolean flag indicating if person meets any diabetes risk criteria
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -53,9 +57,11 @@ models:
     description: Most recent QRisk2 cardiovascular risk score (%)
   - name: has_gestational_diabetes
     description: Boolean flag indicating history of gestational diabetes
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

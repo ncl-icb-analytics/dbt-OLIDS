@@ -1,46 +1,29 @@
 version: 2
 models:
 - name: fct_household_members
-  description: 'Mart: Household Members - Bridge table linking patients to households for geographic and social analysis.
+  description: 'Bridge table linking patients to households for geographic and social analysis.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support population health teams in analysing household-level health outcomes and social determinants
+    • Links people to households through UPRN hash mapping with demographic and registration details
 
-    • Enable business intelligence reporting on geographic distribution of patients and practice populations
+    • Includes practice registration and organisational context for spatial analysis
 
-    • Provide foundation for household-based care planning and resource allocation
+    • Supports household-level population analytics and neighbourhood health intelligence
 
-    • Support neighbourhood-level health analytics and community health assessments
+    • One row per person with valid UPRN hash, enabling household composition analysis and geographic health reporting'
 
-
-    Data Granularity:
-
-    • One row per person per household (UPRN-based dwelling)
-
-    • Includes all patients with valid household addresses
-
-    • Current snapshot of household membership with demographic attributes
-
-
-    Key Features:
-
-    • Links patients to geographic households and practice organisational structures
-
-    • Includes demographic characteristics for household composition analysis
-
-    • Supports spatial analysis combining patient attributes with dwelling location
-
-    • Enables population health reporting at household and neighbourhood levels'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: household_id
     description: Foreign key to dim_households
+
     tests:
     - not_null
     - relationships:
@@ -48,35 +31,43 @@ models:
         field: household_id
   - name: uprn_hash
     description: Hashed UPRN - natural key for the dwelling
+
     tests:
     - not_null
   - name: is_active
     description: Whether the person is an active patient
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_deceased
     description: Whether the person is recorded as deceased
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: sex
     description: Sex of the person
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Female
         - Male
         - Unknown
   - name: age
     description: Current age in years (or age at death if deceased)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -84,10 +75,12 @@ models:
         max_value: 150
   - name: age_life_stage
     description: Life stage categorisation
+
     tests:
     - not_null
   - name: age_band_ons
     description: ONS standard 5-year age bands
+
     tests:
     - not_null
   - name: ethnicity_category
@@ -96,9 +89,11 @@ models:
     description: Main spoken language
   - name: interpreter_needed
     description: Whether an interpreter is needed
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -118,12 +113,15 @@ models:
     description: Practice neighbourhood classification
   - name: snapshot_date
     description: Date this snapshot was taken
+
     tests:
     - not_null
   - name: created_at
     description: Timestamp when this record was created
+
     tests:
     - not_null
+
   tests:
   - dbt_utils.expression_is_true:
       name: active_people_have_practice

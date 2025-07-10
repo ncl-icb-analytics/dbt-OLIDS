@@ -26,7 +26,6 @@ Replace these placeholders when creating a new campaign model:
 
 {{ config(
     materialized='table',
-    persist_docs={"relation": true, "columns": true},
     cluster_by=['campaign_id', 'person_id', 'rule_group_id']) }}
 
 {# 

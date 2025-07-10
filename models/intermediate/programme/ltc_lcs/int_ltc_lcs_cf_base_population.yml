@@ -35,9 +35,11 @@ models:
     • NHS health check lookback period of 24 months
 
     • Integration with person age and LTC summary data for comprehensive population definition'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: condition_code
@@ -46,5 +48,6 @@ models:
     description: Flag indicating if person is on LTC/LCS register
   - name: age
     description: The patient's age in years
+
     tests:
     - not_null

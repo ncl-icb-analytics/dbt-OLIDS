@@ -1,62 +1,49 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_dm_63
-  description: 'Mart: LTC LCS Case Finding DM_63 - Identifies patients with borderline HbA1c levels requiring diabetes surveillance and intervention.
+  description: 'Case finding for patients with borderline HbA1c levels requiring diabetes surveillance.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for patients with HbA1c in pre-diabetic range requiring ongoing monitoring
+    • Identifies patients aged 17+ with latest HbA1c between 46-47 mmol/mol (borderline pre-diabetic)
 
-    • Enable early intervention for diabetes prevention in patients with borderline glucose control
+    • Targets patients lacking recent diabetes monitoring and requiring enhanced surveillance
 
-    • Provide clinical decision support for diabetes surveillance in high-risk populations
+    • Focuses on borderline glycaemic control requiring ongoing diabetes risk assessment
 
-    • Support quality improvement initiatives for diabetes prevention and early detection programmes
+    • One row per eligible person with borderline HbA1c requiring intervention'
 
-
-    Data Granularity:
-
-    • One row per person aged 17+ with latest HbA1c between 46-47 mmol/mol lacking recent monitoring
-
-    • Includes patients with borderline glycaemic control requiring enhanced surveillance
-
-    • Limited to patients in pre-diabetic range without recent diabetes assessment
-
-
-    Key Features:
-
-    • Borderline HbA1c identification (46-47 mmol/mol) for enhanced diabetes surveillance
-
-    • Monitoring gap detection for patients requiring ongoing diabetes risk assessment
-
-    • Evidence-based case finding supporting diabetes prevention in borderline glycaemic populations
-
-    • Integration with diabetes prevention pathways for targeted lifestyle and medical intervention'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_elevated_hba1c
     description: Boolean flag indicating if person has elevated HbA1c (46-47) with no recent monitoring
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: latest_hba1c_date
     description: Date of most recent HbA1c reading
+
     tests:
     - not_null
   - name: latest_hba1c_value
     description: Most recent HbA1c value (46-47 mmol/mol)
+
     tests:
     - not_null
   - name: all_hba1c_codes

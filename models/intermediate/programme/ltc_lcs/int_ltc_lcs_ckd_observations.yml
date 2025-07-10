@@ -21,14 +21,12 @@ models:
 
     • Covers urine ACR testing, eGFR testing, acute kidney injury, BPH/gout, haematuria, proteinuria
 
-
     • Includes medication-related observations: lithium, sulfasalazine, tacrolimus
 
     • Sourced from LTC_LCS programme observation clusters
 
 
     Key Features:
-
 
     • Cluster IDs: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS
 
@@ -37,6 +35,7 @@ models:
     • Comprehensive laboratory and clinical observation analysis for undiagnosed CKD detection
 
     • Integration with LTC_LCS programme clinical observation tracking systems'
+
   tests:
   - cluster_ids_exist:
       cluster_ids: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS

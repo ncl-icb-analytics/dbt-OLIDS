@@ -20,21 +20,26 @@ models:
     • HbA1c surveillance gap detection
 
     • Evidence-based case finding for post-pregnancy diabetes risk management'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_gestational_diabetes_risk
     description: Boolean flag indicating if person has gestational diabetes with pregnancy risk and missing HbA1c
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

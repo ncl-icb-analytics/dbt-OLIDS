@@ -36,9 +36,11 @@ models:
     • Resolution and remission monitoring capability
 
     • Critical for cancer care quality indicators and pathway management'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:

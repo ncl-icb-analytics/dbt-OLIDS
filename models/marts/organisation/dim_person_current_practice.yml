@@ -20,9 +20,11 @@ models:
     • Includes practice operational status and hierarchy information
 
     • Supports practice-level reporting and population health management'
+
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique

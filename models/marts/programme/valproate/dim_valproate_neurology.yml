@@ -3,23 +3,27 @@ models:
 - name: dim_valproate_neurology
   description: 'Person-level aggregation of neurology-related events for valproate monitoring.
 
+
     Business Logic:
-    
+
     • Aggregates all neurology events per person from intermediate neurology events table
-    
+
     • Provides earliest and latest neurology event dates for timeline analysis
-    
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
-    
+
     • Only includes people who have neurology events (has_neurology_event always TRUE)'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
     - unique
   - name: has_neurology_event
     description: TRUE if any neurology event is present for the person. Always TRUE for persons in this table.
+
     tests:
     - not_null
   - name: earliest_neurology_event_date

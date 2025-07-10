@@ -8,14 +8,17 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique
   - name: is_care_home_resident
     description: Boolean flag indicating if person resides in a care home
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

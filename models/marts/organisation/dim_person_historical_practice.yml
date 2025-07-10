@@ -20,37 +20,45 @@ models:
     • Includes practice transition information and registration sequence analysis
 
     • Supports longitudinal care continuity and patient journey analytics'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: practice_id
     description: Practice identifier
+
     tests:
     - not_null
   - name: practice_code
     description: Practice ODS code
+
     tests:
     - not_null
   - name: practice_name
     description: Practice name
+
     tests:
     - not_null
   - name: registration_start_date
     description: Start date of registration at this practice
+
     tests:
     - not_null
   - name: registration_end_date
     description: End date of registration (NULL if current)
   - name: registration_duration_days
     description: Duration of registration in days
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 0
         max_value: 50000
   - name: registration_sequence
     description: Sequence number of this registration for the person (1 = first practice)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

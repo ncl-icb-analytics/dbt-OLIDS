@@ -34,24 +34,30 @@ models:
     • QOF target achievement flags for diabetes quality indicators
 
     • Diabetes diagnostic thresholds and clinical decision support'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the HbA1c measurement
+
     tests:
     - not_null
   - name: is_valid_hba1c
     description: Flag indicating if HbA1c is within valid range
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

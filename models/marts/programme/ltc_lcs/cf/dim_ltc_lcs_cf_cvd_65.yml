@@ -1,61 +1,48 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_cvd_65
-  description: 'Mart: LTC LCS Case Finding CVD_65 - Identifies patients with moderate cardiovascular risk (QRISK2 ≥10%) requiring moderate-dose statin therapy.
+  description: 'Case finding for patients with moderate cardiovascular risk requiring moderate-dose statin therapy.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for cardiovascular disease prevention with moderate-dose statin therapy
+    • Identifies patients with latest QRISK2 score ≥10% requiring moderate-dose statin therapy
 
-    • Enable identification of patients requiring evidence-based lipid management for primary prevention
+    • Targets primary prevention patients needing evidence-based lipid management
 
-    • Provide clinical decision support for QRISK2-guided statin initiation
+    • Uses QRISK2-based cardiovascular risk stratification for statin eligibility decisions
 
-    • Support quality improvement initiatives for cardiovascular risk reduction and prevention programmes
+    • One row per person meeting moderate cardiovascular risk intervention thresholds'
 
-
-    Data Granularity:
-
-    • One row per person with latest QRISK2 score of 10% or higher requiring moderate-dose statin therapy
-
-    • Includes cardiovascular risk assessment and medication requirement indicators
-
-    • Limited to patients meeting moderate cardiovascular risk intervention thresholds
-
-
-    Key Features:
-
-    • QRISK2-based cardiovascular risk stratification (≥10% threshold) for statin eligibility
-
-    • Moderate-dose statin requirement assessment for primary prevention
-
-    • Evidence-based case finding supporting NICE guidelines for CVD prevention
-
-    • Integration with cardiovascular risk assessment for therapeutic decision-making'
   columns:
   - name: person_id
     description: Unique patient identifier
+
     tests:
     - not_null
     - unique
   - name: age
     description: Patient age
+
     tests:
     - not_null
   - name: needs_moderate_dose_statin
     description: Whether patient needs moderate-dose statin (TRUE for all)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_qrisk2_date
     description: Date of latest QRISK2 ≥ 10 assessment
+
     tests:
     - not_null
   - name: latest_qrisk2_value
     description: Latest QRISK2 value (≥ 10)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

@@ -34,21 +34,26 @@ models:
     • CKD indicator flags for values <60 suggesting kidney disease
 
     • Comprehensive kidney function assessment for clinical management'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the eGFR measurement
+
     tests:
     - not_null
   - name: egfr_value
     description: eGFR value in mL/min/1.73m²
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -59,17 +64,21 @@ models:
     description: Display value for the result unit (e.g., 'mL/min/1.73m²')
   - name: is_valid_egfr
     description: Flag indicating if eGFR is within valid range (1-200)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: ckd_stage
     description: CKD stage classification based on eGFR
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Invalid
         - Normal/High (≥90)
@@ -81,9 +90,11 @@ models:
         - Unknown
   - name: is_ckd_indicator
     description: Flag indicating CKD (eGFR < 60)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

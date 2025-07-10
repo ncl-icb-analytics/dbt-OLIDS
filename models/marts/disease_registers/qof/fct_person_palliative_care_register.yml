@@ -14,9 +14,11 @@ models:
 
 
     Purpose: QOF register for end-of-life care quality measures, care coordination, and ensuring appropriate palliative support.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -24,13 +26,16 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: meets QOF palliative care criteria (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Date of first recorded palliative care code (QOF requires on/after 1 April 2008)
+
     tests:
     - not_null
     - test_no_future_dates
@@ -40,6 +45,7 @@ models:
         severity: warn
   - name: latest_diagnosis_date
     description: Date of most recent palliative care code (QOF requires on/after 1 April 2008)
+
     tests:
     - not_null
     - test_no_future_dates

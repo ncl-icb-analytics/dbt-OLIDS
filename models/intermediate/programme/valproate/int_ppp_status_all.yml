@@ -28,7 +28,6 @@ models:
 
     Key Features:
 
-
     • PPP status categorisation: enrolled, discontinued, not needed, declined
 
     • Integration with valproate programme codes for comprehensive status tracking
@@ -36,9 +35,11 @@ models:
     • Raw data collection layer feeding downstream PPP dimension table
 
     • Support for valproate patient safety monitoring and regulatory compliance'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
   - name: ppp_event_date

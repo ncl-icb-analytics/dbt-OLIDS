@@ -19,7 +19,6 @@ models:
 
     • One row per person with any excluding LTC condition
 
-
     • Covers 13 major LTC conditions: CKD, AF, COPD, HTN, CHD, Stroke/TIA, PAD, HF, T2DM, hyperlipidaemia, NAFLD, asthma
 
     • Includes boolean flags for each condition type and composite exclusion indicator
@@ -36,13 +35,16 @@ models:
     • Composite exclusion flag for simple filtering in downstream models
 
     • Integration with diabetes register for Type 2 diabetes exclusions'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: has_excluding_condition
     description: Flag indicating if person has any excluding condition
+
     tests:
     - not_null
   - name: has_ckd

@@ -20,9 +20,11 @@ models:
     • Complete UACR testing history with latest and previous readings
 
     • Evidence-based case finding criteria for early kidney damage detection'
+
   columns:
   - name: person_id
     description: The unique identifier for the patient
+
     tests:
     - not_null
     - unique

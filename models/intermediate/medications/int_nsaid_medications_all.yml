@@ -31,21 +31,26 @@ models:
     • High-dose therapy flags for safety monitoring
 
     • Cardiovascular risk assessment based on drug type and dosing'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
   - name: medication_order_id
     description: Unique identifier for the medication order record
+
     tests:
     - not_null
     - unique
   - name: nsaid_type
     description: NSAID classification by selectivity and route
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - COX2_SELECTIVE
         - TOPICAL
@@ -53,9 +58,11 @@ models:
         - OTHER_NSAID
   - name: specific_nsaid
     description: Specific NSAID medication type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - IBUPROFEN
         - DICLOFENAC
@@ -68,70 +75,88 @@ models:
         - OTHER_NSAID
   - name: is_ibuprofen
     description: Boolean flag indicating ibuprofen use (most common NSAID)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_diclofenac
     description: Boolean flag indicating diclofenac use
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_naproxen
     description: Boolean flag indicating naproxen use
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_cox2_selective
     description: Boolean flag indicating COX-2 selective NSAID
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_topical
     description: Boolean flag indicating topical NSAID formulation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_non_selective
     description: Boolean flag indicating non-selective NSAID
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_high_dose_ibuprofen
     description: Boolean flag indicating high-dose ibuprofen (≥2400mg daily)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_high_cv_risk
     description: Boolean flag indicating NSAID with high cardiovascular risk
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - person_id
       - medication_order_id

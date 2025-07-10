@@ -36,9 +36,11 @@ models:
     • Applies primarily to women of childbearing age
 
     • Critical for postpartum diabetes risk stratification'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:

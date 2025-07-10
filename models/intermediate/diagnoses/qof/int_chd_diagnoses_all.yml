@@ -33,14 +33,17 @@ models:
     • Critical for cardiovascular risk management protocols
 
     • Essential input for secondary prevention quality indicators'
+
   columns:
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
     - unique
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -48,34 +51,43 @@ models:
         field: person_id
   - name: clinical_effective_date
     description: Date when the CHD diagnosis was recorded
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED CT concept code for the CHD diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Human readable description of the CHD diagnosis
+
     tests:
     - not_null
   - name: source_cluster_id
     description: Source cluster identifier (should be CHD_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - CHD_COD
   - name: is_chd_diagnosis
     description: Flag indicating this is a CHD diagnosis (always TRUE in this model)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
+
   tests:
   - cluster_ids_exist:
       cluster_ids: CHD_COD
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - observation_id
       - concept_code

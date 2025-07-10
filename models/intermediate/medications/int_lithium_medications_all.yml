@@ -31,30 +31,37 @@ models:
     • Dose categorisation for therapeutic range assessment
 
     • Mandatory monitoring requirement flags for patient safety'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
   - name: medication_order_id
     description: Unique identifier for the medication order record
+
     tests:
     - not_null
     - unique
   - name: lithium_type
     description: Lithium preparation type (carbonate vs citrate)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - LITHIUM_CARBONATE
         - LITHIUM_CITRATE
         - OTHER_LITHIUM
   - name: lithium_brand
     description: Lithium brand name (critical for bioequivalence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - PRIADEL
         - CAMCOLIT
@@ -63,25 +70,31 @@ models:
         - OTHER_BRAND
   - name: is_lithium_carbonate
     description: Boolean flag indicating lithium carbonate preparation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_priadel
     description: Boolean flag indicating Priadel brand (most common)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: lithium_dose_category
     description: Lithium dose classification for therapeutic monitoring
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - STANDARD_DOSE
         - HIGH_DOSE
@@ -89,9 +102,11 @@ models:
         - UNKNOWN_DOSE
   - name: formulation_type
     description: Lithium formulation type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - TABLET
         - CAPSULE
@@ -99,14 +114,18 @@ models:
         - UNKNOWN_FORMULATION
   - name: requires_monitoring
     description: Boolean flag indicating monitoring requirement (always true for lithium)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - person_id
       - medication_order_id

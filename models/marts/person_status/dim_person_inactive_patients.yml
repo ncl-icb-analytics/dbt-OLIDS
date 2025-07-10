@@ -5,30 +5,37 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique
   - name: sk_patient_id
     description: Surrogate patient key
+
     tests:
     - not_null
   - name: is_deceased
     description: Boolean flag indicating if patient is deceased
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_dummy_patient
     description: Boolean flag indicating if this is a dummy/test patient
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: inactive_reason
     description: Reason for inactive status (Deceased, No Current Registration, Dummy Patient)
+
     tests:
     - not_null

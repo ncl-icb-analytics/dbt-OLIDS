@@ -1,70 +1,59 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_dm_64
-  description: 'Mart: LTC LCS Case Finding DM_64 - Identifies patients with ethnicity-adjusted high BMI requiring diabetes screening due to lack of recent assessment.
+  description: 'Case finding for diabetes screening in patients with high BMI using ethnicity-specific thresholds.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for diabetes in high-BMI populations using ethnicity-specific thresholds
+    • Identifies patients with high BMI requiring diabetes screening (BAME: ≥32.5, non-BAME: ≥35)
 
-    • Enable diabetes screening in patients with obesity-related diabetes risk lacking recent assessment
+    • Targets patients lacking HbA1c assessment in the last 24 months
 
-    • Provide clinical decision support for ethnicity-appropriate diabetes screening programmes
+    • Uses ethnicity-specific BMI thresholds for appropriate diabetes risk assessment
 
-    • Support quality improvement initiatives for equitable diabetes prevention and early detection
+    • One row per eligible person with BMI, ethnicity data, and HbA1c monitoring gap'
 
-
-    Data Granularity:
-
-    • One row per person with ethnicity-adjusted high BMI lacking HbA1c assessment in 24 months
-
-    • Includes BAME patients with BMI ≥32.5 and non-BAME patients with BMI ≥35
-
-    • Limited to patients with obesity-related diabetes risk requiring screening
-
-
-    Key Features:
-
-    • Ethnicity-adjusted BMI thresholds (≥32.5 BAME, ≥35 non-BAME) for appropriate diabetes risk assessment
-
-    • Extended monitoring gap detection (24 months) for obesity-related diabetes surveillance
-
-    • Evidence-based case finding supporting NICE guidelines for diabetes screening in high-risk populations
-
-    • Integration with diabetes prevention pathways for ethnicity-appropriate intervention'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_high_bmi
     description: Boolean flag indicating if person has high BMI based on ethnicity thresholds
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_bame
     description: Boolean flag indicating if person is from BAME ethnicity
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: latest_bmi_date
     description: Date of most recent BMI measurement
+
     tests:
     - not_null
   - name: latest_bmi_value
     description: Most recent BMI value (≥32.5 for BAME, ≥35 for non-BAME)
+
     tests:
     - not_null
   - name: latest_hba1c_date

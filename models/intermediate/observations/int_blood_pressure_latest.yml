@@ -5,15 +5,18 @@ models:
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Timestamp of when the blood pressure reading is clinically effective (TIMESTAMP_NTZ)
+
     tests:
     - not_null
     - test_no_future_dates
   - name: systolic_value
     description: Systolic blood pressure value in mmHg
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 40
@@ -21,6 +24,7 @@ models:
         where: systolic_value is not null
   - name: diastolic_value
     description: Diastolic blood pressure value in mmHg
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 20
@@ -28,10 +32,12 @@ models:
         where: diastolic_value is not null
   - name: is_home_bp_event
     description: Flag indicating if reading was taken at home
+
     tests:
     - not_null
   - name: is_abpm_bp_event
     description: Flag indicating if reading was from ambulatory blood pressure monitoring
+
     tests:
     - not_null
   - name: systolic_observation_id
@@ -40,9 +46,11 @@ models:
     description: Reference to source observation for diastolic reading
   - name: all_concept_codes
     description: Array of all related concept codes for the readings
+
     tests:
     - not_null
   - name: all_concept_displays
     description: Array of all related concept display texts
+
     tests:
     - not_null

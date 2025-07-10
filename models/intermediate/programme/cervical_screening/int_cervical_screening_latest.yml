@@ -33,13 +33,16 @@ models:
     • Foundation for person-level screening programme analysis
 
     • Essential for real-time programme management and patient care coordination'
+
   columns:
   - name: observation_id
     description: Unique observation identifier for the latest screening observation
+
     tests:
     - not_null
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
@@ -48,21 +51,26 @@ models:
         field: person_id
   - name: clinical_effective_date
     description: Date of the latest cervical screening observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for latest cervical screening observation
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the latest cervical screening code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID for latest observation (SMEAR_COD, CSPU_COD, CSDEC_COD, CSPCAINVITE_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - SMEAR_COD
         - CSPU_COD
@@ -70,9 +78,11 @@ models:
         - CSPCAINVITE_COD
   - name: screening_observation_type
     description: Classification of latest screening observation type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Cervical Screening Completed
         - Screening Unsuitable
@@ -81,40 +91,50 @@ models:
         - Unknown
   - name: is_completed_screening
     description: Flag indicating latest observation is completed cervical screening (SMEAR_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_unsuitable_screening
     description: Flag indicating latest observation is screening unsuitable status (CSPU_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_declined_screening
     description: Flag indicating latest observation is screening declined status (CSDEC_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_non_response_screening
     description: Flag indicating latest observation is non-response to invitations (CSPCAINVITE_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: cytology_result_category
     description: Comprehensive cytology result categorisation (only populated for completed screenings)
+
     tests:
     - accepted_values:
+
         values:
         - Normal
         - Borderline Changes
@@ -138,8 +158,10 @@ models:
         quote: false
   - name: cervical_screening_risk_category
     description: Clinical risk assessment based on cytology results (only populated for completed screenings)
+
     tests:
     - accepted_values:
+
         values:
         - Low Risk (Normal)
         - Low-Moderate Risk
@@ -149,29 +171,26 @@ models:
         - Risk Assessment Required
         quote: false
   - name: abnormality_grade
-    description: 'Simplified abnormality grade classification (only populated for completed screenings):
 
+    description: 'Simplified abnormality grade classification (only populated for completed screenings):
 
       - ''Normal'': No abnormality detected
 
-
       - ''Low Grade'': Borderline changes, mild dyskaryosis
-
 
       - ''Moderate Grade'': Moderate dyskaryosis
 
-
       - ''High Grade'': Severe dyskaryosis, glandular abnormalities
 
-
       - ''HPV Changes'': Viral changes, koilocytosis
-
 
       - ''Infection'': Bacterial/fungal infections
 
       - ''Inflammatory'', ''Atrophic Changes'', ''Other Finding'''
+
     tests:
     - accepted_values:
+
         values:
         - Normal
         - Low Grade
@@ -184,38 +203,37 @@ models:
         - Nuclear Abnormality
         - Other Finding
   - name: sample_adequacy
-    description: 'Sample adequacy assessment (only populated for completed screenings):
 
+    description: 'Sample adequacy assessment (only populated for completed screenings):
 
       - ''Adequate'': Endocervical cells present, suitable for assessment
 
-
       - ''Inadequate'': Insufficient sample for assessment
 
-
       - ''Unspecified'': No specific adequacy information'
+
     tests:
     - accepted_values:
+
         values:
         - Adequate
         - Inadequate
         - Unspecified
   - name: clinical_action_required
-    description: 'Clinical action required based on screening result (only populated for completed screenings):
 
+    description: 'Clinical action required based on screening result (only populated for completed screenings):
 
       - ''Routine Follow-up'': Normal result, routine interval
 
-
       - ''Repeat Required'': Follow-up screening needed
-
 
       - ''Colposcopy Required'': Referral for colposcopy indicated
 
-
       - ''Clinical Review'': Requires clinical assessment'
+
     tests:
     - accepted_values:
+
         values:
         - Routine Follow-up
         - Repeat Required

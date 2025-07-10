@@ -31,13 +31,16 @@ models:
     • QOF target achievement flags for quality indicator reporting
 
     • Diabetes diagnostic indicators for clinical decision support'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date of the HbA1c measurement
+
     tests:
     - not_null

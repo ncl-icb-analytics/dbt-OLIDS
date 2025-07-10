@@ -18,9 +18,11 @@ models:
     • Pulse check compliance monitoring
 
     • Clinical exclusion criteria assessment'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: age

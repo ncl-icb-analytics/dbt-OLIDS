@@ -1,46 +1,29 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_cvd_64
-  description: 'Mart: LTC LCS Case Finding CVD_64 - Identifies patients requiring high-dose statin therapy for optimal cardiovascular risk management.
+  description: 'Case finding for patients from CVD base population requiring high-dose statin therapy.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for cardiovascular medication optimisation requiring high-dose statin therapy
+    • Identifies all patients from cardiovascular base population needing high-dose statins
 
-    • Enable identification of patients needing intensive lipid management for secondary prevention
+    • Tracks current high-dose statin prescription patterns and medication history
 
-    • Provide clinical decision support for evidence-based statin dose escalation
+    • Supports cardiovascular medication optimisation for secondary prevention
 
-    • Support quality improvement initiatives for cardiovascular risk reduction and medication optimisation
+    • One row per person in CVD base population requiring intensive lipid management'
 
-
-    Data Granularity:
-
-    • One row per person in cardiovascular base population requiring high-dose statin therapy
-
-    • Includes current statin prescription patterns and cardiovascular risk indicators
-
-    • Limited to patients meeting criteria for intensive lipid management
-
-
-    Key Features:
-
-    • High-dose statin requirement assessment based on cardiovascular risk profile
-
-    • Current medication pattern analysis for therapeutic optimisation opportunities
-
-    • Evidence-based case finding supporting intensive lipid management protocols
-
-    • Integration with cardiovascular base population for targeted intervention'
   columns:
   - name: person_id
     description: Unique patient identifier
+
     tests:
     - not_null
     - unique
   - name: age
     description: Patient age (40-83)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -48,9 +31,11 @@ models:
         max_value: 83
   - name: needs_high_dose_statin
     description: Whether patient needs high-dose statin (TRUE for all)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_statin_date

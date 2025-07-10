@@ -1,58 +1,45 @@
 version: 2
 models:
 - name: fct_organisation_active_patients
-  description: 'Mart: Organisation Active Patients - Current active patient list size per organisation for capacity planning and performance monitoring.
+  description: 'Current active patient list size per organisation for capacity planning and performance monitoring.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support operational analytics for practice list management and capacity planning
+    • Calculates current active patient count per organisation using active patient dimension
 
-    • Enable business intelligence reporting on practice list sizes and patient distribution
+    • Supports operational analytics for practice list management and capacity planning
 
-    • Provide foundation for commissioning and resource allocation based on patient volumes
+    • Limited to non-obsolete organisations for operational relevance
 
-    • Support population health analytics and practice performance monitoring
+    • One row per organisation with standardised service usage metric for commissioning and resource allocation'
 
-
-    Data Granularity:
-
-    • One row per organisation with active patient count
-
-    • Includes current active patient list size for operational planning
-
-    • Current snapshot of organisation patient volumes and list management
-
-
-    Key Features:
-
-    • Tracks active patient count per organisation for capacity planning
-
-    • Supports practice-level reporting and operational management
-
-    • Enables business intelligence for resource allocation and service planning
-
-    • Provides foundation for performance monitoring and commissioning analytics'
   config:
     materialized: table
+
   columns:
   - name: organisation_id
     description: Unique organisation identifier
+
     tests:
     - not_null
   - name: ods_code
     description: ODS (Organisation Data Service) code for the organisation
+
     tests:
     - not_null
   - name: measure_id
     description: Metric identifier (always 'ORGANISATION_ACTIVE_LIST_SIZE')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - ORGANISATION_ACTIVE_LIST_SIZE
   - name: active_patient_count
     description: Current number of active patients registered with this organisation
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

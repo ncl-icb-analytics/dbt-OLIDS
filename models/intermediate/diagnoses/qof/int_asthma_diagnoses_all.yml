@@ -34,44 +34,55 @@ models:
     • Age and clinical context considerations for downstream processing
 
     • Essential input for QOF asthma register and respiratory care analytics'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the asthma diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for asthma diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the asthma diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (AST_COD, ASTRES_COD)
+
     tests:
     - not_null
   - name: is_asthma_diagnosis_code
     description: Flag indicating asthma diagnosis (AST_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_asthma_resolved_code
     description: Flag indicating asthma resolved/remission (ASTRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

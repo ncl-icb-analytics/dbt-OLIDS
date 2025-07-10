@@ -14,9 +14,11 @@ models:
 
 
     Purpose: QOF register for dementia care pathway monitoring, cognitive health assessment, memory service referrals, and early detection support.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -24,21 +26,26 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: has dementia diagnosis (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Date of most recent dementia diagnosis
+
     tests:
     - not_null
     - test_no_future_dates
   - name: all_dementia_concept_codes
     description: Array of all distinct dementia concept codes for this person
+
     tests:
     - not_null
   - name: all_dementia_concept_displays
     description: Array of all distinct dementia concept display terms for this person
+
     tests:
     - not_null

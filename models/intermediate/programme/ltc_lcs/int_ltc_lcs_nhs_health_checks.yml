@@ -28,7 +28,6 @@ models:
 
     Key Features:
 
-
     • Cluster IDs: HEALTH_CHECK_COMP
 
     • Supports health check completion tracking for case finding programme exclusions
@@ -36,14 +35,18 @@ models:
     • Health check lookback period logic for avoiding duplicate assessments
 
     • Integration with LTC_LCS programme health check tracking systems'
+
   tests:
   - cluster_ids_exist:
       cluster_ids: HEALTH_CHECK_COMP
+
   columns:
   - name: observation_id
+
     tests:
     - not_null
     - unique
   - name: person_id
+
     tests:
     - not_null

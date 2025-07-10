@@ -36,32 +36,40 @@ models:
     • Critical for serious mental illness care pathway optimisation
 
     • Essential input for SMI quality improvement and treatment monitoring'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the mental health diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for mental health diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the mental health diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (MH_COD, MHREM_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - MH_COD
         - MHREM_COD

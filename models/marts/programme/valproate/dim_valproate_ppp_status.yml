@@ -3,25 +3,29 @@ models:
 - name: dim_valproate_ppp_status
   description: 'Person-level aggregation of Pregnancy Prevention Programme (PPP) events for valproate monitoring.
 
+
     Business Logic:
-    
+
     • Aggregates all PPP events per person from intermediate PPP status table
-    
+
     • Determines latest PPP status and enrollment (is_currently_ppp_enrolled from most recent event)
-    
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
-    
+
     • Provides current PPP status description with formatted date
-    
+
     • Only includes people who have PPP events (has_ppp_event always TRUE)'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
     - unique
   - name: has_ppp_event
     description: TRUE if any PPP event is present for the person.
+
     tests:
     - not_null
   - name: earliest_ppp_event_date
@@ -36,10 +40,12 @@ models:
     description: Display term for the most recent PPP concept code.
   - name: is_currently_ppp_enrolled
     description: TRUE if most recent PPP status indicates enrollment.
+
     tests:
     - not_null
   - name: is_ppp_non_enrolled
     description: TRUE if most recent PPP status indicates discontinued/not needed/declined.
+
     tests:
     - not_null
   - name: current_ppp_status_description

@@ -31,44 +31,55 @@ models:
     • Time-based screening status for QOF reporting
 
     • Essential data for diabetes care process monitoring'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the latest retinal screening
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for retinal screening
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the screening code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: Source cluster ID (RETSCREN_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - RETSCREN_COD
   - name: is_completed_screening
     description: Flag indicating completed screening (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: days_since_screening
     description: Number of days since latest screening
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -77,17 +88,21 @@ models:
         severity: warn
   - name: screening_current_12m
     description: Flag indicating screening within 12 months
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: screening_current_24m
     description: Flag indicating screening within 24 months
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

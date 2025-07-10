@@ -1,43 +1,26 @@
 version: 2
 models:
 - name: fct_person_gp_appointments_12m
-  description: 'Mart: GP Appointments 12-Month Summary - Service usage analytics for primary care appointment activity.
+  description: 'Service usage analytics for primary care appointment activity over 12-month period.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support operational analytics for GP practice capacity planning and resource allocation
+    • Calculates total GP appointment count per person per organisation in last 12 months
 
-    • Enable business intelligence reporting on patient service utilisation patterns
+    • Includes earliest and latest appointment dates for utilisation pattern analysis
 
-    • Provide population health analytics for primary care access and demand management
+    • Supports GP practice capacity planning and resource allocation analytics
 
-    • Support commissioning and performance monitoring of GP services
+    • One row per person per organisation with appointments in last 12 months (minimum 1 appointment)'
 
-
-    Data Granularity:
-
-    • One row per person per organisation with appointments in last 12 months
-
-    • Includes appointment count and temporal distribution over 12-month period
-
-    • Current analysis of GP service utilisation and patient engagement
-
-
-    Key Features:
-
-    • Tracks total appointment count per person per practice over 12 months
-
-    • Includes earliest and latest appointment dates for utilisation patterns
-
-    • Supports operational decision-making for practice capacity management
-
-    • Enables population health management and service planning analytics'
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -45,31 +28,38 @@ models:
         field: person_id
   - name: organisation_id
     description: Organisation providing the appointments
+
     tests:
     - not_null
   - name: measure_id
     description: Metric identifier (always 'GP_APPOINTMENTS_12M')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - GP_APPOINTMENTS_12M
   - name: appointment_count
     description: Number of GP appointments in last 12 months
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 1
   - name: earliest_appointment_date
     description: Date of earliest appointment in the 12-month period
+
     tests:
     - not_null
   - name: latest_appointment_date
     description: Date of most recent appointment in the 12-month period
+
     tests:
     - not_null
   - name: age
     description: Person's current age in years
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

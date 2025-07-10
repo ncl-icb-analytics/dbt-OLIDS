@@ -31,30 +31,37 @@ models:
     • Evidence-based therapy flags for heart failure management
 
     • Clinical trial evidence mapping (CIBIS, COPERNICUS, MERIT-HF, SENIORS trials)'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
   - name: medication_order_id
     description: Unique identifier for the medication order record
+
     tests:
     - not_null
     - unique
   - name: beta_blocker_selectivity
     description: Beta blocker selectivity classification (selective vs non-selective)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - NON_SELECTIVE
         - SELECTIVE
         - OTHER_BETA_BLOCKER
   - name: beta_blocker_type
     description: Specific beta blocker medication type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - ACEBUTOLOL
         - ATENOLOL
@@ -69,62 +76,78 @@ models:
         - OTHER_BETA_BLOCKER
   - name: is_evidence_based_hf
     description: Boolean flag indicating evidence-based beta blocker for heart failure (bisoprolol, carvedilol, metoprolol, nebivolol)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_atenolol
     description: Boolean flag indicating atenolol use
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_bisoprolol
     description: Boolean flag indicating bisoprolol use (CIBIS trials evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_carvedilol
     description: Boolean flag indicating carvedilol use (COPERNICUS trial evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_metoprolol
     description: Boolean flag indicating metoprolol use (MERIT-HF trial evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_propranolol
     description: Boolean flag indicating propranolol use
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_cardioselective
     description: Boolean flag indicating cardioselective (beta1 selective) beta blocker
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - person_id
       - medication_order_id

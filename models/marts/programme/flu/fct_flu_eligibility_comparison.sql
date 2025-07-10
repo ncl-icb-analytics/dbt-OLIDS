@@ -19,7 +19,6 @@ To add a new campaign year:
 
 {{ config(
     materialized='table',
-    persist_docs={"relation": true, "columns": true},
     cluster_by=['campaign_period', 'person_id']) }}
 
 -- Current campaign (2024-25)

@@ -1,78 +1,69 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_htn_62
-  description: 'Mart: LTC LCS Case Finding HTN_62 - Identifies patients with stage 2 hypertension requiring blood pressure management and cardiovascular risk assessment.
+  description: 'Case finding for stage 2 hypertension requiring blood pressure management.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for stage 2 hypertension requiring clinical intervention and management
-
-    • Enable hypertension management and cardiovascular risk reduction in high-risk populations
-
-    • Provide clinical decision support for blood pressure monitoring and treatment optimisation
-
-    • Support quality improvement initiatives for comprehensive hypertension management programmes
-
-
-    Data Granularity:
-
-    • One row per person with latest blood pressure readings meeting stage 2 hypertension criteria
+    • Identifies patients with stage 2 hypertension (clinic BP 160-179/100-109, home/ABPM 150-164/95-99)
 
     • Excludes patients already captured in severe hypertension category (HTN_61)
 
-    • Limited to patients requiring stage 2 hypertension intervention and monitoring
+    • Targets patients requiring clinical intervention and cardiovascular risk assessment
 
+    • One row per person with latest blood pressure readings meeting stage 2 criteria'
 
-    Key Features:
-
-    • Stage 2 hypertension identification with exclusion of severe hypertension cases
-
-    • Latest blood pressure assessment focus for appropriate clinical intervention
-
-    • Evidence-based case finding supporting staged hypertension management protocols
-
-    • Integration with cardiovascular risk management pathways for risk-stratified intervention'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Person's age at time of analysis
+
     tests:
     - not_null
   - name: has_stage_2_hypertension
     description: Flag indicating patient has stage 2 hypertension (always TRUE in this model)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_bp_date
     description: Date of the latest blood pressure reading
+
     tests:
     - not_null
   - name: latest_bp_value
     description: Value of the latest blood pressure reading
+
     tests:
     - not_null
   - name: latest_bp_type
     description: Type of latest BP reading (HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HYPERTENSION_BP_CLINIC
         - HYPERTENSION_BP_HOME
         - HYPERTENSION_BP_ABPM
   - name: is_clinic_bp
     description: Flag indicating if latest reading is clinic blood pressure
+
     tests:
     - not_null
   - name: is_home_bp
     description: Flag indicating if latest reading is home/ABPM blood pressure
+
     tests:
     - not_null
   - name: latest_bp_code

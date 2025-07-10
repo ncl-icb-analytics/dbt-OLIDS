@@ -28,7 +28,6 @@ models:
 
     Key Features:
 
-
     • Cluster IDs: HBA1C_LEVEL, QDIABETES_RISK, QRISK2_10YEAR, HISTORY_GESTATIONAL_DIABETES, GESTATIONAL_DIABETES_PREGNANCY_RISK, BMI_MEASUREMENT
 
     • Supports diabetes case finding measures using laboratory and risk assessment data
@@ -36,13 +35,16 @@ models:
     • Comprehensive diabetes risk factor and diagnostic observation analysis
 
     • Integration with LTC_LCS programme clinical observation tracking systems'
+
   columns:
   - name: observation_id
     description: Unique identifier for the observation
+
     tests:
     - not_null
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: clinical_effective_date
@@ -61,8 +63,10 @@ models:
     description: Human-readable description of the diabetes observation
   - name: cluster_id
     description: Cluster identifier for the diabetes observation type
+
     tests:
     - accepted_values:
+
         values:
         - HBA1C_LEVEL
         - QDIABETES_RISK
@@ -72,6 +76,7 @@ models:
         - BMI_MEASUREMENT
   - name: cluster_description
     description: Description of the diabetes observation cluster
+
   tests:
   - cluster_ids_exist:
       cluster_ids: HBA1C_LEVEL,QDIABETES_RISK,QRISK2_10YEAR,HISTORY_GESTATIONAL_DIABETES,GESTATIONAL_DIABETES_PREGNANCY_RISK,BMI_MEASUREMENT

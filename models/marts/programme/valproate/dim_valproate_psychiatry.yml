@@ -3,23 +3,27 @@ models:
 - name: dim_valproate_psychiatry
   description: 'Person-level aggregation of psychiatry-related events for valproate monitoring.
 
+
     Business Logic:
-    
+
     • Aggregates all psychiatry events per person from intermediate psychiatry events table
-    
+
     • Provides earliest and latest psychiatry event dates for timeline analysis
-    
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
-    
+
     • Only includes people who have psychiatry events (has_psych_event always TRUE)'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
     - unique
   - name: has_psych_event
     description: TRUE if any psychiatry event is present for the person. Always TRUE for persons in this table.
+
     tests:
     - not_null
   - name: earliest_psych_event_date

@@ -1,64 +1,54 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_cvd_63
-  description: 'Mart: LTC LCS Case Finding CVD_63 - Identifies patients on statins with suboptimal cholesterol control requiring medication review.
+  description: 'Case finding for patients on statins with elevated non-HDL cholesterol requiring medication review.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for cardiovascular medication optimisation in patients on statin therapy
+    • Identifies patients aged 40-83 on statins with latest non-HDL cholesterol > 2.5 mmol/L
 
-    • Enable identification of patients requiring statin dose adjustment or alternative lipid management
+    • Targets patients requiring statin therapy optimisation or dose escalation
 
-    • Provide clinical decision support for cholesterol management and cardiovascular risk reduction
+    • Supports cardiovascular medication effectiveness monitoring and clinical intervention
 
-    • Support quality improvement initiatives for secondary prevention and medication effectiveness monitoring
+    • One row per person meeting criteria for statin therapy review'
 
-
-    Data Granularity:
-
-    • One row per person on statin therapy with non-HDL cholesterol above 2.5 mmol/L
-
-    • Includes latest statin prescription and cholesterol assessment data
-
-    • Limited to patients with evidence of suboptimal lipid control despite statin therapy
-
-
-    Key Features:
-
-    • Statin therapy monitoring with non-HDL cholesterol threshold assessment (>2.5 mmol/L)
-
-    • Latest medication and laboratory result integration for current clinical status
-
-    • Complete lipid management history with all relevant concept codes
-
-    • Evidence-based case finding supporting cardiovascular medication optimisation'
   columns:
   - name: person_id
+
     tests:
     - not_null
     - unique
   - name: age
+
     tests:
     - not_null
   - name: needs_statin_review
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_statin_date
+
     tests:
     - not_null
   - name: latest_non_hdl_date
+
     tests:
     - not_null
   - name: latest_non_hdl_value
+
     tests:
     - not_null
   - name: meets_criteria
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

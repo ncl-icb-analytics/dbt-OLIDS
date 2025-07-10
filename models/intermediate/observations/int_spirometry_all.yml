@@ -34,67 +34,84 @@ models:
     • COPD severity staging and airway obstruction indicators
 
     • QOF-specific spirometry confirmation flags for register eligibility'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the spirometry test
+
     tests:
     - not_null
   - name: fev1_fvc_ratio
     description: FEV1/FVC ratio value (NULL for pre-coded values)
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 0.1
         max_value: 2.0
         severity: warn
+
         config:
           where: fev1_fvc_ratio IS NOT NULL
   - name: original_result_value
     description: Original result value as recorded (NULL for FEV1FVCL70_COD codes which are pre-coded as <0.7)
+
     tests:
     - not_null:
+
         config:
           where: source_cluster_id != 'FEV1FVCL70_COD'
   - name: concept_code
     description: SNOMED concept code for spirometry
+
     tests:
     - not_null
   - name: source_cluster_id
     description: Source cluster ID (FEV1FVC_COD, FEV1FVCL70_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - FEV1FVC_COD
         - FEV1FVCL70_COD
   - name: is_below_0_7
     description: Flag indicating FEV1/FVC ratio below 0.7 (COPD indication)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_valid_spirometry
     description: Flag indicating valid spirometry reading
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: spirometry_interpretation
     description: Clinical interpretation of spirometry result
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - COPD Indicated (Coded <0.7)
         - COPD Indicated (Measured <0.7)

@@ -8,6 +8,7 @@ models:
 
   - name: stg_olids_patient
     description: Staging model for patient data
+
     tests:
       - all_source_columns_in_staging
 

@@ -33,26 +33,32 @@ models:
     • Awaiting formal cluster implementation
 
     • Supports comprehensive liver health assessment'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date when the NAFLD diagnosis was clinically effective
+
     tests:
     - not_null
     - test_no_future_dates
   - name: concept_code
     description: SNOMED concept code for the NAFLD diagnosis
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - '197315008'
         - '1197739005'
@@ -62,12 +68,15 @@ models:
         - '503681000000108'
   - name: concept_display
     description: Human-readable description of the NAFLD diagnosis concept
+
     tests:
     - not_null
   - name: source_cluster_id
     description: Source cluster identifier (currently hardcoded as 'HARDCODED_NAFLD')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HARDCODED_NAFLD

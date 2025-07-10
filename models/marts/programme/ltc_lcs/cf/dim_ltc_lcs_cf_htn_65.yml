@@ -1,80 +1,71 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_htn_65
-  description: 'Mart: LTC LCS Case Finding HTN_65 - Identifies patients with stage 1 hypertension and cardiovascular risk factors requiring comprehensive management.
+  description: 'Case finding for stage 1 hypertension with cardiovascular risk factors.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for stage 1 hypertension with cardiovascular risk factors requiring intervention
+    • Identifies patients with stage 1 hypertension who also have cardiovascular risk factors
 
-    • Enable risk-stratified hypertension management based on overall cardiovascular risk profile
+    • Targets higher-risk patients requiring comprehensive management rather than lifestyle-only
 
-    • Provide clinical decision support for stage 1 hypertension treatment decisions
+    • Combines blood pressure thresholds with cardiovascular risk assessment
 
-    • Support quality improvement initiatives for comprehensive cardiovascular risk management
+    • One row per eligible person with BP readings and risk factor status'
 
-
-    Data Granularity:
-
-    • One row per person with stage 1 hypertension and additional cardiovascular risk factors
-
-    • Includes patients requiring intervention based on combined hypertension and cardiovascular risk
-
-    • Limited to patients meeting stage 1 hypertension criteria with additional risk factors
-
-
-    Key Features:
-
-    • Stage 1 hypertension identification with cardiovascular risk factor assessment
-
-    • Risk-stratified approach to hypertension management and intervention
-
-    • Evidence-based case finding supporting risk-based treatment guidelines
-
-    • Integration with cardiovascular risk management pathways for comprehensive care'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Person's age at time of analysis
+
     tests:
     - not_null
   - name: has_cardiovascular_risk_factors
     description: Flag indicating patient has cardiovascular risk factors (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_stage_1_hypertension_with_rf
     description: Flag indicating patient has stage 1 hypertension with risk factors (always TRUE)
   - name: latest_bp_date
     description: Date of the latest blood pressure reading
+
     tests:
     - not_null
   - name: latest_bp_value
     description: Value of the latest blood pressure reading
+
     tests:
     - not_null
   - name: latest_bp_type
     description: Type of latest BP reading (HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HYPERTENSION_BP_CLINIC
         - HYPERTENSION_BP_HOME
         - HYPERTENSION_BP_ABPM
   - name: is_clinic_bp
     description: Flag indicating if latest reading is clinic blood pressure
+
     tests:
     - not_null
   - name: is_home_bp
     description: Flag indicating if latest reading is home/ABPM blood pressure
+
     tests:
     - not_null
   - name: latest_bp_code

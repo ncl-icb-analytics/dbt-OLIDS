@@ -1,85 +1,78 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_htn_63
-  description: 'Mart: LTC LCS Case Finding HTN_63 - Identifies Black and South Asian patients with cardiovascular risk factors and elevated blood pressure requiring culturally appropriate intervention.
+  description: 'Case finding for hypertension in Black and South Asian patients with cardiovascular risk factors.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for hypertension in Black and South Asian populations with enhanced cardiovascular risk
+    • Targets Black and South Asian patients with elevated blood pressure and cardiovascular risk factors
 
-    • Enable ethnicity-specific hypertension management aligned with higher cardiovascular risk profiles
+    • Uses ethnicity-specific risk thresholds recognising higher cardiovascular risk in these populations
 
-    • Provide clinical decision support for culturally appropriate blood pressure management
+    • Identifies patients requiring culturally appropriate hypertension intervention
 
-    • Support quality improvement initiatives for equitable hypertension care and cardiovascular disease prevention
+    • One row per eligible person with ethnicity, BP readings, and risk factor assessment'
 
-
-    Data Granularity:
-
-    • One row per Black or South Asian person with elevated blood pressure and cardiovascular risk factors
-
-    • Includes ethnicity-specific risk assessment and blood pressure threshold evaluation
-
-    • Limited to patients requiring culturally appropriate hypertension intervention
-
-
-    Key Features:
-
-    • Ethnicity-specific hypertension case finding for Black and South Asian populations
-
-    • Cardiovascular risk factor integration for comprehensive risk assessment
-
-    • Evidence-based case finding supporting ethnicity-appropriate hypertension management
-
-    • Integration with culturally sensitive cardiovascular risk management pathways'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Person's age at time of analysis
+
     tests:
     - not_null
   - name: is_bsa_with_risk_factors
     description: Flag indicating patient is Black/South Asian with cardiovascular risk factors (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_elevated_bp_bsa
     description: Flag indicating patient has elevated BP using BSA thresholds (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_bp_date
     description: Date of the latest blood pressure reading
+
     tests:
     - not_null
   - name: latest_bp_value
     description: Value of the latest blood pressure reading
+
     tests:
     - not_null
   - name: latest_bp_type
     description: Type of latest BP reading (HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HYPERTENSION_BP_CLINIC
         - HYPERTENSION_BP_HOME
         - HYPERTENSION_BP_ABPM
   - name: is_clinic_bp
     description: Flag indicating if latest reading is clinic blood pressure
+
     tests:
     - not_null
   - name: is_home_bp
     description: Flag indicating if latest reading is home/ABPM blood pressure
+
     tests:
     - not_null
   - name: latest_bp_code

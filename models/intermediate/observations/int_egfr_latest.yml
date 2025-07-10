@@ -31,18 +31,22 @@ models:
     • CKD indicator flags for immediate clinical attention
 
     • Complete observation metadata for clinical context'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date of the eGFR measurement
+
     tests:
     - not_null
   - name: egfr_value
     description: eGFR value in mL/min/1.73m² (valid range only)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -50,9 +54,11 @@ models:
         max_value: 200
   - name: ckd_stage
     description: CKD stage classification (excludes 'Invalid')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Normal/High (≥90)
         - Mild decrease (60-89)
@@ -62,9 +68,11 @@ models:
         - CKD Stage 5 (<15)
   - name: is_ckd_indicator
     description: Flag indicating eGFR < 60 (suggests CKD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

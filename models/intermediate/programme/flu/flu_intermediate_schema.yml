@@ -33,21 +33,26 @@ models:
     • Integration with flu programme logic and campaign dates
 
     • Replacement for age birth range functionality in apply_flu_rule macro'
+
   columns:
   - name: campaign_id
     description: Campaign identifier (e.g., flu_2024_25)
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (CHILD_2_3, CHILD_4_16)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - CHILD_2_3
         - CHILD_4_16
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -55,6 +60,7 @@ models:
         field: person_id
   - name: birth_date
     description: Person's birth date
+
     tests:
     - not_null
   - name: birth_start
@@ -65,8 +71,10 @@ models:
     description: Age in months at reference date
   - name: age_years
     description: Age in years at reference date
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - rule_group_id
@@ -100,29 +108,32 @@ models:
 
     Key Features:
 
-
     • Multi-path eligibility: CKD diagnosis OR hierarchical stage 3-5 evidence
 
     • Hierarchical staging logic ensuring severe stages take precedence
 
-
     • Age restrictions: 6 months to 65 years at reference date
 
     • Evidence dating logic to prioritise recent severe CKD stages'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (CKD_GROUP)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - CKD_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -130,6 +141,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying CKD event
+
     tests:
     - not_null
   - name: diagnosis_type
@@ -164,29 +176,32 @@ models:
 
     Key Features:
 
-
     • Multi-path eligibility: BMI >= 40 values OR severe obesity diagnostic codes
 
     • Hierarchical logic ensuring most recent and severe evidence takes precedence
 
-
     • Age restrictions: 18-64 years (216 months to 65 years)
 
     • Evidence dating logic to prioritise clinical codes over measured BMI values'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (BMI_GROUP)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - BMI_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -194,6 +209,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying BMI/obesity event
+
     tests:
     - not_null
   - name: eligibility_path
@@ -219,9 +235,7 @@ models:
 
     • One row per eligible woman aged 12-64 years with documented pregnancy
 
-
     • Group 1: Pregnancy since campaign start date (highest priority)
-
 
     • Group 2: Latest pregnancy before start where pregnancy is more recent than delivery
 
@@ -234,24 +248,28 @@ models:
 
     • Campaign timing logic ensuring pregnancy relevance to flu season
 
-
     • Age and sex restrictions: women aged 12-64 years (144 months to 65 years)
 
     • Evidence dating logic comparing pregnancy vs delivery events for historical cases'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (PREG_GROUP)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - PREG_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -259,14 +277,17 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying pregnancy event
+
     tests:
     - not_null
   - name: eligibility_group
     description: Group by which pregnancy eligibility was determined
   - name: person_sex
     description: Person's sex (should be female for pregnancy)
+
     tests:
     - accepted_values:
+
         values:
         - F
         - FEMALE
@@ -290,12 +311,9 @@ models:
 
     • One row per eligible person aged 6 months to 65 years per rule group
 
-
     • CNS_GROUP: chronic neurological conditions (MS, motor neurone disease)
 
-
     • ASPLENIA_GROUP: asplenia or splenic dysfunction
-
 
     • LEARNDIS_GROUP: learning disabilities
 
@@ -304,29 +322,32 @@ models:
 
     • Single-cluster evaluation per rule group with specific clinical conditions
 
-
     • Date qualifier logic: earliest for CNS/asplenia, latest for learning disabilities
-
 
     • Age restrictions: 6 months to 65 years at reference date
 
     • Complements main simple rules model with targeted clinical groups'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - CNS_GROUP
         - ASPLENIA_GROUP
         - LEARNDIS_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -334,6 +355,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying clinical event
+
     tests:
     - not_null
 - name: int_flu_remaining_combination_eligibility
@@ -355,9 +377,7 @@ models:
 
     • One row per eligible person aged 6 months to 65 years per rule group
 
-
     • IMMUNO_GROUP: diagnosis OR medication OR administration OR chemotherapy evidence
-
 
     • RESP_GROUP: asthma eligibility OR chronic respiratory disease diagnosis
 
@@ -372,23 +392,27 @@ models:
 
     • Evidence hierarchy selection using most recent qualifying evidence
 
-
     • Age restrictions: 6 months to 65 years at reference date'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - IMMUNO_GROUP
         - RESP_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -396,6 +420,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying clinical event
+
     tests:
     - not_null
   - name: evidence_type
@@ -432,24 +457,28 @@ models:
 
     • Comprehensive exclusion logic checking all clinical eligibility paths
 
-
     • Age restrictions: 5-64 years (60 months to 65 years)
 
     • Prevents duplicate eligibility for carers with clinical risk factors'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (CARER_GROUP)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - CARER_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -457,6 +486,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying carer event
+
     tests:
     - not_null
   - name: carer_type
@@ -496,22 +526,27 @@ models:
     • Essential for coverage reporting and programme effectiveness monitoring
 
     • Critical for identifying populations still requiring vaccination'
+
   columns:
   - name: campaign_id
     description: Campaign identifier
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - FLUVAX_GROUP
         - FLUDECLINED_GROUP
         - LAIV_GROUP
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -519,12 +554,15 @@ models:
         field: person_id
   - name: event_date
     description: Date of vaccination/decline event
+
     tests:
     - not_null
   - name: status_type
     description: Type of vaccination status
+
     tests:
     - accepted_values:
+
         values:
         - vaccinated
         - laiv_vaccinated
@@ -562,17 +600,21 @@ models:
     • Essential for flu vaccination programme targeting and coverage reporting
 
     • Foundation for age-based vaccination prioritisation and resource planning'
+
   columns:
   - name: campaign_id
     description: Campaign identifier (e.g., flu_2024_25)
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (e.g., OVER65_GROUP)
+
     tests:
     - not_null
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -580,10 +622,12 @@ models:
         field: person_id
   - name: birth_date
     description: Person's birth date
+
     tests:
     - not_null
   - name: reference_date
     description: Campaign reference date used for age calculation
+
     tests:
     - not_null
   - name: age_months
@@ -592,8 +636,10 @@ models:
     description: Age in years at reference date
   - name: description
     description: Rule description
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - rule_group_id
@@ -627,26 +673,28 @@ models:
 
     Key Features:
 
-
     • Single cluster evaluation: one clinical condition per rule group
-
 
     • Flexible date qualifiers: earliest, latest, latest_since, latest_after
 
     • Age restrictions applied per rule group from campaign configuration
 
     • Static configuration to avoid unsafe introspection in macro replacement'
+
   columns:
   - name: campaign_id
     description: Campaign identifier (e.g., flu_2024_25)
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (e.g., CHD_GROUP, LEARNDIS_GROUP)
+
     tests:
     - not_null
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -654,6 +702,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying clinical event
+
     tests:
     - not_null
   - name: reference_date
@@ -666,8 +715,10 @@ models:
     description: Current age in months
   - name: age_years
     description: Current age in years
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - rule_group_id
@@ -701,27 +752,28 @@ models:
 
     Key Features:
 
-
     • Multi-condition logic: AST_GROUP (diagnosis AND medication/admission)
 
-
     • Union logic: RESP_GROUP (asthma OR respiratory disease)
-
 
     • Complex combinations: IMMUNO_GROUP (diagnosis OR medication OR treatment)
 
     • Age restrictions applied per rule group from campaign configuration'
+
   columns:
   - name: campaign_id
     description: Campaign identifier (e.g., flu_2024_25)
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (e.g., AST_GROUP, RESP_GROUP)
+
     tests:
     - not_null
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -729,6 +781,7 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: Date of qualifying clinical event
+
     tests:
     - not_null
   - name: reference_date
@@ -741,8 +794,10 @@ models:
     description: Current age in months
   - name: age_years
     description: Current age in years
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - rule_group_id
@@ -781,27 +836,34 @@ models:
     • Age restriction compliance (6 months to under 65 years)
 
     • Essential for high-risk population vaccination targeting'
+
   columns:
   - name: campaign_id
     description: Flu vaccination campaign identifier (e.g., flu_2024_25)
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier - always 'DIAB_GROUP' for diabetes/Addison's eligibility
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - DIAB_GROUP
   - name: rule_group_name
     description: Human-readable rule group name - always 'Diabetes'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Diabetes
   - name: person_id
     description: Unique person identifier from clinical system
+
     tests:
     - not_null
     - relationships:
@@ -809,13 +871,16 @@ models:
         field: person_id
   - name: qualifying_event_date
     description: 'Date of the clinical event that establishes eligibility: - For Addison''s disease: earliest diagnosis date - For diabetes: latest diabetes diagnosis date (after exclusion logic)'
+
     tests:
     - not_null
   - name: diagnosis_type
     description: 'Type of qualifying diagnosis: - ''Addison''s disease'' for ADDIS_COD codes - ''Diabetes (type 1 or 2)'' for DIAB_COD codes'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Addison's disease
         - Diabetes (type 1 or 2)
@@ -823,18 +888,22 @@ models:
     description: Date of most recent diabetes resolved code (DMRES_COD) if any exists. NULL for Addison's disease cases or when no resolved codes exist. Used in business logic to determine if diabetes is still active.
   - name: reference_date
     description: Campaign reference date used for age calculations and clinical date cutoffs
+
     tests:
     - not_null
   - name: description
     description: 'Standard description: ''Diabetes (type 1, type 2) or Addison''s disease'''
+
     tests:
     - not_null
   - name: birth_date
     description: Person's birth date from demographics
+
     tests:
     - not_null
   - name: age_months_at_ref_date
     description: Age in months at campaign reference date. Used for precise age-based eligibility (minimum 6 months).
+
     tests:
     - not_null
     - dbt_utils.expression_is_true:
@@ -842,6 +911,7 @@ models:
         name: diabetes_min_age_6_months
   - name: age_years_at_ref_date
     description: Age in years at campaign reference date. Used for age-based exclusion (must be under 65).
+
     tests:
     - not_null
     - dbt_utils.expression_is_true:
@@ -849,10 +919,13 @@ models:
         name: diabetes_max_age_under_65
   - name: created_at
     description: Timestamp when record was created (audit date for campaign)
+
     tests:
     - not_null
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - person_id
@@ -891,37 +964,41 @@ models:
 
     Key Features:
 
-
     • Primary requirement: Asthma diagnosis (AST_COD) with earliest occurrence tracking
 
-
     • Secondary requirement: Recent medication OR historical admission evidence
-
 
     • Age restrictions: 6 months to 65 years at reference date
 
     • Evidence hierarchy selection using most recent qualifying evidence'
+
   columns:
   - name: campaign_id
     description: Campaign identifier (e.g., flu_2024_25)
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier - always 'AST_GROUP' for asthma eligibility
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - AST_GROUP
   - name: rule_group_name
     description: Human-readable rule group name - always 'Asthma'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Asthma
   - name: person_id
     description: Person identifier - must exist in demographics table
+
     tests:
     - not_null
     - relationships:
@@ -935,10 +1012,12 @@ models:
       the patient''s asthma status. This is the primary qualifying event that
 
       must be present for eligibility consideration.'
+
     tests:
     - not_null
     - dbt_utils.expression_is_true:
         expression: qualifying_event_date <= reference_date
+
         config:
           severity: error
           error_if: '>0'
@@ -955,10 +1034,12 @@ models:
       - Asthma admission (ASTADM_COD) at any time
 
       When multiple evidence types exist, the most recent date is selected.'
+
     tests:
     - not_null
     - dbt_utils.expression_is_true:
         expression: evidence_date <= reference_date
+
         config:
           severity: error
           error_if: '>0'
@@ -968,16 +1049,16 @@ models:
 
       Categorizes the evidence that qualified the patient:
 
-
       - ''Recent asthma medication'': Medication prescribed/ordered since lookback date
-
 
       - ''Asthma admission'': Hospital admission for asthma at any time
 
       This helps understand the clinical pathway for eligibility.'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Recent asthma medication
         - Asthma admission
@@ -990,6 +1071,7 @@ models:
       - Age eligibility calculations (6 months to <65 years)
 
       - Ensuring all clinical events occur before this date'
+
     tests:
     - not_null
   - name: description
@@ -999,13 +1081,16 @@ models:
       Standard description explaining the eligibility logic:
 
       ''Asthma diagnosis with recent medication or admission'''
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Asthma diagnosis with recent medication or admission
   - name: birth_date
     description: Person's birth date from demographics table
+
     tests:
     - not_null
   - name: age_months_at_ref_date
@@ -1014,10 +1099,12 @@ models:
       Calculated as DATEDIFF(''month'', birth_date, reference_date).
 
       Used for precise age-based eligibility filtering (≥6 months).'
+
     tests:
     - not_null
     - dbt_utils.expression_is_true:
         expression: age_months_at_ref_date >= 6
+
         config:
           severity: error
           error_if: '>0'
@@ -1027,34 +1114,42 @@ models:
       Calculated as DATEDIFF(''year'', birth_date, reference_date).
 
       Used for age-based eligibility filtering (<65 years).'
+
     tests:
     - not_null
     - dbt_utils.expression_is_true:
         expression: age_years_at_ref_date < 65
+
         config:
           severity: error
           error_if: '>0'
   - name: created_at
     description: Audit timestamp - date when eligibility was determined
+
     tests:
     - not_null
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - rule_group_id
       - person_id
       name: unique_asthma_eligibility_person
+
       config:
         severity: error
   - dbt_utils.expression_is_true:
       expression: qualifying_event_date <= evidence_date
       name: asthma_diagnosis_before_evidence
+
       config:
         severity: warn
         error_if: '>10'
   - dbt_utils.not_null_proportion:
       at_least: 0.95
       name: asthma_eligibility_completeness
+
       config:
         severity: warn

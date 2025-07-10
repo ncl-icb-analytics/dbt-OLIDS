@@ -1,43 +1,26 @@
 version: 2
 models:
 - name: fct_person_smoking_status
-  description: 'Mart: Person Smoking Status Facts - Current and historical smoking status for clinical decision support and population health monitoring.
+  description: 'Current and historical smoking status for clinical decision support and population health monitoring.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support clinical decision-making by providing current smoking status for care delivery
+    • Provides current smoking status based on most recent clinical observation
 
-    • Enable population health analytics and smoking cessation programme targeting
-
-    • Provide comprehensive smoking history for longitudinal health trend analysis
-
-    • Support quality measurement and smoking-related health outcomes tracking
-
-
-    Data Granularity:
-
-    • One row per person with smoking observation data
-
-    • Includes current status and complete smoking history
-
-    • Limited to people with recorded smoking observations
-
-
-    Key Features:
-
-    • Current smoking status based on most recent clinical observation
-
-    • Complete smoking history with earliest and all recorded observations
+    • Includes complete smoking history with earliest and all recorded observations
 
     • Integrated with person demographics for population health analysis
 
-    • Real-time refresh tracking for data currency monitoring'
+    • One row per person with smoking observation data (limited to people with recorded smoking observations)'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier linking to dim_person
+
     tests:
     - not_null
     - relationships:
@@ -45,6 +28,7 @@ models:
         field: person_id
   - name: age
     description: Person's current age in years
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -52,9 +36,11 @@ models:
         max_value: 120
   - name: smoking_status
     description: Current smoking status classification
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Current Smoker
         - Ex-Smoker
@@ -63,33 +49,41 @@ models:
         - Unknown
   - name: latest_smoking_date
     description: Date of most recent smoking-related observation
+
     tests:
     - not_null
   - name: earliest_smoking_date
     description: Date of first smoking-related observation
+
     tests:
     - not_null
   - name: latest_concept_code
     description: SNOMED concept code of most recent smoking observation
+
     tests:
     - not_null
   - name: latest_code_description
     description: Human-readable description of latest smoking observation
+
     tests:
     - not_null
   - name: latest_cluster_id
     description: Cluster ID of latest smoking observation (SMOK_COD, EXSMOK_COD, NSMOK_COD, etc.)
+
     tests:
     - not_null
   - name: all_smoking_concept_codes
     description: Array of all smoking-related concept codes for traceability
+
     tests:
     - not_null
   - name: all_smoking_concept_displays
     description: Array of all smoking-related concept displays for traceability
+
     tests:
     - not_null
   - name: last_refresh_date
     description: Timestamp when this record was last refreshed
+
     tests:
     - not_null

@@ -31,30 +31,37 @@ models:
     • Evidence-based therapy flags with clinical trial references
 
     • Recency indicators for therapy monitoring (3m, 6m, 12m)'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
   - name: medication_order_id
     description: Unique identifier for the medication order record
+
     tests:
     - not_null
     - unique
   - name: anticoagulant_type
     description: High-level anticoagulant type classification
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - DOAC
         - VKA
         - OTHER_ANTICOAGULANT
   - name: specific_anticoagulant
     description: Specific anticoagulant medication type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - APIXABAN
         - DABIGATRAN
@@ -67,70 +74,88 @@ models:
         - OTHER_ANTICOAGULANT
   - name: is_evidence_based_af
     description: Boolean flag indicating evidence-based anticoagulant for atrial fibrillation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_warfarin
     description: Boolean flag indicating warfarin use (gold standard VKA)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_apixaban
     description: Boolean flag indicating apixaban use (ARISTOTLE trial evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_rivaroxaban
     description: Boolean flag indicating rivaroxaban use (ROCKET-AF trial evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_dabigatran
     description: Boolean flag indicating dabigatran use (RE-LY trial evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_edoxaban
     description: Boolean flag indicating edoxaban use (ENGAGE-AF trial evidence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_doac
     description: Boolean flag indicating Direct Oral Anticoagulant (DOAC)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_vka
     description: Boolean flag indicating Vitamin K Antagonist (VKA)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - person_id
       - medication_order_id

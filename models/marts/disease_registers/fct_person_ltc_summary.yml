@@ -16,33 +16,42 @@ models:
 
 
     Purpose: Analytical table for multi-morbidity analysis, population health management, and comprehensive patient condition profiling.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: condition_code
     description: Standardised condition code (AF, AST, CA, CHD, CKD, COPD, DEM, DEP, DM, EPIL, etc.)
+
     tests:
     - not_null
   - name: condition_name
     description: Full condition name for reporting
+
     tests:
     - not_null
   - name: is_on_register
     description: Boolean flag - always TRUE for this table (filtered to registered patients only)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Earliest diagnosis date for this condition (may be NULL for obesity if no valid BMI recorded)
+
     tests:
     - not_null:
+
         config:
           where: condition_code != 'OB'
   - name: latest_diagnosis_date
     description: Latest diagnosis date for this condition
+
     tests:
     - not_null

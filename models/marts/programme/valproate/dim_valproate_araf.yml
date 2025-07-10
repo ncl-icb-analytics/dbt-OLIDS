@@ -3,25 +3,29 @@ models:
 - name: dim_valproate_araf
   description: 'Person-level aggregation of Annual Risk Acknowledgement Form (ARAF) events for valproate monitoring.
 
+
     Business Logic:
-    
+
     • Aggregates all ARAF events per person from intermediate ARAF events table
-    
+
     • Provides earliest and latest ARAF event dates for timeline analysis
-    
+
     • Tracks latest specific ARAF form date and lookback compliance flag
-    
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
-    
+
     • Only includes people who have ARAF events (has_araf_event always TRUE)'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
     - unique
   - name: has_araf_event
     description: TRUE if any ARAF event is present for the person. Always TRUE for persons in this table.
+
     tests:
     - not_null
   - name: earliest_araf_event_date
@@ -32,6 +36,7 @@ models:
     description: Latest date of an ARAF form event for the person.
   - name: has_specific_araf_form_meeting_lookback
     description: TRUE if an ARAF form event meeting lookback criteria is recorded.
+
     tests:
     - not_null
   - name: all_araf_observation_ids

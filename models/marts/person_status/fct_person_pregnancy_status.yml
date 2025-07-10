@@ -6,25 +6,24 @@ models:
 
     Business Logic:
 
-
     • Population: Non-male individuals only
-
 
     • Current pregnancy: Latest pregnancy code > latest delivery code
 
-
     • Risk assessment: Child-bearing age (0-55 years) for medication safety
-
 
     • Clinical codes: Uses pregnancy codes vs delivery/termination codes
 
 
     Purpose: Clinical decision support for medication safety, care planning, and pregnancy-related interventions.'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier linking to dim_person
+
     tests:
     - not_null
     - relationships:
@@ -32,6 +31,7 @@ models:
         field: person_id
   - name: age
     description: Person's current age in years
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -40,59 +40,73 @@ models:
         severity: warn
   - name: sex
     description: Person's sex (non-male only in this table)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Female
         - Unknown
         - Other
   - name: is_currently_pregnant
     description: Flag indicating current pregnancy status (always TRUE in this filtered table)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_preg_cod_date
     description: Date of most recent pregnancy code (PREG_COD)
+
     tests:
     - not_null
   - name: latest_pregdel_cod_date
     description: Date of most recent delivery/pregnancy ended code (PREGDEL_COD)
   - name: is_child_bearing_age_12_55
     description: 'Flag: TRUE if age 12-55 inclusive (standard child-bearing age)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_child_bearing_age_0_55
     description: 'Flag: TRUE if age 0-55 inclusive (extended age range)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: has_permanent_absence_preg_risk_flag
     description: 'Flag: TRUE if person has permanent absence of pregnancy risk (e.g., hysterectomy)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: all_preg_concept_codes
     description: Array of all pregnancy-related concept codes for traceability
+
     tests:
     - not_null
   - name: all_preg_concept_displays
     description: Array of all pregnancy-related concept displays for traceability
+
     tests:
     - not_null
   - name: all_preg_source_cluster_ids
     description: Array of all pregnancy-related cluster IDs (PREG_COD, PREGDEL_COD)
+
     tests:
     - not_null

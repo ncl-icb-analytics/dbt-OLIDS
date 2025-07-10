@@ -31,18 +31,22 @@ models:
     • Data quality assurance with validation flags
 
     • Complete observation metadata for clinical context'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date of the BMI measurement
+
     tests:
     - not_null
   - name: bmi_value
     description: BMI value in kg/m² (valid range only)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -51,13 +55,16 @@ models:
         severity: warn
   - name: original_result_value
     description: Original BMI value as recorded
+
     tests:
     - not_null
   - name: bmi_category
     description: Clinical BMI category (excludes 'Invalid')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Underweight
         - Normal

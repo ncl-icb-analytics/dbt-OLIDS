@@ -20,9 +20,11 @@ models:
     • SNOMED coding for clinical interoperability
 
     • Clinical effective date for data quality assessment'
+
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique

@@ -18,9 +18,11 @@ models:
     • Clinical exclusion criteria assessment
 
     • Evidence-based case finding for AF screening'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: has_active_anticoagulant

@@ -33,11 +33,14 @@ models:
     • Essential for clinical safety and pharmaceutical risk management
 
     • Supports reproductive health and medication safety protocols'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -45,25 +48,31 @@ models:
         field: person_id
   - name: clinical_effective_date
     description: Date when observation was clinically effective
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for pregnancy risk absence observation
+
     tests:
     - not_null
   - name: concept_display
     description: Human-readable display term for concept code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: Source cluster ID from mapped concepts
+
     tests:
     - not_null
   - name: code_category
     description: Code category from valproate programme (always 'PREGRISK')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - PREGRISK
   - name: lookback_years_offset

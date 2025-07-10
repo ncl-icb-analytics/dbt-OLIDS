@@ -18,29 +18,38 @@ models:
     • Complete cardiovascular risk assessment history
 
     • Evidence-based case finding for CVD prevention pathways'
+
   columns:
   - name: person_id
+
     tests:
     - not_null
     - unique
   - name: age
+
     tests:
     - not_null
   - name: has_moderate_qrisk2
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_qrisk2_date
+
     tests:
     - not_null
   - name: latest_qrisk2_value
+
     tests:
     - not_null
   - name: meets_criteria
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

@@ -5,64 +5,79 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique
   - name: sk_patient_id
     description: Surrogate patient key from latest patient record
+
     tests:
     - not_null
   - name: primary_patient_id
     description: Primary patient ID from person record
   - name: patient_ids
     description: Array of all patient IDs associated with this person
+
     tests:
     - not_null
   - name: is_active
     description: Boolean flag - always TRUE for this table (filtered to active only)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: is_deceased
     description: Boolean flag - always FALSE for this table (deceased patients excluded)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - false
   - name: is_dummy_patient
     description: Boolean flag - always FALSE for this table (dummy patients excluded)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - false
   - name: is_confidential
     description: Boolean flag indicating if patient record is marked confidential
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_spine_sensitive
     description: Boolean flag indicating if patient is spine sensitive
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: birth_year
     description: Year of birth (YYYY format)
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 1900
         max_value: 2030
   - name: birth_month
     description: Month of birth (1-12)
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 1
@@ -73,28 +88,34 @@ models:
     description: Month of death - always NULL for active patients
   - name: current_practice_id
     description: Practice ID where patient is currently registered
+
     tests:
     - not_null
   - name: current_practice_code
     description: Practice ODS code where patient is currently registered
+
     tests:
     - not_null
   - name: current_practice_name
     description: Practice name where patient is currently registered
+
     tests:
     - not_null
   - name: current_registration_start
     description: Start date of current practice registration
+
     tests:
     - not_null
   - name: current_registration_duration
     description: Duration in days of current registration
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 0
         max_value: 50000
   - name: total_registrations_count
     description: Total number of practice registrations for this person
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -102,9 +123,11 @@ models:
         max_value: 50
   - name: has_changed_practice
     description: Boolean flag indicating if person has ever changed practice
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -114,5 +137,6 @@ models:
     description: Organisation code that owns this patient record
   - name: latest_record_date
     description: Timestamp of latest patient record update
+
     tests:
     - not_null

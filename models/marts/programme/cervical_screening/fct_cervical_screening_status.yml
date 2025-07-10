@@ -8,7 +8,6 @@ models:
 
     • Eligible females aged 25-64 years for cervical screening programme
 
-
     • Age-specific screening intervals: 3-year for 25-49, 5-year for 50-64
 
     • Includes all women with screening history and current programme status
@@ -23,52 +22,59 @@ models:
     • Clinical risk stratification based on cytology results and abnormality grades
 
     • Next screening due dates and follow-up requirement flags'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: current_age
     description: Current age of the person
+
     tests:
     - not_null
   - name: is_screening_eligible
     description: Boolean flag indicating if person is eligible for cervical screening (female, aged 25-64)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: screening_interval_years
+
     description: 'Age-specific screening interval in years:
 
       - 3 years for ages 25-49
 
       - 5 years for ages 50-64'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - 3
         - 5
   - name: programme_compliance_status
-    description: 'Overall programme compliance status:
 
+    description: 'Overall programme compliance status:
 
       - ''Up to Date'': Screening current within age-appropriate interval
 
-
       - ''Overdue'': Screening overdue based on age-specific interval
-
 
       - ''Never Screened'': No completed screening history
 
-
       - ''Not Eligible'': Outside eligible age range'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Up to Date
         - Overdue
@@ -76,24 +82,22 @@ models:
         - Not Eligible
         - Unknown
   - name: current_screening_status
-    description: 'Current screening status based on latest observation:
 
+    description: 'Current screening status based on latest observation:
 
       - ''Up to Date (Screened)'': Latest observation is completed screening
 
-
       - ''Unsuitable for Screening'': Latest valid status is unsuitable
-
 
       - ''Recently Declined'': Declined screening within last 12 months
 
-
       - ''Non-responsive'': Non-response to invitations within last 12 months
 
-
       - ''Status Expired'': Latest status no longer valid'
+
     tests:
     - accepted_values:
+
         values:
         - Up to Date (Screened)
         - Unsuitable for Screening
@@ -111,6 +115,7 @@ models:
   - name: days_overdue
     description: Number of days overdue for screening (0 if up to date, null if never screened)
   - name: cytology_result_category
+
     description: 'Detailed cytology result classification from latest completed screening:
 
       - Normal, Borderline Changes, Mild/Moderate/Severe Dyskaryosis
@@ -119,6 +124,7 @@ models:
 
       - NULL if no completed screenings'
   - name: cervical_screening_risk_category
+
     description: 'Clinical risk assessment based on cytology results:
 
       - ''Low Risk (Normal)'', ''Low-Moderate Risk'', ''Moderate Risk''
@@ -127,31 +133,28 @@ models:
 
       - NULL if no completed screenings'
   - name: abnormality_grade
-    description: 'Simplified abnormality grade classification:
 
+    description: 'Simplified abnormality grade classification:
 
       - ''Normal'': No abnormality detected
 
-
       - ''Low Grade'': Borderline changes, mild dyskaryosis
-
 
       - ''Moderate Grade'': Moderate dyskaryosis
 
-
       - ''High Grade'': Severe dyskaryosis, glandular abnormalities
 
-
       - ''HPV Changes'': Viral changes, koilocytosis
-
 
       - ''Infection'': Bacterial/fungal infections
 
       - ''Inflammatory'', ''Atrophic Changes'', ''Other Finding''
 
       - NULL if no completed screenings'
+
     tests:
     - accepted_values:
+
         values:
         - Normal
         - Low Grade
@@ -164,42 +167,41 @@ models:
         - Nuclear Abnormality
         - Other Finding
   - name: sample_adequacy
-    description: 'Sample adequacy assessment:
 
+    description: 'Sample adequacy assessment:
 
       - ''Adequate'': Endocervical cells present, suitable for assessment
 
-
       - ''Inadequate'': Insufficient sample for assessment
-
 
       - ''Unspecified'': No specific adequacy information
 
       - NULL if no completed screenings'
+
     tests:
     - accepted_values:
+
         values:
         - Adequate
         - Inadequate
         - Unspecified
   - name: clinical_action_required
-    description: 'Clinical action required based on latest screening:
 
+    description: 'Clinical action required based on latest screening:
 
       - ''Routine Follow-up'': Normal result, routine interval
 
-
       - ''Repeat Required'': Follow-up screening needed
 
-
       - ''Colposcopy Required'': Referral for colposcopy indicated
-
 
       - ''Clinical Review'': Requires clinical assessment
 
       - NULL if no completed screenings'
+
     tests:
     - accepted_values:
+
         values:
         - Routine Follow-up
         - Repeat Required
@@ -207,33 +209,41 @@ models:
         - Clinical Review
   - name: never_screened
     description: Boolean flag indicating if person has never had a completed screening
+
     tests:
     - not_null
   - name: requires_urgent_follow_up
     description: Boolean flag for high-grade abnormalities requiring urgent clinical follow-up
+
     tests:
     - not_null
   - name: requires_colposcopy_referral
     description: Boolean flag indicating colposcopy referral is required
+
     tests:
     - not_null
   - name: long_term_non_attendance
     description: Boolean flag for women overdue for screening by more than 5 years
+
     tests:
     - not_null
   - name: total_completed_screenings
     description: Total number of completed screenings in screening history
+
     tests:
     - not_null
   - name: total_unsuitable_records
     description: Total number of unsuitable screening records
+
     tests:
     - not_null
   - name: total_declined_records
     description: Total number of declined screening records
+
     tests:
     - not_null
   - name: total_non_response_records
     description: Total number of non-response records
+
     tests:
     - not_null

@@ -34,21 +34,26 @@ models:
     • High-risk and very high-risk indicators for clinical intervention
 
     • Comprehensive anthropometric assessment for metabolic health'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the waist circumference measurement
+
     tests:
     - not_null
   - name: waist_circumference_value
     description: Waist circumference value in cm
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -57,17 +62,21 @@ models:
         severity: warn
   - name: is_valid_waist_circumference
     description: Flag indicating if waist circumference is within valid range (30-250)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: waist_risk_category
     description: Clinical waist circumference risk category
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Invalid
         - Low Risk
@@ -78,17 +87,21 @@ models:
         - Unknown
   - name: is_high_waist_risk
     description: Flag indicating waist circumference ≥88cm
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_very_high_waist_risk
     description: Flag indicating waist circumference ≥102cm
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

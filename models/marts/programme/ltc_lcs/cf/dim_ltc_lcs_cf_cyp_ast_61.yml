@@ -1,56 +1,42 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_cyp_ast_61
-  description: 'Mart: LTC LCS Case Finding CYP_AST_61 - Identifies children and young people with asthma symptoms requiring formal diagnosis and management.
+  description: 'Case finding for children and young people with asthma symptoms requiring formal diagnosis.
 
 
-    Business Purpose:
+    Business Logic:
 
-    • Support systematic case finding for undiagnosed asthma in children and young people aged 18 months to under 18 years
+    • Identifies children/young people aged 18 months to under 18 years with asthma symptoms but no formal diagnosis
 
-    • Enable early asthma diagnosis and management to prevent complications and improve outcomes
+    • Targets paediatric population with clinical indicators suggesting asthma requiring assessment
 
-    • Provide clinical decision support for paediatric asthma screening and diagnostic pathways
+    • Supports early asthma diagnosis and management to prevent complications
 
-    • Support quality improvement initiatives for childhood asthma care and respiratory health
+    • One row per eligible child/young person requiring asthma evaluation and formal diagnosis'
 
-
-    Data Granularity:
-
-    • One row per child/young person aged 18 months to under 18 years with asthma symptoms but no formal diagnosis
-
-    • Includes patients with clinical indicators suggesting asthma requiring diagnostic assessment
-
-    • Limited to paediatric population requiring asthma evaluation and formal diagnosis
-
-
-    Key Features:
-
-    • Age-specific asthma case finding for children and young people (18 months to <18 years)
-
-    • Symptom-based identification of patients requiring formal asthma diagnosis
-
-    • Evidence-based case finding supporting paediatric asthma diagnostic guidelines
-
-    • Integration with childhood respiratory health pathways for comprehensive asthma management'
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Person's age (18 months to under 18 years)
+
     tests:
     - not_null
   - name: has_asthma_symptoms
     description: Flag indicating patient has asthma symptoms (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_symptom_date
     description: Date of most recent asthma symptom
+
     tests:
     - not_null

@@ -10,16 +10,18 @@ models:
 
     • Current pregnancy status OR child-bearing age (0-55 years)
 
-
     • TERATOGENIC RISK: Valproate causes significant birth defects
 
 
     Purpose: Critical safety monitoring for immediate clinical review and urgent medication switching to prevent foetal harm.'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: 🚨 PERSON REQUIRING URGENT CLINICAL REVIEW - Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -27,6 +29,7 @@ models:
         field: person_id
   - name: age
     description: Person's current age (all will be 0-55 for this safety cohort)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -34,53 +37,65 @@ models:
         max_value: 55
   - name: sex
     description: Person's sex (non-male individuals only)
+
     tests:
     - not_null
   - name: is_child_bearing_age_0_55
     description: Flag confirming child-bearing age range (always TRUE in this table)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_preg_cod_date
     description: 🚨 Date of most recent pregnancy code - indicates current pregnancy
+
     tests:
     - not_null
   - name: latest_pregdel_cod_date
     description: Date of most recent delivery code (NULL or before pregnancy code)
   - name: all_preg_concept_codes
     description: All pregnancy-related concept codes for clinical context
+
     tests:
     - not_null
   - name: all_preg_concept_displays
     description: All pregnancy-related concept displays for clinical review
+
     tests:
     - not_null
   - name: all_preg_source_cluster_ids
     description: All pregnancy-related cluster IDs for traceability
+
     tests:
     - not_null
   - name: most_recent_valproate_order_date
     description: 🚨 Date of most recent valproate prescription (within last 6 months)
+
     tests:
     - not_null
   - name: valproate_medication_order_id
     description: Unique identifier for the valproate order requiring review
+
     tests:
     - not_null
   - name: valproate_order_medication_name
     description: 🚨 Name of valproate medication prescribed - for clinical review
+
     tests:
     - not_null
   - name: valproate_order_dose
     description: Dosage of valproate - important for risk assessment
   - name: valproate_product_term
     description: Specific valproate product type (EPILIM, CONVULEX, etc.)
+
     tests:
     - not_null
   - name: valproate_recent_order_count
     description: Number of valproate orders in last 6 months - indicates continuation
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

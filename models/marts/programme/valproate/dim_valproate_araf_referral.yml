@@ -3,23 +3,27 @@ models:
 - name: dim_valproate_araf_referral
   description: 'Person-level aggregation of ARAF referral events for valproate monitoring.
 
+
     Business Logic:
-    
+
     • Aggregates all ARAF referral events per person from intermediate ARAF referral events table
-    
+
     • Provides earliest and latest ARAF referral event dates for timeline analysis
-    
+
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
-    
+
     • Only includes people who have ARAF referral events (has_araf_referral_event always TRUE)'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
     - unique
   - name: has_araf_referral_event
     description: TRUE if any ARAF referral event is present for the person. Always TRUE for persons in this table.
+
     tests:
     - not_null
   - name: earliest_araf_referral_event_date
