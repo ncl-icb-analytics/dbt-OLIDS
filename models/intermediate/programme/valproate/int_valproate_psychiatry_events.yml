@@ -4,9 +4,13 @@ models:
   description: 'Extracts all psychiatry-related events from observations using valproate programme codes.
 
     Business Logic:
+    
     • Joins observations with mapped concepts and valproate programme codes
+    
     • Filters to PSYCH code category only
+    
     • One row per psychiatry observation with person, date, concept details
+    
     • Foundation data for psychiatry dimension aggregation'
   columns:
   - name: person_id

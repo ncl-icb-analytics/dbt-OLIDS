@@ -4,9 +4,13 @@ models:
   description: 'Extracts all neurology-related events from observations using valproate programme codes.
 
     Business Logic:
+    
     • Joins observations with mapped concepts and valproate programme codes
+    
     • Filters to NEUROLOGY code category only
+    
     • One row per neurology observation with person, date, concept details
+    
     • Foundation data for neurology dimension aggregation'
   columns:
   - name: person_id
