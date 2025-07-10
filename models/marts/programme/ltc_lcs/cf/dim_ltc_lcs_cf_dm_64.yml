@@ -12,38 +12,47 @@ models:
     • Uses ethnicity-specific BMI thresholds for appropriate diabetes risk assessment
     
     • One row per eligible person with BMI, ethnicity data, and HbA1c monitoring gap'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_high_bmi
     description: Boolean flag indicating if person has high BMI based on ethnicity thresholds
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_bame
     description: Boolean flag indicating if person is from BAME ethnicity
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: latest_bmi_date
     description: Date of most recent BMI measurement
+
     tests:
     - not_null
   - name: latest_bmi_value
     description: Most recent BMI value (≥32.5 for BAME, ≥35 for non-BAME)
+
     tests:
     - not_null
   - name: latest_hba1c_date

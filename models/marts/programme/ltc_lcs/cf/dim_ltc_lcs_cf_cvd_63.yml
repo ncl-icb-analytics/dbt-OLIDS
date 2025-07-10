@@ -33,32 +33,42 @@ models:
     • Complete lipid management history with all relevant concept codes
 
     • Evidence-based case finding supporting cardiovascular medication optimisation'
+
   columns:
   - name: person_id
+
     tests:
     - not_null
     - unique
   - name: age
+
     tests:
     - not_null
   - name: needs_statin_review
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_statin_date
+
     tests:
     - not_null
   - name: latest_non_hdl_date
+
     tests:
     - not_null
   - name: latest_non_hdl_value
+
     tests:
     - not_null
   - name: meets_criteria
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

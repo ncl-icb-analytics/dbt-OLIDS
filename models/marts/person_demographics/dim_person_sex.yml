@@ -20,17 +20,21 @@ models:
     • Hardcoded concept ID mappings for data consistency
 
     • One row per person with sex classification'
+
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique
   - name: sex
     description: 'Sex classification: Female, Male, or Unknown'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Female
         - Male

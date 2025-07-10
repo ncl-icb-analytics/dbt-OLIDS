@@ -20,18 +20,22 @@ models:
     • Current and historical practice relationship tracking
 
     • Core dimension for person-centered analytics'
+
   columns:
   - name: person_id
     description: Unique person identifier - primary key for the dimension
+
     tests:
     - not_null
     - unique
   - name: sk_patient_ids
     description: Array of all surrogate patient IDs (sk_patient_id) associated with this person
+
     tests:
     - not_null
   - name: patient_ids
     description: Array of all patient IDs associated with this person across different practice registrations
+
     tests:
     - not_null
   - name: practice_ids
@@ -48,6 +52,7 @@ models:
     description: Practice name where the person is currently registered
   - name: total_patients
     description: Count of distinct patient IDs associated with this person
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -55,6 +60,7 @@ models:
         max_value: 20
   - name: total_practices
     description: Count of distinct practices where this person has been registered
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

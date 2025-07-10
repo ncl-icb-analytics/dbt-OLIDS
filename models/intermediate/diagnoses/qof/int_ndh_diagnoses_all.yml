@@ -36,57 +36,71 @@ models:
     • Diabetes prevention programme eligibility determination
 
     • Critical for early intervention and diabetes prevention strategies'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the NDH-related observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for NDH observation
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the NDH code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID for NDH pathway
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - NDH_COD
         - IGT_COD
         - PRD_COD
   - name: is_ndh_diagnosis_code
     description: Flag indicating non-diabetic hyperglycaemia code (NDH_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_igt_diagnosis_code
     description: Flag indicating impaired glucose tolerance code (IGT_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_pre_diabetes_diagnosis_code
     description: Flag indicating pre-diabetes code (PRD_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

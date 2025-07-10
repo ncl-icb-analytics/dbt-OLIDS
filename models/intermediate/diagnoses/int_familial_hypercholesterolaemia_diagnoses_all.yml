@@ -36,9 +36,11 @@ models:
     • Essential for family screening programmes
 
     • Supports intensive cholesterol management protocols'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:

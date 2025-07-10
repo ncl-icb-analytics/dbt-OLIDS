@@ -36,9 +36,11 @@ models:
     • Critical for cerebrovascular secondary prevention protocols
 
     • Essential input for stroke care quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:

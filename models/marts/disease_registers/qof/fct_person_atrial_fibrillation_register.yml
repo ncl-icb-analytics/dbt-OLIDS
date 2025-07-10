@@ -17,27 +17,34 @@ models:
 
 
     Purpose: QOF register for AF management, stroke prevention, and anticoagulation monitoring.'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
     - unique
   - name: is_on_register
     description: QOF register inclusion flag - TRUE for all persons in this table
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Date of first recorded atrial fibrillation diagnosis code (AFIB_COD)
+
     tests:
     - dbt_utils.not_accepted_values:
+
         values:
         - '1900-01-01'
   - name: latest_diagnosis_date
     description: Date of most recent atrial fibrillation diagnosis code (AFIB_COD)
+
     tests:
     - not_null
   - name: latest_af_resolved_date
@@ -50,15 +57,19 @@ models:
     description: Array of source cluster IDs (AFIB_COD, AFIBRES_COD) for traceability
   - name: meets_age_criteria
     description: 'Boolean flag: TRUE (no age restrictions for AF register)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_active_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

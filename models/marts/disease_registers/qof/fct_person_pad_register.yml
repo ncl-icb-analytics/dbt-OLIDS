@@ -14,9 +14,11 @@ models:
 
 
     Purpose: QOF register for cardiovascular disease management, risk stratification, and secondary prevention monitoring.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -24,13 +26,16 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: has PAD diagnosis (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Date of most recent PAD diagnosis
+
     tests:
     - not_null
     - test_no_future_dates

@@ -36,48 +36,60 @@ models:
     • Critical for respiratory care pathway optimisation
 
     • Essential input for COPD quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the COPD diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for COPD diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the COPD diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (COPD_COD, COPDRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - COPD_COD
         - COPDRES_COD
   - name: is_copd_diagnosis_code
     description: Flag indicating COPD diagnosis (COPD_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_copd_resolved_code
     description: Flag indicating COPD resolved/remission (COPDRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -93,9 +105,11 @@ models:
     description: 'QOF field: Earliest unresolved COPD diagnosis date (EUNRESCOPD_DAT equivalent)'
   - name: copd_observation_type
     description: Classification of this specific observation (COPD Diagnosis, COPD Resolved, Unknown)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - COPD Diagnosis
         - COPD Resolved

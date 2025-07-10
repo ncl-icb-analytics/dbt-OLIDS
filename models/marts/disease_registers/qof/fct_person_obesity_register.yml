@@ -15,11 +15,14 @@ models:
 
 
     Purpose: QOF register for obesity management, weight reduction interventions, and ethnicity-appropriate health monitoring.'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier linking to dim_person
+
     tests:
     - not_null
     - relationships:
@@ -27,39 +30,49 @@ models:
         field: person_id
   - name: is_on_register
     description: Register inclusion flag (always TRUE in this table as filtered view)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: meets_age_criteria
     description: Flag indicating if person meets age ≥18 requirement
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_bmi_30_plus
     description: Flag indicating if person has BMI ≥30 kg/m² (standard obesity threshold)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: has_bmi_27_5_plus
     description: Flag indicating if person has BMI ≥27.5 kg/m² (BAME-specific threshold)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_bame
     description: Flag indicating Black, Asian and Minority Ethnic (BAME) classification
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -69,6 +82,7 @@ models:
     description: Date of most recent clinically valid BMI recording
   - name: latest_valid_bmi_value
     description: Most recent clinically valid BMI value (kg/m²)
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 10
@@ -80,10 +94,12 @@ models:
     description: Date of most recent BAME ethnicity recording
   - name: all_bmi_concept_codes
     description: Array of all BMI-related concept codes recorded for traceability
+
     tests:
     - not_null
   - name: all_bmi_concept_displays
     description: Array of human-readable terms for BMI concept codes
+
     tests:
     - not_null
   - name: all_ethnicity_concept_codes

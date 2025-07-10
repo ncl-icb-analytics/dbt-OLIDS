@@ -34,21 +34,26 @@ models:
     • Elevated creatinine flags for kidney function screening
 
     • Original value preservation for clinical interpretation'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the creatinine measurement
+
     tests:
     - not_null
   - name: creatinine_value
     description: Serum creatinine value in µmol/L
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -59,17 +64,21 @@ models:
     description: Display value for the result unit (e.g., 'µmol/L')
   - name: is_valid_creatinine
     description: Flag indicating if creatinine is within valid range (20-1000)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: creatinine_category
     description: Clinical creatinine category
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Invalid
         - Normal
@@ -79,9 +88,11 @@ models:
         - Unknown
   - name: is_elevated_creatinine
     description: Flag indicating elevated creatinine (>120 µmol/L)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

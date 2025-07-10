@@ -31,30 +31,37 @@ models:
     • Statin consideration flags based on prevention guidelines
 
     • Complete risk assessment metadata for clinical context'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date of the QRISK assessment
+
     tests:
     - not_null
   - name: cvd_risk_category
     description: CVD risk category (excludes 'Invalid')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Low Risk (<10%)
         - Moderate Risk (10-20%)
         - High Risk (≥20%)
   - name: is_high_cvd_risk
     description: Flag indicating QRISK ≥20% (high risk)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

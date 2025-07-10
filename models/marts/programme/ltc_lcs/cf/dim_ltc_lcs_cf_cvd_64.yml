@@ -33,14 +33,17 @@ models:
     • Evidence-based case finding supporting intensive lipid management protocols
 
     • Integration with cardiovascular base population for targeted intervention'
+
   columns:
   - name: person_id
     description: Unique patient identifier
+
     tests:
     - not_null
     - unique
   - name: age
     description: Patient age (40-83)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -48,9 +51,11 @@ models:
         max_value: 83
   - name: needs_high_dose_statin
     description: Whether patient needs high-dose statin (TRUE for all)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_statin_date

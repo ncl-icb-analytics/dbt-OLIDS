@@ -19,33 +19,41 @@ models:
 
 
     Purpose: QOF register for epilepsy management, seizure monitoring, and medication optimisation in adults.'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
     - unique
   - name: is_on_register
     description: QOF register inclusion flag - TRUE for all persons in this table
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Date of first recorded epilepsy diagnosis code (EPIL_COD)
+
     tests:
     - dbt_utils.not_accepted_values:
+
         values:
         - '1900-01-01'
   - name: latest_diagnosis_date
     description: Date of most recent epilepsy diagnosis code (EPIL_COD)
+
     tests:
     - not_null
   - name: latest_epilepsy_resolved_date
     description: Date of most recent epilepsy resolved code (EPILRES_COD) - NULL if never resolved
   - name: latest_epilepsy_medication_date
     description: Date of most recent epilepsy medication prescription - required for register inclusion
+
     tests:
     - not_null
   - name: latest_epilepsy_medication_name
@@ -58,6 +66,7 @@ models:
     description: Display term for most recent epilepsy medication concept
   - name: recent_epilepsy_medication_count
     description: Count of epilepsy medication prescriptions in last 6 months
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 1
@@ -70,22 +79,28 @@ models:
     description: Array of source cluster IDs (EPIL_COD, EPILRES_COD) for traceability
   - name: meets_age_criteria
     description: 'Boolean flag: TRUE if person meets age ≥18 requirement'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_active_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_recent_medication
     description: 'Boolean flag: TRUE if epilepsy medication prescribed within last 6 months'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

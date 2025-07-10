@@ -12,14 +12,17 @@ models:
     • Targets patients for diabetes prevention interventions and ongoing monitoring
     
     • One row per eligible person with recent HbA1c results and monitoring history'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_no_risk_factors

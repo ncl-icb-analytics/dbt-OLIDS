@@ -33,29 +33,36 @@ models:
     • Evidence-based case finding supporting NICE guidelines for CVD prevention
 
     • Integration with cardiovascular risk assessment for therapeutic decision-making'
+
   columns:
   - name: person_id
     description: Unique patient identifier
+
     tests:
     - not_null
     - unique
   - name: age
     description: Patient age
+
     tests:
     - not_null
   - name: needs_moderate_dose_statin
     description: Whether patient needs moderate-dose statin (TRUE for all)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_qrisk2_date
     description: Date of latest QRISK2 ≥ 10 assessment
+
     tests:
     - not_null
   - name: latest_qrisk2_value
     description: Latest QRISK2 value (≥ 10)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

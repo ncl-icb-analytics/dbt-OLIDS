@@ -36,9 +36,11 @@ models:
     • Raw data collection layer feeding downstream PPP dimension table
 
     • Support for valproate patient safety monitoring and regulatory compliance'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
   - name: ppp_event_date

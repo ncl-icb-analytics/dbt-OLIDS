@@ -15,9 +15,11 @@ models:
 
 
     Purpose: QOF register for mental health care monitoring, lithium therapy safety, specialist service coordination, and recovery planning.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -25,24 +27,30 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: meets QOF SMI criteria (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: is_on_lithium
     description: Flag indicating person has lithium therapy in last 6 months
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: has_mh_diagnosis
     description: Flag indicating person has a mental health diagnosis
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

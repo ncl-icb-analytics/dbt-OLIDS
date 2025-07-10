@@ -31,11 +31,14 @@ models:
     • Focused dataset for clinical safety interventions
 
     • Essential input for valproate programme risk assessment'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
@@ -44,16 +47,19 @@ models:
         field: person_id
   - name: most_recent_order_date
     description: Date of most recent valproate order within last 6 months
+
     tests:
     - not_null
   - name: medication_order_id
     description: Unique identifier for the medication order
+
     tests:
     - not_null
   - name: medication_statement_id
     description: Linked medication statement identifier
   - name: order_medication_name
     description: Medication name from the order
+
     tests:
     - not_null
   - name: order_dose
@@ -68,17 +74,21 @@ models:
     description: Medication name from the linked statement
   - name: mapped_concept_code
     description: SNOMED concept code for the valproate product
+
     tests:
     - not_null
   - name: mapped_concept_display
     description: Display term for the mapped concept
+
     tests:
     - not_null
   - name: valproate_product_term
     description: Classified valproate product type (EPILIM, CONVULEX, etc.)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - EPILIM
         - CONVULEX
@@ -88,6 +98,7 @@ models:
         - OTHER_VALPROATE
   - name: recent_order_count
     description: Total count of valproate orders for this person in last 6 months
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

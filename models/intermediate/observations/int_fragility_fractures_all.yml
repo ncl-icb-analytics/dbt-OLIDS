@@ -34,22 +34,27 @@ models:
     • Clinical fracture coding validation and categorisation
 
     • Essential input for osteoporosis register and bone health analytics'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: patient_id
     description: Patient identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date of fracture observation (all after 2012-04-01)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -57,24 +62,30 @@ models:
         max_value: current_date()
   - name: source_cluster_id
     description: Source cluster ID - should be FF_COD for all rows
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - FF_COD
   - name: concept_code
     description: Clinical concept code for the fracture
+
     tests:
     - not_null
   - name: code_description
     description: Display term for the fracture concept code
+
     tests:
     - not_null
   - name: fracture_site
     description: Classified fracture site (Hip, Wrist, Spine, Humerus, Pelvis, Femur, Other)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Hip
         - Wrist
@@ -85,9 +96,11 @@ models:
         - Other
   - name: is_fragility_fracture_code
     description: Boolean flag - always TRUE for this table (FF_COD cluster)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: numeric_value

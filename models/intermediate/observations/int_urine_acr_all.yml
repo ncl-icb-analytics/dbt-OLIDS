@@ -34,21 +34,26 @@ models:
     • Microalbuminuria and macroalbuminuria classification
 
     • CKD risk indicators for clinical decision support'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the ACR measurement
+
     tests:
     - not_null
   - name: acr_value
     description: Urine ACR value in mg/mmol
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -59,17 +64,21 @@ models:
     description: Display value for the result unit (e.g., 'mg/mmol')
   - name: is_valid_acr
     description: Flag indicating if ACR is within valid range (0-1000)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: acr_category
     description: Clinical ACR category for CKD risk assessment
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Invalid
         - Normal (<3)
@@ -79,25 +88,31 @@ models:
         - Unknown
   - name: is_acr_elevated
     description: Flag indicating ACR ≥3 mg/mmol
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_microalbuminuria
     description: Flag indicating microalbuminuria (3-30 mg/mmol)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_macroalbuminuria
     description: Flag indicating macroalbuminuria (≥30 mg/mmol)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

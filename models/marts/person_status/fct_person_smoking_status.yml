@@ -33,11 +33,14 @@ models:
     • Integrated with person demographics for population health analysis
 
     • Real-time refresh tracking for data currency monitoring'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier linking to dim_person
+
     tests:
     - not_null
     - relationships:
@@ -45,6 +48,7 @@ models:
         field: person_id
   - name: age
     description: Person's current age in years
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -52,9 +56,11 @@ models:
         max_value: 120
   - name: smoking_status
     description: Current smoking status classification
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Current Smoker
         - Ex-Smoker
@@ -63,33 +69,41 @@ models:
         - Unknown
   - name: latest_smoking_date
     description: Date of most recent smoking-related observation
+
     tests:
     - not_null
   - name: earliest_smoking_date
     description: Date of first smoking-related observation
+
     tests:
     - not_null
   - name: latest_concept_code
     description: SNOMED concept code of most recent smoking observation
+
     tests:
     - not_null
   - name: latest_code_description
     description: Human-readable description of latest smoking observation
+
     tests:
     - not_null
   - name: latest_cluster_id
     description: Cluster ID of latest smoking observation (SMOK_COD, EXSMOK_COD, NSMOK_COD, etc.)
+
     tests:
     - not_null
   - name: all_smoking_concept_codes
     description: Array of all smoking-related concept codes for traceability
+
     tests:
     - not_null
   - name: all_smoking_concept_displays
     description: Array of all smoking-related concept displays for traceability
+
     tests:
     - not_null
   - name: last_refresh_date
     description: Timestamp when this record was last refreshed
+
     tests:
     - not_null

@@ -36,13 +36,16 @@ models:
     • Comprehensive ethnicity classification for diabetes risk stratification
 
     • Integration with LTC_LCS programme ethnicity tracking systems for diabetes screening'
+
   columns:
   - name: observation_id
     description: Unique identifier for the observation
+
     tests:
     - not_null
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: clinical_effective_date
@@ -53,14 +56,17 @@ models:
     description: Human-readable description of the ethnicity classification
   - name: cluster_id
     description: Cluster identifier for the ethnicity type
+
     tests:
     - accepted_values:
+
         values:
         - ETHNICITY_BAME
         - ETHNICITY_WHITE_BRITISH
         - DIABETES_EXCLUDED_ETHNICITY
   - name: cluster_description
     description: Description of the ethnicity cluster
+
   tests:
   - cluster_ids_exist:
       cluster_ids: ETHNICITY_BAME,ETHNICITY_WHITE_BRITISH,DIABETES_EXCLUDED_ETHNICITY

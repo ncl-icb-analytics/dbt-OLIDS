@@ -36,31 +36,38 @@ models:
     • Comprehensive paediatric medication pattern analysis for undiagnosed asthma detection
 
     • Integration with LTC_LCS programme medication tracking systems for children and young people'
+
   tests:
   - cluster_ids_exist:
       cluster_ids: ASTHMA_MEDICATIONS,ASTHMA_PREDNISOLONE,MONTELUKAST_MEDICATIONS
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date when the medication was prescribed
   - name: cluster_id
     description: Cluster identifier for the type of asthma medication
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - ASTHMA_MEDICATIONS
         - ASTHMA_PREDNISOLONE
         - MONTELUKAST_MEDICATIONS
   - name: mapped_concept_code
     description: Mapped concept code for the medication
+
     tests:
     - not_null
   - name: mapped_concept_display
     description: Mapped concept display for the medication
+
     tests:
     - not_null
   - name: source

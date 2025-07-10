@@ -36,14 +36,17 @@ models:
     • Clinical action determination and follow-up requirements
 
     • Essential for cervical cancer prevention and screening programme optimisation'
+
   columns:
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
     - unique
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -51,21 +54,26 @@ models:
         field: person_id
   - name: clinical_effective_date
     description: Date of the cervical screening observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for cervical screening observation
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the cervical screening code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (SMEAR_COD, CSPU_COD, CSDEC_COD, CSPCAINVITE_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - SMEAR_COD
         - CSPU_COD
@@ -73,9 +81,11 @@ models:
         - CSPCAINVITE_COD
   - name: screening_observation_type
     description: Classification of screening observation type
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Cervical Screening Completed
         - Screening Unsuitable
@@ -84,40 +94,50 @@ models:
         - Unknown
   - name: is_completed_screening
     description: Flag indicating completed cervical screening (SMEAR_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_unsuitable_screening
     description: Flag indicating screening unsuitable status (CSPU_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_declined_screening
     description: Flag indicating screening declined status (CSDEC_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_non_response_screening
     description: Flag indicating non-response to invitations (CSPCAINVITE_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: cytology_result_category
     description: Comprehensive cytology result categorisation for completed screenings
+
     tests:
     - accepted_values:
+
         values:
         - Normal
         - Borderline Changes
@@ -141,8 +161,10 @@ models:
         quote: false
   - name: cervical_screening_risk_category
     description: Clinical risk assessment based on cytology results
+
     tests:
     - accepted_values:
+
         values:
         - Low Risk (Normal)
         - Low-Moderate Risk
@@ -152,6 +174,7 @@ models:
         - Risk Assessment Required
         quote: false
   - name: abnormality_grade
+
     description: 'Simplified abnormality grade classification:
 
 
@@ -173,8 +196,10 @@ models:
       - ''Infection'': Bacterial/fungal infections
 
       - ''Inflammatory'', ''Atrophic Changes'', ''Other Finding'''
+
     tests:
     - accepted_values:
+
         values:
         - Normal
         - Low Grade
@@ -187,6 +212,7 @@ models:
         - Nuclear Abnormality
         - Other Finding
   - name: sample_adequacy
+
     description: 'Sample adequacy assessment:
 
 
@@ -197,13 +223,16 @@ models:
 
 
       - ''Unspecified'': No specific adequacy information'
+
     tests:
     - accepted_values:
+
         values:
         - Adequate
         - Inadequate
         - Unspecified
   - name: clinical_action_required
+
     description: 'Clinical action required based on screening result:
 
 
@@ -217,8 +246,10 @@ models:
 
 
       - ''Clinical Review'': Requires clinical assessment'
+
     tests:
     - accepted_values:
+
         values:
         - Routine Follow-up
         - Repeat Required
@@ -226,6 +257,7 @@ models:
         - Clinical Review
   - name: days_since_screening
     description: Number of days since screening observation
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -234,6 +266,7 @@ models:
         severity: warn
   - name: years_since_screening
     description: Number of years since screening observation (decimal)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -242,49 +275,61 @@ models:
         severity: warn
   - name: screening_current_12m
     description: Flag indicating screening within 12 months
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: screening_current_24m
     description: Flag indicating screening within 24 months
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: screening_current_36m
     description: Flag indicating screening within 36 months (3-year interval)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: screening_current_60m
     description: Flag indicating screening within 60 months (5-year interval)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_status_currently_valid
     description: Flag indicating if screening status is currently valid per business rules
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: screening_status_interpretation
     description: Clinical interpretation of screening currency and status
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Current (within 3 years)
         - Recent (within 5 years)

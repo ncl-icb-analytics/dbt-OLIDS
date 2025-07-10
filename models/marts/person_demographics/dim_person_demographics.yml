@@ -22,43 +22,53 @@ models:
     • Current practice registration and organisational hierarchy
 
     • Address and household linkage capability'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: sk_patient_id
     description: Surrogate key for the patient
+
     tests:
     - not_null
   - name: is_active
     description: Whether the person is an active patient (registered, not deceased, not dummy)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_deceased
     description: Whether the person is recorded as deceased
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: sex
     description: Sex of the person (Female, Male, Unknown)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Female
         - Male
         - Unknown
   - name: birth_year
     description: Year of birth
+
     tests:
     - not_null
   - name: birth_date_approx
@@ -69,26 +79,32 @@ models:
     description: Approximate date of death (midpoint of death month/year)
   - name: age
     description: Current age in years (or age at death if deceased)
+
     tests:
     - not_null
   - name: age_life_stage
     description: Life stage categorisation (e.g., Child, Adult, Elderly)
+
     tests:
     - not_null
   - name: age_band_5y
     description: 5-year age band (e.g., 0-4, 5-9)
+
     tests:
     - not_null
   - name: age_band_10y
     description: 10-year age band (e.g., 0-9, 10-19)
+
     tests:
     - not_null
   - name: age_band_nhs
     description: NHS standard age bands for healthcare reporting
+
     tests:
     - not_null
   - name: age_band_ons
     description: ONS (Office for National Statistics) standard 5-year age bands
+
     tests:
     - not_null
   - name: ethnicity_category
@@ -103,9 +119,11 @@ models:
     description: Language category (e.g., English, Other)
   - name: interpreter_needed
     description: Whether an interpreter is needed
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

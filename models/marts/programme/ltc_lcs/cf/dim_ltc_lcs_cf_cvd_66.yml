@@ -12,14 +12,17 @@ models:
     • Supports age-appropriate cardiovascular risk management and statin review decisions
     
     • One row per eligible elderly person requiring cardiovascular risk assessment'
+
   columns:
   - name: person_id
     description: Unique patient identifier
+
     tests:
     - not_null
     - unique
   - name: age
     description: Patient age (75-83)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

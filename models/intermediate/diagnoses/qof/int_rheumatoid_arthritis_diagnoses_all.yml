@@ -36,9 +36,11 @@ models:
     • Critical for inflammatory arthritis treatment optimisation
 
     • Essential input for rheumatoid arthritis care quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:

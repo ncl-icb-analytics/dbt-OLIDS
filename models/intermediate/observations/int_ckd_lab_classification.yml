@@ -31,9 +31,11 @@ models:
     • Combined inferred CKD stage and criteria assessment
 
     • Laboratory-based CKD identification for clinical decision support'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
@@ -51,21 +53,26 @@ models:
     description: CKD A-stage (A1-A3) based on latest ACR
   - name: latest_ckd_stage_inferred
     description: Combined CKD stage inferred from latest eGFR and ACR
+
     tests:
     - not_null
   - name: latest_labs_meet_ckd_criteria
     description: TRUE if latest labs indicate CKD (eGFR < 60 or ACR >= 3)
+
     tests:
     - not_null
   - name: has_confirmed_low_egfr
     description: TRUE if two eGFR < 60 results >= 90 days and <= 730 days apart
+
     tests:
     - not_null
   - name: has_confirmed_high_acr
     description: TRUE if two ACR >= 3 results >= 90 days and <= 730 days apart
+
     tests:
     - not_null
   - name: has_confirmed_ckd_by_labs
     description: TRUE if either low eGFR or high ACR is confirmed (persistent abnormal results)
+
     tests:
     - not_null

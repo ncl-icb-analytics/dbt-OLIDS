@@ -8,9 +8,11 @@ models:
     • Implements CASE-based decision logic for recommended actions based on patient status
     • Actions include: pregnancy review, PPP enrollment check, ARAF compliance, specialist monitoring
     • Provides consolidated view of all patient safety monitoring dimensions for decision support'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
     - unique

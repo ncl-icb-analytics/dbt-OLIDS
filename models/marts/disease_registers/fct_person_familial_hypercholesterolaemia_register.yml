@@ -17,9 +17,11 @@ models:
 
 
     Purpose: Clinical register for cascade family screening, high-intensity statin monitoring, and inherited cardiovascular risk management.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -27,8 +29,10 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: has FH diagnosis (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

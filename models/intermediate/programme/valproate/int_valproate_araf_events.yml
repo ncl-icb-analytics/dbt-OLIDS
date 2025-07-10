@@ -9,9 +9,11 @@ models:
     • One row per ARAF observation with person, date, concept details
     • Includes specific ARAF form code identification and lookback logic
     • Foundation data for ARAF dimension aggregation'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
   - name: araf_event_date

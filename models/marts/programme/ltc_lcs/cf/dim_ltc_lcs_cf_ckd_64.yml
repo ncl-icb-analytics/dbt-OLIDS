@@ -33,9 +33,11 @@ models:
     • Complex microhaematuria validation with UACR correlation
 
     • Evidence-based case finding supporting condition-specific kidney function monitoring'
+
   columns:
   - name: person_id
     description: The unique identifier for the patient
+
     tests:
     - not_null
     - unique

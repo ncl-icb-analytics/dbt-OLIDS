@@ -16,9 +16,11 @@ models:
 
 
     Purpose: QOF register for depression management, monitoring treatment response, and mental health support.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -26,18 +28,22 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: meets QOF depression criteria (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: earliest_diagnosis_date
     description: Date of first recorded depression diagnosis
+
     tests:
     - not_null
     - test_no_future_dates
   - name: latest_diagnosis_date
     description: Date of most recent depression diagnosis (QOF requires on/after 1 April 2006)
+
     tests:
     - not_null
     - test_no_future_dates
@@ -49,10 +55,12 @@ models:
     description: Date of most recent depression resolved code (NULL if never resolved)
   - name: all_depression_concept_codes
     description: Array of all distinct depression diagnosis concept codes for this person
+
     tests:
     - not_null
   - name: all_depression_concept_displays
     description: Array of all distinct depression diagnosis concept display terms for this person
+
     tests:
     - not_null
   - name: all_depression_resolved_concept_codes

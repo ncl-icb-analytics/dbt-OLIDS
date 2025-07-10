@@ -36,13 +36,17 @@ models:
     • Comprehensive medication pattern analysis for CVD risk stratification
 
     • Integration with LTC_LCS programme medication tracking systems'
+
   tests:
   - cluster_ids_exist:
       cluster_ids: STATIN_CVD_MEDICATIONS, STATIN_CVD_63_MEDICATIONS, STATIN_CVD_64_MEDICATIONS, STATIN_CVD_65_MEDICATIONS
+
   columns:
   - name: medication_order_id
+
     tests:
     - not_null
   - name: person_id
+
     tests:
     - not_null

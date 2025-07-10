@@ -36,44 +36,55 @@ models:
     • Critical for epilepsy care pathway optimisation
 
     • Essential input for neurological quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the epilepsy diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for epilepsy diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the epilepsy diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (EPIL_COD, EPILRES_COD)
+
     tests:
     - not_null
   - name: is_epilepsy_diagnosis_code
     description: Flag indicating epilepsy diagnosis (EPIL_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_epilepsy_resolved_code
     description: Flag indicating epilepsy resolved/remission (EPILRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -87,9 +98,11 @@ models:
     description: Latest epilepsy resolved date for this person
   - name: epilepsy_observation_type
     description: Classification of this specific observation (Epilepsy Diagnosis, Epilepsy Resolved, Unknown)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Epilepsy Diagnosis
         - Epilepsy Resolved

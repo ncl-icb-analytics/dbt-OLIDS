@@ -12,11 +12,14 @@ models:
     • Calculates due status: eligible patients who never had a check or last check >5 years ago (1825 days)
     
     • One row per person with eligibility flags and latest health check date'
+
   config:
     materialized: table
+
   columns:
   - name: person_id
     description: Unique person identifier linking to dim_person
+
     tests:
     - not_null
     - relationships:
@@ -24,6 +27,7 @@ models:
         field: person_id
   - name: age
     description: Person's current age in years
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -31,17 +35,21 @@ models:
         max_value: 120
   - name: has_any_excluding_condition
     description: 'Flag: TRUE if person has any condition excluding them from NHS Health Checks'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_eligible_for_nhs_health_check
     description: 'Flag: TRUE if person is eligible (age 40-74 without excluding conditions)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -49,6 +57,7 @@ models:
     description: Date of most recent NHS Health Check (NULL if never had one)
   - name: days_since_last_health_check
     description: Number of days since last health check (NULL if never had one)
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 0
@@ -56,9 +65,11 @@ models:
         severity: warn
   - name: due_nhs_health_check
     description: 'Flag: TRUE if person is due an NHS Health Check (eligible + >5 years or never)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

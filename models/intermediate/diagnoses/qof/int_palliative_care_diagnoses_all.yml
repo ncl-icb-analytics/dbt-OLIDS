@@ -36,48 +36,60 @@ models:
     • Critical for end-of-life care quality improvement
 
     • Essential input for palliative care pathway optimisation'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the palliative care observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for palliative care observation
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the palliative care code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID for palliative care pathway
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - PALCARE_COD
         - PALCARENI_COD
   - name: is_palliative_care_code
     description: Flag indicating palliative care code (PALCARE_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_palliative_care_not_indicated_code
     description: Flag indicating palliative care no longer indicated (PALCARENI_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

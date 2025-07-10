@@ -34,21 +34,26 @@ models:
     • Latest valid BMI with person-level aggregation
 
     • Comprehensive concept tracking for audit and quality assurance'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the BMI measurement
+
     tests:
     - not_null
   - name: bmi_value
     description: BMI value in kg/m²
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -57,15 +62,19 @@ models:
         severity: warn
   - name: original_result_value
     description: Original BMI value as recorded (NULL for BMI30_COD codes which are descriptive)
+
     tests:
     - not_null:
+
         config:
           where: source_cluster_id != 'BMI30_COD'
   - name: is_valid_bmi
     description: Flag indicating if BMI is within valid range (10-80)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

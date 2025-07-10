@@ -33,24 +33,30 @@ models:
     • Evidence-based case finding supporting paediatric asthma diagnostic guidelines
 
     • Integration with childhood respiratory health pathways for comprehensive asthma management'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Person's age (18 months to under 18 years)
+
     tests:
     - not_null
   - name: has_asthma_symptoms
     description: Flag indicating patient has asthma symptoms (always TRUE)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: latest_symptom_date
     description: Date of most recent asthma symptom
+
     tests:
     - not_null

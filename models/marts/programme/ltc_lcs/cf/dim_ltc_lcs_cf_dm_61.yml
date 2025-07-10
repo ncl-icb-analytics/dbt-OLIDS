@@ -21,21 +21,26 @@ models:
     • Evidence-based case finding aligned with NICE guidelines
 
     • Integration with diabetes prevention pathways'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient (17+)
+
     tests:
     - not_null
   - name: has_diabetes_risk
     description: Boolean flag indicating if person meets any diabetes risk criteria
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -53,9 +58,11 @@ models:
     description: Most recent QRisk2 cardiovascular risk score (%)
   - name: has_gestational_diabetes
     description: Boolean flag indicating history of gestational diabetes
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

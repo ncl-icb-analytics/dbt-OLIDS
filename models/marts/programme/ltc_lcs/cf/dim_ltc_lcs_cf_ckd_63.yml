@@ -33,9 +33,11 @@ models:
     • Latest assessment focus for immediate clinical intervention priority
 
     • Evidence-based case finding supporting urgent clinical review for severe proteinuria'
+
   columns:
   - name: person_id
     description: The unique identifier for the patient
+
     tests:
     - not_null
     - unique

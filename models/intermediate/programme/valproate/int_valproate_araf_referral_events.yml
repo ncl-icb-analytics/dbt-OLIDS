@@ -8,9 +8,11 @@ models:
     • Filters to REFERRAL code category only
     • One row per ARAF referral observation with person, date, concept details
     • Foundation data for ARAF referral dimension aggregation'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
   - name: araf_referral_event_date

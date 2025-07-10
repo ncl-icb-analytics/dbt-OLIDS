@@ -36,16 +36,20 @@ models:
     • Comprehensive clinical observation analysis for undiagnosed AF detection
 
     • Integration with LTC_LCS programme clinical observation tracking systems'
+
   tests:
   - cluster_ids_exist:
       cluster_ids: DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER
+
   columns:
   - name: observation_id
     description: Unique identifier for the observation
+
     tests:
     - not_null
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: clinical_effective_date

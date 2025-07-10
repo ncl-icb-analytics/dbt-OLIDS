@@ -36,48 +36,60 @@ models:
     • Supports complex QOF business rules and clinical pathway integration
 
     • Essential input for hypertension quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the hypertension diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for hypertension diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the hypertension diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (HYP_COD, HYPRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HYP_COD
         - HYPRES_COD
   - name: is_hypertension_diagnosis_code
     description: Flag indicating hypertension diagnosis (HYP_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_hypertension_resolved_code
     description: Flag indicating hypertension resolved/remission (HYPRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -91,9 +103,11 @@ models:
     description: Latest hypertension resolved date for this person
   - name: hypertension_observation_type
     description: Classification of this specific observation (Hypertension Diagnosis, Hypertension Resolved, Unknown)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Hypertension Diagnosis
         - Hypertension Resolved

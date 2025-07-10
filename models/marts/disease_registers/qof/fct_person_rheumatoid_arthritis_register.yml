@@ -14,9 +14,11 @@ models:
 
 
     Purpose: QOF register for musculoskeletal disease management, disease activity monitoring, and treatment pathway optimisation.'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - relationships:
@@ -24,8 +26,10 @@ models:
         field: person_id
   - name: is_on_register
     description: 'Register flag: has RA diagnosis aged 16+ (always TRUE for this table)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

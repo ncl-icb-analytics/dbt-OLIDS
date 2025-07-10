@@ -36,48 +36,60 @@ models:
     • Critical for mental health care pathway optimisation
 
     • Essential input for depression quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the depression-related observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for depression-related observation
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the depression-related code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID for depression care pathway
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - DEPR_COD
         - DEPRES_COD
   - name: is_depression_diagnosis_code
     description: Flag indicating depression diagnosis (DEPR_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_depression_resolved_code
     description: Flag indicating depression resolved/remission (DEPRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -107,9 +119,11 @@ models:
     description: Latest depression PCA unsuitable date for this person
   - name: depression_observation_type
     description: Classification of this specific observation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Depression Diagnosis
         - Depression Resolved

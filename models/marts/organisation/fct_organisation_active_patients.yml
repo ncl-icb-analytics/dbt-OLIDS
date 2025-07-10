@@ -33,26 +33,33 @@ models:
     • Enables business intelligence for resource allocation and service planning
 
     • Provides foundation for performance monitoring and commissioning analytics'
+
   config:
     materialized: table
+
   columns:
   - name: organisation_id
     description: Unique organisation identifier
+
     tests:
     - not_null
   - name: ods_code
     description: ODS (Organisation Data Service) code for the organisation
+
     tests:
     - not_null
   - name: measure_id
     description: Metric identifier (always 'ORGANISATION_ACTIVE_LIST_SIZE')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - ORGANISATION_ACTIVE_LIST_SIZE
   - name: active_patient_count
     description: Current number of active patients registered with this organisation
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

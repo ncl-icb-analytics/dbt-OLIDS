@@ -36,32 +36,40 @@ models:
     • Critical for cardiac care pathway optimisation
 
     • Essential input for heart failure quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the heart failure diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for heart failure diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the heart failure diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (HF_COD, HFRES_COD, HFLVSD_COD, REDEJCFRAC_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - HF_COD
         - HFRES_COD
@@ -69,33 +77,41 @@ models:
         - REDEJCFRAC_COD
   - name: is_heart_failure_diagnosis_code
     description: Flag indicating general heart failure diagnosis (HF_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_heart_failure_resolved_code
     description: Flag indicating heart failure resolved/remission (HFRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_hf_lvsd_code
     description: Flag indicating HF with left ventricular systolic dysfunction (HFLVSD_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_reduced_ef_code
     description: Flag indicating reduced ejection fraction (REDEJCFRAC_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -117,9 +133,11 @@ models:
     description: Latest heart failure resolved date for this person
   - name: heart_failure_observation_type
     description: Classification of this specific observation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Heart Failure Diagnosis
         - HF with LVSD

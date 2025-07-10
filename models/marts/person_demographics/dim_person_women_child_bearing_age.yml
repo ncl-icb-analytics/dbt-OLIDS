@@ -5,11 +5,13 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier - primary key
+
     tests:
     - not_null
     - unique
   - name: age
     description: Current age of person
+
     tests:
     - dbt_utils.accepted_range:
         min_value: 0

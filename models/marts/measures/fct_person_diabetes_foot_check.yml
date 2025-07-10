@@ -33,44 +33,55 @@ models:
     • Supports clinical decision-making for diabetes foot care management
 
     • Enables population health management and diabetes complication prevention'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: diabetes_type
     description: Type of diabetes diagnosis (Type 1, Type 2, Other)
+
     tests:
     - accepted_values:
+
         values:
         - Type 1
         - Type 2
         - Unknown
   - name: latest_foot_check_date
     description: Date of most recent foot examination
+
     tests:
     - test_no_future_dates
   - name: foot_check_completed_in_last_12m
     description: Flag indicating valid foot check completed within last 12 months
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_permanently_exempt
     description: Flag indicating permanent exemption (both feet absent/amputated)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: latest_check_status
     description: Status of most recent foot check attempt
+
     tests:
     - accepted_values:
+
         values:
         - Not Done
         - Declined
@@ -82,8 +93,10 @@ models:
         - Partial - Right Only
   - name: foot_check_status
     description: Detailed foot check status including exemptions
+
     tests:
     - accepted_values:
+
         values:
         - Permanently Exempt - Both Feet Missing
         - Not Appropriate - Unsuitable
@@ -96,8 +109,10 @@ models:
         - Not Done
   - name: left_foot_status
     description: Status and risk level of left foot
+
     tests:
     - accepted_values:
+
         values:
         - Absent (Congenital)
         - Amputated
@@ -109,8 +124,10 @@ models:
         - Not Assessed
   - name: right_foot_status
     description: Status and risk level of right foot
+
     tests:
     - accepted_values:
+
         values:
         - Absent (Congenital)
         - Amputated
@@ -122,8 +139,10 @@ models:
         - Not Assessed
   - name: townson_scale_level
     description: Young Townson footskin scale level if applicable
+
     tests:
     - accepted_values:
+
         values:
         - Level 1
         - Level 2

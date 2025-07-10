@@ -20,220 +20,274 @@ models:
     • Person-level consolidation of case finding opportunities
 
     • Evidence-based case finding criteria and intervention requirements'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
     - unique
   - name: age
     description: Age of the patient from base population
+
     tests:
     - not_null
   - name: practice_code
     description: Practice code for the patient
   - name: in_af_61
     description: Boolean flag for AF_61 case finding (cardiac medications)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_af_62
     description: Boolean flag for AF_62 case finding (missing pulse check)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_ckd_61
     description: Boolean flag for CKD_61 case finding (consecutive low eGFR)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_ckd_62
     description: Boolean flag for CKD_62 case finding (consecutive high UACR)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_ckd_63
     description: Boolean flag for CKD_63 case finding (elevated UACR)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_ckd_64
     description: Boolean flag for CKD_64 case finding (conditions and medications)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cvd_61
     description: Boolean flag for CVD_61 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cvd_62
     description: Boolean flag for CVD_62 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cvd_63
     description: Boolean flag for CVD_63 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cvd_64
     description: Boolean flag for CVD_64 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cvd_65
     description: Boolean flag for CVD_65 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cvd_66
     description: Boolean flag for CVD_66 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_dm_61
     description: Boolean flag for DM_61 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_dm_62
     description: Boolean flag for DM_62 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_dm_63
     description: Boolean flag for DM_63 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_dm_64
     description: Boolean flag for DM_64 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_dm_65
     description: Boolean flag for DM_65 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_dm_66
     description: Boolean flag for DM_66 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_htn_61
     description: Boolean flag for HTN_61 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_htn_62
     description: Boolean flag for HTN_62 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_htn_63
     description: Boolean flag for HTN_63 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_htn_65
     description: Boolean flag for HTN_65 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_htn_66
     description: Boolean flag for HTN_66 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_cyp_ast_61
     description: Boolean flag for CYP_AST_61 case finding
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: in_any_case_finding
     description: Boolean flag indicating if person is in any case finding indicator
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: case_finding_count
     description: Count of case finding indicators the person appears in (0-24)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:

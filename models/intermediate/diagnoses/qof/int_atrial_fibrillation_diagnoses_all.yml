@@ -36,48 +36,60 @@ models:
     • Supports complex QOF business rules and age restrictions
 
     • Essential input for cardiovascular risk stratification'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the AF diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for AF diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the AF diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (AFIB_COD, AFIBRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - AFIB_COD
         - AFIBRES_COD
   - name: is_af_diagnosis_code
     description: Flag indicating AF diagnosis (AFIB_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_af_resolved_code
     description: Flag indicating AF resolved/remission (AFIBRES_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
@@ -95,9 +107,11 @@ models:
     description: Total number of AF resolved codes for this person
   - name: af_observation_type
     description: Classification of this observation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - AF Diagnosis
         - AF Resolved

@@ -36,6 +36,7 @@ models:
     • Standardised structure ensuring consistency across campaign years
 
     • Comprehensive documentation and instructions for campaign deployment'
+
   columns:
   - name: campaign_id
     description: '**Template Parameter**: Campaign identifier placeholder
@@ -175,19 +176,24 @@ models:
       Audit field showing when the eligibility record was created.
 
       Useful for tracking data processing and debugging.'
+
   tests:
   - dbt_utils.expression_is_true:
       expression: campaign_id = 'CAMPAIGN_ID'
       name: template_campaign_id_placeholder_check
+
       config:
         severity: warn
+
         tags:
         - template_validation
   - dbt_utils.expression_is_true:
       expression: campaign_name = 'CAMPAIGN_NAME'
       name: template_campaign_name_placeholder_check
+
       config:
         severity: warn
+
         tags:
         - template_validation
 - name: fct_flu_eligibility_comparison
@@ -225,40 +231,50 @@ models:
     • Campaign-specific model approach ensuring data stability and historical preservation
 
     • Comprehensive eligibility analysis supporting programme planning and evaluation'
+
   columns:
   - name: campaign_id
     description: Unique campaign identifier (e.g., flu_2024_25). Key for filtering specific campaigns in comparison analysis.
+
     tests:
     - not_null
   - name: campaign_name
     description: Human-readable campaign name for reporting and display purposes.
+
     tests:
     - not_null
   - name: campaign_start_date
     description: Campaign start date. Critical for temporal analysis and establishing campaign timelines.
+
     tests:
     - not_null
   - name: campaign_ref_date
     description: Reference date used for campaign eligibility calculations. Important for understanding rule application timing.
+
     tests:
     - not_null
   - name: audit_end_date
     description: End date for audit period. Defines the analytical snapshot point for comparison purposes.
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (e.g., OVER65_GROUP, AST_GROUP, CHD_GROUP). Key dimension for analyzing eligibility by rule type.
+
     tests:
     - not_null
   - name: rule_group_name
     description: Human-readable rule group name for reporting and visualization.
+
     tests:
     - not_null
   - name: rule_type
     description: Classification of rule logic type. Enables analysis of rule complexity and effectiveness by type.
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - AGE_BASED
         - AGE_BIRTH_RANGE
@@ -268,6 +284,7 @@ models:
         - EXCLUSION
   - name: person_id
     description: Person identifier. Primary key for linking to demographics and tracking individuals across campaigns.
+
     tests:
     - not_null
     - relationships:
@@ -277,45 +294,56 @@ models:
     description: Date of qualifying clinical event (NULL for age-based rules). Enables analysis of time-to-eligibility and clinical event patterns.
   - name: reference_date
     description: Reference date used for eligibility determination. Critical for understanding when eligibility was assessed.
+
     tests:
     - not_null
   - name: eligibility_reason
     description: Human-readable description of eligibility reason. Key for understanding eligibility drivers and rule interpretation.
+
     tests:
     - not_null
   - name: birth_date
     description: Person's birth date. Enables age-based analysis and cohort segmentation.
+
     tests:
     - not_null
   - name: age_months
     description: Age in months at reference date. Provides precise age calculation for detailed demographic analysis.
+
     tests:
     - not_null
   - name: age_years
     description: Age in years at reference date. Primary age dimension for eligibility analysis and reporting.
+
     tests:
     - not_null
   - name: created_at
     description: Timestamp when record was created. Enables data lineage tracking and refresh monitoring.
+
     tests:
     - not_null
   - name: days_since_qualifying_event
     description: Days between qualifying event and audit end date. Analytical metric for measuring time from qualification to eligibility assessment.
   - name: eligibility_priority
     description: Priority ranking for multiple eligibilities (1=highest). Enables primary eligibility analysis when persons qualify under multiple rules.
+
     tests:
     - not_null
   - name: campaign_period
     description: Campaign period classification ('current', 'previous', 'upcoming'). Key dimension for temporal comparison analysis and trend identification.
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - current
         - previous
         - upcoming
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - person_id
@@ -365,31 +393,39 @@ models:
     • Comprehensive rule coverage including exclusion logic
 
     • Clear business logic with explicit intermediate model references'
+
   columns:
   - name: campaign_id
     description: Campaign identifier (flu_2024_25)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - flu_2024_25
   - name: campaign_name
     description: Human-readable campaign name
+
     tests:
     - not_null
   - name: rule_group_id
     description: Rule group identifier (e.g., OVER65_GROUP, AST_GROUP, CHD_GROUP)
+
     tests:
     - not_null
   - name: rule_group_name
     description: Human-readable rule group name
+
     tests:
     - not_null
   - name: rule_type
     description: Type of rule logic applied
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - AGE_BASED
         - AGE_BIRTH_RANGE
@@ -399,6 +435,7 @@ models:
         - EXCLUSION
   - name: person_id
     description: Person identifier
+
     tests:
     - not_null
     - relationships:
@@ -408,31 +445,38 @@ models:
     description: Date of qualifying clinical event (NULL for age-based rules)
   - name: reference_date
     description: Reference date used for eligibility determination
+
     tests:
     - not_null
   - name: eligibility_reason
     description: Human-readable description of eligibility reason
+
     tests:
     - not_null
   - name: birth_date
     description: Person's birth date
+
     tests:
     - not_null
   - name: age_months
     description: Age in months at reference date
+
     tests:
     - not_null
   - name: age_years
     description: Age in years at reference date
+
     tests:
     - not_null
   - name: days_since_qualifying_event
     description: Days between qualifying event and audit end date
   - name: eligibility_priority
     description: Priority ranking for multiple eligibilities (1=highest)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - 1
         - 2
@@ -443,10 +487,13 @@ models:
         - 7
   - name: created_at
     description: Timestamp when record was created
+
     tests:
     - not_null
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - campaign_id
       - person_id

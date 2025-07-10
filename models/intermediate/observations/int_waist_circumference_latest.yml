@@ -31,18 +31,22 @@ models:
     • High-risk threshold flags for immediate clinical attention
 
     • Complete measurement metadata for clinical context'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
     - unique
   - name: clinical_effective_date
     description: Date of the waist circumference measurement
+
     tests:
     - not_null
   - name: waist_circumference_value
     description: Waist circumference value in cm (valid range only)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -50,9 +54,11 @@ models:
         max_value: 250
   - name: waist_risk_category
     description: Clinical waist circumference risk category (excludes 'Invalid')
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Low Risk
         - Moderate Risk (Female)
@@ -61,17 +67,21 @@ models:
         - Very High Risk
   - name: is_high_waist_risk
     description: Flag indicating waist circumference ≥88cm
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: is_very_high_waist_risk
     description: Flag indicating waist circumference ≥102cm
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

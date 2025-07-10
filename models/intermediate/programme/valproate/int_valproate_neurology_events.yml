@@ -8,9 +8,11 @@ models:
     • Filters to NEUROLOGY code category only
     • One row per neurology observation with person, date, concept details
     • Foundation data for neurology dimension aggregation'
+
   columns:
   - name: person_id
     description: Unique identifier for the person.
+
     tests:
     - not_null
   - name: neurology_event_date

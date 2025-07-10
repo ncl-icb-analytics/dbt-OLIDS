@@ -36,18 +36,22 @@ models:
     • Comprehensive paediatric clinical observation analysis for undiagnosed asthma detection
 
     • Integration with LTC_LCS programme clinical observation tracking systems for children and young people'
+
   columns:
   - name: person_id
     description: Unique identifier for the person
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date when the observation was clinically effective
   - name: cluster_id
     description: Cluster identifier for the type of asthma observation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - SUSPECTED_ASTHMA
         - VIRAL_WHEEZE
@@ -55,10 +59,12 @@ models:
         - ASTHMA_RESOLVED
   - name: mapped_concept_code
     description: Mapped concept code for the observation
+
     tests:
     - not_null
   - name: mapped_concept_display
     description: Mapped concept display for the observation
+
     tests:
     - not_null
   - name: source

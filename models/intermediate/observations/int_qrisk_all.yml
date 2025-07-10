@@ -34,32 +34,40 @@ models:
     • Statin consideration thresholds and treatment decision support
 
     • Cardiovascular prevention guideline compliance indicators'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the QRISK assessment
+
     tests:
     - not_null
   - name: is_valid_qrisk
     description: Flag indicating if QRISK is within valid range (0-100)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: cvd_risk_category
     description: CVD risk category based on QRISK score
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Invalid
         - Low Risk (<10%)
@@ -68,9 +76,11 @@ models:
         - Unknown
   - name: is_high_cvd_risk
     description: Flag indicating QRISK ≥20% (high risk)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false

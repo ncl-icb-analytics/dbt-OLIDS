@@ -5,9 +5,11 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date the ethnicity was recorded
+
     tests:
     - not_null

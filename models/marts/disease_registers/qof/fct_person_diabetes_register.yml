@@ -14,36 +14,45 @@ models:
     • Type classification: Type 1, Type 2, or Unknown (Type 1 takes precedence)
 
     • One row per person with current register status'
+
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system
+
     tests:
     - not_null
     - unique
   - name: is_on_register
     description: QOF register inclusion flag - TRUE for all persons in this table
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: diabetes_type
     description: Classified diabetes type based on latest specific coding (Type 1 takes precedence)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Type 1
         - Type 2
         - Unknown
   - name: earliest_diagnosis_date
     description: Date of first recorded diabetes diagnosis code (any type)
+
     tests:
     - dbt_utils.not_accepted_values:
+
         values:
         - '1900-01-01'
   - name: latest_diagnosis_date
     description: Date of most recent diabetes diagnosis code (any type)
+
     tests:
     - not_null
   - name: latest_resolved_date
@@ -68,15 +77,19 @@ models:
     description: Array of all diabetes resolved concept codes
   - name: meets_age_criteria
     description: 'Boolean flag: TRUE if person meets age ≥17 requirement'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
   - name: has_active_diabetes_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true

@@ -36,44 +36,55 @@ models:
     • Critical for disability care pathway optimisation
 
     • Essential input for learning disability quality improvement initiatives'
+
   columns:
   - name: person_id
     description: Unique person identifier
+
     tests:
     - not_null
   - name: observation_id
     description: Unique observation identifier
+
     tests:
     - not_null
   - name: clinical_effective_date
     description: Date of the learning disability diagnosis observation
+
     tests:
     - not_null
   - name: concept_code
     description: SNOMED concept code for learning disability diagnosis
+
     tests:
     - not_null
   - name: concept_display
     description: Description of the learning disability diagnosis code
+
     tests:
     - not_null
   - name: source_cluster_id
     description: QOF cluster ID (LD_COD)
+
     tests:
     - not_null
   - name: is_learning_disability_diagnosis_code
     description: Flag indicating learning disability diagnosis (LD_COD)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - true
         - false
   - name: learning_disability_observation_type
     description: Classification of this specific observation
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Learning Disability Diagnosis
         - Unknown

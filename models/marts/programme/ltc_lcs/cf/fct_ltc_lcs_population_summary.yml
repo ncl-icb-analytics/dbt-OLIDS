@@ -39,12 +39,15 @@ models:
     • Ethnicity and deprivation gap analysis
 
     • Population pyramid visualisations with case finding overlay'
+
   columns:
   - name: age_band_10y
     description: 10-year age band (0-9, 10-19, etc.)
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - 0-9
         - 10-19
@@ -57,8 +60,10 @@ models:
         - 80+
   - name: ethnicity_category
     description: High-level ethnicity category (White, Mixed, Asian, Black, Other, Unknown)
+
     tests:
     - accepted_values:
+
         values:
         - White
         - Mixed
@@ -69,6 +74,7 @@ models:
         - null
   - name: imd_quintile
     description: Index of Multiple Deprivation 2019 quintile (0=Unknown, 1=Most deprived, 5=Least deprived)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -76,9 +82,11 @@ models:
         max_value: 5
   - name: imd_quintile_label
     description: Descriptive label for IMD quintile
+
     tests:
     - not_null
     - accepted_values:
+
         values:
         - Unknown
         - Quintile 1 (Most Deprived)
@@ -92,84 +100,98 @@ models:
     description: Practice neighbourhood classification
   - name: total_population
     description: Total population for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: population_male
     description: Male population for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: population_female
     description: Female population for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: population_other_sex
     description: Population with other/unknown sex for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: case_finding_eligible_population
     description: Population eligible for case finding (excludes those already in programmes)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: total_case_finding_count
     description: Total number meeting any case finding criteria for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: cf_cvd_61_count
     description: Count meeting CVD_61 criteria (high QRISK2) for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: cf_cvd_62_count
     description: Count meeting CVD_62 criteria (moderate QRISK2) for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: cf_dm_61_count
     description: Count meeting DM_61 criteria for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: cf_htn_61_count
     description: Count meeting HTN_61 criteria for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: case_finding_male
     description: Male patients meeting any case finding criteria
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: case_finding_female
     description: Female patients meeting any case finding criteria
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: case_finding_other_sex
     description: Other/unknown sex patients meeting any case finding criteria
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
         min_value: 0
   - name: case_finding_rate_per_1000
     description: Case finding rate per 1000 population for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -177,6 +199,7 @@ models:
         max_value: 1000
   - name: case_finding_percentage
     description: Case finding percentage of total population for this demographic combination
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -184,6 +207,7 @@ models:
         max_value: 100
   - name: age_band_sort_order
     description: Numeric sort order for age bands (1=0-9 years, 9=80+ years)
+
     tests:
     - not_null
     - dbt_utils.accepted_range:
@@ -191,10 +215,13 @@ models:
         max_value: 10
   - name: data_refresh_date
     description: Date when data was last refreshed
+
     tests:
     - not_null
+
   tests:
   - dbt_utils.unique_combination_of_columns:
+
       combination_of_columns:
       - age_band_10y
       - ethnicity_category
