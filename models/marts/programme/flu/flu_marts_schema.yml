@@ -1,41 +1,17 @@
 version: 2
 models:
 - name: fct_flu_eligibility_TEMPLATE
-  description: 'Mart: Flu Eligibility Template - Template for creating new campaign-specific flu vaccination eligibility fact tables.
+  description: 'Template for creating new campaign-specific flu vaccination eligibility fact tables.
 
+    Business Logic:
 
-    Business Purpose:
-
-    • Provides standardised template for creating new campaign-specific flu eligibility models
+    • Provides standardised template structure for rapid deployment of new flu vaccination campaigns
 
     • Ensures consistency across campaign years with established patterns and business logic
 
-    • Facilitates rapid deployment of new flu vaccination campaigns with minimal configuration changes
+    • Uses placeholder configuration requiring campaign ID and name replacement
 
-    • Supports campaign planning and development with proven model structure
-
-
-    Data Granularity:
-
-    • Template structure for one row per person per eligible rule group per campaign
-
-    • Placeholder configuration requiring campaign ID and name replacement
-
-
-    • Maintains same rule coverage as established models: age-based, clinical, hierarchical, exclusion
-
-    • Contains all standard eligibility fields and priority scoring framework
-
-
-    Key Features:
-
-    • Template-driven approach for new campaign creation with clear replacement instructions
-
-    • Campaign configuration driven by CSV seed files for business logic and dates
-
-    • Standardised structure ensuring consistency across campaign years
-
-    • Comprehensive documentation and instructions for campaign deployment'
+    • One row per person per eligible rule group per campaign with priority scoring framework'
 
   columns:
   - name: campaign_id
@@ -197,40 +173,17 @@ models:
         tags:
         - template_validation
 - name: fct_flu_eligibility_comparison
-  description: 'Mart: Flu Eligibility Comparison - Multi-campaign comparison fact table enabling year-over-year flu vaccination eligibility analysis.
+  description: 'Multi-campaign comparison fact table enabling year-over-year flu vaccination eligibility analysis.
 
-
-    Business Purpose:
+    Business Logic:
 
     • Enables comparison between flu campaigns for multi-year analysis and trend identification
 
     • Supports year-over-year eligibility trends analysis and rule change impact assessment
 
-    • Provides foundation for population health analysis across flu seasons
-
-    • Facilitates coverage and uptake comparisons between campaign periods
-
-
-    Data Granularity:
-
-    • One row per person per eligible rule group per campaign period
-
-    • Currently covers 2024-25 campaign with framework for historical and future campaigns
-
     • Contains campaign period classification (current, previous, upcoming) for temporal analysis
 
-    • Preserves all eligibility details from campaign-specific fact models
-
-
-    Key Features:
-
-    • Multi-campaign comparison capability with campaign period classification
-
-    • Extensible framework for adding new campaign years through union operations
-
-    • Campaign-specific model approach ensuring data stability and historical preservation
-
-    • Comprehensive eligibility analysis supporting programme planning and evaluation'
+    • One row per person per eligible rule group per campaign period with extensible framework'
 
   columns:
   - name: campaign_id
@@ -365,34 +318,17 @@ models:
       expression: eligibility_priority BETWEEN 1 AND 10
       name: priority_within_expected_range
 - name: fct_flu_eligibility_2024_25
-  description: 'Mart: Flu Eligibility 2024-25 Campaign - Comprehensive fact table consolidating all flu vaccination eligibility rules for the 2024-25 campaign.
+  description: 'Comprehensive fact table consolidating all flu vaccination eligibility rules for the 2024-25 campaign.
 
+    Business Logic:
 
-    Population Scope:
+    • Consolidates all flu vaccination eligibility rules: age-based (65+, children 2-16), clinical conditions (asthma, diabetes, CKD, immunosuppression, pregnancy), and special populations (carers, healthcare workers)
 
-    • All persons eligible for flu vaccination in 2024-25 campaign
+    • Provides campaign-specific stability ensuring historical preservation and data consistency
 
+    • Includes multi-rule eligibility with priority scoring for persons qualifying under multiple rules
 
-    • Age-based eligibility: 65+ years, children 2-3 years, children 4-16 years
-
-
-    • Clinical conditions: asthma, diabetes, CKD, immunosuppression, pregnancy
-
-
-    • Special populations: carers, healthcare workers, residents in care homes
-
-    • One row per person per eligible rule group with priority scoring
-
-
-    Key Features:
-
-    • Campaign-specific stability ensuring historical preservation
-
-    • Multi-rule eligibility with priority scoring for multiple qualifications
-
-    • Comprehensive rule coverage including exclusion logic
-
-    • Clear business logic with explicit intermediate model references'
+    • One row per person per eligible rule group with comprehensive rule coverage including exclusion logic'
 
   columns:
   - name: campaign_id

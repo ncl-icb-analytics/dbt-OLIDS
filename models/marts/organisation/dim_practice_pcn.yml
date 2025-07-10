@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_practice_pcn
-  description: 'Mart: Practice PCN Dimension - Primary Care Network mapping for organisational hierarchy and network analysis.
+  description: 'Primary Care Network mapping for organisational hierarchy and network analysis.
 
+    Business Logic:
 
-    Business Purpose:
+    • Maps GP practices to Primary Care Networks (PCNs) for organisational hierarchy
 
-    • Support operational analytics for Primary Care Network management and practice collaboration
+    • Supports PCN-level analytics, performance monitoring and network operations
 
-    • Enable business intelligence reporting on PCN-level performance and resource allocation
+    • Enables network-based service planning and integrated care delivery
 
-    • Provide foundation for network-based service planning and commissioning
-
-    • Support population health analytics at PCN level for integrated care delivery
-
-
-    Data Granularity:
-
-    • One row per practice with PCN assignment
-
-    • Includes practice to PCN mapping for organisational hierarchy
-
-    • Current PCN network structure and practice affiliations
-
-
-    Key Features:
-
-    • Links practices to Primary Care Networks for network-level analysis
-
-    • Supports PCN-level reporting and performance monitoring
-
-    • Enables business intelligence for network operations and collaborative care
-
-    • Provides foundation for integrated care delivery and network resource planning'
+    • One row per practice with PCN assignment from practice neighbourhood lookup'
 
   tests:
   - dbt_utils.at_least_one:

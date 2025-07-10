@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_ckd_63
-  description: 'Mart: LTC LCS Case Finding CKD_63 - Identifies patients with significantly elevated single UACR reading indicating substantial kidney damage.
+  description: 'Case finding for patients with significantly elevated single UACR reading indicating substantial kidney damage.
 
+    Business Logic:
 
-    Business Purpose:
+    • Identifies patients aged 17+ with latest UACR reading > 70 (excludes patients from CKD_62)
 
-    • Support systematic case finding for undiagnosed chronic kidney disease through single high UACR assessment
+    • Targets patients with severe proteinuria requiring immediate clinical attention and nephrology referral
 
-    • Enable identification of patients with severe proteinuria requiring immediate clinical attention
+    • Takes maximum UACR value per day to handle multiple readings on same date
 
-    • Provide clinical decision support for urgent nephrology referral and intervention
-
-    • Support quality improvement initiatives for comprehensive kidney damage detection
-
-
-    Data Granularity:
-
-    • One row per person aged 17+ with latest UACR reading above 70
-
-    • Excludes patients already captured in consecutive high UACR cohort (CKD_62)
-
-    • Limited to patients with clinically significant single elevated readings
-
-
-    Key Features:
-
-    • High-threshold UACR assessment (>70) for significant kidney damage identification
-
-    • Exclusion logic to prevent double-counting with consecutive reading cohorts
-
-    • Latest assessment focus for immediate clinical intervention priority
-
-    • Evidence-based case finding supporting urgent clinical review for severe proteinuria'
+    • One row per person with clinically significant single elevated UACR reading'
 
   columns:
   - name: person_id

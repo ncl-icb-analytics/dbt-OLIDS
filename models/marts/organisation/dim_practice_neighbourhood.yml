@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_practice_neighbourhood
-  description: 'Mart: Practice Neighbourhood Dimension - Geographic context and neighbourhood classification for GP practices.
+  description: 'Geographic context and neighbourhood classification for GP practices.
 
+    Business Logic:
 
-    Business Purpose:
+    • Provides geographic context for GP practices including local authority and neighbourhood classification
 
-    • Support operational analytics for practice geographic distribution and catchment area analysis
+    • Supports geographic analysis for population health and health inequalities assessment
 
-    • Enable business intelligence reporting on practice locations and local authority contexts
+    • Enables spatial reporting and commissioning based on practice geographic characteristics
 
-    • Provide foundation for population health analytics and geographic health inequalities assessment
-
-    • Support commissioning and service planning based on practice geographic characteristics
-
-
-    Data Granularity:
-
-    • One row per practice with neighbourhood and local authority information
-
-    • Includes practice geographic context for spatial analysis
-
-    • Current geographic classification and neighbourhood assignment
-
-
-    Key Features:
-
-    • Links practices to local authorities and neighbourhood classifications
-
-    • Supports geographic analysis and spatial reporting for population health
-
-    • Enables business intelligence for practice operations and service planning
-
-    • Provides foundation for health inequalities analysis and resource allocation'
+    • One row per practice with neighbourhood and local authority information from practice neighbourhood lookup'
 
   tests:
   - dbt_utils.at_least_one:

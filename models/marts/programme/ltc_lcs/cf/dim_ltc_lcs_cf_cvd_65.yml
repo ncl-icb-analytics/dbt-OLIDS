@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_cvd_65
-  description: 'Mart: LTC LCS Case Finding CVD_65 - Identifies patients with moderate cardiovascular risk (QRISK2 ≥10%) requiring moderate-dose statin therapy.
+  description: 'Case finding for patients with moderate cardiovascular risk requiring moderate-dose statin therapy.
 
-
-    Business Purpose:
-
-    • Support systematic case finding for cardiovascular disease prevention with moderate-dose statin therapy
-
-    • Enable identification of patients requiring evidence-based lipid management for primary prevention
-
-    • Provide clinical decision support for QRISK2-guided statin initiation
-
-    • Support quality improvement initiatives for cardiovascular risk reduction and prevention programmes
-
-
-    Data Granularity:
-
-    • One row per person with latest QRISK2 score of 10% or higher requiring moderate-dose statin therapy
-
-    • Includes cardiovascular risk assessment and medication requirement indicators
-
-    • Limited to patients meeting moderate cardiovascular risk intervention thresholds
-
-
-    Key Features:
-
-    • QRISK2-based cardiovascular risk stratification (≥10% threshold) for statin eligibility
-
-    • Moderate-dose statin requirement assessment for primary prevention
-
-    • Evidence-based case finding supporting NICE guidelines for CVD prevention
-
-    • Integration with cardiovascular risk assessment for therapeutic decision-making'
+    Business Logic:
+    
+    • Identifies patients with latest QRISK2 score ≥10% requiring moderate-dose statin therapy
+    
+    • Targets primary prevention patients needing evidence-based lipid management
+    
+    • Uses QRISK2-based cardiovascular risk stratification for statin eligibility decisions
+    
+    • One row per person meeting moderate cardiovascular risk intervention thresholds'
 
   columns:
   - name: person_id
