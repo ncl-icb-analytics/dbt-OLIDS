@@ -1,25 +1,14 @@
 version: 2
 models:
 - name: dim_valproate_araf
-  description: 'Mart: Valproate ARAF Status - Person-level aggregation of Annual Risk Acknowledgement Form events for valproate safety monitoring.
+  description: 'Person-level aggregation of Annual Risk Acknowledgement Form (ARAF) events for valproate monitoring.
 
-
-    Population Scope:
-
-    • Patients with ARAF-related events in valproate safety monitoring
-
-    • All persons with recorded Annual Risk Acknowledgement Form interactions
-
-    • One row per person with ARAF events and completion tracking
-
-
-    Key Features:
-
-    • Person-level ARAF event aggregation with complete compliance history
-
-    • Earliest and latest ARAF completion tracking for monitoring effectiveness
-
-    • Evidence-based ARAF compliance assessment supporting regulatory requirements'
+    Business Logic:
+    • Aggregates all ARAF events per person from intermediate ARAF events table
+    • Provides earliest and latest ARAF event dates for timeline analysis
+    • Tracks latest specific ARAF form date and lookback compliance flag
+    • Includes arrays of all observation IDs, concept codes, and displays for traceability
+    • Only includes people who have ARAF events (has_araf_event always TRUE)'
   columns:
   - name: person_id
     description: Unique identifier for the person.
