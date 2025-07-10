@@ -1,11 +1,25 @@
 version: 2
 models:
 - name: dim_person_current_practice
-  description: 'Current practice registration details for each person.
+  description: 'Mart: Person Current Practice Dimension - Current practice registration details for each person.
 
-    Provides current practice relationships and registration status.
 
-    '
+    Population Scope:
+
+    • All persons with current practice registrations
+
+    • One row per person with active practice registration status
+
+    • Includes practice organisational details and registration timeline
+
+
+    Key Features:
+
+    • Links patients to their current registered practice with organisational context
+
+    • Includes practice operational status and hierarchy information
+
+    • Supports practice-level reporting and population health management'
   columns:
   - name: person_id
     description: Unique person identifier - primary key

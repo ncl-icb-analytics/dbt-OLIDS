@@ -1,15 +1,25 @@
 version: 2
 models:
 - name: fct_person_bp_control
-  description: "Fact table for blood pressure control status applying patient-specific thresholds based on NICE NG136 guidelines.\n\
-    \n**BP Threshold Logic (Priority Order):**\n1. **CKD with ACR \u226570**: Most stringent thresholds for high-risk CKD\
-    \ patients\n2. **Type 2 Diabetes**: Specific thresholds for T2DM patients under 80\n3. **CKD (general)**: Thresholds for\
-    \ CKD patients under 80\n4. **Age \u226580**: Age-specific thresholds for elderly patients\n5. **Age <80**: Default thresholds\
-    \ for general population\n\n**Monitoring Intervals (Risk-Based):**\n- **High Risk** (T2DM OR CKD OR diagnosed HTN): Every\
-    \ 12 months\n- **Medium Risk** (Age \u226540, no high-risk conditions): Every 24 months\n- **Low Risk** (Age <40, no high-risk\
-    \ conditions): Every 60 months\n\n**Business Logic:**\n- Uses latest BP reading for each person\n- Applies highest priority\
-    \ applicable threshold\n- Calculates systolic, diastolic, and overall control\n- Assesses timeliness based on risk factors\n\
-    - References BP thresholds ruleset for clinical accuracy\n"
+  description: 'Mart: Blood Pressure Control Status - Patient-level blood pressure control assessment for QOF reporting and clinical management.
+
+
+    Population Scope:
+
+    • All patients with blood pressure readings requiring control assessment
+
+    • Patient-specific BP thresholds based on age, Type 2 diabetes, CKD, and ACR levels
+
+    • One row per patient with current BP control status and monitoring timeliness
+
+
+    Key Features:
+
+    • Applies priority-ranked thresholds based on NICE NG136 guidelines
+
+    • Calculates overall BP control status (both systolic and diastolic)
+
+    • Includes risk-based timeliness assessment for monitoring frequency'
   columns:
   - name: person_id
     description: Unique person identifier

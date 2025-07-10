@@ -1,37 +1,65 @@
 version: 2
-
 models:
-  - name: int_ltc_lcs_cyp_asthma_observations
-    description: "CYP Asthma observations for LTC/LCS case finding including diagnoses, symptoms, and related conditions (non-medication observations)"
-    # tests:
-    #   - cluster_ids_exist:
-    #       cluster_ids: 'SUSPECTED_ASTHMA,VIRAL_WHEEZE,ASTHMA_DIAGNOSIS,ASTHMA_RESOLVED'
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date when the observation was clinically effective"
-        # tests:
-        #   - not_null  # Disabled for dummy data - expect some nulls
-      - name: cluster_id
-        description: "Cluster identifier for the type of asthma observation"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['SUSPECTED_ASTHMA', 'VIRAL_WHEEZE', 'ASTHMA_DIAGNOSIS', 'ASTHMA_RESOLVED']
-      - name: mapped_concept_code
-        description: "Mapped concept code for the observation"
-        tests:
-          - not_null
-      - name: mapped_concept_display
-        description: "Mapped concept display for the observation"
-        tests:
-          - not_null
-      - name: source
-        description: "Source system for the observation"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-        #   - accepted_values:
-        #       values: ['LTC_LCS']
+- name: int_ltc_lcs_cyp_asthma_observations
+  description: 'Intermediate: LTC LCS CYP Asthma Observations - Collects all children and young people asthma-relevant observations for Long Term Conditions case finding measures.
+
+
+    Clinical Purpose:
+
+    • Gathers comprehensive CYP asthma-related clinical observation data for case finding algorithms
+
+    • Supports identification of children and young people with undiagnosed asthma through clinical observations
+
+    • Enables observation-based risk stratification for paediatric asthma case finding measures
+
+    • Provides foundation data for CYP asthma case finding indicators including suspected asthma and wheeze
+
+
+    Data Granularity:
+
+    • One row per clinical observation for CYP asthma-relevant observations
+
+    • Covers suspected asthma, viral wheeze, asthma diagnosis, and asthma resolved observations
+
+    • Sourced from LTC_LCS programme observation clusters for paediatric populations
+
+    • Includes all historical and current asthma clinical observation patterns for children and young people
+
+
+    Key Features:
+
+
+    • Cluster IDs: SUSPECTED_ASTHMA, VIRAL_WHEEZE, ASTHMA_DIAGNOSIS, ASTHMA_RESOLVED
+
+    • Supports CYP-specific asthma case finding measure requirements
+
+    • Comprehensive paediatric clinical observation analysis for undiagnosed asthma detection
+
+    • Integration with LTC_LCS programme clinical observation tracking systems for children and young people'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date when the observation was clinically effective
+  - name: cluster_id
+    description: Cluster identifier for the type of asthma observation
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - SUSPECTED_ASTHMA
+        - VIRAL_WHEEZE
+        - ASTHMA_DIAGNOSIS
+        - ASTHMA_RESOLVED
+  - name: mapped_concept_code
+    description: Mapped concept code for the observation
+    tests:
+    - not_null
+  - name: mapped_concept_display
+    description: Mapped concept display for the observation
+    tests:
+    - not_null
+  - name: source
+    description: Source system for the observation

@@ -1,17 +1,22 @@
 version: 2
 models:
 - name: fct_person_hypertension_register
-  description: "Hypertension register fact table identifying individuals aged 18 and over currently on the hypertension register.\n\
-    \n**QOF Business Logic (Pattern 6: Complex Clinical Logic):**\n- Age \u226518 years (QOF requirement)\n- Active HTN diagnosis:\
-    \ latest HYP_COD > latest HYPRES_COD OR no resolution recorded\n- Uses cluster IDs: HYP_COD (diagnosis), HYPRES_COD (resolution)\n\
-    \n**Complex Clinical Staging Logic:**\nApplies NICE-aligned hypertension staging based on latest BP reading with context-specific\
-    \ thresholds:\n- **Severe HTN**: \u2265180/120 mmHg (any context)\n- **Home/ABPM readings**: Stage 2 \u2265150/95, Stage\
-    \ 1 \u2265135/85 mmHg\n- **Clinic readings**: Stage 2 \u2265160/100, Stage 1 \u2265140/90 mmHg\n\n**Clinical Integration:**\n\
-    Links diagnosis codes with latest BP measurements to provide clinical staging context.\nStaging reflects latest reading\
-    \ only and does not constitute clinical diagnosis of that stage.\n\n**Population Coverage:**\nIncludes ALL persons (active,\
-    \ inactive, deceased) for comprehensive reporting and research.\n\n**Clinical Context:**\nEnables QOF monitoring with\
-    \ integrated BP staging for clinical decision support.\nSeparate BP monitoring available in int_blood_pressure_* tables\
-    \ for detailed analysis.\n"
+  description: 'QOF Hypertension Register - Patients aged 18+ with active hypertension diagnosis and clinical staging.
+
+
+    Population Scope:
+
+    • Age 18+ years
+
+
+    • Active hypertension diagnosis: latest HTN_COD > latest HTNRES_COD
+
+    • Clinical staging based on latest BP with NICE-aligned thresholds
+
+
+    • Context-aware thresholds: Home/ABPM vs Clinic readings
+
+    • One row per person with current register status'
   config:
     materialized: table
   columns:
@@ -22,13 +27,6 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-#   - name: age
-#     description: "Person's age at register assessment (must be \u226518 for HTN register)"
-#     tests:
-#     - not_null
-#     - dbt_utils.accepted_range:
-#         min_value: 18
-#         max_value: 120
   - name: is_on_register
     description: Register inclusion flag (always TRUE in this table as filtered view)
     tests:
@@ -63,8 +61,13 @@ models:
         max_value: 200
         severity: warn
   - name: latest_bp_htn_stage
-    description: "Clinical staging of latest BP reading using context-specific NICE thresholds:\n- Severe HTN (\u2265180/120)\n\
-      - Stage 2/1 HTN with Home/ABPM or Clinic threshold context\n- Normal with context indication\n"
+    description: 'Clinical staging of latest BP reading using context-specific NICE thresholds:
+
+      - Severe HTN (≥180/120)
+
+      - Stage 2/1 HTN with Home/ABPM or Clinic threshold context
+
+      - Normal with context indication'
     tests:
     - accepted_values:
         values:
@@ -74,7 +77,7 @@ models:
         - Normal / High Normal
         severity: warn
   - name: meets_age_criteria
-    description: "Flag indicating if person meets age \u226518 requirement"
+    description: Flag indicating if person meets age ≥18 requirement
     tests:
     - not_null
     - accepted_values:

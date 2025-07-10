@@ -1,87 +1,116 @@
 version: 2
-
 models:
-  - name: int_ace_inhibitor_medications_all
-    description: |
-      All ACE inhibitor medication orders for cardiovascular and renal protection.
-      Uses BNF classification (2.5.5.1) for ACE inhibitors.
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+- name: int_ace_inhibitor_medications_all
+  description: 'Intermediate: ACE Inhibitor Medication Orders - All recorded ACE inhibitor prescriptions.
 
-      Clinical Purpose:
-      - Cardiovascular protection in heart failure and post-MI
-      - Renal protection in diabetes and CKD
-      - Blood pressure management in hypertension
 
-      Key Features:
-      - Evidence-based ACE inhibitor identification from major trials
-      - Individual ACE inhibitor type classification
-      - Long-term therapy recency tracking
+    Clinical Purpose:
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
+    • Tracks ACE inhibitor therapy for cardiovascular and renal protection
 
-      - name: medication_order_id
-        description: "Unique identifier for the medication order record"
-        tests:
-          - not_null
-          - unique
+    • Supports clinical monitoring and medication review processes
 
-      - name: ace_inhibitor_type
-        description: "Specific ACE inhibitor medication type"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CAPTOPRIL', 'CILAZAPRIL', 'ENALAPRIL', 'FOSINOPRIL', 'IMIDAPRIL', 'LISINOPRIL', 'MOEXIPRIL', 'PERINDOPRIL', 'QUINAPRIL', 'RAMIPRIL', 'TRANDOLAPRIL', 'OTHER_ACE_INHIBITOR']
+    • Enables analysis of prescribing patterns by specific ACE inhibitor type
 
-      - name: is_evidence_based_cvd
-        description: "Boolean flag indicating evidence-based ACE inhibitor for cardiovascular disease (ramipril, perindopril, lisinopril, enalapril)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
 
-      - name: is_ramipril
-        description: "Boolean flag indicating ramipril use (HOPE trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    Data Granularity:
 
-      - name: is_lisinopril
-        description: "Boolean flag indicating lisinopril use"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • One row per medication order
 
-      - name: is_perindopril
-        description: "Boolean flag indicating perindopril use (EUROPA trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Includes all patients regardless of status (active/inactive/deceased)
 
-      - name: is_enalapril
-        description: "Boolean flag indicating enalapril use (SOLVD trial evidence)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Historical data maintained for longitudinal analysis
 
-      - name: is_captopril
-        description: "Boolean flag indicating captopril use"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
 
+    Key Features:
+
+    • Classification by specific ACE inhibitor type (ramipril, lisinopril, etc.)
+
+    • Evidence-based medication flags for cardiovascular disease management
+
+    • Recency indicators for therapy monitoring (3m, 6m, 12m)
+
+    • Clinical trial evidence mapping (HOPE, EUROPA, GISSI-3, SOLVD trials)'
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - medication_order_id
-      - bnf_codes_exist:
-          bnf_codes: "02050501"
+    - not_null
+  - name: medication_order_id
+    description: Unique identifier for the medication order record
+    tests:
+    - not_null
+    - unique
+  - name: ace_inhibitor_type
+    description: Specific ACE inhibitor medication type
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - CAPTOPRIL
+        - CILAZAPRIL
+        - ENALAPRIL
+        - FOSINOPRIL
+        - IMIDAPRIL
+        - LISINOPRIL
+        - MOEXIPRIL
+        - PERINDOPRIL
+        - QUINAPRIL
+        - RAMIPRIL
+        - TRANDOLAPRIL
+        - OTHER_ACE_INHIBITOR
+  - name: is_evidence_based_cvd
+    description: Boolean flag indicating evidence-based ACE inhibitor for cardiovascular disease (ramipril, perindopril, lisinopril, enalapril)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_ramipril
+    description: Boolean flag indicating ramipril use (HOPE trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_lisinopril
+    description: Boolean flag indicating lisinopril use
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_perindopril
+    description: Boolean flag indicating perindopril use (EUROPA trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_enalapril
+    description: Boolean flag indicating enalapril use (SOLVD trial evidence)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_captopril
+    description: Boolean flag indicating captopril use
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - person_id
+      - medication_order_id
+  - bnf_codes_exist:
+      bnf_codes: '02050501'

@@ -4,13 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: QRISKSCORE_COD
-  description: 'All QRISK cardiovascular risk assessment scores from observations.
+  description: 'Intermediate: QRISK Observations - All recorded cardiovascular risk scores with clinical categorisation.
 
-    Includes QRISK, QRISK2, and QRISK3 scores with clinical validation and risk categorisation.
 
-    Includes ALL persons following intermediate layer principles.
+    Clinical Purpose:
 
-    '
+    • Tracks QRISK scores for cardiovascular disease risk assessment and management
+
+    • Supports primary prevention strategies and statin therapy decision-making
+
+    • Enables cardiovascular risk stratification and population health monitoring
+
+
+    Data Granularity:
+
+    • One row per QRISK observation
+
+    • Includes all patients regardless of status (active/inactive/deceased)
+
+    • Uses QRISKSCORE_COD cluster for cardiovascular risk score identification
+
+
+    Key Features:
+
+    • QRISK type identification (QRISK2, QRISK3) with score validation
+
+    • Clinical risk categorisation (low, moderate, high CVD risk)
+
+    • Statin consideration thresholds and treatment decision support
+
+    • Cardiovascular prevention guideline compliance indicators'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -41,10 +64,10 @@ models:
         - Invalid
         - Low Risk (<10%)
         - Moderate Risk (10-20%)
-        - "High Risk (\u226520%)"
+        - High Risk (≥20%)
         - Unknown
   - name: is_high_cvd_risk
-    description: "Flag indicating QRISK \u226520% (high risk)"
+    description: Flag indicating QRISK ≥20% (high risk)
     tests:
     - not_null
     - accepted_values:

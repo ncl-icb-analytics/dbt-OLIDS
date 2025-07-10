@@ -4,41 +4,36 @@ models:
   tests:
   - bnf_codes_exist:
       bnf_codes: '0304'
-  description: 'All allergy medication orders including antihistamines and allergy treatments.
-
-    Uses BNF classification (3.4) for antihistamines and related allergy medications.
-
-    Includes ALL persons following intermediate layer principles.
+  description: 'Intermediate: Allergy Medication Orders - All recorded antihistamine and allergy treatment prescriptions.
 
 
     Clinical Purpose:
 
-    - Allergy symptom management
+    • Tracks antihistamine therapy for allergic conditions (rhinitis, urticaria, eczema)
 
-    - Allergic rhinitis treatment
+    • Supports allergy management and medication review processes
 
-    - Urticaria and dermatitis care
+    • Enables analysis of prescribing patterns by sedation profile and administration route
 
-    - Chronic allergy monitoring
+
+    Data Granularity:
+
+    • One row per medication order
+
+    • Includes all patients regardless of status (active/inactive/deceased)
+
+    • Historical data maintained for longitudinal analysis
 
 
     Key Features:
 
-    - Antihistamine type classification
+    • Classification by antihistamine type and sedation profile (sedating vs non-sedating)
 
-    - Sedation profile identification (sedating vs non-sedating)
+    • Route of administration categorisation (oral, topical, injection)
 
-    - Route of administration tracking
+    • Clinical indication mapping (allergic rhinitis, urticaria, eczema)
 
-    - Clinical indication classification
-
-    - Paediatric formulation identification
-
-    - Over-the-counter availability flags
-
-    - Chronic allergy treatment detection
-
-    '
+    • Over-the-counter availability and safety warning flags'
   columns:
   - name: person_id
     description: Unique person identifier across the HEI system

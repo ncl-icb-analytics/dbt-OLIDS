@@ -4,16 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: EPIL_COD, EPILRES_COD
-  description: "All epilepsy diagnosis observations from clinical records using QOF cluster IDs.\nProvides comprehensive data\
-    \ collection for epilepsy register and neurological management.\n\nQOF Cluster IDs Used:\n- EPIL_COD: Epilepsy diagnoses\n\
-    - EPILRES_COD: Epilepsy resolved/remission codes\n\nClinical Purpose:\n- QOF epilepsy register data collection (aged 18+,\
-    \ active epilepsy diagnosis + recent medication)\n- Epilepsy care pathway monitoring\n- Seizure management support\n-\
-    \ Medication therapy integration for neurological conditions\n\nKey QOF Requirements:\n- Register inclusion: Age \u2265\
-    18, active epilepsy diagnosis (latest EPIL_COD > latest EPILRES_COD)\n- AND recent epilepsy medication order (within last\
-    \ 6 months)\n- Neurological condition with specific medication monitoring requirements\n\nNote: This model provides diagnosis\
-    \ codes only. Medication integration is handled \nin the corresponding fact table which joins to intermediate_epilepsy_orders_6m.\n\
-    \nIncludes ALL persons following intermediate layer principles.\nUse as input for fct_person_epilepsy_register.sql which\
-    \ applies QOF business rules and medication integration.\n"
+  description: 'Intermediate: Epilepsy Diagnoses All - Complete history of all epilepsy diagnosis and resolution observations for QOF register management.
+
+
+    Clinical Purpose:
+
+    • QOF epilepsy register data collection and monitoring
+
+    • Epilepsy care pathway coordination and seizure management tracking
+
+    • Neurological treatment monitoring and clinical decision support
+
+    • Resolution status tracking for improved neurological outcomes
+
+
+    Data Granularity:
+
+    • One row per epilepsy diagnosis or resolution observation
+
+    • Uses EPI_COD (diagnosis) and EPIRES_COD (resolved) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Diagnosis and resolution code classification for register eligibility
+
+    • Age restrictions typically ≥18 years applied in downstream processing
+
+    • Critical for epilepsy care pathway optimisation
+
+    • Essential input for neurological quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier

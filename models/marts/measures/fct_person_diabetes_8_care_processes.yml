@@ -1,46 +1,25 @@
 version: 2
 models:
 - name: fct_person_diabetes_8_care_processes
-  description: 'Fact table tracking completion of the 8 diabetes care processes for people on the diabetes register.
+  description: 'Mart: Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care assessment.
 
 
-    **8 Care Processes:**
+    Population Scope:
 
-    1. HbA1c test
+    • All persons on diabetes register requiring 8 care processes assessment
 
-    2. Blood pressure check
+    • One row per person with completion status for all processes within 12 months
 
-    3. Cholesterol test
-
-    4. Serum creatinine test
-
-    5. Urine ACR test
-
-    6. Foot examination
-
-    7. BMI recording
-
-    8. Smoking status recording
+    • Current assessment of comprehensive diabetes care delivery
 
 
-    **Business Logic:**
+    Key Features:
 
-    - Base population: Anyone with a diabetes diagnosis (from int_diabetes_diagnoses_all)
+    • Tracks HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status
 
-    - Completion timeframe: Within last 12 months from current date
+    • Calculates overall completion metrics for QOF reporting
 
-    - Foot check logic: Requires both feet checked OR one foot checked with other absent/amputated, AND not declined/unsuitable
-
-    - Overall completion: Count of completed processes (0-8) and flag for all 8 completed
-
-
-    **Clinical Context:**
-
-    Essential for diabetes quality of care monitoring and QOF reporting. Based on NICE diabetes guidelines
-
-    requiring regular monitoring of these key clinical parameters.
-
-    '
+    • Supports clinical decision-making and quality improvement initiatives'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -120,9 +99,7 @@ models:
 
       - Both feet checked OR one foot checked with other absent/amputated
 
-      - NOT declined by patient or deemed unsuitable
-
-      '
+      - NOT declined by patient or deemed unsuitable'
     tests:
     - accepted_values:
         values:

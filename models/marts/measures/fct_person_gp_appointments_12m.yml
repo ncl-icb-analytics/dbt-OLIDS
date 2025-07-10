@@ -1,68 +1,77 @@
 version: 2
-
 models:
-  - name: fct_person_gp_appointments_12m
-    description: |
-      GP appointments 12-month fact table providing service usage metrics.
+- name: fct_person_gp_appointments_12m
+  description: 'Mart: GP Appointments 12-Month Summary - Service usage analytics for primary care appointment activity.
 
-      **Business Logic:**
-      - Counts GP appointments per person per organisation in last 12 months
-      - Aggregates from appointment start date
-      - Includes all appointment types
 
-      **Population Coverage:**
-      ALL persons with appointments in the last 12 months.
-      Includes active, inactive, and deceased for comprehensive service analytics.
+    Business Purpose:
 
-      **Service Context:**
-      Supports capacity planning, utilisation analysis, and patient access monitoring.
-      Key metric for primary care service delivery assessment.
+    • Support operational analytics for GP practice capacity planning and resource allocation
 
-    config:
-      materialized: table
+    • Enable business intelligence reporting on patient service utilisation patterns
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
+    • Provide population health analytics for primary care access and demand management
 
-      - name: organisation_id
-        description: "Organisation providing the appointments"
-        tests:
-          - not_null
+    • Support commissioning and performance monitoring of GP services
 
-      - name: measure_id
-        description: "Metric identifier (always 'GP_APPOINTMENTS_12M')"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['GP_APPOINTMENTS_12M']
 
-      - name: appointment_count
-        description: "Number of GP appointments in last 12 months"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
+    Data Granularity:
 
-      - name: earliest_appointment_date
-        description: "Date of earliest appointment in the 12-month period"
-        tests:
-          - not_null
+    • One row per person per organisation with appointments in last 12 months
 
-      - name: latest_appointment_date
-        description: "Date of most recent appointment in the 12-month period"
-        tests:
-          - not_null
+    • Includes appointment count and temporal distribution over 12-month period
 
-      - name: age
-        description: "Person's current age in years"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 120
+    • Current analysis of GP service utilisation and patient engagement
+
+
+    Key Features:
+
+    • Tracks total appointment count per person per practice over 12 months
+
+    • Includes earliest and latest appointment dates for utilisation patterns
+
+    • Supports operational decision-making for practice capacity management
+
+    • Enables population health management and service planning analytics'
+  config:
+    materialized: table
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: organisation_id
+    description: Organisation providing the appointments
+    tests:
+    - not_null
+  - name: measure_id
+    description: Metric identifier (always 'GP_APPOINTMENTS_12M')
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - GP_APPOINTMENTS_12M
+  - name: appointment_count
+    description: Number of GP appointments in last 12 months
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 1
+  - name: earliest_appointment_date
+    description: Date of earliest appointment in the 12-month period
+    tests:
+    - not_null
+  - name: latest_appointment_date
+    description: Date of most recent appointment in the 12-month period
+    tests:
+    - not_null
+  - name: age
+    description: Person's current age in years
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 120

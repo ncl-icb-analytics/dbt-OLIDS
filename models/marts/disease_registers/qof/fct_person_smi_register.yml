@@ -1,23 +1,20 @@
 version: 2
 models:
 - name: fct_person_smi_register
-  description: '**Serious Mental Illness (SMI) Register - QOF Mental Health Quality Measures**
-
-    QOF Business Logic:
-    - Mental health diagnosis (MH_COD) NOT in remission (latest_diagnosis > latest_remission OR no remission)
-    - OR lithium therapy in last 6 months
-    - No age restrictions for SMI register
-    - Includes ALL persons (active, inactive, deceased) for comprehensive reporting
+  description: 'QOF Serious Mental Illness (SMI) Register - Patients with active serious mental illness or lithium therapy.
 
 
-    QOF Context:
-    Used for serious mental illness quality measures including:
-    - Mental health care monitoring and review
-    - Lithium therapy monitoring and safety
-    - Specialist mental health service coordination
-    - Recovery and rehabilitation planning
+    Key Inclusion Criteria:
 
-    '
+
+    • Mental health diagnosis (MH_COD) not in remission: Latest diagnosis > latest remission OR no remission
+
+    • OR lithium therapy in last 6 months and not stopped
+
+    • No age restrictions
+
+
+    Purpose: QOF register for mental health care monitoring, lithium therapy safety, specialist service coordination, and recovery planning.'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -26,7 +23,6 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-
   - name: is_on_register
     description: 'Register flag: meets QOF SMI criteria (always TRUE for this table)'
     tests:

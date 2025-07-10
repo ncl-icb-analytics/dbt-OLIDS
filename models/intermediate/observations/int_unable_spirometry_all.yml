@@ -4,34 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: SPIRPU_COD
-  description: 'All unable-to-have-spirometry observations from clinical records.
-
-    Uses QOF cluster ID UNABLESPI_COD for patients unable to perform spirometry tests.
+  description: 'Intermediate: Unable Spirometry Observations - All records where spirometry testing was unsuitable or contraindicated.
 
 
     Clinical Purpose:
 
-    - COPD register spirometry confirmation requirements (post-April 2023)
+    • Tracks spirometry contraindications for COPD register confirmation requirements
 
-    - Alternative pathway for COPD register inclusion when spirometry cannot be performed
+    • Supports alternative pathway for COPD register inclusion when spirometry cannot be performed
 
-    - Documentation of contraindications or patient inability
-
-
-    QOF Context:
-
-    For COPD patients diagnosed after April 2023, spirometry confirmation is required for register inclusion.
-
-    When spirometry cannot be performed due to patient contraindications or inability, this documentation
-
-    serves as an alternative pathway for COPD register inclusion.
+    • Enables documentation of clinical assessment limitations and patient factors
 
 
-    Includes ALL persons following intermediate layer principles.
+    Data Granularity:
 
-    Use as input for COPD register spirometry validation.
+    • One row per unable spirometry observation
 
-    '
+    • Includes all patients regardless of status (active/inactive/deceased)
+
+    • Uses SPIRPU_COD cluster for spirometry unsuitability identification
+
+
+    Key Features:
+
+    • Comprehensive documentation of spirometry contraindications
+
+    • Alternative evidence pathway for COPD register eligibility
+
+    • Clinical assessment limitation tracking for quality assurance
+
+    • Essential for COPD register spirometry validation processes'
   columns:
   - name: person_id
     description: Unique person identifier

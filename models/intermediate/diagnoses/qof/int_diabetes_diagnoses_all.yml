@@ -1,107 +1,119 @@
 version: 2
-
 models:
-  - name: int_diabetes_diagnoses_all
-    description: |
-      All diabetes diagnosis observations from clinical records using QOF cluster IDs.
-      Provides comprehensive data collection for diabetes register and type classification.
+- name: int_diabetes_diagnoses_all
+  description: 'Intermediate: Diabetes Diagnoses All - Complete history of all diabetes diagnosis observations with clinical prioritisation for QOF register management.
 
-      QOF Cluster IDs Used:
-      - DM_COD: General diabetes diagnoses
-      - DMTYPE1_COD: Type 1 diabetes specific diagnoses
-      - DMTYPE2_COD: Type 2 diabetes specific diagnoses
-      - DMRES_COD: Diabetes resolved/remission codes
 
-      Clinical Purpose:
-      - QOF diabetes register data collection
-      - Diabetes type classification support
-      - Disease progression tracking
-      - Resolution status monitoring
+    Clinical Purpose:
 
-      This is OBSERVATION-LEVEL data - one row per diabetes observation.
-      When an observation belongs to multiple clusters, prioritizes the most clinically specific.
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_diabetes_register.sql which applies QOF business rules.
+    • QOF diabetes register data collection and monitoring
 
-    columns:
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          - unique
+    • Diabetes type classification and clinical decision support
 
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
+    • Disease progression tracking across diabetes spectrum
 
-      - name: clinical_effective_date
-        description: "Date of the diabetes diagnosis observation"
-        tests:
-          - not_null
+    • Resolution and remission status monitoring
 
-      - name: concept_code
-        description: "SNOMED concept code for diabetes diagnosis"
-        tests:
-          - not_null
 
-      - name: concept_display
-        description: "Description of the diabetes diagnosis code"
-        tests:
-          - not_null
+    Data Granularity:
 
-      - name: source_cluster_id
-        description: "QOF cluster ID (DM_COD, DMTYPE1_COD, DMTYPE2_COD, DMRES_COD)"
-        tests:
-          - not_null
+    • One row per diabetes diagnosis observation with cluster prioritisation
 
-      - name: is_general_diabetes_code
-        description: "Flag indicating general diabetes diagnosis (DM_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Uses DMTYPE1_COD, DMTYPE2_COD, DM_COD, and DMRES_COD clusters
 
-      - name: is_type1_diabetes_code
-        description: "Flag indicating Type 1 diabetes diagnosis (DMTYPE1_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Includes all patients regardless of status for comprehensive QOF reporting
 
-      - name: is_type2_diabetes_code
-        description: "Flag indicating Type 2 diabetes diagnosis (DMTYPE2_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
 
-      - name: is_diabetes_resolved_code
-        description: "Flag indicating diabetes resolved/remission (DMRES_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    Key Features:
 
-      - name: diabetes_observation_type
-        description: "Classification of this specific observation (Type 1, Type 2, General, Resolved, Unknown)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Type 1', 'Type 2', 'General', 'Resolved', 'Unknown']
+    • Clinical prioritisation logic for multiple cluster membership
 
+    • Type 1, Type 2, and general diabetes classification
+
+    • Resolution and remission code tracking
+
+    • Essential input for diabetes care pathway optimisation'
+  columns:
+  - name: observation_id
+    description: Unique observation identifier
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD"
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - observation_id
-            - concept_code
-            - source_cluster_id
-      - dbt_utils.expression_is_true:
-          expression: "(CASE WHEN is_general_diabetes_code THEN 1 ELSE 0 END + CASE WHEN is_type1_diabetes_code THEN 1 ELSE 0 END + CASE WHEN is_type2_diabetes_code THEN 1 ELSE 0 END + CASE WHEN is_diabetes_resolved_code THEN 1 ELSE 0 END) = 1"
-          config:
-            severity: error
+    - not_null
+    - unique
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: clinical_effective_date
+    description: Date of the diabetes diagnosis observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for diabetes diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the diabetes diagnosis code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID (DM_COD, DMTYPE1_COD, DMTYPE2_COD, DMRES_COD)
+    tests:
+    - not_null
+  - name: is_general_diabetes_code
+    description: Flag indicating general diabetes diagnosis (DM_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_type1_diabetes_code
+    description: Flag indicating Type 1 diabetes diagnosis (DMTYPE1_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_type2_diabetes_code
+    description: Flag indicating Type 2 diabetes diagnosis (DMTYPE2_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_diabetes_resolved_code
+    description: Flag indicating diabetes resolved/remission (DMRES_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: diabetes_observation_type
+    description: Classification of this specific observation (Type 1, Type 2, General, Resolved, Unknown)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Type 1
+        - Type 2
+        - General
+        - Resolved
+        - Unknown
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - observation_id
+      - concept_code
+      - source_cluster_id
+  - dbt_utils.expression_is_true:
+      expression: (CASE WHEN is_general_diabetes_code THEN 1 ELSE 0 END + CASE WHEN is_type1_diabetes_code THEN 1 ELSE 0 END + CASE WHEN is_type2_diabetes_code THEN 1 ELSE 0 END + CASE WHEN is_diabetes_resolved_code THEN 1 ELSE 0 END) = 1
+      config:
+        severity: error

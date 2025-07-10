@@ -1,53 +1,77 @@
 version: 2
-
 models:
-  - name: dim_ltc_lcs_cf_dm_64
-    description: "Intermediate model for LTC/LCS case finding DM_64. Identifies patients with ethnicity-based high BMI who require diabetes screening due to lack of recent HbA1c testing."
+- name: dim_ltc_lcs_cf_dm_64
+  description: 'Mart: LTC LCS Case Finding DM_64 - Identifies patients with ethnicity-adjusted high BMI requiring diabetes screening due to lack of recent assessment.
 
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
 
-      - name: age
-        description: "Age of the patient (17+)"
-        tests:
-          - not_null
+    Business Purpose:
 
-      - name: has_high_bmi
-        description: "Boolean flag indicating if person has high BMI based on ethnicity thresholds"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Support systematic case finding for diabetes in high-BMI populations using ethnicity-specific thresholds
 
-      - name: is_bame
-        description: "Boolean flag indicating if person is from BAME ethnicity"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Enable diabetes screening in patients with obesity-related diabetes risk lacking recent assessment
 
-      - name: latest_bmi_date
-        description: "Date of most recent BMI measurement"
-        tests:
-          - not_null
+    • Provide clinical decision support for ethnicity-appropriate diabetes screening programmes
 
-      - name: latest_bmi_value
-        description: "Most recent BMI value (≥32.5 for BAME, ≥35 for non-BAME)"
-        tests:
-          - not_null
+    • Support quality improvement initiatives for equitable diabetes prevention and early detection
 
-      - name: latest_hba1c_date
-        description: "Date of most recent HbA1c reading (should be null for this cohort)"
 
-      - name: latest_hba1c_value
-        description: "Most recent HbA1c value (should be null for this cohort)"
+    Data Granularity:
 
-      - name: all_bmi_codes
-        description: "Array of all BMI concept codes for the patient"
+    • One row per person with ethnicity-adjusted high BMI lacking HbA1c assessment in 24 months
 
-      - name: all_bmi_displays
-        description: "Array of all BMI concept display terms for the patient"
+    • Includes BAME patients with BMI ≥32.5 and non-BAME patients with BMI ≥35
+
+    • Limited to patients with obesity-related diabetes risk requiring screening
+
+
+    Key Features:
+
+    • Ethnicity-adjusted BMI thresholds (≥32.5 BAME, ≥35 non-BAME) for appropriate diabetes risk assessment
+
+    • Extended monitoring gap detection (24 months) for obesity-related diabetes surveillance
+
+    • Evidence-based case finding supporting NICE guidelines for diabetes screening in high-risk populations
+
+    • Integration with diabetes prevention pathways for ethnicity-appropriate intervention'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Age of the patient (17+)
+    tests:
+    - not_null
+  - name: has_high_bmi
+    description: Boolean flag indicating if person has high BMI based on ethnicity thresholds
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_bame
+    description: Boolean flag indicating if person is from BAME ethnicity
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_bmi_date
+    description: Date of most recent BMI measurement
+    tests:
+    - not_null
+  - name: latest_bmi_value
+    description: Most recent BMI value (≥32.5 for BAME, ≥35 for non-BAME)
+    tests:
+    - not_null
+  - name: latest_hba1c_date
+    description: Date of most recent HbA1c reading (should be null for this cohort)
+  - name: latest_hba1c_value
+    description: Most recent HbA1c value (should be null for this cohort)
+  - name: all_bmi_codes
+    description: Array of all BMI concept codes for the patient
+  - name: all_bmi_displays
+    description: Array of all BMI concept display terms for the patient

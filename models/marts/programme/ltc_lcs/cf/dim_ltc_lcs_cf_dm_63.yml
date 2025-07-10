@@ -1,40 +1,65 @@
 version: 2
-
 models:
-  - name: dim_ltc_lcs_cf_dm_63
-    description: "Intermediate model for LTC/LCS case finding DM_63. Identifies patients with elevated HbA1c (46-47 mmol/mol) who have not had recent monitoring."
+- name: dim_ltc_lcs_cf_dm_63
+  description: 'Mart: LTC LCS Case Finding DM_63 - Identifies patients with borderline HbA1c levels requiring diabetes surveillance and intervention.
 
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
 
-      - name: age
-        description: "Age of the patient (17+)"
-        tests:
-          - not_null
+    Business Purpose:
 
-      - name: has_elevated_hba1c
-        description: "Boolean flag indicating if person has elevated HbA1c (46-47) with no recent monitoring"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    • Support systematic case finding for patients with HbA1c in pre-diabetic range requiring ongoing monitoring
 
-      - name: latest_hba1c_date
-        description: "Date of most recent HbA1c reading"
-        tests:
-          - not_null
+    • Enable early intervention for diabetes prevention in patients with borderline glucose control
 
-      - name: latest_hba1c_value
-        description: "Most recent HbA1c value (46-47 mmol/mol)"
-        tests:
-          - not_null
+    • Provide clinical decision support for diabetes surveillance in high-risk populations
 
-      - name: all_hba1c_codes
-        description: "Array of all HbA1c concept codes for the patient"
+    • Support quality improvement initiatives for diabetes prevention and early detection programmes
 
-      - name: all_hba1c_displays
-        description: "Array of all HbA1c concept display terms for the patient"
+
+    Data Granularity:
+
+    • One row per person aged 17+ with latest HbA1c between 46-47 mmol/mol lacking recent monitoring
+
+    • Includes patients with borderline glycaemic control requiring enhanced surveillance
+
+    • Limited to patients in pre-diabetic range without recent diabetes assessment
+
+
+    Key Features:
+
+    • Borderline HbA1c identification (46-47 mmol/mol) for enhanced diabetes surveillance
+
+    • Monitoring gap detection for patients requiring ongoing diabetes risk assessment
+
+    • Evidence-based case finding supporting diabetes prevention in borderline glycaemic populations
+
+    • Integration with diabetes prevention pathways for targeted lifestyle and medical intervention'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Age of the patient (17+)
+    tests:
+    - not_null
+  - name: has_elevated_hba1c
+    description: Boolean flag indicating if person has elevated HbA1c (46-47) with no recent monitoring
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: latest_hba1c_date
+    description: Date of most recent HbA1c reading
+    tests:
+    - not_null
+  - name: latest_hba1c_value
+    description: Most recent HbA1c value (46-47 mmol/mol)
+    tests:
+    - not_null
+  - name: all_hba1c_codes
+    description: Array of all HbA1c concept codes for the patient
+  - name: all_hba1c_displays
+    description: Array of all HbA1c concept display terms for the patient

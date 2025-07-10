@@ -1,14 +1,21 @@
 version: 2
 models:
 - name: fct_person_cancer_register
-  description: "**Cancer Register - QOF Quality Measures**\n\nFact table for cancer register with date filter. All patients\
-    \ with cancer diagnosis \non/after April 1, 2003 are included on the register.\n\nSimple Register Business Logic with\
-    \ Date Filter:\n- Cancer diagnosis on/after 1 April 2003 = on register\n- No resolution codes (cancer is permanent)\n\
-    - No age restrictions\n- Excludes non-melanotic skin cancers (handled in cluster definition)\n\nQOF Context:\nUsed for\
-    \ cancer care quality measures including:\n- Survivorship care and follow-up monitoring\n- Cancer care pathway tracking\n\
-    - Treatment outcome monitoring\n- Care coordination quality measures\n\nNote: Legacy includes episode timing flags, but\
-    \ keeping this model simple \nper architectural guidance. Episode analysis can be done separately if needed.\n\nMatches\
-    \ legacy fct_person_dx_cancer business logic and field structure.\n"
+  description: 'QOF Cancer Register - Patients with cancer diagnosis from April 2003 onwards.
+
+
+    Key Inclusion Criteria:
+
+    • Cancer diagnosis (CAN_COD) on/after 1 April 2003
+
+    • No age restrictions
+
+    • No resolution codes (cancer is permanent condition)
+
+    • Excludes non-melanotic skin cancers (handled in cluster definition)
+
+
+    Purpose: QOF register for cancer survivorship care, follow-up monitoring, and quality measures for cancer management.'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -17,12 +24,6 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-#   - name: age
-#     description: Current age of person in years
-#     tests:
-#     - dbt_utils.accepted_range:
-#         min_value: 0
-#         max_value: 120
   - name: is_on_register
     description: 'Register flag: has cancer diagnosis on/after 1 April 2003 (always TRUE for this table)'
     tests:

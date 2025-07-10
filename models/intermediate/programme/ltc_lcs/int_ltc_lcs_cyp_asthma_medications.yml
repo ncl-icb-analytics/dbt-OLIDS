@@ -1,37 +1,67 @@
 version: 2
-
 models:
-  - name: int_ltc_lcs_cyp_asthma_medications
-    description: "CYP Asthma medications for LTC/LCS case finding including asthma medications, prednisolone, and montelukast"
+- name: int_ltc_lcs_cyp_asthma_medications
+  description: 'Intermediate: LTC LCS CYP Asthma Medications - Collects all children and young people asthma-relevant medications for Long Term Conditions case finding measures.
+
+
+    Clinical Purpose:
+
+    • Gathers comprehensive CYP asthma-related medication data for case finding algorithms
+
+    • Supports identification of children and young people with undiagnosed asthma through medication patterns
+
+    • Enables medication-based risk stratification for paediatric asthma case finding measures
+
+    • Provides foundation data for CYP asthma case finding indicators
+
+
+    Data Granularity:
+
+    • One row per medication order for CYP asthma-relevant medications
+
+    • Covers asthma medications, prednisolone (oral steroids), and montelukast (leukotriene receptor antagonist)
+
+    • Sourced from LTC_LCS programme medication clusters for paediatric populations
+
+    • Includes all historical and current asthma medication patterns for children and young people
+
+
+    Key Features:
+
+
+    • Cluster IDs: ASTHMA_MEDICATIONS, ASTHMA_PREDNISOLONE, MONTELUKAST_MEDICATIONS
+
+    • Supports CYP-specific asthma case finding measure requirements
+
+    • Comprehensive paediatric medication pattern analysis for undiagnosed asthma detection
+
+    • Integration with LTC_LCS programme medication tracking systems for children and young people'
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: ASTHMA_MEDICATIONS,ASTHMA_PREDNISOLONE,MONTELUKAST_MEDICATIONS
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
     tests:
-      - cluster_ids_exist:
-          cluster_ids: 'ASTHMA_MEDICATIONS,ASTHMA_PREDNISOLONE,MONTELUKAST_MEDICATIONS'
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date when the medication was prescribed"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-      - name: cluster_id
-        description: "Cluster identifier for the type of asthma medication"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['ASTHMA_MEDICATIONS', 'ASTHMA_PREDNISOLONE', 'MONTELUKAST_MEDICATIONS']
-      - name: mapped_concept_code
-        description: "Mapped concept code for the medication"
-        tests:
-          - not_null
-      - name: mapped_concept_display
-        description: "Mapped concept display for the medication"
-        tests:
-          - not_null
-      - name: source
-        description: "Source system for the medication order"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-        #   - accepted_values:
-        #       values: ['LTC_LCS']
+    - not_null
+  - name: clinical_effective_date
+    description: Date when the medication was prescribed
+  - name: cluster_id
+    description: Cluster identifier for the type of asthma medication
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - ASTHMA_MEDICATIONS
+        - ASTHMA_PREDNISOLONE
+        - MONTELUKAST_MEDICATIONS
+  - name: mapped_concept_code
+    description: Mapped concept code for the medication
+    tests:
+    - not_null
+  - name: mapped_concept_display
+    description: Mapped concept display for the medication
+    tests:
+    - not_null
+  - name: source
+    description: Source system for the medication order

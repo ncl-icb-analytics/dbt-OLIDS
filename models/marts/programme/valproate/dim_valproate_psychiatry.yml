@@ -1,27 +1,57 @@
 version: 2
-
 models:
-  - name: dim_valproate_psychiatry
-    description: "Aggregates psychiatry-related events for each person, providing analytics-ready person-level psychiatry event status and history."
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person."
-        tests:
-          - not_null
-          - unique
-      - name: has_psych_event
-        description: "TRUE if any psychiatry event is present for the person. Always TRUE for persons in this table."
-        tests:
-          - not_null
-      - name: earliest_psych_event_date
-        description: "Earliest date of any psychiatry-related event for the person."
-      - name: latest_psych_event_date
-        description: "Latest date of any psychiatry-related event for the person."
-      - name: all_psych_observation_ids
-        description: "Array of unique observation IDs related to psychiatry events."
-      - name: all_psych_concept_codes
-        description: "Array of all distinct psychiatry-related medical concept codes found."
-      - name: all_psych_concept_displays
-        description: "Array of display terms for the psychiatry codes."
-      - name: all_psych_code_categories_applied
-        description: "Array of code categories applied (should contain only 'PSYCH')."
+- name: dim_valproate_psychiatry
+  description: 'Mart: Valproate Psychiatry Status - Person-level aggregation of psychiatry-related events for valproate therapy monitoring and mental health care coordination.
+
+
+    Business Purpose:
+
+    • Support valproate safety monitoring through psychiatry specialist engagement tracking and care coordination
+
+    • Enable systematic monitoring of mental health care requirements for valproate therapy management
+
+    • Provide clinical decision support for psychiatry specialist involvement and treatment oversight
+
+    • Support quality improvement initiatives for comprehensive mental health care and medication safety
+
+
+    Data Granularity:
+
+    • One row per person with psychiatry-related events in valproate therapy monitoring
+
+    • Aggregates all psychiatry events with earliest and latest specialist engagement tracking
+
+    • Includes comprehensive psychiatry care history for specialist coordination assessment
+
+
+    Key Features:
+
+    • Person-level psychiatry event aggregation with complete mental health specialist care history
+
+    • Earliest and latest psychiatry engagement tracking for monitoring care coordination effectiveness
+
+    • Evidence-based psychiatry care assessment supporting comprehensive valproate therapy management
+
+    • Integration with mental health care pathways for systematic specialist engagement and monitoring'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person.
+    tests:
+    - not_null
+    - unique
+  - name: has_psych_event
+    description: TRUE if any psychiatry event is present for the person. Always TRUE for persons in this table.
+    tests:
+    - not_null
+  - name: earliest_psych_event_date
+    description: Earliest date of any psychiatry-related event for the person.
+  - name: latest_psych_event_date
+    description: Latest date of any psychiatry-related event for the person.
+  - name: all_psych_observation_ids
+    description: Array of unique observation IDs related to psychiatry events.
+  - name: all_psych_concept_codes
+    description: Array of all distinct psychiatry-related medical concept codes found.
+  - name: all_psych_concept_displays
+    description: Array of display terms for the psychiatry codes.
+  - name: all_psych_code_categories_applied
+    description: Array of code categories applied (should contain only 'PSYCH').

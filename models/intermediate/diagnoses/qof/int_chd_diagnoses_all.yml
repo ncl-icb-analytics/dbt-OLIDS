@@ -1,80 +1,82 @@
 version: 2
-
 models:
-  - name: int_chd_diagnoses_all
-    description: |
-      All coronary heart disease (CHD) diagnoses from clinical records.
-      Uses QOF cluster ID CHD_COD for all forms of CHD diagnosis.
+- name: int_chd_diagnoses_all
+  description: 'Intermediate: CHD Diagnoses All - Complete history of all coronary heart disease diagnosis observations for QOF register management.
 
-      Clinical Purpose:
-      - CHD register inclusion for QOF cardiovascular disease management
-      - Cardiovascular risk stratification and monitoring
-      - Secondary prevention pathway identification
 
-      QOF Context:
-      CHD register follows simple diagnosis-only pattern - any CHD diagnosis code qualifies
-      for register inclusion. No resolution codes or complex criteria. This is a lifelong
-      condition register for cardiovascular secondary prevention.
+    Clinical Purpose:
 
-      Key Clinical Notes:
-      - CHD is considered a permanent condition (no resolution codes)
-      - Register inclusion based purely on presence of diagnostic codes
-      - Important for secondary prevention medication monitoring
-      - No age restrictions for CHD register
+    • QOF coronary heart disease register data collection and monitoring
 
-      This is OBSERVATION-LEVEL data - one row per CHD observation.
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
-      Use this model as input for CHD register and cardiovascular risk models.
+    • Cardiovascular risk stratification and secondary prevention
 
-    columns:
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-          - unique
+    • CHD care pathway coordination and treatment optimisation
 
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
+    • Long-term cardiovascular outcome tracking
 
-      - name: clinical_effective_date
-        description: "Date when the CHD diagnosis was recorded"
-        tests:
-          - not_null
 
-      - name: concept_code
-        description: "SNOMED CT concept code for the CHD diagnosis"
-        tests:
-          - not_null
+    Data Granularity:
 
-      - name: concept_display
-        description: "Human readable description of the CHD diagnosis"
-        tests:
-          - not_null
+    • One row per coronary heart disease diagnosis observation
 
-      - name: source_cluster_id
-        description: "Source cluster identifier (should be CHD_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CHD_COD']
+    • Uses CHD_COD cluster for QOF-compliant CHD diagnosis identification
 
-      - name: is_chd_diagnosis
-        description: "Flag indicating this is a CHD diagnosis (always TRUE in this model)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
+    • Includes all patients regardless of status for comprehensive QOF reporting
 
+
+    Key Features:
+
+    • Lifelong condition register for cardiovascular secondary prevention
+
+    • Simple diagnosis-only pattern with no resolution codes
+
+    • Critical for cardiovascular risk management protocols
+
+    • Essential input for secondary prevention quality indicators'
+  columns:
+  - name: observation_id
+    description: Unique observation identifier
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "CHD_COD"
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - observation_id
-            - concept_code
-            - source_cluster_id
+    - not_null
+    - unique
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: clinical_effective_date
+    description: Date when the CHD diagnosis was recorded
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED CT concept code for the CHD diagnosis
+    tests:
+    - not_null
+  - name: concept_display
+    description: Human readable description of the CHD diagnosis
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: Source cluster identifier (should be CHD_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - CHD_COD
+  - name: is_chd_diagnosis
+    description: Flag indicating this is a CHD diagnosis (always TRUE in this model)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: CHD_COD
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - observation_id
+      - concept_code
+      - source_cluster_id

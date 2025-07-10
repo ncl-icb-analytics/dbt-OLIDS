@@ -1,37 +1,56 @@
 version: 2
-
 models:
-  - name: dim_practice_neighbourhood
-    description: |
-      Dimension table providing practice neighbourhood information.
-      Sources from PRACTICE_NEIGHBOURHOOD_LOOKUP in the POPULATION_HEALTH schema.
-      PCN information is available separately in DIM_PRACTICE_PCN.
+- name: dim_practice_neighbourhood
+  description: 'Mart: Practice Neighbourhood Dimension - Geographic context and neighbourhood classification for GP practices.
 
-      Provides geographic context for GP practices including local authority and neighbourhood classification.
-      Note: Working with dummy data so geographic information may be limited/placeholder.
 
+    Business Purpose:
+
+    • Support operational analytics for practice geographic distribution and catchment area analysis
+
+    • Enable business intelligence reporting on practice locations and local authority contexts
+
+    • Provide foundation for population health analytics and geographic health inequalities assessment
+
+    • Support commissioning and service planning based on practice geographic characteristics
+
+
+    Data Granularity:
+
+    • One row per practice with neighbourhood and local authority information
+
+    • Includes practice geographic context for spatial analysis
+
+    • Current geographic classification and neighbourhood assignment
+
+
+    Key Features:
+
+    • Links practices to local authorities and neighbourhood classifications
+
+    • Supports geographic analysis and spatial reporting for population health
+
+    • Enables business intelligence for practice operations and service planning
+
+    • Provides foundation for health inequalities analysis and resource allocation'
+  tests:
+  - dbt_utils.at_least_one:
+      column_name: practice_code
+  columns:
+  - name: practice_code
+    description: Practice organisation code
     tests:
-      - dbt_utils.at_least_one:
-          column_name: practice_code  # Check the table has at least one row
-
-    columns:
-      - name: practice_code
-        description: "Practice organisation code"
-        tests:
-          - not_null
-          - unique
-
-      - name: practice_name
-        description: "Name of the practice"
-        tests:
-          - not_null
-
-      - name: local_authority
-        description: "Local authority area"
-        tests:
-          - not_null
-
-      - name: practice_neighbourhood
-        description: "Practice neighbourhood classification"
-        tests:
-          - not_null
+    - not_null
+    - unique
+  - name: practice_name
+    description: Name of the practice
+    tests:
+    - not_null
+  - name: local_authority
+    description: Local authority area
+    tests:
+    - not_null
+  - name: practice_neighbourhood
+    description: Practice neighbourhood classification
+    tests:
+    - not_null

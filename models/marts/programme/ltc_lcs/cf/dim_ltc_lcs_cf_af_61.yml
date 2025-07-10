@@ -1,25 +1,41 @@
 version: 2
 models:
-  - name: dim_ltc_lcs_cf_af_61
-    description: "AF_61 case finding dimension: Patients on digoxin, flecainide, propafenone or anticoagulants who may have undiagnosed atrial fibrillation"
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-      - name: has_active_anticoagulant
-        description: "Flag for active anticoagulant medication order"
-      - name: has_active_digoxin
-        description: "Flag for active digoxin medication order"
-      - name: has_active_cardiac_glycoside
-        description: "Flag for active cardiac glycoside medication order"
-      - name: latest_af_medication_date
-        description: "Date of latest AF medication order"
-      - name: has_exclusion_condition
-        description: "Flag for any exclusion condition based on observations"
-      - name: exclusion_reason
-        description: "Cluster IDs for exclusion conditions found in observations"
-      - name: all_af_medication_codes
-        description: "All AF medication codes found for person (array)"
-      - name: all_af_medication_displays
-        description: "All AF medication display terms found for person (array)"
+- name: dim_ltc_lcs_cf_af_61
+  description: 'Mart: LTC LCS Case Finding AF_61 - Identifies patients on cardiac medications who may have undiagnosed atrial fibrillation.
+
+
+    Population Scope:
+
+    • Patients from LTC case finding base population on anticoagulants, digoxin, or cardiac glycosides
+
+    • Excludes patients with DVT, existing AF/flutter diagnoses
+
+
+    Key Features:
+
+    • Medication history tracking with latest prescription dates
+
+    • Clinical exclusion criteria assessment
+
+    • Evidence-based case finding for AF screening'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+  - name: has_active_anticoagulant
+    description: Flag for active anticoagulant medication order
+  - name: has_active_digoxin
+    description: Flag for active digoxin medication order
+  - name: has_active_cardiac_glycoside
+    description: Flag for active cardiac glycoside medication order
+  - name: latest_af_medication_date
+    description: Date of latest AF medication order
+  - name: has_exclusion_condition
+    description: Flag for any exclusion condition based on observations
+  - name: exclusion_reason
+    description: Cluster IDs for exclusion conditions found in observations
+  - name: all_af_medication_codes
+    description: All AF medication codes found for person (array)
+  - name: all_af_medication_displays
+    description: All AF medication display terms found for person (array)

@@ -1,41 +1,75 @@
 version: 2
 models:
-  - name: int_ltc_lcs_cf_exclusions
-    description: "Intermediate model identifying patients with any of the specified conditions that exclude them from the LTC LCS Case Finding programme. Includes CKD, AF, COPD, Hypertension, CHD, Stroke/TIA, PAD, Heart Failure, Type 2 Diabetes, Hyperlipidaemia, NAFLD, and Asthma (adult and CYP)."
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-      - name: has_excluding_condition
-        description: "Flag indicating if person has any excluding condition"
-        tests:
-          - not_null
-      - name: has_ckd
-        description: "Has Chronic Kidney Disease (CKD)"
-      - name: has_af
-        description: "Has Atrial Fibrillation (AF)"
-      - name: has_copd
-        description: "Has Chronic Obstructive Pulmonary Disease (COPD)"
-      - name: has_hypertension
-        description: "Has Hypertension (HTN)"
-      - name: has_chd
-        description: "Has Coronary Heart Disease (CHD)"
-      - name: has_stia
-        description: "Has Stroke/TIA (STIA)"
-      - name: has_pad
-        description: "Has Peripheral Arterial Disease (PAD)"
-      - name: has_hf
-        description: "Has Heart Failure (HF)"
-      - name: has_type2_diabetes
-        description: "Has Type 2 Diabetes (DM2)"
-      - name: has_hyperlipidaemia
-        description: "Has Hyperlipidaemia (FHYP)"
-      - name: has_nafld
-        description: "Has Non-Alcoholic Fatty Liver Disease (NAFLD)"
-      - name: has_asthma
-        description: "Has Asthma (adult) (AST)"
-      - name: has_cyp_asthma
-        description: "Has Children and Young People Asthma (CYP_AST)"
-      - name: earliest_excluding_condition_date
-        description: "Earliest date of any excluding condition diagnosis"
+- name: int_ltc_lcs_cf_exclusions
+  description: 'Intermediate: LTC LCS CF Exclusions - Identifies patients with existing Long Term Conditions who should be excluded from case finding programmes.
+
+
+    Clinical Purpose:
+
+    • Prevents targeting of patients already diagnosed with LTC conditions for case finding
+
+    • Ensures appropriate population selection for undiagnosed condition identification
+
+    • Supports efficient healthcare resource allocation by avoiding duplicate targeting
+
+    • Maintains data quality in case finding programme reporting
+
+
+    Data Granularity:
+
+    • One row per person with any excluding LTC condition
+
+
+    • Covers 13 major LTC conditions: CKD, AF, COPD, HTN, CHD, Stroke/TIA, PAD, HF, T2DM, hyperlipidaemia, NAFLD, asthma
+
+    • Includes boolean flags for each condition type and composite exclusion indicator
+
+    • Contains earliest excluding condition date for temporal analysis
+
+
+    Key Features:
+
+    • Comprehensive LTC condition screening across multiple disease registers
+
+    • Boolean aggregation for efficient condition presence checking
+
+    • Composite exclusion flag for simple filtering in downstream models
+
+    • Integration with diabetes register for Type 2 diabetes exclusions'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+  - name: has_excluding_condition
+    description: Flag indicating if person has any excluding condition
+    tests:
+    - not_null
+  - name: has_ckd
+    description: Has Chronic Kidney Disease (CKD)
+  - name: has_af
+    description: Has Atrial Fibrillation (AF)
+  - name: has_copd
+    description: Has Chronic Obstructive Pulmonary Disease (COPD)
+  - name: has_hypertension
+    description: Has Hypertension (HTN)
+  - name: has_chd
+    description: Has Coronary Heart Disease (CHD)
+  - name: has_stia
+    description: Has Stroke/TIA (STIA)
+  - name: has_pad
+    description: Has Peripheral Arterial Disease (PAD)
+  - name: has_hf
+    description: Has Heart Failure (HF)
+  - name: has_type2_diabetes
+    description: Has Type 2 Diabetes (DM2)
+  - name: has_hyperlipidaemia
+    description: Has Hyperlipidaemia (FHYP)
+  - name: has_nafld
+    description: Has Non-Alcoholic Fatty Liver Disease (NAFLD)
+  - name: has_asthma
+    description: Has Asthma (adult) (AST)
+  - name: has_cyp_asthma
+    description: Has Children and Young People Asthma (CYP_AST)
+  - name: earliest_excluding_condition_date
+    description: Earliest date of any excluding condition diagnosis

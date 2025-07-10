@@ -1,26 +1,37 @@
 version: 2
-
 models:
-  - name: dim_person_sex
-    description: |
-      Dimension table for person sex classification. Uses hardcoded gender_concept_id values
-      to determine sex due to issues with Concept Map/Concept tables.
+- name: dim_person_sex
+  description: 'Mart: Person Sex Dimension - Sex demographics for population analysis.
 
-      **Sex Classification Logic:**
-      - Maps specific hardcoded UUIDs to 'Female' and 'Male'
-      - Any other or NULL gender_concept_id results in 'Unknown'
-      - One row per person
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier - primary key"
-        tests:
-          - not_null
-          - unique
+    Population Scope:
 
-      - name: sex
-        description: "Sex classification: Female, Male, or Unknown"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Female', 'Male', 'Unknown']
+    • All persons with patient records
+
+    • Derived from gender_concept_id mappings
+
+    • Defaults to \"Unknown\" for unmapped or null values
+
+
+    Key Features:
+
+    • Standardised sex categories (Male, Female, Unknown)
+
+    • Hardcoded concept ID mappings for data consistency
+
+    • One row per person with sex classification'
+  columns:
+  - name: person_id
+    description: Unique person identifier - primary key
+    tests:
+    - not_null
+    - unique
+  - name: sex
+    description: 'Sex classification: Female, Male, or Unknown'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Female
+        - Male
+        - Unknown

@@ -1,178 +1,200 @@
 version: 2
-
 models:
-  - name: int_diabetes_medications_all
-    description: |
-      All diabetes medication orders including insulins, antidiabetic drugs, and related treatments.
-      Uses BNF classification (6.1.x) for comprehensive diabetes medication categorisation.
-      Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
+- name: int_diabetes_medications_all
+  description: 'Intermediate: Diabetes Medication Orders - All recorded diabetes treatment prescriptions.
 
-      Clinical Categories:
-      - Insulins (6.1.1): All insulin preparations by duration of action
-      - Antidiabetic drugs (6.1.2): Oral and injectable non-insulin medications
-      - Monitoring agents (6.1.6): Blood glucose testing and diagnostic agents
-      - Hypoglycaemia treatments (6.1.4): Emergency glucose preparations
 
-      Key Features:
-      - Detailed drug class classification for antidiabetic medications
-      - Insulin type categorisation by duration of action
-      - Boolean flags for major medication classes
-      - Recency indicators for clinical decision support
+    Clinical Purpose:
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier across the HEI system"
-        tests:
-          - not_null
+    • Tracks diabetes medication therapy including insulins and antidiabetic drugs
 
-      - name: medication_order_id
-        description: "Unique identifier for the medication order record"
-        tests:
-          - not_null
-          - unique
+    • Supports diabetes management and medication review processes
 
-      - name: medication_statement_id
-        description: "Identifier linking to the medication statement"
-        tests:
-          - not_null
+    • Enables analysis of treatment patterns by drug class and type
 
-      - name: order_date
-        description: "Date when the medication was ordered/prescribed"
-        tests:
-          - not_null
 
-      - name: order_medication_name
-        description: "Medication name as recorded in the order"
+    Data Granularity:
 
-      - name: order_dose
-        description: "Prescribed dose information"
+    • One row per medication order
 
-      - name: order_quantity_value
-        description: "Numeric quantity prescribed"
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 10000
-              severity: warn
+    • Includes all patients regardless of status (active/inactive/deceased)
 
-      - name: order_quantity_unit
-        description: "Unit of measurement for the prescribed quantity"
+    • Historical data maintained for longitudinal analysis
 
-      - name: order_duration_days
-        description: "Duration of treatment in days"
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 3650
-              severity: warn
 
-      - name: statement_medication_name
-        description: "Medication name from the medication statement"
+    Key Features:
 
-      - name: mapped_concept_code
-        description: "SNOMED concept code for the medication"
-        tests:
-          - not_null
+    • Comprehensive BNF 6.1.x classification (insulins, antidiabetics, monitoring)
 
-      - name: mapped_concept_display
-        description: "Display term for the mapped concept"
+    • Insulin type categorisation (short-acting, long-acting, biphasic)
 
-      - name: bnf_code
-        description: "British National Formulary code for medication classification"
-        tests:
-          - not_null
+    • Antidiabetic drug class identification (metformin, SGLT2i, GLP-1, etc.)
 
-      - name: bnf_name
-        description: "BNF medication name"
-
-      - name: diabetes_medication_type
-        description: "High-level diabetes medication category based on BNF classification"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['INSULIN', 'ANTIDIABETIC', 'DIABETIC_KETOACIDOSIS', 'HYPOGLYCAEMIA_TREATMENT', 'BLOOD_GLUCOSE_TESTING', 'MONITORING', 'OTHER_DIABETES']
-
-      - name: antidiabetic_drug_class
-        description: "Specific antidiabetic drug class for BNF 6.1.2 medications"
-        tests:
-          - accepted_values:
-              values: ['SULPHONYLUREAS', 'BIGUANIDES', 'OTHER_ANTIDIABETICS', 'THIAZOLIDINEDIONES', 'MEGLITINIDES', 'ALPHA_GLUCOSIDASE_INHIBITORS', 'DPP4_INHIBITORS', 'SODIUM_GLUCOSE_COTRANSPORTER_2_INHIBITORS', 'GLP1_RECEPTOR_AGONISTS']
-
-      - name: insulin_type
-        description: "Insulin classification by duration of action for BNF 6.1.1 medications"
-        tests:
-          - accepted_values:
-              values: ['SHORT_ACTING', 'INTERMEDIATE_ACTING', 'LONG_ACTING', 'BIPHASIC']
-
-      - name: is_insulin
-        description: "Boolean flag indicating if medication is an insulin preparation"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_metformin
-        description: "Boolean flag indicating if medication is metformin (first-line diabetes treatment)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_sulphonylurea
-        description: "Boolean flag indicating if medication is a sulphonylurea"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_dpp4_inhibitor
-        description: "Boolean flag indicating if medication is a DPP-4 inhibitor"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_sglt2_inhibitor
-        description: "Boolean flag indicating if medication is an SGLT2 inhibitor"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_glp1_agonist
-        description: "Boolean flag indicating if medication is a GLP-1 receptor agonist"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: days_since_order
-        description: "Number of days between order date and current date"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 36500
-              severity: warn
-
-      - name: is_recent_3m
-        description: "Boolean flag indicating if order was within the last 3 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_recent_6m
-        description: "Boolean flag indicating if order was within the last 6 months"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
+    • Modern diabetes therapy flags for treatment pathway analysis'
+  columns:
+  - name: person_id
+    description: Unique person identifier across the HEI system
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - medication_order_id
-      - bnf_codes_exist:
-          bnf_codes: "0601"
+    - not_null
+  - name: medication_order_id
+    description: Unique identifier for the medication order record
+    tests:
+    - not_null
+    - unique
+  - name: medication_statement_id
+    description: Identifier linking to the medication statement
+    tests:
+    - not_null
+  - name: order_date
+    description: Date when the medication was ordered/prescribed
+    tests:
+    - not_null
+  - name: order_medication_name
+    description: Medication name as recorded in the order
+  - name: order_dose
+    description: Prescribed dose information
+  - name: order_quantity_value
+    description: Numeric quantity prescribed
+    tests:
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 10000
+        severity: warn
+  - name: order_quantity_unit
+    description: Unit of measurement for the prescribed quantity
+  - name: order_duration_days
+    description: Duration of treatment in days
+    tests:
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 3650
+        severity: warn
+  - name: statement_medication_name
+    description: Medication name from the medication statement
+  - name: mapped_concept_code
+    description: SNOMED concept code for the medication
+    tests:
+    - not_null
+  - name: mapped_concept_display
+    description: Display term for the mapped concept
+  - name: bnf_code
+    description: British National Formulary code for medication classification
+    tests:
+    - not_null
+  - name: bnf_name
+    description: BNF medication name
+  - name: diabetes_medication_type
+    description: High-level diabetes medication category based on BNF classification
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - INSULIN
+        - ANTIDIABETIC
+        - DIABETIC_KETOACIDOSIS
+        - HYPOGLYCAEMIA_TREATMENT
+        - BLOOD_GLUCOSE_TESTING
+        - MONITORING
+        - OTHER_DIABETES
+  - name: antidiabetic_drug_class
+    description: Specific antidiabetic drug class for BNF 6.1.2 medications
+    tests:
+    - accepted_values:
+        values:
+        - SULPHONYLUREAS
+        - BIGUANIDES
+        - OTHER_ANTIDIABETICS
+        - THIAZOLIDINEDIONES
+        - MEGLITINIDES
+        - ALPHA_GLUCOSIDASE_INHIBITORS
+        - DPP4_INHIBITORS
+        - SODIUM_GLUCOSE_COTRANSPORTER_2_INHIBITORS
+        - GLP1_RECEPTOR_AGONISTS
+  - name: insulin_type
+    description: Insulin classification by duration of action for BNF 6.1.1 medications
+    tests:
+    - accepted_values:
+        values:
+        - SHORT_ACTING
+        - INTERMEDIATE_ACTING
+        - LONG_ACTING
+        - BIPHASIC
+  - name: is_insulin
+    description: Boolean flag indicating if medication is an insulin preparation
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_metformin
+    description: Boolean flag indicating if medication is metformin (first-line diabetes treatment)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_sulphonylurea
+    description: Boolean flag indicating if medication is a sulphonylurea
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_dpp4_inhibitor
+    description: Boolean flag indicating if medication is a DPP-4 inhibitor
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_sglt2_inhibitor
+    description: Boolean flag indicating if medication is an SGLT2 inhibitor
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_glp1_agonist
+    description: Boolean flag indicating if medication is a GLP-1 receptor agonist
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: days_since_order
+    description: Number of days between order date and current date
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 36500
+        severity: warn
+  - name: is_recent_3m
+    description: Boolean flag indicating if order was within the last 3 months
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_recent_6m
+    description: Boolean flag indicating if order was within the last 6 months
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - person_id
+      - medication_order_id
+  - bnf_codes_exist:
+      bnf_codes: '0601'

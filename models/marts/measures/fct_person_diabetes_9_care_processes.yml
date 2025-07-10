@@ -1,48 +1,38 @@
 version: 2
 models:
 - name: fct_person_diabetes_9_care_processes
-  description: 'Fact table tracking completion of the 9 diabetes care processes for people on the diabetes register.
+  description: 'Mart: Diabetes 9 Care Processes Achievement - Enhanced QOF quality measure for comprehensive diabetes care assessment.
 
 
-    **9 Care Processes (8 standard + retinal screening):**
+    Business Purpose:
 
-    1. HbA1c test
+    • Support QOF reporting for diabetes care processes achievement indicators including retinal screening
 
-    2. Blood pressure check
+    • Enable clinical teams to identify patients requiring diabetes care review and eye screening
 
-    3. Cholesterol test
+    • Provide population health analytics for diabetes management programmes
 
-    4. Serum creatinine test
-
-    5. Urine ACR test
-
-    6. Foot examination
-
-    7. BMI recording
-
-    8. Smoking status recording
-
-    9. Retinal screening
+    • Support business intelligence reporting on practice performance and clinical quality
 
 
-    **Business Logic:**
+    Data Granularity:
 
-    - Extends fct_person_diabetes_8_care_processes with retinal screening data
+    • One row per person on diabetes register
 
-    - Completion timeframe: Within last 12 months from current date
+    • Includes completion status for all 9 care processes within 12 months
 
-    - Includes both 8-process and 9-process completion metrics
-
-    - Maintains all original 8-process business logic
+    • Current assessment of comprehensive diabetes care delivery including sight-threatening complication prevention
 
 
-    **Clinical Context:**
+    Key Features:
 
-    Comprehensive diabetes quality monitoring including diabetic retinopathy screening.
+    • Tracks all 8 standard diabetes care processes plus retinal screening
 
-    Essential for full diabetes care pathway assessment and QOF reporting.
+    • Calculates overall completion metrics for QOF reporting
 
-    '
+    • Supports clinical decision-making and quality improvement initiatives
+
+    • Enables population health management and diabetes care optimisation'
   columns:
   - name: person_id
     description: Unique person identifier

@@ -4,15 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: GESTDIAB_COD
-  description: "All gestational diabetes diagnoses from clinical records.\nUses QOF cluster ID GESTDM_COD for gestational\
-    \ diabetes diagnosis codes.\n\nClinical Purpose:\n- Gestational diabetes register inclusion for QOF quality measures\n\
-    - Pregnancy diabetes management monitoring\n- Future diabetes risk assessment\n\nQOF Context:\nGestational diabetes register\
-    \ follows simple diagnosis-only pattern - any gestational \ndiabetes diagnosis qualifies for register inclusion. No resolution\
-    \ codes.\nThis supports pregnancy care quality measures and future diabetes risk monitoring.\n\nKey Clinical Notes:\n\
-    - Gestational diabetes records are permanent for future risk assessment\n- Register inclusion based purely on presence\
-    \ of diagnostic codes\n- Important for pregnancy care quality measures\n- Critical for future diabetes risk monitoring\
-    \ and prevention\n\nIncludes ALL persons (active, inactive, deceased) following intermediate layer principles.\nUse this\
-    \ model as input for gestational diabetes register.\n"
+  description: 'Intermediate: Gestational Diabetes Diagnoses All - Complete history of all gestational diabetes diagnosis observations from clinical records.
+
+
+    Clinical Purpose:
+
+    • QOF gestational diabetes register data collection
+
+    • Pregnancy-related diabetes monitoring and risk assessment
+
+    • Postpartum diabetes screening pathway identification
+
+    • Future diabetes prevention planning and early intervention
+
+
+    Data Granularity:
+
+    • One row per gestational diabetes diagnosis observation
+
+    • Includes all diagnosis dates across pregnancy episodes
+
+    • Uses GESTDIAB_COD cluster for QOF-compliant diagnosis identification
+
+
+    Key Features:
+
+    • Pregnancy-specific diabetes condition tracking
+
+    • No resolution codes (condition-specific to pregnancy episodes)
+
+    • Applies primarily to women of childbearing age
+
+    • Critical for postpartum diabetes risk stratification'
   columns:
   - name: person_id
     description: Unique person identifier

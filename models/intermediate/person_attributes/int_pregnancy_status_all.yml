@@ -4,35 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: PREGDEL_COD, PREG_COD
-  description: 'Pregnancy status intermediate model collecting ALL pregnancy-related observations.
+  description: 'Intermediate: Pregnancy Status All - Complete history of all pregnancy-related observations with enhanced analytics for maternity care.
 
 
-    **Single Responsibility Principle:**
+    Clinical Purpose:
 
-    - Data collection only - NO business logic
+    • Pregnancy status tracking and maternity care pathway coordination
 
-    - Uses standardised get_observations() macro
+    • Medication safety monitoring during pregnancy and post-pregnancy periods
 
-    - Collects from UKHSA_FLU source only (as per legacy)
+    • Clinical decision support for pregnancy-contraindicated treatments
 
-
-    **Cluster IDs:**
-
-    - PREG_COD: Pregnancy codes
-
-    - PREGDEL_COD: Pregnancy delivery/ended codes
+    • Maternity care quality improvement and outcome tracking
 
 
-    **Usage:**
+    Data Granularity:
 
-    Input for fct_person_pregnancy_status.sql which applies pregnancy status logic.
+    • One row per pregnancy-related observation with enhanced timeframe analysis
+
+    • Uses PREG_COD (pregnancy status) and PREGDEL_COD (delivery events) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive maternity care
 
 
-    **Data Quality:**
+    Key Features:
 
-    Raw observation data - person-level aggregation and business rules applied downstream.
+    • Enhanced pregnancy status categorisation and clinical safety context
 
-    '
+    • Maternity care timeframe analysis for clinical decision support
+
+    • Pregnancy outcome tracking including live births and terminations
+
+    • Critical for medication safety and reproductive health monitoring'
   config:
     materialized: table
   columns:

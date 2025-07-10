@@ -1,59 +1,50 @@
 version: 2
-
 models:
-  - name: fct_person_stroke_tia_register
-    description: |
-      **Stroke/TIA Register - QOF Cardiovascular Disease Quality Measures**
+- name: fct_person_stroke_tia_register
+  description: 'QOF Stroke and TIA Register - Patients with stroke or transient ischaemic attack history.
 
-      Fact table for stroke/TIA register following simple register pattern. All patients with
-      any stroke or TIA diagnosis are included on the register.
 
-      Simple Register Business Logic:
-      - Presence of stroke or TIA diagnosis = on register (lifelong condition)
-      - No resolution codes (stroke/TIA are permanent)
-      - No age restrictions
-      - Important for secondary prevention monitoring
+    Key Inclusion Criteria:
 
-      QOF Context:
-      Used for cerebrovascular disease secondary prevention quality measures including:
-      - Secondary prevention medication monitoring
-      - Cardiovascular risk management and anticoagulation decisions
-      - Blood pressure management targets
-      - Neurological follow-up coordination
+    • Stroke or TIA diagnosis (STIA_COD) present
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
+    • Not resolved by resolution codes (STIARES_COD)
 
-      - name: is_on_register
-        description: "Register flag: has stroke or TIA diagnosis (always TRUE for this table)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
+    • No age restrictions
 
-      - name: earliest_diagnosis_date
-        description: "Date of first recorded stroke/TIA diagnosis"
-        tests:
-          - not_null
+    • Lifelong condition for secondary prevention
 
-      - name: latest_diagnosis_date
-        description: "Date of most recent stroke/TIA diagnosis"
-        tests:
-          - not_null
-          - test_no_future_dates
 
-      - name: stroke_tia_diagnosis_codes
-        description: "Array of all distinct stroke/TIA concept codes for this person"
-        tests:
-          - not_null
-
-      - name: stroke_tia_diagnosis_displays
-        description: "Array of all distinct stroke/TIA concept display terms for this person"
-        tests:
-          - not_null
+    Purpose: QOF register for stroke secondary prevention measures, cardiovascular risk management, and stroke care pathway monitoring.'
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: is_on_register
+    description: 'Register flag: has stroke or TIA diagnosis (always TRUE for this table)'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: earliest_diagnosis_date
+    description: Date of first recorded stroke/TIA diagnosis
+    tests:
+    - not_null
+  - name: latest_diagnosis_date
+    description: Date of most recent stroke/TIA diagnosis
+    tests:
+    - not_null
+    - test_no_future_dates
+  - name: stroke_tia_diagnosis_codes
+    description: Array of all distinct stroke/TIA concept codes for this person
+    tests:
+    - not_null
+  - name: stroke_tia_diagnosis_displays
+    description: Array of all distinct stroke/TIA concept display terms for this person
+    tests:
+    - not_null

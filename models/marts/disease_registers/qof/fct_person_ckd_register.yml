@@ -1,14 +1,21 @@
 version: 2
 models:
 - name: fct_person_ckd_register
-  description: "Chronic Kidney Disease (CKD) register fact table identifying individuals aged 18 and over currently on the\
-    \ CKD register.\n\n**QOF Business Logic**\n- Age \u226518 years (QOF requirement)\n- Active CKD diagnosis:\
-    \ latest CKD_COD > latest CKDRES_COD OR no resolution recorded\n- Uses cluster IDs: CKD_COD (diagnosis), CKDRES_COD (resolution)\n\
-    \n**Lab Data Separation:**\nLab results (eGFR, creatinine, ACR) available separately in intermediate tables:\n- int_egfr_all/int_egfr_latest\
-    \ for eGFR monitoring\n- int_creatinine_all/int_creatinine_latest for creatinine levels\n- int_urine_acr_all/int_urine_acr_latest\
-    \ for ACR monitoring\n\n**Population Coverage:**\nIncludes ALL persons (active, inactive, deceased) for comprehensive\
-    \ reporting and research.\n\n**Clinical Context:**\nCKD register forms the basis for QOF monitoring and clinical care\
-    \ pathways. Lab data monitoring\nprovides separate clinical decision support without complicating register logic.\n"
+  description: 'QOF Chronic Kidney Disease (CKD) Register - Patients aged 18+ with active CKD diagnosis.
+
+
+    Key Inclusion Criteria:
+
+
+    • Age: 18 years or older
+
+
+    • Active CKD diagnosis: Latest CKD_COD > latest CKDRES_COD OR no resolution recorded
+
+    • Excludes resolved CKD cases
+
+
+    Purpose: QOF register for CKD management, monitoring progression, and cardiovascular risk reduction. Lab data available separately for clinical monitoring.'
   config:
     materialized: table
   columns:
@@ -19,13 +26,6 @@ models:
     - relationships:
         to: ref('dim_person')
         field: person_id
-#   - name: age
-#     description: "Person's age at register assessment (must be \u226518 for CKD register)"
-#     tests:
-#     - not_null
-#     - dbt_utils.accepted_range:
-#         min_value: 18
-#         max_value: 120
   - name: is_on_register
     description: Register inclusion flag (always TRUE in this table as filtered view)
     tests:
@@ -44,7 +44,7 @@ models:
   - name: latest_ckd_resolved_date
     description: Date of most recent CKD resolution code (null if never resolved)
   - name: meets_age_criteria
-    description: "Flag indicating if person meets age \u226518 requirement"
+    description: Flag indicating if person meets age ≥18 requirement
     tests:
     - not_null
     - accepted_values:

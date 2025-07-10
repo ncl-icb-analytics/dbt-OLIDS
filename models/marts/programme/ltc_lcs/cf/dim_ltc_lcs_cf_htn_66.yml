@@ -1,61 +1,87 @@
 version: 2
-
 models:
-  - name: dim_ltc_lcs_cf_htn_66
-    description: "HTN_66 case finding: Stage 1 hypertension without cardiovascular risk factors (clinic ≥140/90, home ≥135/85)"
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person"
-        tests:
-          - not_null
-          - unique
-      - name: age
-        description: "Person's age at time of analysis"
-        tests:
-          - not_null
-      - name: has_cardiovascular_risk_factors
-        description: "Flag indicating patient has cardiovascular risk factors (always FALSE)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [false]
-      - name: has_stage_1_hypertension_no_rf
-        description: "Flag indicating patient has stage 1 hypertension without risk factors (always TRUE)"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-        #   - accepted_values:
-        #       values: [true]
-      - name: latest_bp_date
-        description: "Date of the latest blood pressure reading"
-        tests:
-          - not_null
-      - name: latest_bp_value
-        description: "Value of the latest blood pressure reading"
-        tests:
-          - not_null
-      - name: latest_bp_type
-        description: "Type of latest BP reading (HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['HYPERTENSION_BP_CLINIC', 'HYPERTENSION_BP_HOME', 'HYPERTENSION_BP_ABPM']
-      - name: is_clinic_bp
-        description: "Flag indicating if latest reading is clinic blood pressure"
-        tests:
-          - not_null
-      - name: is_home_bp
-        description: "Flag indicating if latest reading is home/ABPM blood pressure"
-        tests:
-          - not_null
-      - name: latest_bp_code
-        description: "Mapped concept code for latest blood pressure reading"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-      - name: latest_bp_display
-        description: "Mapped concept display for latest blood pressure reading"
-        # tests:
-        #   - not_null  # TODO: Column missing from model, test disabled
-      - name: all_bp_codes
-        description: "Array of all blood pressure concept codes for the patient"
-      - name: all_bp_displays
-        description: "Array of all blood pressure concept displays for the patient"
+- name: dim_ltc_lcs_cf_htn_66
+  description: 'Mart: LTC LCS Case Finding HTN_66 - Identifies patients with stage 1 hypertension without cardiovascular risk factors requiring lifestyle intervention focus.
+
+
+    Business Purpose:
+
+    • Support systematic case finding for stage 1 hypertension without additional cardiovascular risk factors
+
+    • Enable lifestyle-focused intervention for patients with isolated stage 1 hypertension
+
+    • Provide clinical decision support for low-risk hypertension management approaches
+
+    • Support quality improvement initiatives for comprehensive hypertension care across risk categories
+
+
+    Data Granularity:
+
+    • One row per person with stage 1 hypertension without additional cardiovascular risk factors
+
+    • Includes patients suitable for lifestyle intervention rather than immediate pharmacological treatment
+
+    • Limited to patients with isolated stage 1 hypertension requiring monitoring and lifestyle support
+
+
+    Key Features:
+
+    • Stage 1 hypertension identification without cardiovascular risk factor complications
+
+    • Lifestyle intervention focus for patients with lower overall cardiovascular risk
+
+    • Evidence-based case finding supporting risk-stratified hypertension management
+
+    • Integration with lifestyle intervention pathways for comprehensive non-pharmacological care'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person
+    tests:
+    - not_null
+    - unique
+  - name: age
+    description: Person's age at time of analysis
+    tests:
+    - not_null
+  - name: has_cardiovascular_risk_factors
+    description: Flag indicating patient has cardiovascular risk factors (always FALSE)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - false
+  - name: has_stage_1_hypertension_no_rf
+    description: Flag indicating patient has stage 1 hypertension without risk factors (always TRUE)
+  - name: latest_bp_date
+    description: Date of the latest blood pressure reading
+    tests:
+    - not_null
+  - name: latest_bp_value
+    description: Value of the latest blood pressure reading
+    tests:
+    - not_null
+  - name: latest_bp_type
+    description: Type of latest BP reading (HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - HYPERTENSION_BP_CLINIC
+        - HYPERTENSION_BP_HOME
+        - HYPERTENSION_BP_ABPM
+  - name: is_clinic_bp
+    description: Flag indicating if latest reading is clinic blood pressure
+    tests:
+    - not_null
+  - name: is_home_bp
+    description: Flag indicating if latest reading is home/ABPM blood pressure
+    tests:
+    - not_null
+  - name: latest_bp_code
+    description: Mapped concept code for latest blood pressure reading
+  - name: latest_bp_display
+    description: Mapped concept display for latest blood pressure reading
+  - name: all_bp_codes
+    description: Array of all blood pressure concept codes for the patient
+  - name: all_bp_displays
+    description: Array of all blood pressure concept displays for the patient

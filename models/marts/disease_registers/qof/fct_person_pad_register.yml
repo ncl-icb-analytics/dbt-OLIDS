@@ -1,13 +1,19 @@
 version: 2
 models:
 - name: fct_person_pad_register
-  description: "**PAD Register - QOF Cardiovascular Disease Quality Measures**\n\nFact table for PAD register following simple\
-    \ register pattern. All patients with any PAD \ndiagnosis are included on the register as PAD is considered a permanent\
-    \ condition.\n\nSimple Register Business Logic:\n- Presence of PAD diagnosis = on register (lifelong condition)\n- No\
-    \ resolution codes (PAD is permanent)\n- No age restrictions\n- Important for secondary prevention monitoring\n\nQOF Context:\n\
-    Used for cardiovascular disease secondary prevention quality measures including:\n- Medication monitoring (statins, antiplatelets,\
-    \ ACE inhibitors)\n- Blood pressure management targets\n- Cholesterol management\n- Limb preservation and vascular health\
-    \ monitoring\n"
+  description: 'QOF Peripheral Arterial Disease (PAD) Register - Patients with peripheral vascular disease.
+
+
+    Key Inclusion Criteria:
+
+    • PAD diagnosis (PAD_COD) present
+
+    • No age restrictions
+
+    • No resolution codes (PAD is permanent condition)
+
+
+    Purpose: QOF register for cardiovascular disease management, risk stratification, and secondary prevention monitoring.'
   columns:
   - name: person_id
     description: Unique person identifier

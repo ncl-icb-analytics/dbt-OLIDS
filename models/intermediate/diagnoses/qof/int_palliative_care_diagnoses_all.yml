@@ -1,65 +1,83 @@
 version: 2
-
 models:
-  - name: int_palliative_care_diagnoses_all
+- name: int_palliative_care_diagnoses_all
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: PALCARENI_COD, PALCARE_COD
+  description: 'Intermediate: Palliative Care Diagnoses All - Complete history of all palliative care pathway observations for QOF register management.
 
+
+    Clinical Purpose:
+
+    • QOF palliative care register data collection and monitoring (on/after 1 April 2008)
+
+    • End-of-life care pathway coordination and quality assessment
+
+    • Palliative care status tracking and appropriateness evaluation
+
+    • Care transition management between active treatment and end-of-life care
+
+
+    Data Granularity:
+
+    • One row per palliative care pathway observation
+
+    • Uses PALCARE_COD (pathway) and PALCARENI_COD (no longer indicated) clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Time-sensitive register inclusion (on/after 1 April 2008)
+
+    • Exclusion logic for care no longer indicated
+
+    • Critical for end-of-life care quality improvement
+
+    • Essential input for palliative care pathway optimisation'
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "PALCARENI_COD, PALCARE_COD"
-    description: |
-      All palliative care pathway observations from clinical records.
-      Important pathway with inclusion/exclusion logic for appropriate care targeting.
-
-      QOF Register Logic:
-      - Palliative care code (PALCARE_COD) on/after 1 April 2008
-      - Exclusion logic: 'No longer indicated' codes (PALCARENI_COD)
-      - Current status determined by latest code
-
-      Includes ALL persons following intermediate layer principles.
-      Use as input for fct_person_palliative_care_register.sql which applies QOF business rules.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-
-      - name: clinical_effective_date
-        description: "Date of the palliative care observation"
-        tests:
-          - not_null
-
-      - name: concept_code
-        description: "SNOMED concept code for palliative care observation"
-        tests:
-          - not_null
-
-      - name: concept_display
-        description: "Description of the palliative care code"
-        tests:
-          - not_null
-
-      - name: source_cluster_id
-        description: "QOF cluster ID for palliative care pathway"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['PALCARE_COD', 'PALCARENI_COD']
-
-      - name: is_palliative_care_code
-        description: "Flag indicating palliative care code (PALCARE_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_palliative_care_not_indicated_code
-        description: "Flag indicating palliative care no longer indicated (PALCARENI_COD)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the palliative care observation
+    tests:
+    - not_null
+  - name: concept_code
+    description: SNOMED concept code for palliative care observation
+    tests:
+    - not_null
+  - name: concept_display
+    description: Description of the palliative care code
+    tests:
+    - not_null
+  - name: source_cluster_id
+    description: QOF cluster ID for palliative care pathway
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - PALCARE_COD
+        - PALCARENI_COD
+  - name: is_palliative_care_code
+    description: Flag indicating palliative care code (PALCARE_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_palliative_care_not_indicated_code
+    description: Flag indicating palliative care no longer indicated (PALCARENI_COD)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

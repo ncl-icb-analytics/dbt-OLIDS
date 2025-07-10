@@ -1,10 +1,7 @@
 version: 2
 models:
 - name: int_blood_pressure_latest
-  description: 'Contains the latest blood pressure reading for each person, based on clinical_effective_date, derived from
-    int_blood_pressure_all.
-
-    '
+  description: Latest blood pressure event per person with paired systolic/diastolic values and clinical context flags (Home/ABPM). One row per person containing their most recent BP event.
   columns:
   - name: person_id
     description: Unique identifier for the person

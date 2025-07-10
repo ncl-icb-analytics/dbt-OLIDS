@@ -1,191 +1,239 @@
 version: 2
-
 models:
-  - name: fct_cervical_screening_status
-    description: |
-      Cervical Screening Programme Status - Person-Level Analytics
-      Comprehensive person-level cervical screening programme tracking with age-specific business rules.
+- name: fct_cervical_screening_status
+  description: 'Mart: Cervical Screening Programme Status - Comprehensive screening programme tracking with age-specific compliance and risk stratification.
 
-      Key Business Rules:
-      1. Screening Intervals:
-         - Women aged 25-49: invited every 3 years
-         - Women aged 50-64: invited every 5 years
-         - Women outside 25-64 age range: not eligible for routine screening
 
-      2. Status Validity Rules:
-         - Completed screening (SMEAR_COD): Always valid for programme compliance
-         - Unsuitable status (CSPU_COD): Permanent until superseded by completed screening
-         - Declined/Non-response (CSDEC_COD/CSPCAINVITE_COD): Valid for 12 months only
+    Population Scope:
 
-      3. Programme Compliance:
-         - Up to Date: Completed screening within age-appropriate interval
-         - Overdue: Last screening outside age-appropriate interval but within programme history
-         - Never Screened: No completed screening history within eligible age range
+    • Eligible females aged 25-64 years for cervical screening programme
 
-      Clinical Purpose:
-      - Programme compliance monitoring and reporting
-      - Risk stratification for population health management  
-      - Screening interval tracking and invitation planning
-      - Quality assurance and outcome monitoring
 
-      Data Grain: One row per woman eligible for cervical screening (aged 25-64)
+    • Age-specific screening intervals: 3-year for 25-49, 5-year for 50-64
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-          - unique
+    • Includes all women with screening history and current programme status
 
-      - name: current_age
-        description: "Current age of the person"
-        tests:
-          - not_null
 
-      - name: is_screening_eligible
-        description: "Boolean flag indicating if person is eligible for cervical screening (female, aged 25-64)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true]
+    Key Features:
 
-      - name: screening_interval_years
-        description: |
-          Age-specific screening interval in years:
-          - 3 years for ages 25-49
-          - 5 years for ages 50-64
-        tests:
-          - not_null
-          - accepted_values:
-              values: [3, 5]
+    • Age-appropriate screening interval tracking and compliance monitoring
 
-      - name: programme_compliance_status
-        description: |
-          Overall programme compliance status:
-          - 'Up to Date': Screening current within age-appropriate interval
-          - 'Overdue': Screening overdue based on age-specific interval
-          - 'Never Screened': No completed screening history
-          - 'Not Eligible': Outside eligible age range
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Up to Date', 'Overdue', 'Never Screened', 'Not Eligible', 'Unknown']
+    • Programme compliance status with overdue and never-screened identification
 
-      - name: current_screening_status
-        description: |
-          Current screening status based on latest observation:
-          - 'Up to Date (Screened)': Latest observation is completed screening
-          - 'Unsuitable for Screening': Latest valid status is unsuitable
-          - 'Recently Declined': Declined screening within last 12 months
-          - 'Non-responsive': Non-response to invitations within last 12 months
-          - 'Status Expired': Latest status no longer valid
-        tests:
-          - accepted_values:
-              values: ['Up to Date (Screened)', 'Unsuitable for Screening', 'Recently Declined', 'Non-responsive', 'Status Expired']
+    • Clinical risk stratification based on cytology results and abnormality grades
 
-      - name: latest_screening_date
-        description: "Date of most recent screening observation (any type)"
+    • Next screening due dates and follow-up requirement flags'
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+    - unique
+  - name: current_age
+    description: Current age of the person
+    tests:
+    - not_null
+  - name: is_screening_eligible
+    description: Boolean flag indicating if person is eligible for cervical screening (female, aged 25-64)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+  - name: screening_interval_years
+    description: 'Age-specific screening interval in years:
 
-      - name: latest_completed_date
-        description: "Date of most recent completed screening (SMEAR_COD only)"
+      - 3 years for ages 25-49
 
-      - name: years_since_last_completed_screening
-        description: "Years since last completed screening (null if never screened)"
+      - 5 years for ages 50-64'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - 3
+        - 5
+  - name: programme_compliance_status
+    description: 'Overall programme compliance status:
 
-      - name: next_screening_due_date
-        description: "Calculated next screening due date based on age-specific interval"
 
-      - name: days_overdue
-        description: "Number of days overdue for screening (0 if up to date, null if never screened)"
+      - ''Up to Date'': Screening current within age-appropriate interval
 
-      - name: cytology_result_category
-        description: |
-          Detailed cytology result classification from latest completed screening:
-          - Normal, Borderline Changes, Mild/Moderate/Severe Dyskaryosis
-          - Glandular Abnormality, Inflammatory Changes, etc.
-          - NULL if no completed screenings
 
-      - name: cervical_screening_risk_category
-        description: |
-          Clinical risk assessment based on cytology results:
-          - 'Low Risk (Normal)', 'Low-Moderate Risk', 'Moderate Risk'
-          - 'High Risk (Abnormal)', 'Requires Clinical Assessment'
-          - NULL if no completed screenings
+      - ''Overdue'': Screening overdue based on age-specific interval
 
-      - name: abnormality_grade
-        description: |
-          Simplified abnormality grade classification:
-          - 'Normal': No abnormality detected
-          - 'Low Grade': Borderline changes, mild dyskaryosis
-          - 'Moderate Grade': Moderate dyskaryosis
-          - 'High Grade': Severe dyskaryosis, glandular abnormalities
-          - 'HPV Changes': Viral changes, koilocytosis
-          - 'Infection': Bacterial/fungal infections
-          - 'Inflammatory', 'Atrophic Changes', 'Other Finding'
-          - NULL if no completed screenings
-        tests:
-          - accepted_values:
-              values: ['Normal', 'Low Grade', 'Moderate Grade', 'High Grade', 'HPV Changes', 'Infection', 'Inflammatory', 'Atrophic Changes', 'Nuclear Abnormality', 'Other Finding']
 
-      - name: sample_adequacy
-        description: |
-          Sample adequacy assessment:
-          - 'Adequate': Endocervical cells present, suitable for assessment
-          - 'Inadequate': Insufficient sample for assessment
-          - 'Unspecified': No specific adequacy information
-          - NULL if no completed screenings
-        tests:
-          - accepted_values:
-              values: ['Adequate', 'Inadequate', 'Unspecified']
+      - ''Never Screened'': No completed screening history
 
-      - name: clinical_action_required
-        description: |
-          Clinical action required based on latest screening:
-          - 'Routine Follow-up': Normal result, routine interval
-          - 'Repeat Required': Follow-up screening needed
-          - 'Colposcopy Required': Referral for colposcopy indicated
-          - 'Clinical Review': Requires clinical assessment
-          - NULL if no completed screenings
-        tests:
-          - accepted_values:
-              values: ['Routine Follow-up', 'Repeat Required', 'Colposcopy Required', 'Clinical Review']
 
-      - name: never_screened
-        description: "Boolean flag indicating if person has never had a completed screening"
-        tests:
-          - not_null
+      - ''Not Eligible'': Outside eligible age range'
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Up to Date
+        - Overdue
+        - Never Screened
+        - Not Eligible
+        - Unknown
+  - name: current_screening_status
+    description: 'Current screening status based on latest observation:
 
-      - name: requires_urgent_follow_up
-        description: "Boolean flag for high-grade abnormalities requiring urgent clinical follow-up"
-        tests:
-          - not_null
 
-      - name: requires_colposcopy_referral
-        description: "Boolean flag indicating colposcopy referral is required"
-        tests:
-          - not_null
+      - ''Up to Date (Screened)'': Latest observation is completed screening
 
-      - name: long_term_non_attendance
-        description: "Boolean flag for women overdue for screening by more than 5 years"
-        tests:
-          - not_null
 
-      - name: total_completed_screenings
-        description: "Total number of completed screenings in screening history"
-        tests:
-          - not_null
+      - ''Unsuitable for Screening'': Latest valid status is unsuitable
 
-      - name: total_unsuitable_records
-        description: "Total number of unsuitable screening records"
-        tests:
-          - not_null
 
-      - name: total_declined_records
-        description: "Total number of declined screening records"
-        tests:
-          - not_null
+      - ''Recently Declined'': Declined screening within last 12 months
 
-      - name: total_non_response_records
-        description: "Total number of non-response records"
-        tests:
-          - not_null 
+
+      - ''Non-responsive'': Non-response to invitations within last 12 months
+
+
+      - ''Status Expired'': Latest status no longer valid'
+    tests:
+    - accepted_values:
+        values:
+        - Up to Date (Screened)
+        - Unsuitable for Screening
+        - Recently Declined
+        - Non-responsive
+        - Status Expired
+  - name: latest_screening_date
+    description: Date of most recent screening observation (any type)
+  - name: latest_completed_date
+    description: Date of most recent completed screening (SMEAR_COD only)
+  - name: years_since_last_completed_screening
+    description: Years since last completed screening (null if never screened)
+  - name: next_screening_due_date
+    description: Calculated next screening due date based on age-specific interval
+  - name: days_overdue
+    description: Number of days overdue for screening (0 if up to date, null if never screened)
+  - name: cytology_result_category
+    description: 'Detailed cytology result classification from latest completed screening:
+
+      - Normal, Borderline Changes, Mild/Moderate/Severe Dyskaryosis
+
+      - Glandular Abnormality, Inflammatory Changes, etc.
+
+      - NULL if no completed screenings'
+  - name: cervical_screening_risk_category
+    description: 'Clinical risk assessment based on cytology results:
+
+      - ''Low Risk (Normal)'', ''Low-Moderate Risk'', ''Moderate Risk''
+
+      - ''High Risk (Abnormal)'', ''Requires Clinical Assessment''
+
+      - NULL if no completed screenings'
+  - name: abnormality_grade
+    description: 'Simplified abnormality grade classification:
+
+
+      - ''Normal'': No abnormality detected
+
+
+      - ''Low Grade'': Borderline changes, mild dyskaryosis
+
+
+      - ''Moderate Grade'': Moderate dyskaryosis
+
+
+      - ''High Grade'': Severe dyskaryosis, glandular abnormalities
+
+
+      - ''HPV Changes'': Viral changes, koilocytosis
+
+
+      - ''Infection'': Bacterial/fungal infections
+
+      - ''Inflammatory'', ''Atrophic Changes'', ''Other Finding''
+
+      - NULL if no completed screenings'
+    tests:
+    - accepted_values:
+        values:
+        - Normal
+        - Low Grade
+        - Moderate Grade
+        - High Grade
+        - HPV Changes
+        - Infection
+        - Inflammatory
+        - Atrophic Changes
+        - Nuclear Abnormality
+        - Other Finding
+  - name: sample_adequacy
+    description: 'Sample adequacy assessment:
+
+
+      - ''Adequate'': Endocervical cells present, suitable for assessment
+
+
+      - ''Inadequate'': Insufficient sample for assessment
+
+
+      - ''Unspecified'': No specific adequacy information
+
+      - NULL if no completed screenings'
+    tests:
+    - accepted_values:
+        values:
+        - Adequate
+        - Inadequate
+        - Unspecified
+  - name: clinical_action_required
+    description: 'Clinical action required based on latest screening:
+
+
+      - ''Routine Follow-up'': Normal result, routine interval
+
+
+      - ''Repeat Required'': Follow-up screening needed
+
+
+      - ''Colposcopy Required'': Referral for colposcopy indicated
+
+
+      - ''Clinical Review'': Requires clinical assessment
+
+      - NULL if no completed screenings'
+    tests:
+    - accepted_values:
+        values:
+        - Routine Follow-up
+        - Repeat Required
+        - Colposcopy Required
+        - Clinical Review
+  - name: never_screened
+    description: Boolean flag indicating if person has never had a completed screening
+    tests:
+    - not_null
+  - name: requires_urgent_follow_up
+    description: Boolean flag for high-grade abnormalities requiring urgent clinical follow-up
+    tests:
+    - not_null
+  - name: requires_colposcopy_referral
+    description: Boolean flag indicating colposcopy referral is required
+    tests:
+    - not_null
+  - name: long_term_non_attendance
+    description: Boolean flag for women overdue for screening by more than 5 years
+    tests:
+    - not_null
+  - name: total_completed_screenings
+    description: Total number of completed screenings in screening history
+    tests:
+    - not_null
+  - name: total_unsuitable_records
+    description: Total number of unsuitable screening records
+    tests:
+    - not_null
+  - name: total_declined_records
+    description: Total number of declined screening records
+    tests:
+    - not_null
+  - name: total_non_response_records
+    description: Total number of non-response records
+    tests:
+    - not_null

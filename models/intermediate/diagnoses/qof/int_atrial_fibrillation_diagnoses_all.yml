@@ -4,45 +4,38 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: AFIBRES_COD, AFIB_COD
-  description: 'All atrial fibrillation diagnosis observations from clinical records using QOF cluster IDs.
-
-    Provides comprehensive data collection for AF register and arrhythmia management.
-
-
-    QOF Cluster IDs Used:
-
-    - AFIB_COD: Atrial fibrillation diagnoses
-
-    - AFIBRES_COD: Atrial fibrillation resolved/remission codes
+  description: 'Intermediate: Atrial Fibrillation Diagnoses All - Complete history of all atrial fibrillation diagnosis and resolution observations for QOF register management.
 
 
     Clinical Purpose:
 
-    - QOF atrial fibrillation register data collection
+    • QOF atrial fibrillation register data collection and monitoring
 
-    - Arrhythmia management monitoring
+    • Stroke risk assessment and anticoagulation therapy management
 
-    - Anticoagulation therapy planning
+    • Cardiovascular rhythm disorder tracking and care coordination
 
-    - Stroke prevention assessment
-
-
-    Key QOF Requirements:
-
-    - Register inclusion: Atrial fibrillation diagnosis (AFIB_COD) not in remission (latest AFIB_COD > latest AFIBRES_COD)
-
-    - No age restrictions for AF register
-
-    - Resolution status tracking important for anticoagulation decisions
-
-    - Critical for stroke prevention planning
+    • Resolution status monitoring for clinical decision support
 
 
-    Includes ALL persons following intermediate layer principles.
+    Data Granularity:
 
-    Use as input for fct_person_atrial_fibrillation_register.sql which applies QOF business rules.
+    • One row per atrial fibrillation diagnosis or resolution observation
 
-    '
+    • Uses AFIB_COD (diagnosis) and AFIBRES_COD (resolved) QOF clusters
+
+    • Includes all patients regardless of status for comprehensive QOF reporting
+
+
+    Key Features:
+
+    • Diagnosis and resolution code classification for register eligibility
+
+    • Critical for stroke prevention and anticoagulation protocols
+
+    • Supports complex QOF business rules and age restrictions
+
+    • Essential input for cardiovascular risk stratification'
   columns:
   - name: person_id
     description: Unique person identifier

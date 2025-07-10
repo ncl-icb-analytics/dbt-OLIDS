@@ -1,22 +1,55 @@
 version: 2
-
 models:
-  - name: int_ppp_status_all
-    description: "Intermediate table containing all Pregnancy Prevention Programme (PPP) events from source systems. Raw data collection layer that feeds the PPP dimension table."
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person."
-        tests:
-          - not_null
-      - name: ppp_event_date
-        description: "Date of the PPP-related observation."
-      - name: ppp_observation_id
-        description: "Identifier for the PPP observation."
-      - name: ppp_concept_code
-        description: "The medical concept code for the PPP event."
-      - name: ppp_concept_display
-        description: "Display term for the PPP concept code."
-      - name: ppp_status_description
-        description: "Human-readable description of PPP status."
-      - name: ppp_categories
-        description: "Array of all categories applicable to this PPP code."
+- name: int_ppp_status_all
+  description: 'Intermediate: PPP Status All - Comprehensive collection of all Pregnancy Prevention Programme status events for valproate patient safety monitoring.
+
+
+    Clinical Purpose:
+
+    • Gathers all PPP status events for women of childbearing potential on valproate therapy
+
+    • Supports pregnancy prevention programme monitoring for valproate clinical safety
+
+    • Enables comprehensive tracking of PPP enrollment, discontinuation, and clinical decisions
+
+    • Provides foundation data for valproate programme safety compliance reporting
+
+
+    Data Granularity:
+
+    • One row per PPP status observation for patients on valproate therapy
+
+    • Covers PPP enrolled, discontinued, not needed, and declined status events
+
+    • Includes clinical effective dates for temporal analysis and programme tracking
+
+    • Contains concept codes and descriptions for detailed clinical documentation
+
+
+    Key Features:
+
+
+    • PPP status categorisation: enrolled, discontinued, not needed, declined
+
+    • Integration with valproate programme codes for comprehensive status tracking
+
+    • Raw data collection layer feeding downstream PPP dimension table
+
+    • Support for valproate patient safety monitoring and regulatory compliance'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person.
+    tests:
+    - not_null
+  - name: ppp_event_date
+    description: Date of the PPP-related observation.
+  - name: ppp_observation_id
+    description: Identifier for the PPP observation.
+  - name: ppp_concept_code
+    description: The medical concept code for the PPP event.
+  - name: ppp_concept_display
+    description: Display term for the PPP concept code.
+  - name: ppp_status_description
+    description: Human-readable description of PPP status.
+  - name: ppp_categories
+    description: Array of all categories applicable to this PPP code.

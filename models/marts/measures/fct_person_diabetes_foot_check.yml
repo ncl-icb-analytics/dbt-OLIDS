@@ -1,15 +1,38 @@
 version: 2
 models:
 - name: fct_person_diabetes_foot_check
-  description: "Fact table for diabetes foot check completion and status tracking for people on the diabetes register.\n\n\
-    **Foot Check Completion Logic:**\n- Check completed in last 12 months if:\n  1. Check date within 12 months AND\n  2.\
-    \ Either both feet checked OR unchecked foot is absent/amputated AND\n  3. Check not declined or unsuitable\n\n**Permanent\
-    \ Exemption:**\n- Patient permanently exempt only if both feet are absent/amputated\n\n**Risk Assessment:**\n- Tracks\
-    \ individual foot risk levels (Low, Moderate, High)\n- Records foot absence (congenital) vs amputation\n- Includes Townson\
-    \ scale levels when applicable\n\n**Clinical Context:**\nPart of diabetes 8/9 care processes. Critical for preventing\
-    \ diabetic foot complications\nand ulcerations through regular screening and risk stratification.\n\n**Business Rules:**\n\
-    - Base population: People on diabetes register\n- Uses latest foot examination data\n- Comprehensive status tracking including\
-    \ partial checks\n- Supports clinical decision-making for foot care pathways\n"
+  description: 'Mart: Diabetes Foot Check Status - Foot examination assessment for diabetes patients to support QOF reporting.
+
+
+    Business Purpose:
+
+    • Support QOF reporting for diabetes foot examination indicators
+
+    • Enable clinical teams to identify patients requiring foot examination review
+
+    • Provide population health analytics for diabetes complication prevention programmes
+
+    • Support business intelligence reporting on diabetes care quality and risk management
+
+
+    Data Granularity:
+
+    • One row per person on diabetes register
+
+    • Includes foot examination completion status and risk assessment results
+
+    • Current assessment of foot examination delivery and risk levels
+
+
+    Key Features:
+
+    • Tracks foot examination completion with complex business rules for exempt patients
+
+    • Includes Townson scale risk level assessment and individual foot status
+
+    • Supports clinical decision-making for diabetes foot care management
+
+    • Enables population health management and diabetes complication prevention'
   columns:
   - name: person_id
     description: Unique person identifier

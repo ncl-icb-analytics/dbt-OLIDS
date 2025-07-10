@@ -1,89 +1,95 @@
 version: 2
-
 models:
-  - name: fct_person_smoking_status
-    description: |
-      Smoking status fact table providing current smoking status for individuals with smoking data.
+- name: fct_person_smoking_status
+  description: 'Mart: Person Smoking Status Facts - Current and historical smoking status for clinical decision support and population health monitoring.
 
-      **Business Logic:**
-      - Current smoking status based on most recent smoking-related observation
-      - Priority: Current Smoker > Ex Smoker > Never Smoked > Unknown
-      - Uses QOF-aligned smoking status definitions
 
-      **Data Sources:**
-      - int_smoking_status_latest for current status
-      - int_smoking_status_all for historical context
+    Business Purpose:
 
-      **Population Coverage:**
-      Includes ALL persons (active, inactive, deceased) with smoking observation data.
+    • Support clinical decision-making by providing current smoking status for care delivery
 
-      **Clinical Context:**
-      Supports smoking cessation programmes, cardiovascular risk assessment, and QOF reporting.
-      Essential for clinical decision support and population health monitoring.
+    • Enable population health analytics and smoking cessation programme targeting
 
-    config:
-      materialized: table
+    • Provide comprehensive smoking history for longitudinal health trend analysis
 
-    columns:
-      - name: person_id
-        description: "Unique person identifier linking to dim_person"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
+    • Support quality measurement and smoking-related health outcomes tracking
 
-      - name: age
-        description: "Person's current age in years"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 120
 
-      - name: smoking_status
-        description: "Current smoking status classification"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Current Smoker', 'Ex-Smoker', 'Never Smoked', 'General Smoking Code', 'Unknown']
+    Data Granularity:
 
-      - name: latest_smoking_date
-        description: "Date of most recent smoking-related observation"
-        tests:
-          - not_null
+    • One row per person with smoking observation data
 
-      - name: earliest_smoking_date
-        description: "Date of first smoking-related observation"
-        tests:
-          - not_null
+    • Includes current status and complete smoking history
 
-      - name: latest_concept_code
-        description: "SNOMED concept code of most recent smoking observation"
-        tests:
-          - not_null
+    • Limited to people with recorded smoking observations
 
-      - name: latest_code_description
-        description: "Human-readable description of latest smoking observation"
-        tests:
-          - not_null
 
-      - name: latest_cluster_id
-        description: "Cluster ID of latest smoking observation (SMOK_COD, EXSMOK_COD, NSMOK_COD, etc.)"
-        tests:
-          - not_null
+    Key Features:
 
-      - name: all_smoking_concept_codes
-        description: "Array of all smoking-related concept codes for traceability"
-        tests:
-          - not_null
+    • Current smoking status based on most recent clinical observation
 
-      - name: all_smoking_concept_displays
-        description: "Array of all smoking-related concept displays for traceability"
-        tests:
-          - not_null
+    • Complete smoking history with earliest and all recorded observations
 
-      - name: last_refresh_date
-        description: "Timestamp when this record was last refreshed"
-        tests:
-          - not_null
+    • Integrated with person demographics for population health analysis
+
+    • Real-time refresh tracking for data currency monitoring'
+  config:
+    materialized: table
+  columns:
+  - name: person_id
+    description: Unique person identifier linking to dim_person
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_person')
+        field: person_id
+  - name: age
+    description: Person's current age in years
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 120
+  - name: smoking_status
+    description: Current smoking status classification
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Current Smoker
+        - Ex-Smoker
+        - Never Smoked
+        - General Smoking Code
+        - Unknown
+  - name: latest_smoking_date
+    description: Date of most recent smoking-related observation
+    tests:
+    - not_null
+  - name: earliest_smoking_date
+    description: Date of first smoking-related observation
+    tests:
+    - not_null
+  - name: latest_concept_code
+    description: SNOMED concept code of most recent smoking observation
+    tests:
+    - not_null
+  - name: latest_code_description
+    description: Human-readable description of latest smoking observation
+    tests:
+    - not_null
+  - name: latest_cluster_id
+    description: Cluster ID of latest smoking observation (SMOK_COD, EXSMOK_COD, NSMOK_COD, etc.)
+    tests:
+    - not_null
+  - name: all_smoking_concept_codes
+    description: Array of all smoking-related concept codes for traceability
+    tests:
+    - not_null
+  - name: all_smoking_concept_displays
+    description: Array of all smoking-related concept displays for traceability
+    tests:
+    - not_null
+  - name: last_refresh_date
+    description: Timestamp when this record was last refreshed
+    tests:
+    - not_null

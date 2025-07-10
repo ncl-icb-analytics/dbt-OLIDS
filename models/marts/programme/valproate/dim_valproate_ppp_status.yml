@@ -1,45 +1,75 @@
 version: 2
-
 models:
-  - name: dim_valproate_ppp_status
-    description: "Aggregates Pregnancy Prevention Programme (PPP) events for each person, providing analytics-ready person-level PPP status and history."
-    columns:
-      - name: person_id
-        description: "Unique identifier for the person."
-        tests:
-          - not_null
-          - unique
-      - name: has_ppp_event
-        description: "TRUE if any PPP event is present for the person."
-        tests:
-          - not_null
-      - name: earliest_ppp_event_date
-        description: "Earliest date of any PPP-related event for the person."
-      - name: latest_ppp_event_date
-        description: "Latest date of any PPP-related event for the person."
-      - name: latest_ppp_observation_id
-        description: "Observation ID for the most recent PPP event."
-      - name: latest_ppp_concept_code
-        description: "Medical concept code for the most recent PPP event."
-      - name: latest_ppp_concept_display
-        description: "Display term for the most recent PPP concept code."
-      - name: is_currently_ppp_enrolled
-        description: "TRUE if most recent PPP status indicates enrollment."
-        tests:
-          - not_null
-      - name: is_ppp_non_enrolled
-        description: "TRUE if most recent PPP status indicates discontinued/not needed/declined."
-        tests:
-          - not_null
-      - name: current_ppp_status_description
-        description: "Human-readable description of current PPP status."
-      - name: current_ppp_status_with_date
-        description: "PPP status description concatenated with formatted date."
-      - name: all_ppp_observation_ids
-        description: "Array of unique observation IDs related to PPP events."
-      - name: all_ppp_concept_codes
-        description: "Array of all distinct PPP-related medical concept codes found."
-      - name: all_ppp_concept_displays
-        description: "Array of display terms for the PPP codes."
-      - name: all_ppp_code_categories_applied
-        description: "Array of code categories applied (will contain various PPP categories)."
+- name: dim_valproate_ppp_status
+  description: 'Mart: Valproate PPP Status - Person-level aggregation of Pregnancy Prevention Programme events for valproate safety monitoring and reproductive health management.
+
+
+    Business Purpose:
+
+    • Support valproate safety monitoring through Pregnancy Prevention Programme compliance tracking
+
+    • Enable systematic monitoring of reproductive health safeguards for valproate therapy in women
+
+    • Provide clinical decision support for PPP compliance and contraceptive counselling
+
+    • Support quality improvement initiatives for teratogenicity prevention and reproductive safety
+
+
+    Data Granularity:
+
+    • One row per person with PPP-related events in valproate safety monitoring
+
+    • Aggregates all PPP events with comprehensive reproductive health safeguard tracking
+
+    • Includes complete PPP compliance history for reproductive safety assessment
+
+
+    Key Features:
+
+    • Person-level PPP event aggregation with complete reproductive health safeguard history
+
+    • Comprehensive PPP compliance tracking for monitoring pregnancy prevention effectiveness
+
+    • Evidence-based PPP assessment supporting regulatory compliance and reproductive safety
+
+    • Integration with reproductive health pathways for systematic pregnancy prevention management'
+  columns:
+  - name: person_id
+    description: Unique identifier for the person.
+    tests:
+    - not_null
+    - unique
+  - name: has_ppp_event
+    description: TRUE if any PPP event is present for the person.
+    tests:
+    - not_null
+  - name: earliest_ppp_event_date
+    description: Earliest date of any PPP-related event for the person.
+  - name: latest_ppp_event_date
+    description: Latest date of any PPP-related event for the person.
+  - name: latest_ppp_observation_id
+    description: Observation ID for the most recent PPP event.
+  - name: latest_ppp_concept_code
+    description: Medical concept code for the most recent PPP event.
+  - name: latest_ppp_concept_display
+    description: Display term for the most recent PPP concept code.
+  - name: is_currently_ppp_enrolled
+    description: TRUE if most recent PPP status indicates enrollment.
+    tests:
+    - not_null
+  - name: is_ppp_non_enrolled
+    description: TRUE if most recent PPP status indicates discontinued/not needed/declined.
+    tests:
+    - not_null
+  - name: current_ppp_status_description
+    description: Human-readable description of current PPP status.
+  - name: current_ppp_status_with_date
+    description: PPP status description concatenated with formatted date.
+  - name: all_ppp_observation_ids
+    description: Array of unique observation IDs related to PPP events.
+  - name: all_ppp_concept_codes
+    description: Array of all distinct PPP-related medical concept codes found.
+  - name: all_ppp_concept_displays
+    description: Array of display terms for the PPP codes.
+  - name: all_ppp_code_categories_applied
+    description: Array of code categories applied (will contain various PPP categories).

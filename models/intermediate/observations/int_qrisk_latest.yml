@@ -1,11 +1,36 @@
 version: 2
 models:
 - name: int_qrisk_latest
-  description: 'Latest valid QRISK cardiovascular risk assessment per person.
+  description: 'Intermediate: Latest QRISK Observations - Most recent valid cardiovascular risk score per person.
 
-    Filters to most recent valid QRISK score (0-100% range).
 
-    '
+    Clinical Purpose:
+
+    • Provides current cardiovascular risk status for primary prevention strategies
+
+    • Supports statin therapy decision-making and CVD risk management
+
+    • Enables current risk stratification and population health assessment
+
+
+    Data Granularity:
+
+    • One row per person with their most recent valid QRISK score
+
+    • Includes only patients with valid QRISK measurements
+
+    • Filtered to exclude implausible values for clinical accuracy
+
+
+    Key Features:
+
+    • Latest valid QRISK identification with type preservation (QRISK2/3)
+
+    • Clinical cardiovascular risk categorisation for treatment planning
+
+    • Statin consideration flags based on prevention guidelines
+
+    • Complete risk assessment metadata for clinical context'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -24,9 +49,9 @@ models:
         values:
         - Low Risk (<10%)
         - Moderate Risk (10-20%)
-        - "High Risk (\u226520%)"
+        - High Risk (≥20%)
   - name: is_high_cvd_risk
-    description: "Flag indicating QRISK \u226520% (high risk)"
+    description: Flag indicating QRISK ≥20% (high risk)
     tests:
     - not_null
     - accepted_values:

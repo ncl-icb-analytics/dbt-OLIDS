@@ -1,64 +1,103 @@
 version: 2
-
 models:
-  - name: int_urine_acr_all
+- name: int_urine_acr_all
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: UACR_TESTING
+  description: 'Intermediate: Urine ACR Observations - All recorded albumin-to-creatinine ratio measurements for kidney function assessment.
 
+
+    Clinical Purpose:
+
+    • Tracks urine ACR levels for CKD diagnosis, staging and progression monitoring
+
+    • Supports diabetic nephropathy screening and kidney disease management
+
+    • Enables proteinuria assessment and cardiovascular risk stratification
+
+
+    Data Granularity:
+
+    • One row per ACR observation
+
+    • Includes all patients regardless of status (active/inactive/deceased)
+
+    • Uses UACR_TESTING cluster for ACR test result identification
+
+
+    Key Features:
+
+    • Data quality validation with plausible range filtering (0-1000 mg/mmol)
+
+    • Clinical ACR categorisation (normal, mildly/moderately/severely increased)
+
+    • Microalbuminuria and macroalbuminuria classification
+
+    • CKD risk indicators for clinical decision support'
+  columns:
+  - name: person_id
+    description: Unique person identifier
     tests:
-      - cluster_ids_exist:
-          cluster_ids: "UACR_TESTING"
-    description: |
-      All urine Albumin-to-Creatinine Ratio (ACR) measurements from observations.
-      Uses cluster ID UACR_TESTING for ACR test results.
-    columns:
-      - name: person_id
-        description: "Unique person identifier"
-        tests:
-          - not_null
-      - name: observation_id
-        description: "Unique observation identifier"
-        tests:
-          - not_null
-      - name: clinical_effective_date
-        description: "Date of the ACR measurement"
-        tests:
-          - not_null
-      - name: acr_value
-        description: "Urine ACR value in mg/mmol"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 1500
-              severity: warn
-      - name: result_unit_display
-        description: "Display value for the result unit (e.g., 'mg/mmol')"
-      - name: is_valid_acr
-        description: "Flag indicating if ACR is within valid range (0-1000)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: acr_category
-        description: "Clinical ACR category for CKD risk assessment"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Invalid', 'Normal (<3)', 'Mildly Increased (3-30)', 'Moderately Increased (30-300)', 'Severely Increased (≥300)', 'Unknown']
-      - name: is_acr_elevated
-        description: "Flag indicating ACR ≥3 mg/mmol"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_microalbuminuria
-        description: "Flag indicating microalbuminuria (3-30 mg/mmol)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-      - name: is_macroalbuminuria
-        description: "Flag indicating macroalbuminuria (≥30 mg/mmol)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
+    - not_null
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of the ACR measurement
+    tests:
+    - not_null
+  - name: acr_value
+    description: Urine ACR value in mg/mmol
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 0
+        max_value: 1500
+        severity: warn
+  - name: result_unit_display
+    description: Display value for the result unit (e.g., 'mg/mmol')
+  - name: is_valid_acr
+    description: Flag indicating if ACR is within valid range (0-1000)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: acr_category
+    description: Clinical ACR category for CKD risk assessment
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Invalid
+        - Normal (<3)
+        - Mildly Increased (3-30)
+        - Moderately Increased (30-300)
+        - Severely Increased (≥300)
+        - Unknown
+  - name: is_acr_elevated
+    description: Flag indicating ACR ≥3 mg/mmol
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_microalbuminuria
+    description: Flag indicating microalbuminuria (3-30 mg/mmol)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_macroalbuminuria
+    description: Flag indicating macroalbuminuria (≥30 mg/mmol)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - true
+        - false

@@ -1,28 +1,21 @@
 version: 2
 models:
 - name: fct_person_ltc_summary
-  description: 'Comprehensive summary of all long-term condition (LTC) registers for analytical
-    and reporting purposes. Unions all QOF disease registers into a single fact table
-    for cross-condition analysis.
-
-    **Key Features:**
-    - One row per person per condition they''re registered for
-    - Standardised condition codes and names
-    - Earliest and latest diagnosis dates per condition
-    - Only includes people who are on each register (is_on_register = TRUE)
+  description: 'Long-Term Conditions (LTC) Summary - Unified view of all disease registers per person.
 
 
-    **Condition Coverage:**
-    - All major QOF registers (AF, Asthma, Cancer, CHD, CKD, COPD, etc.)
-    - Includes both adult and paediatric registers
-    - Standardised condition codes for reporting
+    Key Features:
 
-    **Usage:**
-    - Multi-morbidity analysis
-    - Population health reporting
-    - Cross-condition prevalence studies
-    - QOF achievement reporting
-    '
+    • One row per person per condition
+
+    • Combines all QOF and clinical disease registers
+
+    • Standardised condition codes and clinical domains
+
+    • Includes diagnosis dates and QOF status
+
+
+    Purpose: Analytical table for multi-morbidity analysis, population health management, and comprehensive patient condition profiling.'
   columns:
   - name: person_id
     description: Unique person identifier
@@ -48,7 +41,7 @@ models:
     tests:
     - not_null:
         config:
-          where: "condition_code != 'OB'"
+          where: condition_code != 'OB'
   - name: latest_diagnosis_date
     description: Latest diagnosis date for this condition
     tests:
