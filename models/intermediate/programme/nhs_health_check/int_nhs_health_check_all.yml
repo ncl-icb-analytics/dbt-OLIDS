@@ -1,40 +1,39 @@
 version: 2
 models:
 - name: int_nhs_health_check_all
-  description: 'Intermediate: NHS Health Check All - Comprehensive collection of all NHS Health Check completion events with enhanced analytics features.
+  description: 'Intermediate: NHS Health Check All - All NHS Health Check completion events with enhanced analytics features.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Gathers all NHS Health Check completion events for programme analysis and reporting
+• Tracks all NHS Health Check completion events for programme analysis and reporting
 
-    • Supports health check type classification and eligibility assessment for 40-74 age group
+• Supports health check type classification and eligibility assessment for 40-74 age group
 
-    • Enables comprehensive time-based analysis and currency tracking for health checks
+• Enables comprehensive time-based analysis and currency tracking for health checks
 
-    • Provides foundation data for QOF prevention pathway integration and risk factor assessment
-
-
-    Data Granularity:
-
-    • One row per NHS Health Check completion observation for all persons (active, inactive, deceased)
-
-    • Covers standard, initial, follow-up health checks, and cardiovascular risk assessments
-
-    • Includes enhanced time calculations and health check currency flags (12m, 24m, 5y intervals)
-
-    • Contains health check type classification and clinical context information
+• Provides foundation data for QOF prevention pathway integration and risk factor assessment
 
 
-    Key Features:
+Data Granularity:
 
-    • Cluster ID: HEALTH_CHECK_COMP with validated SNOMED codes for completed health checks
+• One row per NHS Health Check completion observation for all persons (active, inactive, deceased)
 
-    • Enhanced analytics: type classification, eligibility assessment, timeframe analysis
+• Includes standard, initial, follow-up health checks, and cardiovascular risk assessments
 
-    • QOF prevention pathway integration support with 5-year cycle tracking
+• Contains enhanced time calculations and health check currency flags (12m, 24m, 5y intervals)
 
-    • Comprehensive health check status interpretation and clinical context flags'
+• Covers all patients with recorded NHS Health Check completion codes
+
+
+Key Features:
+
+• Cluster ID: HEALTH_CHECK_COMP with validated SNOMED codes for completed health checks
+
+• Enhanced analytics: type classification, eligibility assessment, timeframe analysis
+
+• QOF prevention pathway integration support with 5-year cycle tracking
+• Comprehensive health check status interpretation and clinical context flags'
 
   columns:
   - name: observation_id

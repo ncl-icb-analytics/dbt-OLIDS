@@ -38,12 +38,17 @@ models:
     description: 'Flag: TRUE if person has any condition excluding them from NHS Health Checks'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: is_eligible_for_nhs_health_check
     description: 'Flag: TRUE if person is eligible (age 40-74 without excluding conditions)'
 
@@ -68,9 +73,13 @@ models:
     description: 'Flag: TRUE if person is due an NHS Health Check (eligible + >5 years or never)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false

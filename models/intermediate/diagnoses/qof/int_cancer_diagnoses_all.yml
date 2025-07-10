@@ -4,27 +4,27 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: CAN_COD
-  description: 'Intermediate: Cancer Diagnoses All - Complete history of all cancer diagnosis observations for QOF register management.
+  description: 'Intermediate: Cancer Diagnoses - All recorded cancer diagnosis observations for QOF register management.
 
 
     Clinical Purpose:
 
-    • QOF cancer register data collection and monitoring
+    • Supports QOF cancer register maintenance and reporting
 
-    • Cancer care pathway coordination and treatment tracking
+    • Tracks cancer care pathway coordination and treatment tracking
 
-    • Oncology service utilisation and quality improvement
+    • Enables oncology service utilisation and quality improvement
 
-    • Resolution and remission status tracking
+    • Supports resolution and remission status tracking
 
 
     Data Granularity:
 
     • One row per cancer diagnosis observation
 
-    • Uses CAN_COD cluster for QOF-compliant cancer diagnosis identification
+    • Includes all patients with cancer-related codes regardless of current status
 
-    • Includes all patients regardless of status for comprehensive QOF reporting
+    • Uses cluster ID: CAN_COD (diagnosis)
 
 
     Key Features:
@@ -33,9 +33,9 @@ models:
 
     • No specific age restrictions for cancer register inclusion
 
-    • Resolution and remission monitoring capability
+    • Provides earliest/latest dates for diagnosis events
 
-    • Critical for cancer care quality indicators and pathway management'
+    • Includes comprehensive arrays of all related concept codes per person'
 
   columns:
   - name: person_id

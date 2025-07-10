@@ -77,11 +77,15 @@ models:
     description: 'Boolean flag: TRUE if person meets age ≥18 requirement'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
   - name: has_active_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
 
@@ -95,8 +99,11 @@ models:
     description: 'Boolean flag: TRUE if epilepsy medication prescribed within last 6 months'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true

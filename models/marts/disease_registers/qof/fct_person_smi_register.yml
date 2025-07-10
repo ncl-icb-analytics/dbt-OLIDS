@@ -28,40 +28,59 @@ models:
     description: 'Register flag: meets QOF SMI criteria (always TRUE for this table)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
   - name: is_on_lithium
     description: Flag indicating person has lithium therapy in last 6 months
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: has_mh_diagnosis
     description: Flag indicating person has a mental health diagnosis
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: latest_remission_date
     description: Date of most recent mental health remission code (NULL if never in remission)
+
   - name: latest_lithium_order_date
     description: Date of most recent lithium medication order (NULL if no lithium therapy)
+
   - name: all_mh_concept_codes
     description: Array of all distinct mental health diagnosis concept codes for this person
+
   - name: all_mh_concept_displays
     description: Array of all distinct mental health diagnosis concept display terms for this person
+
   - name: all_lithium_concept_codes
     description: Array of all distinct lithium medication concept codes for this person
+
   - name: all_lithium_concept_displays
     description: Array of all distinct lithium medication concept display terms for this person

@@ -77,11 +77,15 @@ models:
     description: 'Boolean flag: TRUE if person meets age ≥17 requirement'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
   - name: has_active_diabetes_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
 

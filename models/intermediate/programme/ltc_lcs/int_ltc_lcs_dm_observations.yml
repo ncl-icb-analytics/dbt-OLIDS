@@ -1,40 +1,39 @@
 version: 2
 models:
 - name: int_ltc_lcs_dm_observations
-  description: 'Intermediate: LTC LCS DM Observations - Collects all diabetes-relevant observations for Long Term Conditions case finding measures.
+  description: 'Intermediate: LTC LCS DM Observations - All diabetes-relevant observations for Long Term Conditions case finding measures.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Gathers comprehensive diabetes-related clinical observation data for case finding algorithms
+• Tracks comprehensive diabetes-related clinical observation data for case finding algorithms
 
-    • Supports identification of patients with undiagnosed diabetes through laboratory and clinical observations
+• Supports identification of patients with undiagnosed diabetes through laboratory and clinical observations
 
-    • Enables observation-based risk stratification using HbA1c measurements and diabetes risk scores
+• Enables observation-based risk stratification using HbA1c measurements and diabetes risk scores
 
-    • Provides foundation data for diabetes case finding indicators including gestational diabetes risk
-
-
-    Data Granularity:
-
-    • One row per clinical observation for diabetes-relevant observations
-
-    • Covers HbA1c levels, QDiabetes risk scores, QRISK2 scores, BMI measurements
-
-    • Includes gestational diabetes history and pregnancy risk observations
-
-    • Sourced from LTC_LCS programme observation clusters
+• Provides foundation data for diabetes case finding indicators including gestational diabetes risk
 
 
-    Key Features:
+Data Granularity:
 
-    • Cluster IDs: HBA1C_LEVEL, QDIABETES_RISK, QRISK2_10YEAR, HISTORY_GESTATIONAL_DIABETES, GESTATIONAL_DIABETES_PREGNANCY_RISK, BMI_MEASUREMENT
+• One row per clinical observation for diabetes-relevant observations
 
-    • Supports diabetes case finding measures using laboratory and risk assessment data
+• Includes HbA1c levels, QDiabetes risk scores, QRISK2 scores, BMI measurements
 
-    • Comprehensive diabetes risk factor and diagnostic observation analysis
+• Covers gestational diabetes history and pregnancy risk observations
 
-    • Integration with LTC_LCS programme clinical observation tracking systems'
+• Sourced from LTC_LCS programme observation clusters
+
+
+Key Features:
+
+• Cluster IDs: HBA1C_LEVEL, QDIABETES_RISK, QRISK2_10YEAR, HISTORY_GESTATIONAL_DIABETES, GESTATIONAL_DIABETES_PREGNANCY_RISK, BMI_MEASUREMENT
+
+• Supports diabetes case finding measures using laboratory and risk assessment data
+
+• Comprehensive diabetes risk factor and diagnostic observation analysis
+• Integration with LTC_LCS programme clinical observation tracking systems'
 
   columns:
   - name: observation_id

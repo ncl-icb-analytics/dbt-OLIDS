@@ -58,11 +58,15 @@ models:
     description: 'Boolean flag: TRUE (no age restrictions for AF register)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
   - name: has_active_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
 

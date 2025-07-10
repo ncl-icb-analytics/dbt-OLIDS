@@ -1,40 +1,35 @@
 version: 2
 models:
 - name: int_nhs_health_check_latest
-  description: 'Intermediate: NHS Health Check Latest - Latest NHS Health Check completion per person for programme analysis and eligibility assessment.
+  description: 'Intermediate: NHS Health Check Latest - Most recent NHS Health Check completion per person.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Provides most recent NHS Health Check completion status for each person
+• Tracks latest NHS Health Check completion status for each person
 
-    • Supports health check programme analysis and eligibility assessment for current status
+• Supports health check programme analysis and eligibility assessment
 
-    • Enables identification of patients requiring health check invitations or follow-up
-
-    • Provides foundation data for health check currency tracking and programme planning
+• Enables identification of patients requiring health check invitations or follow-up
 
 
-    Data Granularity:
+Data Granularity:
 
-    • One row per person representing their most recent NHS Health Check completion
+• One row per person representing their most recent NHS Health Check completion
 
-    • Derived from comprehensive NHS Health Check events using latest event logic
+• Includes patients with completed NHS Health Checks recorded in clinical systems
 
-    • Includes key temporal flags for health check currency (12m, 24m, 5y intervals)
-
-    • Contains essential health check completion indicators and time calculations
+• Contains health check currency flags for 12m, 24m, and 5y intervals
 
 
-    Key Features:
+Key Features:
 
-    • Latest event selection per person using clinical_effective_date ordering
+• Latest event selection per person using clinical_effective_date ordering
 
-    • Health check currency flags for programme eligibility assessment
+• Health check currency flags for programme eligibility assessment
 
-    • Time-based calculations for programme planning and invitation scheduling
-
-    • Integration with comprehensive NHS Health Check events for complete programme analysis'
+• Time-based calculations for programme planning and invitation scheduling
+• Integration with comprehensive NHS Health Check events for complete programme analysis'
 
   columns:
   - name: person_id

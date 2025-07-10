@@ -2,26 +2,21 @@
 """
 Fix YAML description spacing across all dbt YAML files.
 
-This script ensures consistent spacing in YAML description blocks:
-1. Two blank lines above headers (lines ending with :) 
-2. One blank line above each bullet point
-3. Removes excessive blank lines between consecutive bullet points
+This script ensures consistent spacing in YAML description blocks to match the good format:
+- Headers (Clinical Purpose:, Data Granularity:, Key Features:) should have a blank line after them
+- Each bullet point should have a blank line before it
 
 Usage:
     python fix_yaml_description_spacing.py [directory]
     
 Arguments:
     directory: Root directory to process (default: models)
-    
-Examples:
-    python fix_yaml_description_spacing.py                    # Process models/ directory
-    python fix_yaml_description_spacing.py models/marts       # Process specific subdirectory
 """
 
 import os
 import sys
 import argparse
-from pathlib import Path
+import re
 
 def fix_description_spacing(content):
     """
@@ -33,112 +28,79 @@ def fix_description_spacing(content):
     lines = content.split('\n')
     fixed_lines = []
     in_description = False
-    description_start_index = None
-    first_content_line_processed = False
     
-    for i, line in enumerate(lines):
+    # Target headers we want to fix
+    target_headers = ['Clinical Purpose:', 'Data Granularity:', 'Key Features:']
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        
         # Check if we're starting a description block
-        if 'description:' in line and not in_description:
+        if re.match(r'\s*description:\s*[\'"]', line) and not in_description:
             in_description = True
-            description_start_index = len(fixed_lines)
-            first_content_line_processed = False
             fixed_lines.append(line)
+            i += 1
             continue
-        
-        # Check if we're ending a description block (new key at same or lesser indentation)
-        if in_description and line.strip():
-            # Get the indentation of the current line
-            current_indent = len(line) - len(line.lstrip())
-            # Get the indentation of the description line
-            desc_line = fixed_lines[description_start_index] if description_start_index is not None else ""
-            desc_indent = len(desc_line) - len(desc_line.lstrip())
             
-            # If current line has same or less indentation and contains a colon (new key), we're out of description
-            if current_indent <= desc_indent and ':' in line and not line.strip().startswith('•'):
-                in_description = False
-                description_start_index = None
-        
+        # Check if we're ending a description block (closing quote)
+        if in_description and (line.strip().endswith('"') or line.strip().endswith("'")):
+            # This is the last line of description
+            fixed_lines.append(line)
+            in_description = False
+            i += 1
+            continue
+            
+        # If we're in a description block, process the content
         if in_description:
             stripped = line.strip()
             
-            # Mark that we've processed the first content line
-            if not first_content_line_processed and stripped:
-                first_content_line_processed = True
+            # Check if this line is one of our target headers
+            is_target_header = any(stripped == header for header in target_headers)
             
             # Check if this is a bullet point
-            is_bullet = (stripped.startswith('•') or 
-                        stripped.startswith('-') or 
-                        stripped.startswith('*'))
+            is_bullet = stripped.startswith('•') or stripped.startswith('-') or stripped.startswith('*')
             
-            # Check if this line is a header (ends with :) and is not a bullet point
-            is_header = (stripped.endswith(':') and 
-                        not is_bullet and
-                        len(stripped) > 1)
-            
-            # Handle spacing logic
-            if is_header:
-                # Add two blank lines above ALL headers (not the very first line of description)
-                if (fixed_lines and fixed_lines[-1].strip() and first_content_line_processed):
-                    # Remove any existing blank lines first
-                    while fixed_lines and not fixed_lines[-1].strip():
-                        fixed_lines.pop()
-                    # Add exactly two blank lines
-                    fixed_lines.extend(['', ''])
-            elif is_bullet:
-                # Add one blank line above ALL bullet points
-                # Remove any existing blank lines first
-                while fixed_lines and not fixed_lines[-1].strip():
-                    fixed_lines.pop()
-                # Add exactly one blank line
-                fixed_lines.append('')
-            
-            fixed_lines.append(line)
-        else:
-            fixed_lines.append(line)
-    
-    return '\n'.join(fixed_lines)
-
-def fix_specific_headers(content, headers=None):
-    """
-    Fix spacing above specific headers (like "Business Logic:").
-    
-    Args:
-        content (str): File content
-        headers (list): List of header patterns to fix (default: ["Business Logic:"])
-        
-    Returns:
-        str: Content with fixed header spacing
-    """
-    if headers is None:
-        headers = ["Business Logic:"]
-    
-    lines = content.split('\n')
-    fixed_lines = []
-    
-    for i, line in enumerate(lines):
-        # Check if this line contains any of the target headers
-        for header in headers:
-            if line.strip().endswith(header):
-                # Remove existing blank lines above
-                while fixed_lines and not fixed_lines[-1].strip():
-                    fixed_lines.pop()
+            if is_target_header:
+                # Add the header line
+                fixed_lines.append(line)
                 
-                # Add exactly 2 blank lines
-                fixed_lines.extend(['', ''])
-                break
-        
-        fixed_lines.append(line)
+                # Check if the next line is empty - if not, we need to add a blank line
+                if i + 1 < len(lines):
+                    next_line = lines[i + 1]
+                    if next_line.strip():  # Next line has content
+                        # Add a blank line after the header
+                        fixed_lines.append('')
+                else:
+                    # This is the last line, add a blank line anyway
+                    fixed_lines.append('')
+                    
+            elif is_bullet:
+                # Check if previous line is empty - if not, we need to add a blank line before bullet
+                if fixed_lines and fixed_lines[-1].strip():
+                    # Previous line has content, add blank line before bullet
+                    fixed_lines.append('')
+                
+                # Add the bullet point
+                fixed_lines.append(line)
+                
+            else:
+                # Regular content line
+                fixed_lines.append(line)
+        else:
+            # Not in description, just copy the line
+            fixed_lines.append(line)
+            
+        i += 1
     
     return '\n'.join(fixed_lines)
 
-def process_yaml_files(directory, fix_headers=True, headers=None):
+def process_yaml_files(directory):
     """
     Process all YAML files in directory and subdirectories.
     
     Args:
         directory (str): Directory path to process
-        fix_headers (bool): Whether to apply specific header fixes
-        headers (list): Specific headers to fix spacing for
         
     Returns:
         tuple: (total_files_found, files_processed)
@@ -159,12 +121,8 @@ def process_yaml_files(directory, fix_headers=True, headers=None):
             with open(yaml_file, 'r', encoding='utf-8') as f:
                 original_content = f.read()
             
-            # Apply general description spacing fixes
+            # Apply spacing fixes
             fixed_content = fix_description_spacing(original_content)
-            
-            # Apply specific header fixes if requested
-            if fix_headers:
-                fixed_content = fix_specific_headers(fixed_content, headers)
             
             # Only write if content changed
             if fixed_content != original_content:
@@ -187,8 +145,6 @@ def main():
 Examples:
   %(prog)s                              # Process models/ directory
   %(prog)s models/marts                 # Process specific subdirectory
-  %(prog)s models --no-headers          # Skip specific header fixes
-  %(prog)s models --headers "Key Features:" "Population Scope:"  # Fix specific headers
         """
     )
     
@@ -199,19 +155,6 @@ Examples:
         help='Directory to process (default: models)'
     )
     
-    parser.add_argument(
-        '--no-headers',
-        action='store_true',
-        help='Skip specific header spacing fixes'
-    )
-    
-    parser.add_argument(
-        '--headers',
-        nargs='*',
-        default=["Business Logic:", "Population Scope:", "Key Features:"],
-        help='Specific headers to fix spacing for'
-    )
-    
     args = parser.parse_args()
     
     # Validate directory exists
@@ -220,12 +163,7 @@ Examples:
         sys.exit(1)
     
     # Process files
-    fix_headers = not args.no_headers
-    total_files, processed_files = process_yaml_files(
-        args.directory, 
-        fix_headers=fix_headers,
-        headers=args.headers if fix_headers else None
-    )
+    total_files, processed_files = process_yaml_files(args.directory)
     
     print(f"\nSummary:")
     print(f"  Total YAML files found: {total_files}")
