@@ -3,6 +3,7 @@ models:
 - name: dim_nhs_health_check_eligibility
   description: 'Eligibility assessment and due status for NHS Health Check programme.
 
+
     Business Logic:
 
     • Determines eligibility based on age 40-74 and absence of excluding chronic conditions

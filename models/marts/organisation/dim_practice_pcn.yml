@@ -3,6 +3,7 @@ models:
 - name: dim_practice_pcn
   description: 'Primary Care Network mapping for organisational hierarchy and network analysis.
 
+
     Business Logic:
 
     • Maps GP practices to Primary Care Networks (PCNs) for organisational hierarchy

@@ -3,6 +3,7 @@ models:
 - name: dim_practice_neighbourhood
   description: 'Geographic context and neighbourhood classification for GP practices.
 
+
     Business Logic:
 
     • Provides geographic context for GP practices including local authority and neighbourhood classification

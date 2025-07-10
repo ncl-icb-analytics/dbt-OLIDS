@@ -3,6 +3,7 @@ models:
 - name: dim_valproate_ppp_status
   description: 'Person-level aggregation of Pregnancy Prevention Programme (PPP) events for valproate monitoring.
 
+
     Business Logic:
 
     • Aggregates all PPP events per person from intermediate PPP status table

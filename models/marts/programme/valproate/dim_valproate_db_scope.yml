@@ -3,6 +3,7 @@ models:
 - name: dim_valproate_db_scope
   description: 'Dashboard scope table - every row should be included in the valproate monitoring dashboard.
 
+
     Business Logic:
 
     • Joins child-bearing age cohort (non-male, 0-55 years) with recent valproate prescriptions (last 6 months)

@@ -3,6 +3,7 @@ models:
 - name: dim_valproate_psychiatry
   description: 'Person-level aggregation of psychiatry-related events for valproate monitoring.
 
+
     Business Logic:
 
     • Aggregates all psychiatry events per person from intermediate psychiatry events table

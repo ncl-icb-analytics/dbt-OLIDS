@@ -3,6 +3,7 @@ models:
 - name: dim_households
   description: 'Geographic and dwelling information for patient household analysis.
 
+
     Business Logic:
 
     • Provides geographic location data including LSOA codes and deprivation indices for household-level health analytics

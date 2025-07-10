@@ -3,6 +3,7 @@ models:
 - name: dim_valproate_araf_referral
   description: 'Person-level aggregation of ARAF referral events for valproate monitoring.
 
+
     Business Logic:
 
     • Aggregates all ARAF referral events per person from intermediate ARAF referral events table

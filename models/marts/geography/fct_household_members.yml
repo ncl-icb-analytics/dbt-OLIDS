@@ -3,6 +3,7 @@ models:
 - name: fct_household_members
   description: 'Bridge table linking patients to households for geographic and social analysis.
 
+
     Business Logic:
 
     • Links people to households through UPRN hash mapping with demographic and registration details

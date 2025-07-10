@@ -3,6 +3,7 @@ models:
 - name: int_valproate_psychiatry_events
   description: 'Extracts all psychiatry-related events from observations using valproate programme codes.
 
+
     Business Logic:
 
     • Joins observations with mapped concepts and valproate programme codes

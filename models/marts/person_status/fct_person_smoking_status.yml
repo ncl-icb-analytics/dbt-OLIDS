@@ -3,6 +3,7 @@ models:
 - name: fct_person_smoking_status
   description: 'Current and historical smoking status for clinical decision support and population health monitoring.
 
+
     Business Logic:
 
     • Provides current smoking status based on most recent clinical observation

@@ -3,6 +3,7 @@ models:
 - name: fct_person_gp_appointments_12m
   description: 'Service usage analytics for primary care appointment activity over 12-month period.
 
+
     Business Logic:
 
     • Calculates total GP appointment count per person per organisation in last 12 months

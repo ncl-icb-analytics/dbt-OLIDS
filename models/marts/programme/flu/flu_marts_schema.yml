@@ -3,6 +3,7 @@ models:
 - name: fct_flu_eligibility_TEMPLATE
   description: 'Template for creating new campaign-specific flu vaccination eligibility fact tables.
 
+
     Business Logic:
 
     • Provides standardised template structure for rapid deployment of new flu vaccination campaigns
@@ -169,6 +170,7 @@ models:
 - name: fct_flu_eligibility_comparison
   description: 'Multi-campaign comparison fact table enabling year-over-year flu vaccination eligibility analysis.
 
+
     Business Logic:
 
     • Enables comparison between flu campaigns for multi-year analysis and trend identification
@@ -313,6 +315,7 @@ models:
       name: priority_within_expected_range
 - name: fct_flu_eligibility_2024_25
   description: 'Comprehensive fact table consolidating all flu vaccination eligibility rules for the 2024-25 campaign.
+
 
     Business Logic:
 

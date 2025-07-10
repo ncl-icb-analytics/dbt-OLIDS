@@ -3,6 +3,7 @@ models:
 - name: dim_valproate_araf
   description: 'Person-level aggregation of Annual Risk Acknowledgement Form (ARAF) events for valproate monitoring.
 
+
     Business Logic:
 
     • Aggregates all ARAF events per person from intermediate ARAF events table

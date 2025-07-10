@@ -3,6 +3,7 @@ models:
 - name: dim_valproate_neurology
   description: 'Person-level aggregation of neurology-related events for valproate monitoring.
 
+
     Business Logic:
 
     • Aggregates all neurology events per person from intermediate neurology events table
