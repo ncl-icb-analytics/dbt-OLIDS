@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_dm_65
-  description: 'Mart: LTC LCS Case Finding DM_65 - Identifies patients with moderate-high BMI requiring diabetes screening using ethnicity-specific thresholds.
+  description: 'Case finding for diabetes screening in patients with moderate-high BMI using ethnicity-specific thresholds.
 
-
-    Business Purpose:
-
-    • Support systematic case finding for diabetes in moderate-risk BMI populations using ethnicity-specific criteria
-
-    • Enable diabetes screening in patients with moderate obesity-related risk lacking recent assessment
-
-    • Provide clinical decision support for comprehensive diabetes screening across BMI risk categories
-
-    • Support quality improvement initiatives for inclusive diabetes prevention and early detection
-
-
-    Data Granularity:
-
-    • One row per person with ethnicity-adjusted moderate-high BMI lacking HbA1c assessment in 24 months
-
-    • Includes BAME patients with BMI 27.5-32.5 and non-BAME patients with BMI 30-35
-
-    • Limited to patients with moderate obesity-related diabetes risk requiring screening
-
-
-    Key Features:
-
-    • Ethnicity-adjusted moderate BMI thresholds (27.5-32.5 BAME, 30-35 non-BAME) for inclusive risk assessment
-
-    • Extended monitoring gap detection (24 months) for moderate-risk diabetes surveillance
-
-    • Evidence-based case finding supporting comprehensive diabetes screening in moderate-risk populations
-
-    • Integration with diabetes prevention pathways for risk-stratified intervention'
+    Business Logic:
+    
+    • Identifies patients with moderate BMI requiring diabetes screening (BAME: 27.5-32.5, non-BAME: 30-35)
+    
+    • Targets patients lacking HbA1c assessment in the last 24 months
+    
+    • Uses ethnicity-specific BMI thresholds recognising different diabetes risk profiles
+    
+    • One row per eligible person with BMI, ethnicity data, and HbA1c monitoring gap'
   columns:
   - name: person_id
     description: Unique identifier for the person

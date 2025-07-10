@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_htn_61
-  description: 'Mart: LTC LCS Case Finding HTN_61 - Identifies patients with severe hypertension requiring urgent blood pressure management and intervention.
+  description: 'Case finding for severe hypertension requiring urgent blood pressure management.
 
-
-    Business Purpose:
-
-    • Support systematic case finding for severe hypertension requiring immediate clinical intervention
-
-    • Enable urgent hypertension management and cardiovascular risk reduction in high-risk populations
-
-    • Provide clinical decision support for blood pressure threshold monitoring and treatment escalation
-
-    • Support quality improvement initiatives for hypertension management and cardiovascular disease prevention
-
-
-    Data Granularity:
-
-    • One row per person with latest blood pressure readings meeting severe hypertension criteria
-
-    • Includes patients with systolic or diastolic blood pressure above severe hypertension thresholds
-
-    • Limited to patients requiring urgent blood pressure intervention and management
-
-
-    Key Features:
-
-    • Severe hypertension identification based on clinical threshold blood pressure measurements
-
-    • Latest blood pressure assessment focus for immediate clinical intervention
-
-    • Evidence-based case finding supporting NICE guidelines for hypertension management
-
-    • Integration with cardiovascular risk management pathways for urgent intervention'
+    Business Logic:
+    
+    • Identifies patients with severe hypertension (clinic BP ≥180/110, home/ABPM ≥165/100)
+    
+    • Targets patients requiring immediate clinical intervention and treatment escalation
+    
+    • Highest priority hypertension category requiring urgent cardiovascular risk management
+    
+    • One row per person with latest blood pressure readings meeting severe criteria'
   columns:
   - name: person_id
     description: Unique identifier for the person

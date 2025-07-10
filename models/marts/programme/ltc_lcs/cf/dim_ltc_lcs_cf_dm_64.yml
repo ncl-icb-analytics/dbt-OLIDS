@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_dm_64
-  description: 'Mart: LTC LCS Case Finding DM_64 - Identifies patients with ethnicity-adjusted high BMI requiring diabetes screening due to lack of recent assessment.
+  description: 'Case finding for diabetes screening in patients with high BMI using ethnicity-specific thresholds.
 
-
-    Business Purpose:
-
-    • Support systematic case finding for diabetes in high-BMI populations using ethnicity-specific thresholds
-
-    • Enable diabetes screening in patients with obesity-related diabetes risk lacking recent assessment
-
-    • Provide clinical decision support for ethnicity-appropriate diabetes screening programmes
-
-    • Support quality improvement initiatives for equitable diabetes prevention and early detection
-
-
-    Data Granularity:
-
-    • One row per person with ethnicity-adjusted high BMI lacking HbA1c assessment in 24 months
-
-    • Includes BAME patients with BMI ≥32.5 and non-BAME patients with BMI ≥35
-
-    • Limited to patients with obesity-related diabetes risk requiring screening
-
-
-    Key Features:
-
-    • Ethnicity-adjusted BMI thresholds (≥32.5 BAME, ≥35 non-BAME) for appropriate diabetes risk assessment
-
-    • Extended monitoring gap detection (24 months) for obesity-related diabetes surveillance
-
-    • Evidence-based case finding supporting NICE guidelines for diabetes screening in high-risk populations
-
-    • Integration with diabetes prevention pathways for ethnicity-appropriate intervention'
+    Business Logic:
+    
+    • Identifies patients with high BMI requiring diabetes screening (BAME: ≥32.5, non-BAME: ≥35)
+    
+    • Targets patients lacking HbA1c assessment in the last 24 months
+    
+    • Uses ethnicity-specific BMI thresholds for appropriate diabetes risk assessment
+    
+    • One row per eligible person with BMI, ethnicity data, and HbA1c monitoring gap'
   columns:
   - name: person_id
     description: Unique identifier for the person

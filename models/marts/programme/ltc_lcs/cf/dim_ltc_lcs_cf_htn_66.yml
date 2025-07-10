@@ -1,38 +1,17 @@
 version: 2
 models:
 - name: dim_ltc_lcs_cf_htn_66
-  description: 'Mart: LTC LCS Case Finding HTN_66 - Identifies patients with stage 1 hypertension without cardiovascular risk factors requiring lifestyle intervention focus.
+  description: 'Case finding for stage 1 hypertension without cardiovascular risk factors.
 
-
-    Business Purpose:
-
-    • Support systematic case finding for stage 1 hypertension without additional cardiovascular risk factors
-
-    • Enable lifestyle-focused intervention for patients with isolated stage 1 hypertension
-
-    • Provide clinical decision support for low-risk hypertension management approaches
-
-    • Support quality improvement initiatives for comprehensive hypertension care across risk categories
-
-
-    Data Granularity:
-
-    • One row per person with stage 1 hypertension without additional cardiovascular risk factors
-
-    • Includes patients suitable for lifestyle intervention rather than immediate pharmacological treatment
-
-    • Limited to patients with isolated stage 1 hypertension requiring monitoring and lifestyle support
-
-
-    Key Features:
-
-    • Stage 1 hypertension identification without cardiovascular risk factor complications
-
-    • Lifestyle intervention focus for patients with lower overall cardiovascular risk
-
-    • Evidence-based case finding supporting risk-stratified hypertension management
-
-    • Integration with lifestyle intervention pathways for comprehensive non-pharmacological care'
+    Business Logic:
+    
+    • Identifies patients with stage 1 hypertension (clinic BP 140-159/90-99, home/ABPM 135-149/85-94)
+    
+    • Excludes patients with existing cardiovascular risk factors or complications
+    
+    • Targets patients suitable for lifestyle intervention rather than immediate drug treatment
+    
+    • One row per eligible person with latest blood pressure readings and risk factor status'
   columns:
   - name: person_id
     description: Unique identifier for the person
