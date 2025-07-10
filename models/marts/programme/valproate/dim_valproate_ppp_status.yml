@@ -1,38 +1,14 @@
 version: 2
 models:
 - name: dim_valproate_ppp_status
-  description: 'Mart: Valproate PPP Status - Person-level aggregation of Pregnancy Prevention Programme events for valproate safety monitoring and reproductive health management.
+  description: 'Person-level aggregation of Pregnancy Prevention Programme (PPP) events for valproate monitoring.
 
-
-    Business Purpose:
-
-    • Support valproate safety monitoring through Pregnancy Prevention Programme compliance tracking
-
-    • Enable systematic monitoring of reproductive health safeguards for valproate therapy in women
-
-    • Provide clinical decision support for PPP compliance and contraceptive counselling
-
-    • Support quality improvement initiatives for teratogenicity prevention and reproductive safety
-
-
-    Data Granularity:
-
-    • One row per person with PPP-related events in valproate safety monitoring
-
-    • Aggregates all PPP events with comprehensive reproductive health safeguard tracking
-
-    • Includes complete PPP compliance history for reproductive safety assessment
-
-
-    Key Features:
-
-    • Person-level PPP event aggregation with complete reproductive health safeguard history
-
-    • Comprehensive PPP compliance tracking for monitoring pregnancy prevention effectiveness
-
-    • Evidence-based PPP assessment supporting regulatory compliance and reproductive safety
-
-    • Integration with reproductive health pathways for systematic pregnancy prevention management'
+    Business Logic:
+    • Aggregates all PPP events per person from intermediate PPP status table
+    • Determines latest PPP status and enrollment (is_currently_ppp_enrolled from most recent event)
+    • Includes arrays of all observation IDs, concept codes, and displays for traceability
+    • Provides current PPP status description with formatted date
+    • Only includes people who have PPP events (has_ppp_event always TRUE)'
   columns:
   - name: person_id
     description: Unique identifier for the person.

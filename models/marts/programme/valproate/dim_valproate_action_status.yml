@@ -1,25 +1,13 @@
 version: 2
 models:
 - name: dim_valproate_action_status
-  description: 'Mart: Valproate Action Status - Clinical decision support for valproate safety monitoring with recommended actions based on patient status.
+  description: 'Clinical decision support table implementing valproate safety monitoring logic with recommended actions.
 
-
-    Population Scope:
-
-    • Patients on valproate therapy requiring safety monitoring
-
-    • Women of childbearing age (0-55 years) with valproate prescriptions
-
-    • Includes all patients with valproate medication orders and clinical dependencies
-
-
-    Key Features:
-
-    • Clinical decision logic for safety monitoring and intervention recommendations
-
-    • Comprehensive status assessment including PPP status and clinical dependencies
-
-    • Evidence-based action recommendations supporting regulatory compliance'
+    Business Logic:
+    • Joins database scope with all dimension tables (PPP, ARAF, referrals, specialists, pregnancy)
+    • Implements CASE-based decision logic for recommended actions based on patient status
+    • Actions include: pregnancy review, PPP enrollment check, ARAF compliance, specialist monitoring
+    • Provides consolidated view of all patient safety monitoring dimensions for decision support'
   columns:
   - name: person_id
     description: Unique identifier for the person.

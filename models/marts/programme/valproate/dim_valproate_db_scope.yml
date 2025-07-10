@@ -1,38 +1,12 @@
 version: 2
 models:
 - name: dim_valproate_db_scope
-  description: 'Mart: Valproate Database Scope - Defines cohort of non-male individuals aged 0-55 with recent valproate prescriptions requiring safety monitoring.
+  description: 'Dashboard scope table - every row should be included in the valproate monitoring dashboard.
 
-
-    Business Purpose:
-
-    • Support valproate safety monitoring programme by defining target population for regulatory compliance
-
-    • Enable systematic identification of patients requiring valproate-related safety interventions
-
-    • Provide clinical decision support for valproate prescribing safety in reproductive-age populations
-
-    • Support quality improvement initiatives for medication safety and teratogenicity risk management
-
-
-    Data Granularity:
-
-    • One row per non-male person aged 0-55 with valproate prescription in last 6 months
-
-    • Includes most recent valproate prescription details and patient demographics
-
-    • Limited to target population requiring valproate safety monitoring and intervention
-
-
-    Key Features:
-
-    • Age and gender-based cohort definition (non-male, 0-55 years) for appropriate safety monitoring
-
-    • Recent prescription tracking (6 months) for current valproate therapy identification
-
-    • Evidence-based cohort criteria supporting regulatory compliance and patient safety
-
-    • Integration with valproate safety monitoring pathways for systematic patient management'
+    Business Logic:
+    • Joins child-bearing age cohort (non-male, 0-55 years) with recent valproate prescriptions (last 6 months)
+    • One row per person with their most recent valproate prescription details
+    • Only includes patients meeting both criteria: correct age/gender AND recent valproate therapy'
   columns:
   - name: person_id
     description: Unique identifier for a person

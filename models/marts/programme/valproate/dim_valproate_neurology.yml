@@ -1,38 +1,13 @@
 version: 2
 models:
 - name: dim_valproate_neurology
-  description: 'Mart: Valproate Neurology Status - Person-level aggregation of neurology-related events for valproate therapy monitoring and specialist care coordination.
+  description: 'Person-level aggregation of neurology-related events for valproate monitoring.
 
-
-    Business Purpose:
-
-    • Support valproate safety monitoring through neurology specialist engagement tracking and care coordination
-
-    • Enable systematic monitoring of neurological care requirements for valproate therapy management
-
-    • Provide clinical decision support for neurology specialist involvement and treatment oversight
-
-    • Support quality improvement initiatives for comprehensive neurological care and medication safety
-
-
-    Data Granularity:
-
-    • One row per person with neurology-related events in valproate therapy monitoring
-
-    • Aggregates all neurology events with earliest and latest specialist engagement tracking
-
-    • Includes comprehensive neurology care history for specialist coordination assessment
-
-
-    Key Features:
-
-    • Person-level neurology event aggregation with complete specialist care history
-
-    • Earliest and latest neurology engagement tracking for monitoring care coordination effectiveness
-
-    • Evidence-based neurology care assessment supporting comprehensive valproate therapy management
-
-    • Integration with neurology care pathways for systematic specialist engagement and monitoring'
+    Business Logic:
+    • Aggregates all neurology events per person from intermediate neurology events table
+    • Provides earliest and latest neurology event dates for timeline analysis
+    • Includes arrays of all observation IDs, concept codes, and displays for traceability
+    • Only includes people who have neurology events (has_neurology_event always TRUE)'
   columns:
   - name: person_id
     description: Unique identifier for the person.
