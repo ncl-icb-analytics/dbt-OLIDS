@@ -79,10 +79,15 @@ models:
     description: 'Type of observation: BP_SYSTOLIC, BP_DIASTOLIC, or OTHER'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - BP_SYSTOLIC
+
         - BP_DIASTOLIC
+
         - OTHER

@@ -4,35 +4,34 @@ models:
   description: 'Intermediate: Cervical Screening Latest - Most recent cervical screening status per person for current programme management.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Current cervical screening status determination for programme coordination
+• Current cervical screening status determination for programme coordination
 
-    • Real-time screening eligibility and invitation management
+• Real-time screening eligibility and invitation management
 
-    • Clinical decision support for current screening requirements
+• Clinical decision support for current screening requirements
 
-    • Programme monitoring and individual patient pathway management
-
-
-    Data Granularity:
-
-    • One row per person representing most recent cervical screening observation
-
-    • Simple latest record selection without date-based business logic
-
-    • Includes all persons regardless of status for comprehensive programme coverage
+• Programme monitoring and individual patient pathway management
 
 
-    Key Features:
+Data Granularity:
 
-    • Latest screening status with comprehensive cytology and risk information
+• One row per person representing most recent cervical screening observation
 
-    • Current clinical action requirements and follow-up determination
+• Uses simple latest record selection without date-based business logic
 
-    • Foundation for person-level screening programme analysis
+• Includes all persons regardless of status for comprehensive programme coverage
 
-    • Essential for real-time programme management and patient care coordination'
+
+Key Features:
+
+• Latest screening status with comprehensive cytology and risk information
+
+• Current clinical action requirements and follow-up determination
+
+• Foundation for person-level screening programme analysis
+• Essential for real-time programme management and patient care coordination'
 
   columns:
   - name: observation_id

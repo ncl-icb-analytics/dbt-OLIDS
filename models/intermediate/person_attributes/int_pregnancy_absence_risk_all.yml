@@ -1,38 +1,33 @@
 version: 2
 models:
 - name: int_pregnancy_absence_risk_all
-  description: 'Intermediate: Pregnancy Absence Risk All - Complete history of all observations indicating permanent absence of pregnancy risk for clinical safety.
+  description: 'Intermediate: Pregnancy Absence Risk All - Complete history of all observations indicating permanent absence of pregnancy risk.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Valproate medication safety monitoring and pregnancy risk assessment
+• Valproate medication safety monitoring and pregnancy risk assessment
 
-    • Clinical decision support for contraindicated medications during pregnancy
+• Clinical decision support for contraindicated medications during pregnancy
 
-    • Safety-critical pharmaceutical prescribing and monitoring
-
-    • Reproductive health risk stratification and patient safety protocols
+• Safety-critical pharmaceutical prescribing and monitoring
 
 
-    Data Granularity:
+Data Granularity:
 
-    • One row per pregnancy absence risk observation
+• One row per pregnancy absence risk observation
 
-    • Uses PREGRISK category codes from valproate programme
+• Uses PREGRISK category codes from valproate programme
 
-    • Includes all patients regardless of status for comprehensive safety monitoring
+• Includes all patients regardless of status for comprehensive safety monitoring
 
 
-    Key Features:
+Key Features:
 
-    • Permanent pregnancy risk absence indicators for medication safety
+• Permanent pregnancy risk absence indicators for medication safety
 
-    • Critical for teratogenic medication prescribing decisions
-
-    • Essential for clinical safety and pharmaceutical risk management
-
-    • Supports reproductive health and medication safety protocols'
+• Critical for teratogenic medication prescribing decisions
+• Essential for clinical safety and pharmaceutical risk management'
 
   config:
     materialized: table

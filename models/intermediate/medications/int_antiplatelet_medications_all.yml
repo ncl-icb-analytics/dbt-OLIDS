@@ -1,36 +1,35 @@
 version: 2
 models:
 - name: int_antiplatelet_medications_all
-  description: 'Intermediate: Antiplatelet Medication Orders - All recorded antiplatelet prescriptions.
+  description: 'Intermediate: Antiplatelet Medications - All recorded antiplatelet prescriptions.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Tracks antiplatelet therapy for cardiovascular protection and thrombosis prevention
+• Supports cardiovascular protection and thrombosis prevention monitoring
 
-    • Supports dual antiplatelet therapy (DAPT) monitoring and medication review processes
+• Enables dual antiplatelet therapy (DAPT) pathway tracking
 
-    • Enables analysis of prescribing patterns by P2Y12 inhibitor usage
-
-
-    Data Granularity:
-
-    • One row per medication order
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Historical data maintained for longitudinal analysis
+• Facilitates P2Y12 inhibitor prescribing pattern analysis
 
 
-    Key Features:
+Data Granularity:
 
-    • Classification by specific antiplatelet type (aspirin, clopidogrel, ticagrelor, etc.)
+• One row per medication order
 
-    • P2Y12 inhibitor identification for DAPT analysis
+• Includes all patients with antiplatelet prescriptions
 
-    • Evidence-based therapy flags with clinical trial references
+• Historical data spanning entire medication history
 
-    • Low-dose aspirin identification for cardioprotection'
+
+Key Features:
+
+• Specific antiplatelet type classification (aspirin, clopidogrel, ticagrelor, etc.)
+
+• P2Y12 inhibitor identification for DAPT analysis
+
+• Evidence-based therapy flags with clinical trial references
+• Low-dose aspirin identification for cardioprotection'
 
   columns:
   - name: person_id

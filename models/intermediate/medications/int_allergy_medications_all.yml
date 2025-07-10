@@ -4,36 +4,35 @@ models:
   tests:
   - bnf_codes_exist:
       bnf_codes: '0304'
-  description: 'Intermediate: Allergy Medication Orders - All recorded antihistamine and allergy treatment prescriptions.
+  description: 'Intermediate: Allergy Medications - All recorded antihistamine and allergy treatment prescriptions.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Tracks antihistamine therapy for allergic conditions (rhinitis, urticaria, eczema)
+• Supports allergic condition monitoring (rhinitis, urticaria, eczema)
 
-    • Supports allergy management and medication review processes
+• Enables allergy management pathway tracking and medication review processes
 
-    • Enables analysis of prescribing patterns by sedation profile and administration route
-
-
-    Data Granularity:
-
-    • One row per medication order
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Historical data maintained for longitudinal analysis
+• Facilitates prescribing pattern analysis by sedation profile and administration route
 
 
-    Key Features:
+Data Granularity:
 
-    • Classification by antihistamine type and sedation profile (sedating vs non-sedating)
+• One row per medication order
 
-    • Route of administration categorisation (oral, topical, injection)
+• Includes all patients with allergy medication prescriptions
 
-    • Clinical indication mapping (allergic rhinitis, urticaria, eczema)
+• Historical data spanning entire medication history
 
-    • Over-the-counter availability and safety warning flags'
+
+Key Features:
+
+• Antihistamine type classification with sedation profile (sedating vs non-sedating)
+
+• Route of administration categorisation (oral, topical, injection)
+
+• Clinical indication mapping for specific allergic conditions
+• Over-the-counter availability and safety warning flags'
 
   columns:
   - name: person_id

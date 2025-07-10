@@ -60,6 +60,7 @@ models:
   - name: earliest_unresolved_diagnosis_date
     description: 'QOF Field 22: EUNRESCOPD_DAT - earliest unresolved COPD diagnosis per exact QOF calculation'
     data_type: date
+
   - name: earliest_diagnosis_date
     description: 'QOF Field 4: COPD_DAT - earliest COPD diagnosis'
     data_type: date
@@ -71,13 +72,16 @@ models:
     data_type: date
 
     tests:
+
     - not_null
+
   - name: latest_resolved_date
     description: 'QOF Field 6: COPDRES_DAT - latest COPD resolved code after latest diagnosis'
     data_type: date
   - name: latest_resolved_after_earliest_date
     description: 'QOF Field 20: COPDRES1_DAT - latest COPD resolved code after earliest diagnosis'
     data_type: date
+
   - name: earliest_diagnosis_after_latest_resolved
     description: 'QOF Field 21: COPD1_DAT - earliest COPD diagnosis after latest resolved code'
     data_type: date

@@ -54,12 +54,17 @@ models:
     description: 'Boolean flag: TRUE if person has IGT (Impaired Glucose Tolerance) diagnosis'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: has_prd_diagnosis
     description: 'Boolean flag: TRUE if person has PRD (Pre-diabetes) diagnosis'
 
@@ -74,11 +79,15 @@ models:
     description: 'Boolean flag: TRUE if person has ever had diabetes diagnosis'
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: is_diabetes_resolved
     description: 'Boolean flag: TRUE if person''s diabetes is resolved (required for register inclusion if ever had diabetes)'
 
@@ -108,8 +117,11 @@ models:
     description: 'Boolean flag: TRUE if person has any NDH/IGT/PRD diagnosis'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true

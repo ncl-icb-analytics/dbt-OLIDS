@@ -30,8 +30,11 @@ models:
     description: 'Register flag: has FH diagnosis (always TRUE for this table)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true

@@ -4,38 +4,36 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: EPIL_COD, EPILRES_COD
-  description: 'Intermediate: Epilepsy Diagnoses All - Complete history of all epilepsy diagnosis and resolution observations for QOF register management.
+  description: 'Intermediate: Epilepsy Diagnoses - All recorded epilepsy diagnosis and resolution observations for QOF register management.
 
 
     Clinical Purpose:
 
-    • QOF epilepsy register data collection and monitoring
+    • Supports QOF epilepsy register maintenance and reporting
 
-    • Epilepsy care pathway coordination and seizure management tracking
+    • Tracks epilepsy diagnoses and resolution/remission status
 
-    • Neurological treatment monitoring and clinical decision support
-
-    • Resolution status tracking for improved neurological outcomes
+    • Enables comprehensive epilepsy patient identification and management
 
 
     Data Granularity:
 
     • One row per epilepsy diagnosis or resolution observation
 
-    • Uses EPI_COD (diagnosis) and EPIRES_COD (resolved) QOF clusters
+    • Includes all patients with epilepsy-related codes regardless of current status
 
-    • Includes all patients regardless of status for comprehensive QOF reporting
+    • Uses cluster IDs: EPIL_COD (diagnosis), EPILRES_COD (resolution)
 
 
     Key Features:
 
-    • Diagnosis and resolution code classification for register eligibility
+    • Captures both diagnosis and resolution codes in single dataset
 
-    • Age restrictions typically ≥18 years applied in downstream processing
+    • Provides earliest/latest dates for diagnosis and resolution events
 
-    • Critical for epilepsy care pathway optimisation
+    • Includes comprehensive arrays of all related concept codes per person
 
-    • Essential input for neurological quality improvement initiatives'
+    • Supports QOF register calculation and clinical pathway tracking'
 
   columns:
   - name: person_id
