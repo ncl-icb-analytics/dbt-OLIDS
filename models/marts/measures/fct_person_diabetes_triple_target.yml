@@ -53,7 +53,6 @@ models:
         - Type 1
         - Type 2
         - Unknown
-        severity: warn
   - name: latest_hba1c_date
     description: Date of most recent HbA1c test
 
@@ -66,7 +65,6 @@ models:
     - dbt_utils.accepted_range:
         min_value: 10
         max_value: 300
-        severity: warn
   - name: hba1c_type
     description: 'HbA1c measurement type: ''IFCC'' (mmol/mol) or ''DCCT'' (%)'
 
@@ -79,8 +77,6 @@ models:
         - IFCC
 
         - DCCT
-        severity: warn
-
   - name: latest_bp_date
     description: Date of most recent blood pressure reading
 
@@ -96,8 +92,6 @@ models:
     - dbt_utils.accepted_range:
         min_value: 40
         max_value: 350
-        severity: warn
-
   - name: latest_diastolic
     description: Most recent diastolic blood pressure (mmHg)
 
@@ -106,8 +100,6 @@ models:
     - dbt_utils.accepted_range:
         min_value: 20
         max_value: 200
-        severity: warn
-
   - name: latest_chol_date
     description: Date of most recent total cholesterol test
 
@@ -123,8 +115,6 @@ models:
     - dbt_utils.accepted_range:
         min_value: 1
         max_value: 15
-        severity: warn
-
   - name: hba1c_in_target_range
     description: TRUE if latest HbA1c is in target range (< 58 mmol/mol or < 7.5%)
 

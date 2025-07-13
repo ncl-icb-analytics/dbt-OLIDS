@@ -85,7 +85,6 @@ models:
         - Stage 2 HTN
         - Stage 1 HTN
         - Normal / High Normal
-        severity: warn
   - name: meets_age_criteria
     description: Flag indicating if person meets age ≥18 requirement
 
