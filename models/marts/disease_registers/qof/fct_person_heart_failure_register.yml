@@ -69,12 +69,17 @@ models:
     description: 'Boolean flag: TRUE if person has ever had HF due to LVSD diagnosis'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: has_reduced_ef_diagnosis
     description: 'Boolean flag: TRUE if person has ever had HF due to reduced ejection fraction diagnosis'
 
@@ -95,11 +100,15 @@ models:
     description: 'Boolean flag: TRUE (no age restrictions for HF register)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
   - name: has_active_diagnosis
     description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
 

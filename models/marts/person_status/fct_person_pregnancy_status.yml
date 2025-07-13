@@ -69,12 +69,17 @@ models:
     description: 'Flag: TRUE if age 12-55 inclusive (standard child-bearing age)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: is_child_bearing_age_0_55
     description: 'Flag: TRUE if age 0-55 inclusive (extended age range)'
 
@@ -89,24 +94,34 @@ models:
     description: 'Flag: TRUE if person has permanent absence of pregnancy risk (e.g., hysterectomy)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: all_preg_concept_codes
     description: Array of all pregnancy-related concept codes for traceability
 
     tests:
+
     - not_null
+
   - name: all_preg_concept_displays
     description: Array of all pregnancy-related concept displays for traceability
 
     tests:
+
     - not_null
+
   - name: all_preg_source_cluster_ids
     description: Array of all pregnancy-related cluster IDs (PREG_COD, PREGDEL_COD)
 
     tests:
+
     - not_null

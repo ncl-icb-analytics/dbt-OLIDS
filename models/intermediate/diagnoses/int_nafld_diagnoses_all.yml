@@ -1,38 +1,37 @@
 version: 2
 models:
 - name: int_nafld_diagnoses_all
-  description: 'Intermediate: NAFLD Diagnoses All - Complete history of all Non-Alcoholic Fatty Liver Disease diagnosis observations from clinical records.
+  description: 'Intermediate: NAFLD Diagnoses - All Non-Alcoholic Fatty Liver Disease diagnosis observations from clinical records.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • NAFLD diagnosis tracking and liver health assessment
+• NAFLD diagnosis tracking and liver health assessment
 
-    • Metabolic syndrome monitoring and risk stratification
+• Metabolic syndrome monitoring and risk stratification
 
-    • Potential QOF register development preparation
-
-    • Integration with diabetes and obesity management pathways
+• Integration with diabetes and obesity management pathways
 
 
-    Data Granularity:
+Data Granularity:
 
-    • One row per NAFLD diagnosis observation
+• One row per NAFLD diagnosis observation
 
-    • Includes all diagnosis dates for complete clinical history
+• Includes all patients with recorded NAFLD diagnoses
 
-    • Uses hardcoded SNOMED concepts (pending NAFLD_COD cluster availability)
+• Complete clinical history with all diagnosis dates
+
+• Uses hardcoded SNOMED concepts (pending NAFLD_COD cluster availability)
 
 
-    Key Features:
+Key Features:
 
-    • Progressive liver disease monitoring capability
+• Progressive liver disease monitoring capability
 
-    • Links to metabolic risk factors and comorbidities
+• Links to metabolic risk factors and comorbidities
 
-    • Awaiting formal cluster implementation
-
-    • Supports comprehensive liver health assessment'
+• Awaiting formal cluster implementation for complete coverage
+• Supports comprehensive liver health assessment'
 
   columns:
   - name: person_id

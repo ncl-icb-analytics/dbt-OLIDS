@@ -3,8 +3,7 @@ models:
 - name: int_hba1c_latest
   description: 'Intermediate: Latest HbA1c Observations - Most recent valid HbA1c measurement per person.
 
-
-    Clinical Purpose:
+    Clinical Logic:
 
     • Provides current glycaemic control status for diabetes management
 

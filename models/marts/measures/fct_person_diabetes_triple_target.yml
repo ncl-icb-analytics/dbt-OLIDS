@@ -69,20 +69,26 @@ models:
     description: 'HbA1c measurement type: ''IFCC'' (mmol/mol) or ''DCCT'' (%)'
 
     tests:
+
     - accepted_values:
 
         values:
+
         - IFCC
+
         - DCCT
   - name: latest_bp_date
     description: Date of most recent blood pressure reading
 
     tests:
+
     - test_no_future_dates
+
   - name: latest_systolic
     description: Most recent systolic blood pressure (mmHg)
 
     tests:
+
     - dbt_utils.accepted_range:
         min_value: 40
         max_value: 350
@@ -90,6 +96,7 @@ models:
     description: Most recent diastolic blood pressure (mmHg)
 
     tests:
+
     - dbt_utils.accepted_range:
         min_value: 20
         max_value: 200
@@ -97,11 +104,14 @@ models:
     description: Date of most recent total cholesterol test
 
     tests:
+
     - test_no_future_dates
+
   - name: latest_chol_value
     description: Most recent total cholesterol level (mmol/L)
 
     tests:
+
     - dbt_utils.accepted_range:
         min_value: 1
         max_value: 15
@@ -109,90 +119,130 @@ models:
     description: TRUE if latest HbA1c is in target range (< 58 mmol/mol or < 7.5%)
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: bp_in_target_range
     description: TRUE if latest BP is in target range (Systolic < 140 AND Diastolic < 80)
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: cholesterol_in_target_range
     description: TRUE if latest cholesterol is in target range (< 5 mmol/L)
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: all_three_targets_met
     description: TRUE if all three targets (HbA1c, BP, cholesterol) are achieved
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: hba1c_measured_in_last_12m
     description: TRUE if HbA1c measured within last 12 months
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: bp_measured_in_last_12m
     description: TRUE if blood pressure measured within last 12 months
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: cholesterol_measured_in_last_12m
     description: TRUE if cholesterol measured within last 12 months
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: hba1c_recent_but_out_of_range
     description: TRUE if HbA1c measured recently (last 12m) but not in target range
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: bp_recent_but_out_of_range
     description: TRUE if BP measured recently (last 12m) but not in target range
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false
+
   - name: cholesterol_recent_but_out_of_range
     description: TRUE if cholesterol measured recently (last 12m) but not in target range
 
     tests:
+
     - accepted_values:
 
         values:
+
         - true
+
         - false

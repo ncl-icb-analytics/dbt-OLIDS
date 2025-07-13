@@ -3,33 +3,21 @@ models:
 - name: int_flu_age_birth_range_rules
   description: 'Intermediate: Flu Age Birth Range Rules - Birth date range eligibility for flu vaccination programme child populations.
 
-
 Clinical Purpose:
-
 • Determines child eligibility based on specific birth date ranges for flu vaccination
-
 • Supports age-based targeting for child populations aged 2-3 and 4-16 years
-
 • Ensures accurate campaign-specific date calculations for childhood flu programmes
 
-
 Data Granularity:
-
 • One row per eligible child per campaign rule group
-
 • Includes children aged 2-3 years (born Sept 2020 - Aug 2022 for 2024-25 campaign)
-
 • Covers school children aged 4-16 years (Reception to Year 11)
-
 • Filtered to current campaign configuration
 
 
 Key Features:
-
 • Campaign-configurable birth date ranges for different child age groups
-
 • Age calculations in both months and years at reference date
-
 • Integration with flu programme logic and campaign dates
 • Replacement for age birth range functionality in apply_flu_rule macro'
 
@@ -82,35 +70,22 @@ Key Features:
 - name: int_flu_ckd_hierarchical_eligibility
   description: 'Intermediate: Flu CKD Hierarchical Eligibility - Flu vaccination eligibility for patients with chronic kidney disease using hierarchical staging logic.
 
-
 Clinical Purpose:
-
 • Identifies patients with chronic kidney disease who qualify for flu vaccination
-
 • Implements hierarchical logic prioritising more recent severe CKD stages over general CKD codes
-
 • Supports clinical targeting for high-risk renal disease patients
-
 • Ensures evidence-based flu vaccination for CKD patients with appropriate staging
 
-
 Data Granularity:
-
 • One row per eligible person aged 6 months to 65 years with documented CKD
-
 • Includes patients with CKD diagnosis OR CKD stage 3-5 more recent than any-stage CKD code
-
 • Filtered to current campaign with qualifying CKD clinical evidence
-
 • Contains hierarchical evidence selection for patients with multiple CKD records
 
 
 Key Features:
-
 • Multi-path eligibility: CKD diagnosis OR hierarchical stage 3-5 evidence
-
 • Hierarchical staging logic ensuring severe stages take precedence
-
 • Age restrictions: 6 months to 65 years at reference date
 • Evidence dating logic to prioritise recent severe CKD stages'
 
@@ -149,35 +124,22 @@ Key Features:
 - name: int_flu_bmi_hierarchical_eligibility
   description: 'Intermediate: Flu BMI Hierarchical Eligibility - Flu vaccination eligibility for adults with severe obesity using hierarchical BMI evidence.
 
-
 Clinical Purpose:
-
 • Identifies adults with severe obesity (BMI 40+) who qualify for flu vaccination
-
 • Implements complex hierarchical logic prioritising most recent and severe obesity evidence
-
 • Supports clinical targeting for high-risk metabolic disease patients
-
 • Ensures evidence-based flu vaccination for morbidly obese patients
 
-
 Data Granularity:
-
 • One row per eligible adult aged 18-64 years with severe obesity evidence
-
 • Includes patients with BMI >= 40 or severe obesity clinical coding
-
 • Filtered to current campaign with qualifying clinical evidence
-
 • Contains hierarchical evidence selection for patients with multiple BMI records
 
 
 Key Features:
-
 • Multi-path eligibility: BMI >= 40 values OR severe obesity diagnostic codes
-
 • Hierarchical logic ensuring most recent and severe evidence takes precedence
-
 • Age restrictions: 18-64 years (216 months to 65 years)
 • Evidence dating logic to prioritise clinical codes over measured BMI values'
 
@@ -216,35 +178,22 @@ Key Features:
 - name: int_flu_pregnancy_hierarchical_eligibility
   description: 'Intermediate: Flu Pregnancy Hierarchical Eligibility - Flu vaccination eligibility for pregnant women using hierarchical pregnancy evidence.
 
-
 Clinical Purpose:
-
 • Identifies pregnant women who qualify for flu vaccination based on hierarchical pregnancy evidence
-
 • Prioritises current pregnancies since campaign start over historical pregnancy status
-
 • Supports clinical targeting for high-risk maternal and foetal health protection
-
 • Ensures evidence-based flu vaccination for pregnant women with appropriate timing logic
 
-
 Data Granularity:
-
 • One row per eligible woman aged 12-64 years with documented pregnancy
-
 • Group 1: Pregnancy since campaign start date (highest priority)
-
 • Group 2: Latest pregnancy before start where pregnancy is more recent than delivery
-
 • Filtered to current campaign with qualifying pregnancy evidence
 
 
 Key Features:
-
 • Hierarchical pregnancy logic prioritising current over historical pregnancies
-
 • Campaign timing logic ensuring pregnancy relevance to flu season
-
 • Age and sex restrictions: women aged 12-64 years (144 months to 65 years)
 • Evidence dating logic comparing pregnancy vs delivery events for historical cases'
 
@@ -291,35 +240,22 @@ Key Features:
 - name: int_flu_remaining_simple_eligibility
   description: 'Intermediate: Flu Remaining Simple Eligibility - Remaining single-cluster eligibility rules for specific flu vaccination clinical conditions.
 
-
 Clinical Purpose:
-
 • Evaluates chronic neurological disease eligibility for flu vaccination
-
 • Processes asplenia and spleen dysfunction eligibility criteria
-
 • Implements learning disability flu vaccination targeting
-
 • Complements main simple rules model with specific clinical condition groups
 
-
 Data Granularity:
-
 • One row per eligible person aged 6 months to 65 years per rule group
-
 • CNS_GROUP: chronic neurological conditions (MS, motor neurone disease)
-
 • ASPLENIA_GROUP: asplenia or splenic dysfunction
-
 • LEARNDIS_GROUP: learning disabilities
 
 
 Key Features:
-
 • Single-cluster evaluation per rule group with specific clinical conditions
-
 • Date qualifier logic: earliest for CNS/asplenia, latest for learning disabilities
-
 • Age restrictions: 6 months to 65 years at reference date
 • Complements main simple rules model with targeted clinical groups'
 
@@ -356,35 +292,22 @@ Key Features:
 - name: int_flu_remaining_combination_eligibility
   description: 'Intermediate: Flu Remaining Combination Eligibility - Remaining combination eligibility rules requiring multiple conditions with AND/OR logic.
 
-
 Clinical Purpose:
-
 • Implements immunosuppression eligibility using multiple evidence types (diagnosis OR medication OR treatment)
-
 • Processes respiratory disease eligibility combining asthma and respiratory diagnoses
-
 • Supports complex clinical targeting for high-risk patients with multiple qualifying pathways
-
 • Complements main combination rules model with specific immunosuppression and respiratory logic
 
-
 Data Granularity:
-
 • One row per eligible person aged 6 months to 65 years per rule group
-
 • IMMUNO_GROUP: diagnosis OR medication OR administration OR chemotherapy evidence
-
 • RESP_GROUP: asthma eligibility OR chronic respiratory disease diagnosis
-
 • Filtered to current campaign with hierarchical evidence selection
 
 
 Key Features:
-
 • Multi-evidence immunosuppression logic with lookback date constraints
-
 • Respiratory disease union logic combining asthma and respiratory diagnoses
-
 • Evidence hierarchy selection using most recent qualifying evidence
 • Age restrictions: 6 months to 65 years at reference date'
 
@@ -423,34 +346,37 @@ Key Features:
   description: 'Intermediate: Flu Carer Exclusion Eligibility - Determines flu vaccination eligibility for unpaid carers with exclusion logic for those already eligible.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• Identifies unpaid carers aged 5-64 who qualify for flu vaccination
+    • Identifies unpaid carers aged 5-64 who qualify for flu vaccination
 
-• Implements exclusion logic to prevent double-counting carers already eligible under clinical risk groups
+    • Implements exclusion logic to prevent double-counting carers already eligible under clinical risk groups
 
-• Supports expansion of flu vaccination programme to include social care roles
+    • Ensures accurate targeting of additional vulnerable populations not covered by clinical criteria
 
-
-Data Granularity:
-
-• One row per eligible carer aged 5-64 years not already qualifying under clinical conditions
-
-• Requires latest carer code more recent than any "not carer" code
-
-• Excludes carers already eligible under clinical risk groups, BMI, or pregnancy
-
-• Filtered to current campaign with qualifying carer status
+    • Supports expansion of flu vaccination programme to include social care roles
 
 
-Key Features:
+    Data Granularity:
 
-• Hierarchical carer status logic prioritising latest carer vs not-carer codes
+    • One row per eligible carer aged 5-64 years not already qualifying under clinical conditions
 
-• Comprehensive exclusion logic checking all clinical eligibility paths
+    • Requires latest carer code more recent than any \"not carer\" code
 
-• Age restrictions: 5-64 years (60 months to 65 years)
-• Prevents duplicate eligibility for carers with clinical risk factors'
+    • Excludes carers already eligible under clinical risk groups, BMI, or pregnancy
+
+    • Filtered to current campaign with qualifying carer status
+
+
+    Key Features:
+
+    • Hierarchical carer status logic prioritising latest carer vs not-carer codes
+
+    • Comprehensive exclusion logic checking all clinical eligibility paths
+
+    • Age restrictions: 5-64 years (60 months to 65 years)
+
+    • Prevents duplicate eligibility for carers with clinical risk factors'
 
   columns:
   - name: campaign_id
@@ -488,32 +414,35 @@ Key Features:
   description: 'Intermediate: Flu Vaccination Status - Flu vaccination status tracking for programme monitoring and coverage reporting.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• NHS flu vaccination programme status monitoring and coverage reporting
+    • NHS flu vaccination programme status monitoring and coverage reporting
 
-• Vaccination uptake tracking and campaign effectiveness measurement
+    • Vaccination uptake tracking and campaign effectiveness measurement
 
-• LAIV (Live Attenuated Influenza Vaccine) administration tracking
+    • Identification of vaccinated populations for programme planning
 
-
-Data Granularity:
-
-• One row per person with vaccination status information
-
-• Includes vaccination received, declined, and LAIV administration
-
-• Uses campaign-specific date thresholds for status determination
+    • LAIV (Live Attenuated Influenza Vaccine) administration tracking
 
 
-Key Features:
+    Data Granularity:
 
-• Comprehensive vaccination status tracking (received, declined, LAIV)
+    • One row per person with vaccination status information
 
-• Campaign-configurable date ranges for status validation
+    • Includes vaccination received, declined, and LAIV administration
 
-• Essential for coverage reporting and programme effectiveness monitoring
-• Critical for identifying populations still requiring vaccination'
+    • Uses campaign-specific date thresholds for status determination
+
+
+    Key Features:
+
+    • Comprehensive vaccination status tracking (received, declined, LAIV)
+
+    • Campaign-configurable date ranges for status validation
+
+    • Essential for coverage reporting and programme effectiveness monitoring
+
+    • Critical for identifying populations still requiring vaccination'
 
   columns:
   - name: campaign_id
@@ -559,32 +488,35 @@ Key Features:
   description: 'Intermediate: Flu Age Based Rules - Age threshold eligibility determination for NHS flu vaccination programme.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• NHS flu vaccination programme age-based eligibility calculation
+    • NHS flu vaccination programme age-based eligibility calculation
 
-• OVER65_GROUP population identification and campaign management
+    • OVER65_GROUP population identification and campaign management
 
-• Age threshold validation against campaign reference dates
+    • Age threshold validation against campaign reference dates
 
-
-Data Granularity:
-
-• One row per person meeting age-based eligibility criteria
-
-• Uses campaign-specific age thresholds and reference dates
-
-• Includes all patients meeting age criteria for comprehensive programme coverage
+    • Foundation for flu vaccination programme coverage and uptake monitoring
 
 
-Key Features:
+    Data Granularity:
 
-• Age 65+ eligibility determination for high-risk population
+    • One row per person meeting age-based eligibility criteria
 
-• Campaign-configurable reference date calculations
+    • Uses campaign-specific age thresholds and reference dates
 
-• Essential for flu vaccination programme targeting and coverage reporting
-• Foundation for age-based vaccination prioritisation and resource planning'
+    • Includes all patients meeting age criteria for comprehensive programme coverage
+
+
+    Key Features:
+
+    • Age 65+ eligibility determination for high-risk population
+
+    • Campaign-configurable reference date calculations
+
+    • Essential for flu vaccination programme targeting and coverage reporting
+
+    • Foundation for age-based vaccination prioritisation and resource planning'
 
   columns:
   - name: campaign_id
@@ -634,34 +566,37 @@ Key Features:
   description: 'Intermediate: Flu Simple Rules - Processes single cluster eligibility rules for flu vaccination programme based on individual clinical conditions.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• Evaluates single clinical condition eligibility rules for flu vaccination
+    • Evaluates single clinical condition eligibility rules for flu vaccination
 
-• Supports chronic disease targeting including heart disease, liver disease, CNS conditions
+    • Supports chronic disease targeting including heart disease, liver disease, CNS conditions
 
-• Implements learning disability and immunodeficiency flu vaccination criteria
+    • Implements learning disability and immunodeficiency flu vaccination criteria
 
-
-Data Granularity:
-
-• One row per eligible person per rule group with single cluster condition
-
-• Covers CHD, CLD, CNS, asplenia, learning disability, and immunodeficiency groups
-
-• Filtered to current campaign with age restrictions applied per rule group
-
-• Contains qualifying event dates based on earliest or latest occurrence criteria
+    • Replaces apply_simple_rule macro functionality with explicit SQL logic
 
 
-Key Features:
+    Data Granularity:
 
-• Single cluster evaluation: one clinical condition per rule group
+    • One row per eligible person per rule group with single cluster condition
 
-• Flexible date qualifiers: earliest, latest, latest_since, latest_after
+    • Covers CHD, CLD, CNS, asplenia, learning disability, and immunodeficiency groups
 
-• Age restrictions applied per rule group from campaign configuration
-• Static configuration to avoid unsafe introspection in macro replacement'
+    • Filtered to current campaign with age restrictions applied per rule group
+
+    • Contains qualifying event dates based on earliest or latest occurrence criteria
+
+
+    Key Features:
+
+    • Single cluster evaluation: one clinical condition per rule group
+
+    • Flexible date qualifiers: earliest, latest, latest_since, latest_after
+
+    • Age restrictions applied per rule group from campaign configuration
+
+    • Static configuration to avoid unsafe introspection in macro replacement'
 
   columns:
   - name: campaign_id
@@ -710,34 +645,37 @@ Key Features:
   description: 'Intermediate: Flu Combination Rules - Processes complex combination eligibility rules for flu vaccination programme using AND/OR logic.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• Implements complex combination rules requiring multiple conditions for flu vaccination eligibility
+    • Implements complex combination rules requiring multiple conditions for flu vaccination eligibility
 
-• Supports asthma diagnosis AND medication/admission combinations
+    • Supports asthma diagnosis AND medication/admission combinations
 
-• Handles respiratory disease OR immunosuppression complex logic
+    • Handles respiratory disease OR immunosuppression complex logic
 
-
-Data Granularity:
-
-• One row per eligible person per rule group with combination rule logic applied
-
-• Covers asthma group, respiratory group, and immunosuppression group combinations
-
-• Filtered to current campaign with age restrictions applied per rule group
-
-• Contains logic expression evaluation for complex clinical combinations
+    • Replaces apply_combination_rule macro functionality with explicit SQL logic
 
 
-Key Features:
+    Data Granularity:
 
-• Multi-condition logic: AST_GROUP (diagnosis AND medication/admission)
+    • One row per eligible person per rule group with combination rule logic applied
 
-• Union logic: RESP_GROUP (asthma OR respiratory disease)
+    • Covers asthma group, respiratory group, and immunosuppression group combinations
 
-• Complex combinations: IMMUNO_GROUP (diagnosis OR medication OR treatment)
-• Age restrictions applied per rule group from campaign configuration'
+    • Filtered to current campaign with age restrictions applied per rule group
+
+    • Contains logic expression evaluation for complex clinical combinations
+
+
+    Key Features:
+
+    • Multi-condition logic: AST_GROUP (diagnosis AND medication/admission)
+
+    • Union logic: RESP_GROUP (asthma OR respiratory disease)
+
+    • Complex combinations: IMMUNO_GROUP (diagnosis OR medication OR treatment)
+
+    • Age restrictions applied per rule group from campaign configuration'
 
   columns:
   - name: campaign_id
@@ -786,32 +724,35 @@ Key Features:
   description: 'Intermediate: Flu Diabetes Eligibility - Diabetes and Addison disease eligibility determination for NHS flu vaccination programme.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• NHS flu vaccination programme diabetes and Addison disease eligibility assessment
+    • NHS flu vaccination programme diabetes and Addison disease eligibility assessment
 
-• High-risk population identification due to immunocompromise and infection risk
+    • High-risk population identification due to immunocompromise and infection risk
 
-• Age-restricted eligibility determination (6 months to under 65 years)
+    • Clinical eligibility validation for diabetes and adrenal insufficiency conditions
 
-
-Data Granularity:
-
-• One row per person meeting diabetes or Addison disease eligibility criteria
-
-• Uses hierarchical date logic for active diabetes determination
-
-• Excludes resolved diabetes using latest diagnosis vs resolution comparison
+    • Age-restricted eligibility determination (6 months to under 65 years)
 
 
-Key Features:
+    Data Granularity:
 
-• Active diabetes determination with resolution exclusion logic
+    • One row per person meeting diabetes or Addison disease eligibility criteria
 
-• Addison disease immunocompromise risk assessment
+    • Uses hierarchical date logic for active diabetes determination
 
-• Age restriction compliance (6 months to under 65 years)
-• Essential for high-risk population vaccination targeting'
+    • Excludes resolved diabetes using latest diagnosis vs resolution comparison
+
+
+    Key Features:
+
+    • Active diabetes determination with resolution exclusion logic
+
+    • Addison disease immunocompromise risk assessment
+
+    • Age restriction compliance (6 months to under 65 years)
+
+    • Essential for high-risk population vaccination targeting'
 
   columns:
   - name: campaign_id
@@ -849,9 +790,7 @@ Key Features:
     description: 'Date of the clinical event that establishes eligibility: - For Addison''s disease: earliest diagnosis date - For diabetes: latest diabetes diagnosis date (after exclusion logic)'
 
     tests:
-
     - not_null
-
   - name: diagnosis_type
     description: 'Type of qualifying diagnosis: - ''Addison''s disease'' for ADDIS_COD codes - ''Diabetes (type 1 or 2)'' for DIAB_COD codes'
 
@@ -873,23 +812,17 @@ Key Features:
     description: 'Standard description: ''Diabetes (type 1, type 2) or Addison''s disease'''
 
     tests:
-
     - not_null
-
   - name: birth_date
     description: Person's birth date from demographics
 
     tests:
-
     - not_null
-
   - name: age_months_at_ref_date
     description: Age in months at campaign reference date. Used for precise age-based eligibility (minimum 6 months).
 
     tests:
-
     - not_null
-
     - dbt_utils.expression_is_true:
         expression: '>= 6'
         name: diabetes_min_age_6_months
@@ -924,34 +857,37 @@ Key Features:
   description: 'Intermediate: Flu Asthma Eligibility - Determines flu vaccination eligibility for patients with asthma using hierarchical clinical evidence.
 
 
-Clinical Purpose:
+    Clinical Purpose:
 
-• Identifies patients with asthma who qualify for flu vaccination based on diagnosis and active management
+    • Identifies patients with asthma who qualify for flu vaccination based on diagnosis and active management
 
-• Implements complex business logic requiring both asthma diagnosis and recent management evidence
+    • Implements complex business logic requiring both asthma diagnosis and recent management evidence
 
-• Supports clinical decision-making for high-risk respiratory disease patients
+    • Supports clinical decision-making for high-risk respiratory disease patients
 
-
-Data Granularity:
-
-• One row per eligible person aged 6 months to 65 years with documented asthma
-
-• Requires both asthma diagnosis and evidence of active management or severity
-
-• Filtered to current campaign with qualifying clinical evidence
-
-• Contains hierarchical evidence selection for patients with multiple evidence types
+    • Ensures evidence-based flu vaccination targeting for asthma patients
 
 
-Key Features:
+    Data Granularity:
 
-• Primary requirement: Asthma diagnosis (AST_COD) with earliest occurrence tracking
+    • One row per eligible person aged 6 months to 65 years with documented asthma
 
-• Secondary requirement: Recent medication OR historical admission evidence
+    • Requires both asthma diagnosis and evidence of active management or severity
 
-• Age restrictions: 6 months to 65 years at reference date
-• Evidence hierarchy selection using most recent qualifying evidence'
+    • Filtered to current campaign with qualifying clinical evidence
+
+    • Contains hierarchical evidence selection for patients with multiple evidence types
+
+
+    Key Features:
+
+    • Primary requirement: Asthma diagnosis (AST_COD) with earliest occurrence tracking
+
+    • Secondary requirement: Recent medication OR historical admission evidence
+
+    • Age restrictions: 6 months to 65 years at reference date
+
+    • Evidence hierarchy selection using most recent qualifying evidence'
 
   columns:
   - name: campaign_id
@@ -1060,7 +996,6 @@ Key Features:
 
 
       Standard description explaining the eligibility logic:
-
 
       ''Asthma diagnosis with recent medication or admission'''
 

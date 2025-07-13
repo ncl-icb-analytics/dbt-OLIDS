@@ -32,10 +32,15 @@ models:
     description: 'Sex classification: Female, Male, or Unknown'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - Female
+
         - Male
+
         - Unknown

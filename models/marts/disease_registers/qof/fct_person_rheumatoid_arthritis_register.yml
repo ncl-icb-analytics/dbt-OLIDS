@@ -28,8 +28,11 @@ models:
     description: 'Register flag: has RA diagnosis aged 16+ (always TRUE for this table)'
 
     tests:
+
     - not_null
+
     - accepted_values:
 
         values:
+
         - true

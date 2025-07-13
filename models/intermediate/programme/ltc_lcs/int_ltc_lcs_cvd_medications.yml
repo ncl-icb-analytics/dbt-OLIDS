@@ -1,40 +1,39 @@
 version: 2
 models:
 - name: int_ltc_lcs_cvd_medications
-  description: 'Intermediate: LTC LCS CVD Medications - Collects all cardiovascular disease-relevant medications for Long Term Conditions case finding measures.
+  description: 'Intermediate: LTC LCS CVD Medications - All cardiovascular disease-relevant medications for Long Term Conditions case finding measures.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • Gathers comprehensive CVD-related medication data for case finding algorithms
+• Tracks comprehensive CVD-related medication data for case finding algorithms
 
-    • Supports identification of patients requiring CVD risk assessment through medication patterns
+• Supports identification of patients requiring CVD risk assessment through medication patterns
 
-    • Enables medication-based risk stratification for CVD case finding measures
+• Enables medication-based risk stratification for CVD case finding measures
 
-    • Provides foundation data for CVD_63, CVD_64, CVD_65, and related case finding indicators
-
-
-    Data Granularity:
-
-    • One row per medication order for CVD-relevant medications
-
-    • Covers statin medications across multiple CVD case finding indicators
-
-    • Includes statin allergies, contraindications, and clinical decisions
-
-    • Sourced from LTC_LCS programme medication clusters
+• Provides foundation data for CVD_63, CVD_64, CVD_65, and related case finding indicators
 
 
-    Key Features:
+Data Granularity:
 
-    • Cluster IDs: STATIN_CVD_MEDICATIONS, STATIN_CVD_63_MEDICATIONS, STATIN_CVD_64_MEDICATIONS, STATIN_CVD_65_MEDICATIONS
+• One row per medication order for CVD-relevant medications
 
-    • Supports cardiovascular risk assessment and primary prevention case finding
+• Includes statin medications across multiple CVD case finding indicators
 
-    • Comprehensive medication pattern analysis for CVD risk stratification
+• Covers statin allergies, contraindications, and clinical decisions
 
-    • Integration with LTC_LCS programme medication tracking systems'
+• Sourced from LTC_LCS programme medication clusters
+
+
+Key Features:
+
+• Cluster IDs: STATIN_CVD_MEDICATIONS, STATIN_CVD_63_MEDICATIONS, STATIN_CVD_64_MEDICATIONS, STATIN_CVD_65_MEDICATIONS
+
+• Supports cardiovascular risk assessment and primary prevention case finding
+
+• Comprehensive medication pattern analysis for CVD risk stratification
+• Integration with LTC_LCS programme medication tracking systems'
 
   tests:
   - cluster_ids_exist:

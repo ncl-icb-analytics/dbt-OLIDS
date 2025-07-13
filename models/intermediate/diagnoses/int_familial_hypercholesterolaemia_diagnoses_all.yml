@@ -4,38 +4,39 @@ models:
   tests:
   - cluster_ids_exist:
       cluster_ids: FHYP_COD
-  description: 'Intermediate: Familial Hypercholesterolaemia Diagnoses All - Complete history of all FH diagnosis observations from clinical records.
+  description: 'Intermediate: Familial Hypercholesterolaemia Diagnoses - All FH diagnosis observations from clinical records.
 
 
-    Clinical Purpose:
+Clinical Purpose:
 
-    • QOF FH register data collection and monitoring
+• QOF FH register data collection and monitoring
 
-    • Genetic cardiovascular risk assessment for familial hypercholesterolaemia
+• Genetic cardiovascular risk assessment for familial hypercholesterolaemia
 
-    • Family screening pathway identification and cascade testing
+• Family screening pathway identification and cascade testing
 
-    • Lipid management and statin therapy decision support
-
-
-    Data Granularity:
-
-    • One row per FH diagnosis observation
-
-    • Includes all diagnosis dates for complete clinical history
-
-    • Uses FHYP_COD cluster for QOF-compliant diagnosis identification
+• Lipid management and statin therapy decision support
 
 
-    Key Features:
+Data Granularity:
 
-    • Genetic condition tracking with no resolution codes
+• One row per FH diagnosis observation
 
-    • Age restrictions (typically ≥20 years for QOF)
+• Includes all patients with recorded FH diagnoses
 
-    • Essential for family screening programmes
+• Complete clinical history with all diagnosis dates
 
-    • Supports intensive cholesterol management protocols'
+• Uses FHYP_COD cluster for QOF-compliant diagnosis identification
+
+
+Key Features:
+
+• Genetic condition tracking with no resolution codes
+
+• Age restrictions (typically ≥20 years for QOF)
+
+• Essential for family screening programmes
+• Supports intensive cholesterol management protocols'
 
   columns:
   - name: person_id
