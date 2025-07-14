@@ -24,7 +24,7 @@ SELECT
     "is_problem" AS is_problem,
     "is_review" AS is_review,
     "problem_end_date" AS problem_end_date,
-    "observation_core_concept_id" AS observation_source_concept_id,
+    "observation_source_concept_id" AS observation_source_concept_id,
     "age_at_event" AS age_at_event,
     "age_at_event_baby" AS age_at_event_baby,
     "age_at_event_neonate" AS age_at_event_neonate,

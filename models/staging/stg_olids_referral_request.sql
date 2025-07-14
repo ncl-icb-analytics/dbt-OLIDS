@@ -27,7 +27,7 @@ SELECT
     "mode" AS mode,
     "is_outgoing_referral" AS is_outgoing_referral,
     "is_review" AS is_review,
-    "referral_request_core_concept_id" AS referral_request_source_concept_id,
+    "referral_request_source_concept_id" AS referral_request_source_concept_id,
     "age_at_event" AS age_at_event,
     "age_at_event_baby" AS age_at_event_baby,
     "age_at_event_neonate" AS age_at_event_neonate,
