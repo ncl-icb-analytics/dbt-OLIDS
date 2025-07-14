@@ -48,7 +48,7 @@ INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
 INNER JOIN {{ ref('stg_olids_patient') }} AS p
     ON o.patient_id = p.id
 LEFT JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
-    ON o.observation_core_concept_id = mc.source_code_id
+    ON o.observation_source_concept_id = mc.source_code_id
 WHERE
     mc.concept_code IN (
         '197315008',    -- Non-alcoholic fatty liver disease

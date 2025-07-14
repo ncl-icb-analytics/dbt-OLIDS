@@ -22,9 +22,8 @@ SELECT
     "is_review" AS is_review,
     "medication_name" AS medication_name,
     "multi_lex_action" AS multi_lex_action,
-    "allergy_intolerance_core_concept_id"
-        AS allergy_intolerance_core_concept_id,
-    "allergy_intolerance_raw_concept_id" AS allergy_intolerance_raw_concept_id,
+    "allergy_intolerance_source_concept_id"
+        AS allergy_intolerance_source_concept_id,
     "age_at_event" AS age_at_event,
     "age_at_event_baby" AS age_at_event_baby,
     "age_at_event_neonate" AS age_at_event_neonate,

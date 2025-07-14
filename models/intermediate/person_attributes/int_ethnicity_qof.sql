@@ -18,7 +18,7 @@ WITH mapped_observations AS (
         pp.person_id,
         p.sk_patient_id,
         o.clinical_effective_date,
-        o.observation_core_concept_id,
+        o.observation_source_concept_id,
         mc.concept_id AS mapped_concept_id,
         mc.concept_code AS mapped_concept_code,
         mc.code_description AS mapped_concept_display,
@@ -31,7 +31,7 @@ WITH mapped_observations AS (
         ON p.id = pp.patient_id
     INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
         ON
-            o.observation_core_concept_id = mc.source_code_id
+            o.observation_source_concept_id = mc.source_code_id
             AND mc.cluster_id LIKE 'ETH2016%_COD'  -- Filter directly on mapped_concepts
     WHERE o.clinical_effective_date IS NOT NULL
 ),

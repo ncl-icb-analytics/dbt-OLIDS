@@ -17,7 +17,7 @@ SELECT
     "date_precision_concept_id" AS date_precision_concept_id,
     "date_recorded" AS date_recorded,
     "description" AS description,
-    "procedure_core_concept_id" AS procedure_core_concept_id,
+    "procedure_core_concept_id" AS procedure_source_concept_id,
     "status_concept_id" AS status_concept_id,
     "age_at_event" AS age_at_event,
     "age_at_event_baby" AS age_at_event_baby,

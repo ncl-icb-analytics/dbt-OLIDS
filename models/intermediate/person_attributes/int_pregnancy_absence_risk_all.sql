@@ -32,7 +32,7 @@ preg_risk_observations AS (
     INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
         ON p.id = pp.patient_id
     INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
-        ON o.observation_core_concept_id = mc.source_code_id
+        ON o.observation_source_concept_id = mc.source_code_id
     INNER JOIN valproate_preg_risk_codes AS vpc
         ON mc.concept_code = vpc.code
     WHERE

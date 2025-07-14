@@ -13,8 +13,8 @@ SELECT
     "organisation_id" AS organisation_id,
     "patient_id" AS patient_id,
     "person_id" AS person_id,
-    "episode_type_raw_concept_id" AS episode_type_raw_concept_id,
-    "episode_status_raw_concept_id" AS episode_status_raw_concept_id,
+    "episode_type_source_concept_id" AS episode_type_source_concept_id,
+    "episode_status_source_concept_id" AS episode_status_source_concept_id,
     "episode_of_care_start_date" AS episode_of_care_start_date,
     "episode_of_care_end_date" AS episode_of_care_end_date,
     "care_manager_practitioner_id" AS care_manager_practitioner_id

@@ -37,7 +37,7 @@ WITH base_medication_orders AS (
     INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
         ON mo.patient_id = pp.patient_id
     LEFT JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
-        ON ms.medication_statement_core_concept_id = mc.source_code_id
+        ON ms.medication_statement_source_concept_id = mc.source_code_id
     LEFT JOIN {{ ref('stg_codesets_valproate_prog_codes') }} AS vp
         ON
             mc.concept_code = vp.code

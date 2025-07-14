@@ -40,7 +40,7 @@
     JOIN {{ ref('stg_olids_medication_statement') }} ms
         ON mo.medication_statement_id = ms.id
     JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
-        ON ms.medication_statement_core_concept_id = mc.source_code_id
+        ON ms.medication_statement_source_concept_id = mc.source_code_id
     JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
         ON mc.concept_code = bnf.snomed_code
     JOIN {{ ref('stg_olids_patient') }} p
