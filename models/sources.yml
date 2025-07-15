@@ -154,10 +154,11 @@ sources:
       data_type: TIMESTAMP_NTZ
 
 - name: REFERENCE
-  database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
+  database: '"MODELLING"'
   schema: REFERENCE
   tables:
   - name: BNF_LATEST
+    identifier: BNF_LATEST
     columns:
     - name: PRESENTATION_PACK_LEVEL
       data_type: VARCHAR
@@ -186,6 +187,7 @@ sources:
     - name: VTM_NAME
       data_type: VARCHAR
   - name: CHILDHOOD_IMMS_CODES
+    identifier: CHILDHOOD_IMMS_CODES
     columns:
     - name: VACCINE
       data_type: VARCHAR
@@ -204,6 +206,7 @@ sources:
     - name: SOURCE
       data_type: VARCHAR
   - name: COMBINED_CODESETS
+    identifier: COMBINED_CODESETS
     columns:
     - name: CLUSTER_ID
       data_type: VARCHAR
@@ -216,6 +219,7 @@ sources:
     - name: SOURCE
       data_type: VARCHAR
   - name: EFI2_SNOMED
+    identifier: EFI2_SNOMED
     columns:
     - name: DEFICIT
       data_type: VARCHAR
@@ -234,6 +238,7 @@ sources:
     - name: OTHERINSTRUCTIONS
       data_type: VARCHAR
   - name: ETHNICITY_CODES
+    identifier: ETHNICITY_CODES
     columns:
     - name: CODE
       data_type: VARCHAR
@@ -246,6 +251,7 @@ sources:
     - name: GRANULAR
       data_type: VARCHAR
   - name: LTC_LCS_CODES
+    identifier: LTC_LCS_CODES
     columns:
     - name: CLUSTER_ID
       data_type: VARCHAR
@@ -256,6 +262,7 @@ sources:
     - name: SNOMED_DESCRIPTION
       data_type: VARCHAR
   - name: MAPPED_CONCEPTS
+    identifier: MAPPED_CONCEPTS
     columns:
     - name: SOURCE_CODE_ID
       data_type: VARCHAR
@@ -278,6 +285,7 @@ sources:
     - name: SOURCE
       data_type: VARCHAR
   - name: PCD_REFSET_LATEST
+    identifier: PCD_REFSET_LATEST
     columns:
     - name: CLUSTER_ID
       data_type: VARCHAR
@@ -292,12 +300,14 @@ sources:
     - name: SERVICE_AND_RULESET
       data_type: VARCHAR
   - name: SOURCE_CONCEPT_ORIGINS
+    identifier: SOURCE_CONCEPT_ORIGINS
     columns:
     - name: SOURCE_CODE_ID_VALUE
       data_type: VARCHAR
     - name: ORIGINATING_SOURCE_TABLE
       data_type: VARCHAR
   - name: UKHSA_COVID_LATEST
+    identifier: UKHSA_COVID_LATEST
     columns:
     - name: CODING_SCHEME
       data_type: VARCHAR
@@ -314,6 +324,7 @@ sources:
     - name: CODE_VALIDATED
       data_type: VARCHAR
   - name: UKHSA_FLU_LATEST
+    identifier: UKHSA_FLU_LATEST
     columns:
     - name: CODING_SCHEME
       data_type: VARCHAR
@@ -338,6 +349,7 @@ sources:
     - name: TPP_ASTRX
       data_type: VARCHAR
   - name: VALPROATE_PROG_CODES
+    identifier: VALPROATE_PROG_CODES
     columns:
     - name: CODE
       data_type: VARCHAR
@@ -347,11 +359,8 @@ sources:
       data_type: NUMBER(38,0)
     - name: VALPROATE_PRODUCT_TERM
       data_type: VARCHAR
-- name: RULESETS
-  database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
-  schema: REFERENCE
-  tables:
   - name: BP_THRESHOLDS
+    identifier: BP_THRESHOLDS
     columns:
     - name: THRESHOLD_RULE_ID
       data_type: VARCHAR
@@ -372,6 +381,7 @@ sources:
     - name: NOTES
       data_type: VARCHAR
   - name: EFI2_COEFFICIENTS
+    identifier: EFI2_COEFFICIENTS
     columns:
     - name: MODEL_NAME
       data_type: VARCHAR
@@ -390,6 +400,7 @@ sources:
     - name: MODEL_DESCRIPTION
       data_type: VARCHAR
   - name: EFI2_RULES
+    identifier: EFI2_RULES
     columns:
     - name: CODE
       data_type: VARCHAR
@@ -470,6 +481,7 @@ sources:
     - name: RULE_PRIORITY
       data_type: NUMBER(1,0)
   - name: IMMS_SCHEDULE_LATEST
+    identifier: IMMS_SCHEDULE_LATEST
     columns:
     - name: VACCINE_ORDER
       data_type: NUMBER(38,0)
@@ -515,11 +527,72 @@ sources:
       data_type: NUMBER(38,0)
     - name: INCOMPATIBLE_EXPLANATION
       data_type: VARCHAR
+  - name: PRACTICE_NEIGHBOURHOOD_LOOKUP
+    identifier: PRACTICE_NEIGHBOURHOOD_LOOKUP
+    columns:
+    - name: PRACTICECODE
+      data_type: VARCHAR
+    - name: PRACTICENAME
+      data_type: VARCHAR
+    - name: LOCALAUTHORITY
+      data_type: VARCHAR
+    - name: PRACTICENEIGHBOURHOOD
+      data_type: VARCHAR
+    - name: PCNCODE
+      data_type: VARCHAR
+  - name: FLU_CAMPAIGN_DATES
+    identifier: FLU_CAMPAIGN_DATES
+    columns:
+    - name: CAMPAIGN_ID
+      data_type: VARCHAR
+    - name: RULE_GROUP_ID
+      data_type: VARCHAR
+    - name: DATE_TYPE
+      data_type: VARCHAR
+    - name: DATE_VALUE
+      data_type: DATE
+    - name: DESCRIPTION
+      data_type: VARCHAR
+  - name: FLU_CODE_CLUSTERS
+    identifier: FLU_CODE_CLUSTERS
+    columns:
+    - name: RULE_GROUP_ID
+      data_type: VARCHAR
+    - name: CLUSTER_ID
+      data_type: VARCHAR
+    - name: DATA_SOURCE_TYPE
+      data_type: VARCHAR
+    - name: DATE_QUALIFIER
+      data_type: VARCHAR
+    - name: CLUSTER_DESCRIPTION
+      data_type: VARCHAR
+  - name: FLU_PROGRAMME_LOGIC
+    identifier: FLU_PROGRAMME_LOGIC
+    columns:
+    - name: CAMPAIGN_ID
+      data_type: VARCHAR
+    - name: RULE_GROUP_ID
+      data_type: VARCHAR
+    - name: RULE_GROUP_NAME
+      data_type: VARCHAR
+    - name: RULE_TYPE
+      data_type: VARCHAR
+    - name: LOGIC_EXPRESSION
+      data_type: VARCHAR
+    - name: EXCLUSION_GROUPS
+      data_type: VARCHAR
+    - name: AGE_MIN_MONTHS
+      data_type: NUMBER
+    - name: AGE_MAX_YEARS
+      data_type: NUMBER
+    - name: BUSINESS_DESCRIPTION
+      data_type: VARCHAR
 - name: OLIDS_MASKED
-  database: '"{{ env_var("SNOWFLAKE_SOURCE_DATABASE", "Data_Store_OLIDS_UAT") }}"'
-  schema: OLIDS_MASKED
+  database: '"DATA_LAKE"'
+  schema: OLIDS
   tables:
   - name: ALLERGY_INTOLERANCE
+    identifier: ALLERGY_INTOLERANCE
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -576,6 +649,7 @@ sources:
     - name: is_confidential
       data_type: BOOLEAN
   - name: APPOINTMENT
+    identifier: APPOINTMENT
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -636,6 +710,7 @@ sources:
     - name: contact_mode_concept_id
       data_type: VARCHAR
   - name: APPOINTMENT_PRACTITIONER
+    identifier: APPOINTMENT_PRACTITIONER
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -662,6 +737,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: DIAGNOSTIC_ORDER
+    identifier: DIAGNOSTIC_ORDER
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -724,6 +800,7 @@ sources:
     - name: date_recorded
       data_type: TIMESTAMP_NTZ(9)
   - name: ENCOUNTER
+    identifier: ENCOUNTER
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -780,6 +857,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: EPISODE_OF_CARE
+    identifier: EPISODE_OF_CARE
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -814,6 +892,7 @@ sources:
     - name: care_manager_practitioner_id
       data_type: VARCHAR
   - name: FLAG
+    identifier: FLAG
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -844,6 +923,7 @@ sources:
     - name: flag_text
       data_type: VARCHAR
   - name: LOCATION
+    identifier: LOCATION
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -894,6 +974,7 @@ sources:
     - name: is_obsolete
       data_type: BOOLEAN
   - name: LOCATION_CONTACT
+    identifier: LOCATION_CONTACT
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -922,6 +1003,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: MEDICATION_ORDER
+    identifier: MEDICATION_ORDER
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -994,6 +1076,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: MEDICATION_STATEMENT
+    identifier: MEDICATION_STATEMENT
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1066,6 +1149,7 @@ sources:
     - name: lds_start_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: OBSERVATION
+    identifier: OBSERVATION
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1130,6 +1214,7 @@ sources:
     - name: is_confidential
       data_type: BOOLEAN
   - name: ORGANISATION
+    identifier: ORGANISATION
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1166,6 +1251,7 @@ sources:
     - name: is_obsolete
       data_type: BOOLEAN
   - name: PATIENT
+    identifier: PATIENT
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1208,6 +1294,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: PATIENT_ADDRESS
+    identifier: PATIENT_ADDRESS
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1236,6 +1323,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: PATIENT_CONTACT
+    identifier: PATIENT_CONTACT
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1264,6 +1352,7 @@ sources:
     - name: end_date
       data_type: DATE
   - name: PATIENT_PERSON
+    identifier: PATIENT_PERSON
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1282,6 +1371,7 @@ sources:
     - name: person_id
       data_type: VARCHAR
   - name: PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
+    identifier: PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1312,6 +1402,7 @@ sources:
     - name: end_date
       data_type: TIMESTAMP_NTZ(9)
   - name: PERSON
+    identifier: PERSON
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1328,6 +1419,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: PRACTITIONER
+    identifier: PRACTITIONER
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1358,6 +1450,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: PRACTITIONER_IN_ROLE
+    identifier: PRACTITIONER_IN_ROLE
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1386,6 +1479,7 @@ sources:
     - name: date_employment_end
       data_type: TIMESTAMP_NTZ(9)
   - name: PROCEDURE_REQUEST
+    identifier: PROCEDURE_REQUEST
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1432,6 +1526,7 @@ sources:
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: REFERRAL_REQUEST
+    identifier: REFERRAL_REQUEST
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1494,6 +1589,7 @@ sources:
     - name: date_recorded
       data_type: TIMESTAMP_NTZ(9)
   - name: SCHEDULE
+    identifier: SCHEDULE
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1526,6 +1622,7 @@ sources:
     - name: is_private
       data_type: BOOLEAN
   - name: SCHEDULE_PRACTITIONER
+    identifier: SCHEDULE_PRACTITIONER
     columns:
     - name: lds_id
       data_type: VARCHAR
@@ -1546,10 +1643,11 @@ sources:
     - name: practitioner_id
       data_type: VARCHAR
 - name: OLIDS_TERMINOLOGY
-  database: '"{{ env_var("SNOWFLAKE_SOURCE_DATABASE", "Data_Store_OLIDS_UAT") }}"'
+  database: '"DATA_LAKE"'
   schema: OLIDS_TERMINOLOGY
   tables:
   - name: CONCEPT
+    identifier: CONCEPT
     columns:
     - name: id
       data_type: VARCHAR
@@ -1572,6 +1670,7 @@ sources:
     - name: lds_start_date_time
       data_type: TIMESTAMP_NTZ(9)
   - name: CONCEPT_MAP
+    identifier: CONCEPT_MAP
     columns:
     - name: id
       data_type: VARCHAR
@@ -1593,66 +1692,3 @@ sources:
       data_type: VARCHAR
     - name: lds_start_date_time
       data_type: TIMESTAMP_NTZ(9)
-
-- name: POPULATION_HEALTH
-  database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
-  schema: REFERENCE
-  tables:
-  - name: PRACTICE_NEIGHBOURHOOD_LOOKUP
-    columns:
-    - name: PRACTICECODE
-      data_type: VARCHAR
-    - name: PRACTICENAME
-      data_type: VARCHAR
-    - name: LOCALAUTHORITY
-      data_type: VARCHAR
-    - name: PRACTICENEIGHBOURHOOD
-      data_type: VARCHAR
-    - name: PCNCODE
-      data_type: VARCHAR
-  - name: FLU_CAMPAIGN_DATES
-    columns:
-    - name: CAMPAIGN_ID
-      data_type: VARCHAR
-    - name: RULE_GROUP_ID
-      data_type: VARCHAR
-    - name: DATE_TYPE
-      data_type: VARCHAR
-    - name: DATE_VALUE
-      data_type: DATE
-    - name: DESCRIPTION
-      data_type: VARCHAR
-  - name: FLU_CODE_CLUSTERS
-    columns:
-    - name: RULE_GROUP_ID
-      data_type: VARCHAR
-    - name: CLUSTER_ID
-      data_type: VARCHAR
-    - name: DATA_SOURCE_TYPE
-      data_type: VARCHAR
-    - name: DATE_QUALIFIER
-      data_type: VARCHAR
-    - name: CLUSTER_DESCRIPTION
-      data_type: VARCHAR
-  - name: FLU_PROGRAMME_LOGIC
-    columns:
-    - name: CAMPAIGN_ID
-      data_type: VARCHAR
-    - name: RULE_GROUP_ID
-      data_type: VARCHAR
-    - name: RULE_GROUP_NAME
-      data_type: VARCHAR
-    - name: RULE_TYPE
-      data_type: VARCHAR
-    - name: LOGIC_EXPRESSION
-      data_type: VARCHAR
-    - name: EXCLUSION_GROUPS
-      data_type: VARCHAR
-    - name: AGE_MIN_MONTHS
-      data_type: NUMBER
-    - name: AGE_MAX_YEARS
-      data_type: NUMBER
-    - name: BUSINESS_DESCRIPTION
-      data_type: VARCHAR
-    - name: TECHNICAL_DESCRIPTION
-      data_type: VARCHAR

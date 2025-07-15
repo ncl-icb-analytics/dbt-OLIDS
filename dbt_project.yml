@@ -30,26 +30,59 @@ tests:
 models:
   snowflake_hei_migration:
     +materialized: table
-    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
     staging:
       +materialized: view
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+      +database: "MODELLING"
+      +schema: "DBT_STAGING"
       +post-hook: "{{ add_model_comment() }}"
-      # Models reading from Data_Store_OLIDS_UAT
-      olids:
-        +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"  # Where to create the views
-        +grants:
-          reference_usage: ["{{ env_var('SNOWFLAKE_SOURCE_DATABASE', 'Data_Store_OLIDS_UAT') }}"]  # Database we need to read from
     intermediate:
       +materialized: table
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+      +database: "MODELLING"
       +post-hook: "{{ add_model_comment() }}"
+      # Business area schema mappings
+      diagnoses:
+        +schema: "OLIDS_DIAGNOSES"
+      medications:
+        +schema: "OLIDS_MEDICATIONS"
+      observations:
+        +schema: "OLIDS_OBSERVATIONS"
+      organisation:
+        +schema: "OLIDS_ORGANISATION"
+      person_attributes:
+        +schema: "OLIDS_PERSON_ATTRIBUTES"
+      programme:
+        +schema: "OLIDS_PROGRAMME"
     marts:
       +materialized: table
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+      +database: "REPORTING"
       +post-hook: "{{ add_model_comment() }}"
+      # Business area schema mappings
+      clinical_safety:
+        +schema: "OLIDS_CLINICAL_SAFETY"
+      data_quality:
+        +schema: "OLIDS_DATA_QUALITY"
+      disease_registers:
+        +schema: "OLIDS_DISEASE_REGISTERS"
+      geography:
+        +schema: "OLIDS_GEOGRAPHY"
+      measures:
+        +schema: "OLIDS_MEASURES"
+      organisation:
+        +schema: "OLIDS_ORGANISATION"
+      person_demographics:
+        +schema: "OLIDS_PERSON_DEMOGRAPHICS"
+      person_dimensions:
+        +schema: "OLIDS_PERSON_DIMENSIONS"
+      person_status:
+        +schema: "OLIDS_PERSON_STATUS"
+      programme:
+        +schema: "OLIDS_PROGRAMME"
+      # Published reporting for direct care
+      published_reporting_direct_care:
+        +database: "PUBLISHED_REPORTING__DIRECT_CARE"
+        +schema: "OLIDS_PUBLISHED"
 
 seeds:
   snowflake_hei_migration:
-    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-    +schema: REFERENCE
+    +database: "MODELLING"
+    +schema: "OLIDS_REFERENCE"
