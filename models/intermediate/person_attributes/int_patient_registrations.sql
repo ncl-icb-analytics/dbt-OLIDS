@@ -9,6 +9,7 @@
 -- Processes raw episode_of_care into proper registration periods
 -- Handles overlapping registrations, active registrations, and historical periods
 -- Forms the foundation for patient-practice relationship analysis
+-- Designed for incremental loading - avoids CURRENT_DATE() calculations
 
 WITH raw_registrations AS (
     -- Get all registration episodes from episode_of_care
@@ -33,48 +34,38 @@ WITH raw_registrations AS (
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON eoc.patient_id = p.id
     WHERE eoc.episode_of_care_start_date IS NOT NULL
+        AND eoc.person_id IS NOT NULL  -- Filter out records without person_id for person-based analysis
 ),
 
 cleaned_registrations AS (
     -- Clean and validate registration periods
     SELECT
         rr.*,
-        -- Determine if registration is currently active
-        CASE
-            WHEN rr.episode_of_care_end_date IS NULL THEN TRUE
-            WHEN rr.episode_of_care_end_date > CURRENT_DATE() THEN TRUE
-            ELSE FALSE
-        END AS is_current_registration,
+        -- Determine if registration is currently active (based on end date presence)
+        rr.episode_of_care_end_date IS NULL AS is_current_registration,
 
-        -- Calculate registration duration
+        -- Calculate registration duration (only for completed registrations)
         CASE
-            WHEN rr.episode_of_care_end_date IS NULL
+            WHEN rr.episode_of_care_end_date IS NOT NULL
                 THEN
                     DATEDIFF(
-                        'day', rr.episode_of_care_start_date, CURRENT_DATE()
+                        'day',
+                        rr.episode_of_care_start_date,
+                        rr.episode_of_care_end_date
                     )
-            ELSE
-                DATEDIFF(
-                    'day',
-                    rr.episode_of_care_start_date,
-                    rr.episode_of_care_end_date
-                )
         END AS registration_duration_days,
 
-        -- Effective end date for analysis (use current date if NULL)
-        COALESCE(rr.episode_of_care_end_date, CURRENT_DATE())
-            AS effective_end_date,
+        -- Effective end date for analysis (NULL for active registrations)
+        rr.episode_of_care_end_date AS effective_end_date,
 
         -- Registration period classification
         CASE
             WHEN rr.episode_of_care_end_date IS NULL THEN 'Active'
-            WHEN rr.episode_of_care_end_date > CURRENT_DATE() THEN 'Future End'
-            WHEN rr.episode_of_care_end_date <= CURRENT_DATE() THEN 'Historical'
-            ELSE 'Unknown'
+            ELSE 'Historical'
         END AS registration_status
 
     FROM raw_registrations AS rr
-    WHERE rr.episode_of_care_start_date <= CURRENT_DATE() -- No future start dates
+    -- Remove future start date filter to support incremental loading
 ),
 
 person_registration_sequences AS (
@@ -116,8 +107,8 @@ person_registration_sequences AS (
 SELECT
     -- Core identifiers
     prs.episode_of_care_id,
-    prs.patient_id,
     prs.person_id,
+    prs.patient_id,
     prs.sk_patient_id,
     prs.organisation_id,
     prs.practice_name,
@@ -137,15 +128,9 @@ SELECT
     -- Sequence information
     prs.registration_sequence,
     prs.total_registrations_count,
+    prs.registration_sequence > 1 AS has_changed_practice,
 
     -- Gap analysis
-    prs.episode_type_raw_concept_id,
-
-    -- Practice change detection
-    prs.episode_status_raw_concept_id,
-
-    -- Additional metadata
-    prs.care_manager_practitioner_id,
     CASE
         WHEN
             prs.previous_registration_end IS NOT NULL
@@ -158,7 +143,11 @@ SELECT
                     prs.episode_of_care_start_date
                 )
     END AS gap_since_previous_registration_days,
-    prs.registration_sequence > 1 AS has_changed_practice
+
+    -- Episode metadata
+    prs.episode_type_raw_concept_id,
+    prs.episode_status_raw_concept_id,
+    prs.care_manager_practitioner_id
 
 FROM person_registration_sequences AS prs
 ORDER BY prs.person_id, prs.episode_of_care_start_date

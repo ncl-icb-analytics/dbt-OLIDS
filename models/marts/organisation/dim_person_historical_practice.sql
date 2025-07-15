@@ -40,9 +40,6 @@ WITH enriched_registrations AS (
         -- Additional registration analysis
         CASE
             WHEN ipr.registration_end_date IS NULL THEN 'Open Registration'
-            WHEN
-                ipr.registration_end_date > CURRENT_DATE()
-                THEN 'Future End Date'
             ELSE 'Closed Registration'
         END AS registration_type,
         -- Calculate age at registration start (approximate)
@@ -55,6 +52,7 @@ WITH enriched_registrations AS (
         ON ipr.organisation_id = o.id
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON ipr.patient_id = p.id
+    -- person_id filtering handled upstream in int_patient_registrations
 ),
 
 registration_transitions AS (
