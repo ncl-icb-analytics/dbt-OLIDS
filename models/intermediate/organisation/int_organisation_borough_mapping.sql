@@ -9,6 +9,10 @@
 Organisation Borough Mapping
 Maps practices and PCNs to North Central London boroughs based on historic CCG relationships.
 Uses Dictionary.dbo.OrganisationDescendent to trace organisational hierarchy paths.
+
+Special handling:
+- Medicus Select Care (Y03103) manually assigned to Enfield borough regardless of CCG history,
+  as they provide cross-borough services but parent organisation is Enfield-based.
 */
 
 WITH borough_ccgs AS (
@@ -41,10 +45,16 @@ practice_borough_final AS (
     -- Get final practice-to-borough mapping (one borough per practice)
     SELECT 
         practice_code,
-        borough,
+        CASE 
+            -- Special exception for Medicus Select Care - manually set to Enfield
+            WHEN practice_code = 'Y03103' THEN 'Enfield'
+            ELSE borough
+        END AS borough,
         historic_ccg
     FROM practice_borough_mapping
     WHERE rn = 1
+        -- For Medicus Select Care, only take the Enfield mapping to avoid duplicates
+        AND (practice_code != 'Y03103' OR borough = 'Enfield')
 ),
 
 pcn_borough_mapping AS (
