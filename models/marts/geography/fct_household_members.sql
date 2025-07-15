@@ -36,8 +36,8 @@ select
   dem.interpreter_needed,
 
   -- Practice registration
-  dem.current_practice_code,
-  dem.current_practice_name,
+  dem.practice_code,
+  dem.practice_name,
   dem.registration_start_date,
 
   -- Practice organisational context

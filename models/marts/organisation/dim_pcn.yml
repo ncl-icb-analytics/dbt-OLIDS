@@ -1,0 +1,68 @@
+version: 2
+models:
+- name: dim_pcn
+  description: 'PCN (Primary Care Network) dimension containing PCN details and member practice information.
+
+
+    Data Sources:
+
+    • Dictionary.dbo.OrganisationMatrixPracticeView - PCN codes, names, and organisational hierarchy (Commissioner, STP)
+
+    • Aggregated practice membership data from same source
+
+    • Filtered to STPCode = QMJ (North Central London)
+
+    • One row per PCN with current state information and member practice arrays'
+
+  tests:
+  - dbt_utils.at_least_one:
+      column_name: pcn_code
+
+  columns:
+  - name: pcn_code
+    description: Primary Care Network code
+
+    tests:
+    - not_null
+    - unique
+  - name: pcn_name
+    description: Primary Care Network name
+
+    tests:
+    - not_null
+  - name: sk_pcn_id
+    description: Dictionary surrogate key for PCN organisation
+  - name: member_practice_count
+    description: Number of practices in this PCN
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        min_value: 1
+        max_value: 100
+  - name: member_practice_codes
+    description: Array of practice codes belonging to this PCN
+  - name: commissioner_code
+    description: Commissioner organisation code
+
+    tests:
+    - not_null
+  - name: commissioner_name
+    description: Commissioner organisation name
+
+    tests:
+    - not_null
+  - name: sk_commissioner_id
+    description: Surrogate key for Commissioner organisation
+  - name: stp_code
+    description: Sustainability and Transformation Partnership code
+
+    tests:
+    - not_null
+  - name: stp_name
+    description: Sustainability and Transformation Partnership name
+
+    tests:
+    - not_null
+  - name: sk_stp_id
+    description: Surrogate key for STP organisation
