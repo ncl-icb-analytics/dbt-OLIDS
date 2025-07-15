@@ -50,12 +50,13 @@ models:
   - name: registration_end_date
     description: End date of registration (NULL if current)
   - name: registration_duration_days
-    description: Duration of registration in days
+    description: Duration of registration in days (NULL for active registrations)
 
     tests:
     - dbt_utils.accepted_range:
         min_value: 0
         max_value: 50000
+        where: "registration_end_date IS NOT NULL"
   - name: registration_sequence
     description: Sequence number of this registration for the person (1 = first practice)
 
