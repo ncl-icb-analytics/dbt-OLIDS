@@ -1,0 +1,77 @@
+version: 2
+models:
+- name: dim_practice
+  description: 'Practice dimension containing comprehensive practice details and organisational hierarchy.
+
+
+    Data Sources:
+
+    • Dictionary.dbo.OrganisationMatrixPracticeView - Practice codes, names, and organisational hierarchy (Commissioner, STP)
+
+    • stg_olids_organisation - Practice operational details (type, postcode, dates, parent org)
+
+    • INNER JOIN on Dictionary.PracticeCode = OLIDS.organisation_code
+
+    • Filtered to STPCode = QMJ (North Central London)
+
+    • One row per practice with current state information'
+
+  tests:
+  - dbt_utils.at_least_one:
+      column_name: practice_code
+
+  columns:
+  - name: organisation_id
+    description: OLIDS organisation identifier for the practice
+    
+  - name: practice_code
+    description: Practice ODS code
+
+    tests:
+    - not_null
+    - unique
+  - name: practice_name
+    description: Practice name
+
+    tests:
+    - not_null
+  - name: practice_type_code
+    description: Practice type code from OLIDS
+  - name: practice_type_desc
+    description: Practice type description from OLIDS
+  - name: practice_postcode
+    description: Practice postcode from OLIDS
+  - name: practice_open_date
+    description: Practice opening date from OLIDS
+  - name: practice_close_date
+    description: Practice closing date from OLIDS
+  - name: practice_is_obsolete
+    description: Whether practice is obsolete from OLIDS
+  - name: practice_parent_organisation_id
+    description: Parent organisation ID from OLIDS
+  - name: commissioner_code
+    description: Commissioner organisation code
+
+    tests:
+    - not_null
+  - name: commissioner_name
+    description: Commissioner organisation name
+
+    tests:
+    - not_null
+  - name: sk_commissioner_id
+    description: Surrogate key for Commissioner organisation
+  - name: stp_code
+    description: Sustainability and Transformation Partnership code
+
+    tests:
+    - not_null
+  - name: stp_name
+    description: Sustainability and Transformation Partnership name
+
+    tests:
+    - not_null
+  - name: sk_stp_id
+    description: Surrogate key for STP organisation
+  - name: sk_practice_id
+    description: Dictionary surrogate key for practice organisation

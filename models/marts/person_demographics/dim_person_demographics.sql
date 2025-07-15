@@ -13,10 +13,11 @@ Provides a single source of truth for person demographics by consolidating infor
 - Ethnicity details
 - Language and communication needs
 - Current practice registration
+- Enhanced practice and PCN information including borough context
 - Practice neighbourhood and organisational hierarchy
-- Geographic placeholders for future data (LSOA 2021, ward, IMD 2019)
+- Geographic data from Dictionary sources and placeholders for future data
 
-Note: Working with dummy data so some geographic fields will be NULL until proper data is available.
+Includes both standard PCN names and borough-prefixed variants for North Central London context.
 Geographic fields include version numbers (LSOA_21, IMD_19) to support historical comparisons when new versions become available.
 */
 
@@ -43,60 +44,67 @@ SELECT
     age.sk_patient_id,
 
     -- Status Flags
+    COALESCE(active.is_active, FALSE) AS is_active,
     age.is_deceased,
-    age.birth_year,
+    COALESCE(sex.sex, 'Unknown') AS sex,
 
     -- Basic Demographics
+    age.birth_year,
     age.birth_date_approx,
     age.death_year,
     age.death_date_approx,
     age.age,
     age.age_life_stage,
 
-    -- Age and Age Bands
+    -- Age Bands
     age.age_band_5y,
     age.age_band_10y,
     age.age_band_nhs,
     age.age_band_ons,
-    eth.ethnicity_category,
-    eth.ethnicity_subcategory,
 
     -- Ethnicity
+    eth.ethnicity_category,
+    eth.ethnicity_subcategory,
     eth.ethnicity_granular,
-    lang.language AS main_language,
-    lang.language_category,
 
     -- Language and Communication
+    lang.language AS main_language,
+    lang.language_category,
     lang.interpreter_type,
-    prac.practice_code AS current_practice_code,
-    prac.practice_name AS current_practice_name,
-    prac.practice_postcode AS current_practice_postcode,
-
-    -- Current Practice Registration
+    COALESCE(lang.interpreter_needed, FALSE) AS interpreter_needed,
+    
+    -- Practice Registration
+    prac.practice_code,
+    prac.practice_name,
     prac.registration_start_date,
-    pcn.pcn_code,
-    pcn.pcn_name,
+    
+    -- PCN Information
+    dp.pcn_code,
+    dp.pcn_name,
+    dp.pcn_name_with_borough,
+    
+    -- Geographic Information
+    dp.practice_borough,
+    dp.practice_postcode_dict AS practice_postcode,
+    dp.practice_lsoa,
+    dp.practice_msoa,
+    dp.practice_latitude,
+    dp.practice_longitude,
     nbhd.local_authority,
-
-    -- Practice Neighbourhood and Organisational Hierarchy
     nbhd.practice_neighbourhood,
+    
+    -- Address and Household Information
     addr.post_code_hash,
     addr.uprn_hash,
     NULL::VARCHAR AS household_id,
 
-    -- Geographic Information (Current and placeholders for future data)
+    -- Geographic Placeholders (for future data)
     NULL AS lsoa_code_21,
     NULL AS lsoa_name_21,
-
-    -- Household linkage (will be populated when real UPRN data available)
-    NULL AS ward_code,  -- Link to dim_households via UPRN hash
-
+    NULL AS ward_code,
     NULL AS ward_name,
     NULL::NUMBER AS imd_decile_19,
-    NULL::NUMBER AS imd_quintile_19,
-    COALESCE(active.is_active, FALSE) AS is_active,
-    COALESCE(sex.sex, 'Unknown') AS sex,
-    COALESCE(lang.interpreter_needed, FALSE) AS interpreter_needed
+    NULL::VARCHAR AS imd_quintile_19
 
 FROM {{ ref('dim_person_age') }} AS age
 
@@ -114,13 +122,13 @@ LEFT JOIN {{ ref('dim_person_main_language') }} AS lang
 LEFT JOIN {{ ref('dim_person_current_practice') }} AS prac
     ON age.person_id = prac.person_id
 
+-- Join enhanced practice dimension (includes PCN and borough information)
+LEFT JOIN {{ ref('dim_practice') }} AS dp
+    ON prac.practice_code = dp.practice_code
+
 -- Join practice neighbourhood information
 LEFT JOIN {{ ref('dim_practice_neighbourhood') }} AS nbhd
     ON prac.practice_code = nbhd.practice_code
-
--- Join practice PCN and commissioning information
-LEFT JOIN {{ ref('dim_practice_pcn') }} AS pcn
-    ON prac.practice_code = pcn.practice_code
 
 -- Join active patient status
 LEFT JOIN {{ ref('dim_person_active_patients') }} AS active

@@ -1,5 +1,158 @@
 version: 2
 sources:
+- name: Dictionary_dbo
+  database: '"Dictionary"'
+  schema: '"dbo"'
+  tables:
+  - name: OrganisationMatrixPracticeView
+    description: "Organisational matrix showing practice relationships to PCNs, Commissioners, and STPs"
+    identifier: '"OrganisationMatrixPracticeView"'
+    columns:
+    - name: SK_OrganisationID_Practice
+      description: "Surrogate key for practice organisation"
+      data_type: NUMBER
+    - name: PracticeCode
+      description: "Practice ODS code"
+      data_type: VARCHAR
+    - name: PracticeName
+      description: "Practice name"
+      data_type: VARCHAR
+    - name: SK_OrganisationID_Network
+      description: "Surrogate key for PCN organisation"
+      data_type: NUMBER
+    - name: NetworkCode
+      description: "PCN (Primary Care Network) code"
+      data_type: VARCHAR
+    - name: NetworkName
+      description: "PCN (Primary Care Network) name"
+      data_type: VARCHAR
+    - name: SK_OrganisationID_Commissioner
+      description: "Surrogate key for Commissioner organisation"
+      data_type: NUMBER
+    - name: CommissionerCode
+      description: "Commissioner code"
+      data_type: VARCHAR
+    - name: CommissionerName
+      description: "Commissioner name"
+      data_type: VARCHAR
+    - name: SK_OrganisationID_STP
+      description: "Surrogate key for STP organisation"
+      data_type: NUMBER
+    - name: STPCode
+      description: "STP (Sustainability and Transformation Partnership) code"
+      data_type: VARCHAR
+    - name: STPName
+      description: "STP (Sustainability and Transformation Partnership) name"
+      data_type: VARCHAR
+  - name: Organisation
+    description: "Organisation details from Dictionary"
+    identifier: '"Organisation"'
+    columns:
+    - name: SK_OrganisationID
+      description: "Surrogate key for organisation"
+      data_type: NUMBER
+    - name: Organisation_Code
+      description: "Organisation code"
+      data_type: VARCHAR
+    - name: Organisation_Name
+      description: "Organisation name"
+      data_type: VARCHAR
+    - name: SK_OrganisationTypeID
+      description: "Surrogate key for organisation type"
+      data_type: NUMBER
+    - name: SK_OrganisationID_NationalGrouping
+      description: "Surrogate key for national grouping"
+      data_type: NUMBER
+    - name: SK_OrganisationID_HealthAuthority
+      description: "Surrogate key for health authority"
+      data_type: NUMBER
+    - name: SK_OrganisationID_CurrentCareOrg
+      description: "Surrogate key for current care organisation"
+      data_type: NUMBER
+    - name: SK_PostcodeID
+      description: "Surrogate key for postcode"
+      data_type: NUMBER
+    - name: StartDate
+      description: "Organisation start date"
+      data_type: TIMESTAMP_NTZ
+    - name: EndDate
+      description: "Organisation end date"
+      data_type: TIMESTAMP_NTZ
+    - name: SK_OrganisationID_ParentOrg
+      description: "Surrogate key for parent organisation"
+      data_type: NUMBER
+    - name: Join_Parent_Date
+      description: "Date joined parent organisation"
+      data_type: TIMESTAMP_NTZ
+    - name: Left_Parent_Date
+      description: "Date left parent organisation"
+      data_type: TIMESTAMP_NTZ
+    - name: FirstCreated
+      description: "First created timestamp"
+      data_type: TIMESTAMP_NTZ
+    - name: LastUpdated
+      description: "Last updated timestamp"
+      data_type: TIMESTAMP_NTZ
+    - name: SK_PrescribingSettingID
+      description: "Surrogate key for prescribing setting"
+      data_type: NUMBER
+    - name: SK_OrganisationStatusID
+      description: "Surrogate key for organisation status"
+      data_type: NUMBER
+    - name: Address_Line_1
+      description: "Address line 1"
+      data_type: VARCHAR
+    - name: Address_Line_2
+      description: "Address line 2"
+      data_type: VARCHAR
+    - name: Address_Line_3
+      description: "Address line 3"
+      data_type: VARCHAR
+    - name: Address_Line_4
+      description: "Address line 4"
+      data_type: VARCHAR
+    - name: Address_Line_5
+      description: "Address line 5"
+      data_type: VARCHAR
+  - name: Postcode
+    description: "Postcode details from Dictionary"
+    identifier: '"Postcode"'
+    columns:
+    - name: SK_PostcodeID
+      description: "Surrogate key for postcode"
+      data_type: NUMBER
+    - name: Postcode_single_space_e_Gif
+      description: "Postcode with single space e-GIF format"
+      data_type: VARCHAR
+    - name: LSOA
+      description: "Lower Super Output Area"
+      data_type: VARCHAR
+    - name: MSOA
+      description: "Middle Super Output Area"
+      data_type: VARCHAR
+    - name: Latitude
+      description: "Latitude coordinate"
+      data_type: NUMBER
+    - name: Longitude
+      description: "Longitude coordinate"
+      data_type: NUMBER
+  - name: OrganisationDescendent
+    description: "Organisation descendant relationships from Dictionary"
+    identifier: '"OrganisationDescendent"'
+    columns:
+    - name: OrganisationCode_Child
+      description: "Child organisation code"
+      data_type: VARCHAR
+    - name: OrganisationPrimaryRole_Child
+      description: "Primary role of child organisation"
+      data_type: VARCHAR
+    - name: Path
+      description: "Organisational hierarchy path"
+      data_type: VARCHAR
+    - name: RelationshipStartDate
+      description: "Relationship start date"
+      data_type: TIMESTAMP_NTZ
+
 - name: REFERENCE
   database: '"{{ env_var("SNOWFLAKE_TARGET_DATABASE", "DATA_LAB_OLIDS_UAT") }}"'
   schema: REFERENCE

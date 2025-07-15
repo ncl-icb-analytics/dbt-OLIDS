@@ -1,0 +1,51 @@
+version: 2
+models:
+- name: int_organisation_borough_mapping
+  description: 'Organisation borough mapping for North Central London practices and PCNs.
+
+
+    Data Sources:
+
+    • Dictionary.dbo.OrganisationDescendent - Historic organisational relationships via hierarchy paths
+
+    • stg_dictionary_organisation_matrix_practice_view - Practice-to-PCN relationships
+
+    • Hardcoded CCG-to-borough mapping for North Central London
+
+    • One row per practice with borough assignments for both practice and PCN levels'
+
+  tests:
+  - dbt_utils.at_least_one:
+      column_name: practice_code
+
+  columns:
+  - name: practice_code
+    description: Practice ODS code
+
+    tests:
+    - not_null
+    - unique
+  - name: practice_borough
+    description: Borough assignment for this practice based on historic CCG relationships
+
+    tests:
+    - not_null
+    - accepted_values:
+        values: ['Camden', 'Islington', 'Barnet', 'Enfield', 'Haringey']
+  - name: practice_historic_ccg
+    description: Historic CCG code used for borough mapping
+
+    tests:
+    - not_null
+    - accepted_values:
+        values: ['07R', '08H', '07M', '07X', '08D']
+  - name: pcn_code
+    description: PCN code that this practice belongs to
+  - name: pcn_borough
+    description: Borough assignment for the PCN (based on majority of member practices)
+
+    tests:
+    - accepted_values:
+        values: ['Camden', 'Islington', 'Barnet', 'Enfield', 'Haringey']
+  - name: pcn_borough_practice_count
+    description: Number of practices this PCN has in the assigned borough
