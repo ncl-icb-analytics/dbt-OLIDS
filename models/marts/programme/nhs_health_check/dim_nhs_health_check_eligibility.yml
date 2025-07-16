@@ -61,14 +61,6 @@ models:
         - false
   - name: latest_health_check_date
     description: Date of most recent NHS Health Check (NULL if never had one)
-  - name: days_since_last_health_check
-    description: Number of days since last health check (NULL if never had one)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 50000
-        severity: warn
   - name: due_nhs_health_check
     description: 'Flag: TRUE if person is due an NHS Health Check (eligible + >5 years or never)'
 

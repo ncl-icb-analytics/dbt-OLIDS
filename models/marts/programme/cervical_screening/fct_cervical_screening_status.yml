@@ -108,8 +108,6 @@ models:
     description: Date of most recent screening observation (any type)
   - name: latest_completed_date
     description: Date of most recent completed screening (SMEAR_COD only)
-  - name: years_since_last_completed_screening
-    description: Years since last completed screening (null if never screened)
   - name: next_screening_due_date
     description: Calculated next screening due date based on age-specific interval
   - name: days_overdue

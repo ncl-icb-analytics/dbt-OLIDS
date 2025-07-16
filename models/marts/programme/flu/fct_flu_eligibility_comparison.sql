@@ -39,7 +39,6 @@ SELECT
     age_months,
     age_years,
     created_at,
-    days_since_qualifying_event,
     eligibility_priority,
     'current' AS campaign_period
 FROM {{ ref('fct_flu_eligibility_2024_25') }}
@@ -67,7 +66,6 @@ SELECT
     age_months,
     age_years,
     created_at,
-    days_since_qualifying_event,
     eligibility_priority,
     'previous' AS campaign_period
 FROM fct_flu_eligibility_2023_24
@@ -92,7 +90,6 @@ SELECT
     age_months,
     age_years,
     created_at,
-    days_since_qualifying_event,
     eligibility_priority,
     'upcoming' AS campaign_period
 FROM fct_flu_eligibility_2025_26

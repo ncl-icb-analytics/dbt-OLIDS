@@ -127,16 +127,6 @@ register_inclusion AS (
             ELSE 'No palliative care diagnosis'
         END AS palliative_care_status,
 
-        -- Days calculations
-        CASE
-            WHEN earliest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, earliest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_first_palliative_care,
-
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, latest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_latest_palliative_care
 
     FROM palliative_care_diagnoses AS pc
     INNER JOIN {{ ref('dim_person_active_patients') }} AS ap
@@ -153,8 +143,6 @@ SELECT
     ri.latest_no_longer_indicated_date,
     ri.total_palliative_care_episodes,
     ri.total_no_longer_indicated_episodes,
-    ri.days_since_first_palliative_care,
-    ri.days_since_latest_palliative_care,
     ri.palliative_care_codes,
     ri.palliative_care_displays,
     ri.no_longer_indicated_codes,

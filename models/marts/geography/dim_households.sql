@@ -27,7 +27,6 @@ dwelling_classification as (
   select
     *,
     -- Calculate dwelling age in years
-    datediff('year', first_known_occupation_date, current_date()) as years_since_first_occupation,
 
     -- Classify dwelling activity
     case
@@ -45,7 +44,6 @@ select
 
   -- Dwelling activity and age
   dwelling_activity_status,
-  years_since_first_occupation,
   first_known_occupation_date,
   last_known_activity_date,
 

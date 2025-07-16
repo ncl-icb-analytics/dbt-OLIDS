@@ -38,13 +38,6 @@ models:
         - Recently active
         - Previously active
         - Historically active only
-  - name: years_since_first_occupation
-    description: Number of years since first known occupation of this dwelling
-
-    tests:
-    - not_null
-    - dbt_utils.expression_is_true:
-        expression: '>= 0'
   - name: first_known_occupation_date
     description: Earliest known registration date for any person at this dwelling
 

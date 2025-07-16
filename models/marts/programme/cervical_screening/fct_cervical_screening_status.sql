@@ -116,17 +116,7 @@ current_status AS (
         sh.total_non_response_records,
         
         -- Time calculations
-        CASE 
-            WHEN sh.latest_completed_date IS NOT NULL 
-            THEN DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE())
-            ELSE NULL
-        END AS days_since_last_completed_screening,
         
-        CASE 
-            WHEN sh.latest_completed_date IS NOT NULL 
-            THEN ROUND(DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE()) / 365.25, 1)
-            ELSE NULL
-        END AS years_since_last_completed_screening,
         
         -- Status validity flags (business rules)
         CASE
@@ -167,8 +157,8 @@ programme_compliance AS (
         CASE
             WHEN NOT cs.is_screening_eligible THEN 'Not Eligible'
             WHEN cs.never_screened OR cs.latest_completed_date IS NULL THEN 'Never Screened'
-            WHEN cs.days_since_last_completed_screening <= cs.screening_interval_days THEN 'Up to Date'
-            WHEN cs.days_since_last_completed_screening > cs.screening_interval_days THEN 'Overdue'
+            WHEN DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) <= cs.screening_interval_days THEN 'Up to Date'
+            WHEN DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) > cs.screening_interval_days THEN 'Overdue'
             ELSE 'Unknown'
         END AS programme_compliance_status,
         
@@ -184,8 +174,8 @@ programme_compliance AS (
         END AS requires_colposcopy_referral,
         
         CASE
-            WHEN cs.days_since_last_completed_screening > cs.screening_interval_days
-                AND cs.years_since_last_completed_screening > 5 THEN TRUE
+            WHEN DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) > cs.screening_interval_days
+                AND ROUND(DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) / 365.25, 1) > 5 THEN TRUE
             ELSE FALSE
         END AS long_term_non_attendance,
         
@@ -219,7 +209,6 @@ SELECT
     -- Latest screening information
     latest_screening_date,
     latest_completed_date,
-    years_since_last_completed_screening,
     next_screening_due_date,
     days_overdue,
     
