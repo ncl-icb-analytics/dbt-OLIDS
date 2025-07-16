@@ -14,7 +14,11 @@ models:
 
     • Includes arrays of all observation IDs, concept codes, and displays for traceability
 
-    • Only includes people who have ARAF events (has_araf_event always TRUE)'
+    • Only includes people who have ARAF events (has_araf_event always TRUE)
+
+    • Includes flags for old and new annual risk acknowledgement form types
+
+    • Provides form type information with dates for traceability'
 
   columns:
   - name: person_id
@@ -47,3 +51,11 @@ models:
     description: Array of display terms for the ARAF codes.
   - name: all_araf_code_categories_applied
     description: Array of code categories applied (should contain only 'ARAF').
+  - name: has_old_annual_risk_acknowledgement_form
+    description: TRUE if person has old annual risk acknowledgement form (concept code 1366401000000107).
+  - name: has_new_annual_risk_acknowledgement_form
+    description: TRUE if person has new annual risk acknowledgement form (concept code 2078951000000106).
+  - name: old_annual_risk_acknowledgement_form_info
+    description: Information about old annual risk acknowledgement form with date if present.
+  - name: new_annual_risk_acknowledgement_form_info
+    description: Information about new annual risk acknowledgement form with date if present.

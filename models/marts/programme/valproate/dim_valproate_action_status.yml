@@ -1,49 +1,73 @@
 version: 2
 models:
 - name: dim_valproate_action_status
-  description: 'Clinical decision support table implementing valproate safety monitoring logic with recommended actions.
+  description: 'Dimension table implementing Valproate safety monitoring clinical decision logic.
 
 
-    Business Logic:
+    Calculates recommended actions and priority order (1-9) based on:
 
-    • Joins database scope with all dimension tables (PPP, ARAF, referrals, specialists, pregnancy)
+    • Pregnancy status
 
-    • Implements CASE-based decision logic for recommended actions based on patient status
+    • PPP enrollment  
 
-    • Actions include: pregnancy review, PPP enrollment check, ARAF compliance, specialist monitoring
+    • ARAF completion
 
-    • Provides consolidated view of all patient safety monitoring dimensions for decision support'
+    • Age and risk factors
+
+
+    Action priorities:
+
+    • 1 = Pregnancy (urgent)
+
+    • 2-4 = Missing safety measures by age/vulnerability
+
+    • 5 = PPP non-enrolled (monitor)
+
+    • 6-8 = Safety measures present (check ARAF expiry)
+
+    • 9 = Low risk (no action)'
 
   columns:
   - name: person_id
     description: Unique identifier for the person.
-
     tests:
     - not_null
     - unique
   - name: age
-    description: Patient's age.
+    description: Age of the person at time of calculation.
   - name: sex
     description: Patient's sex.
-  - name: is_woman_of_child_bearing_age
-    description: TRUE if the person is a woman of child-bearing age.
-  - name: has_recent_valproate_medication
-    description: TRUE if the person has a recent valproate prescription.
-  - name: has_ppp_event
-    description: TRUE if any PPP event is present for the person.
-  - name: is_currently_ppp_enrolled
-    description: TRUE if most recent PPP status indicates enrollment.
-  - name: current_ppp_status_description
-    description: Human-readable description of current PPP status.
+  - name: has_ppp_status
+    description: TRUE if person has any PPP record in the system.
+  - name: is_ppp_enrolled
+    description: TRUE if enrolled in PPP, FALSE otherwise.
+  - name: is_ppp_non_enrolled
+    description: TRUE if PPP status is discontinued/not needed/declined.
+  - name: ppp_status_description
+    description: Description of PPP status.
   - name: has_araf_event
-    description: TRUE if any ARAF event is present for the person.
-  - name: has_specific_araf_form_meeting_lookback
-    description: TRUE if an ARAF form event meeting lookback criteria is recorded.
-  - name: has_araf_referral_event
-    description: TRUE if any ARAF referral event is present for the person.
-  - name: has_neurology_event
-    description: TRUE if any neurology event is present for the person.
-  - name: has_psych_event
-    description: TRUE if any psychiatry event is present for the person.
-  - name: recommended_action
-    description: Recommended clinical action for the person based on safety logic.
+    description: TRUE if person has any ARAF record in the system.
+  - name: has_current_araf
+    description: TRUE if person has ARAF meeting lookback requirements.
+  - name: has_permanent_absence_pregnancy_risk
+    description: TRUE if permanent absence of pregnancy risk recorded.
+  - name: has_learning_disability
+    description: TRUE if learning disability recorded.
+  - name: has_pregnancy
+    description: TRUE if currently pregnant.
+  - name: has_neurology
+    description: TRUE if person has neurology-related conditions.
+  - name: has_psychiatry
+    description: TRUE if person has psychiatry-related conditions.
+  - name: risk_of_pregnancy
+    description: 'Risk category: Low Risk, Medium Risk, High Risk.'
+  - name: action
+    description: Recommended action based on business rules.
+  - name: action_order
+    description: Numeric priority order for action (1=highest priority).
+  - name: additional_findings
+    description: Summary of pregnancy and learning disability findings.
+  - name: condition_group
+    description: Summary of neurology and psychiatry condition groups.
+  - name: calculation_date
+    description: Date when this calculation was performed.
