@@ -16,11 +16,9 @@ SELECT
     concept_code,
     concept_display,
     is_completed_health_check,
-    days_since_health_check,
     health_check_current_12m,
     health_check_current_24m,
-    health_check_current_5y,
-    years_since_health_check
+    health_check_current_5y
 
 FROM (
     {{ get_latest_events(

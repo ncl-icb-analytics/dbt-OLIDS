@@ -66,9 +66,7 @@ SELECT
         ELSE FALSE
     END AS is_follow_up_check,
 
-    -- Enhanced time calculations
-    DATEDIFF(day, obs.clinical_effective_date, CURRENT_DATE()) AS days_since_health_check,
-    ROUND(DATEDIFF(day, obs.clinical_effective_date, CURRENT_DATE()) / 365.25, 1) AS years_since_health_check,
+    -- Enhanced time calculations removed - use clinical_effective_date directly
 
     -- Health check currency flags (standard intervals)
     CASE

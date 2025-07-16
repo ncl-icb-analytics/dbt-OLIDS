@@ -70,8 +70,6 @@ SELECT
         ELSE FALSE
     END AS is_mart_eligible,
 
-    -- Calculate time since order
-    DATEDIFF(day, base_orders.order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (ICS are typically long-term therapy)
     CASE

@@ -68,8 +68,6 @@ SELECT
     CASE WHEN bnf_code LIKE '06010208%' THEN TRUE ELSE FALSE END AS is_sglt2_inhibitor,
     CASE WHEN bnf_code LIKE '06010209%' THEN TRUE ELSE FALSE END AS is_glp1_agonist,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags
     CASE

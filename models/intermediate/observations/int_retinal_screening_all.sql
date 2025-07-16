@@ -74,9 +74,7 @@ SELECT
         THEN TRUE ELSE FALSE
     END AS requires_ophthalmology_referral,
 
-    -- Enhanced time calculations
-    DATEDIFF(day, obs.clinical_effective_date, CURRENT_DATE()) AS days_since_screening,
-    ROUND(DATEDIFF(day, obs.clinical_effective_date, CURRENT_DATE()) / 365.25, 1) AS years_since_screening,
+    -- Enhanced time calculations removed - use clinical_effective_date directly
 
     -- Screening currency flags (diabetes care process requirements)
     CASE

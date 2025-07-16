@@ -69,8 +69,6 @@ SELECT
         ELSE FALSE
     END AS is_low_dose_aspirin,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (antiplatelets are typically long-term therapy)
     CASE

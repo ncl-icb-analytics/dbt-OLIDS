@@ -49,9 +49,7 @@ SELECT
         ELSE 'Maternity care context'
     END AS clinical_safety_context,
 
-    -- Enhanced time calculations for maternity care
-    DATEDIFF(day, obs.clinical_effective_date, CURRENT_DATE()) AS days_since_event,
-    ROUND(DATEDIFF(day, obs.clinical_effective_date, CURRENT_DATE()) / 7, 1) AS weeks_since_event,
+    -- Enhanced time calculations for maternity care removed - use clinical_effective_date directly
 
     -- Maternity care timeframes
     CASE

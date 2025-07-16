@@ -84,8 +84,6 @@ SELECT
         ELSE FALSE
     END AS is_first_line,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (antidepressants are typically long-term therapy)
     CASE

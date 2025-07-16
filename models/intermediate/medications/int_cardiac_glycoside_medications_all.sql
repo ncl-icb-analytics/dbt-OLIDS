@@ -75,8 +75,6 @@ SELECT
         ELSE FALSE
     END AS is_elderly_renal_dose,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (cardiac glycosides require ongoing monitoring)
     CASE
