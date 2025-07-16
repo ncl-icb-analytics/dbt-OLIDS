@@ -32,6 +32,24 @@ SELECT
     pla.all_araf_concept_displays,
     pla.all_araf_code_categories_applied,
     coalesce(pla.has_specific_araf_form_meeting_lookback, FALSE)
-        AS has_specific_araf_form_meeting_lookback
+        AS has_specific_araf_form_meeting_lookback,
+    
+    -- ARAF form type flags
+    array_contains('1366401000000107'::VARIANT, pla.all_araf_concept_codes) AS has_old_annual_risk_acknowledgement_form,
+    array_contains('2078951000000106'::VARIANT, pla.all_araf_concept_codes) AS has_new_annual_risk_acknowledgement_form,
+    
+    -- ARAF form type info with dates
+    CASE 
+        WHEN array_contains('1366401000000107'::VARIANT, pla.all_araf_concept_codes) 
+        THEN 'Yes (' || TO_VARCHAR(pla.latest_specific_araf_form_date, 'DD/MM/YYYY') || ')' 
+        ELSE 'No' 
+    END AS old_annual_risk_acknowledgement_form_info,
+    
+    CASE 
+        WHEN array_contains('2078951000000106'::VARIANT, pla.all_araf_concept_codes) 
+        THEN 'Yes (' || TO_VARCHAR(pla.latest_specific_araf_form_date, 'DD/MM/YYYY') || ')' 
+        ELSE 'No' 
+    END AS new_annual_risk_acknowledgement_form_info
+    
 FROM person_level_araf_aggregation AS pla
 -- Brief: Aggregates ARAF events and status for valproate cohort, using intermediate ARAF events table. Includes latest and historical ARAF status, event details, and code traceability.
