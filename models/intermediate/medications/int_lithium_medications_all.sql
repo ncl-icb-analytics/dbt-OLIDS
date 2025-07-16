@@ -75,8 +75,6 @@ SELECT
     -- Monitoring requirement flag (all lithium requires regular monitoring)
     TRUE AS requires_monitoring,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (lithium requires regular monitoring and compliance tracking)
     CASE

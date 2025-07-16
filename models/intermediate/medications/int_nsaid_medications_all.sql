@@ -86,8 +86,6 @@ SELECT
         ELSE FALSE
     END AS is_high_cv_risk,
 
-    -- Calculate time since order
-    DATEDIFF(day, base_orders.order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags
     CASE

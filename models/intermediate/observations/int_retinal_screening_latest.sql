@@ -17,7 +17,6 @@ SELECT
     concept_display,
     source_cluster_id,
     is_completed_screening,
-    days_since_screening,
     screening_current_12m,
     screening_current_24m
 

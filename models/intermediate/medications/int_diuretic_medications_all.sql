@@ -70,8 +70,6 @@ SELECT
     CASE WHEN bnf_code LIKE '020202%' THEN TRUE ELSE FALSE END AS is_loop_diuretic,
     CASE WHEN bnf_code LIKE '020203%' THEN TRUE ELSE FALSE END AS is_potassium_sparing,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags
     CASE

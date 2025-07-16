@@ -330,11 +330,6 @@ SELECT
     created_at,
     
     -- Add helpful calculated fields
-    CASE 
-        WHEN qualifying_event_date IS NOT NULL 
-        THEN DATEDIFF('days', qualifying_event_date, audit_end_date)
-        ELSE NULL
-    END AS days_since_qualifying_event,
     
     -- Priority scoring for multiple eligibilities (lower = higher priority)
     CASE rule_type

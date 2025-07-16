@@ -93,16 +93,6 @@ register_inclusion AS (
             ELSE 'No stroke/TIA diagnosis'
         END AS stroke_tia_status,
 
-        -- Days calculations
-        CASE
-            WHEN earliest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, earliest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_first_stroke_tia,
-
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, latest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_latest_stroke_tia
 
     FROM stroke_tia_diagnoses AS std
 )
@@ -117,8 +107,6 @@ SELECT
     ri.latest_resolved_date,
     ri.total_stroke_tia_episodes,
     ri.total_resolution_codes,
-    ri.days_since_first_stroke_tia,
-    ri.days_since_latest_stroke_tia,
     ri.stroke_tia_diagnosis_codes,
     ri.stroke_tia_resolution_codes,
     ri.stroke_tia_diagnosis_displays

@@ -88,8 +88,6 @@ SELECT
         ELSE FALSE
     END AS is_vka,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (anticoagulants are typically long-term therapy)
     CASE

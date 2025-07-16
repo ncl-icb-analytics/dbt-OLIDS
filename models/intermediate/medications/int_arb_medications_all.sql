@@ -55,8 +55,6 @@ SELECT
     CASE WHEN bnf_code LIKE '0205050220%' THEN TRUE ELSE FALSE END AS is_irbesartan,
     CASE WHEN bnf_code LIKE '0205050235%' THEN TRUE ELSE FALSE END AS is_telmisartan,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (ARBs are typically long-term therapy)
     CASE

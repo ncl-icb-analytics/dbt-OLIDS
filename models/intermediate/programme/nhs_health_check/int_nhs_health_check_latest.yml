@@ -67,15 +67,6 @@ Key Features:
 
         values:
         - true
-  - name: days_since_health_check
-    description: Number of days since latest health check
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 50000
-        severity: warn
   - name: health_check_current_12m
     description: Flag indicating health check within 12 months
 
@@ -106,12 +97,3 @@ Key Features:
         values:
         - true
         - false
-  - name: years_since_health_check
-    description: Number of years since latest health check
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 100
-        severity: warn

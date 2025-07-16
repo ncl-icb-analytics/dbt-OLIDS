@@ -144,24 +144,6 @@ models:
         values:
         - true
         - false
-  - name: days_since_screening
-    description: Number of days since screening
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 50000
-        severity: warn
-  - name: years_since_screening
-    description: Number of years since screening (decimal)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 150
-        severity: warn
   - name: screening_current_12m
     description: Flag indicating screening within 12 months
 

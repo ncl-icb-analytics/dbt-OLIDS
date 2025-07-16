@@ -68,16 +68,6 @@ register_inclusion AS (
             ELSE 'No NAFLD diagnosis'
         END AS nafld_status,
 
-        -- Days calculations
-        CASE
-            WHEN earliest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, earliest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_first_nafld,
-
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, latest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_latest_nafld
 
     FROM nafld_diagnoses AS nd
 )
@@ -89,8 +79,6 @@ SELECT
     ri.earliest_diagnosis_date,
     ri.latest_diagnosis_date,
     ri.total_nafld_episodes,
-    ri.days_since_first_nafld,
-    ri.days_since_latest_nafld,
     ri.nafld_diagnosis_codes,
     ri.nafld_diagnosis_displays
 

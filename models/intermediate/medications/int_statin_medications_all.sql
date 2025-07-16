@@ -54,8 +54,6 @@ SELECT
     -- Combination therapy flag
     CASE WHEN bnf_code LIKE '0212000AC%' THEN TRUE ELSE FALSE END AS is_combination_therapy,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (statins are typically long-term therapy)
     CASE

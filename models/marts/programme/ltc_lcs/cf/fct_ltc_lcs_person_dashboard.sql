@@ -117,12 +117,6 @@ SELECT
     
     -- Registration context
     prac.registration_start_date,
-    DATEDIFF('day', prac.registration_start_date, CURRENT_DATE()) AS days_registered,
-    CASE 
-        WHEN DATEDIFF('day', prac.registration_start_date, CURRENT_DATE()) < 365 THEN 'New Patient (<1 year)'
-        WHEN DATEDIFF('day', prac.registration_start_date, CURRENT_DATE()) < 1825 THEN 'Recent Patient (1-5 years)'
-        ELSE 'Established Patient (5+ years)'
-    END AS registration_duration_category,
     
     -- Metadata
     CURRENT_DATE() AS data_refresh_date

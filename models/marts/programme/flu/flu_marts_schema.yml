@@ -116,12 +116,6 @@ models:
       Calculated age in years at the reference_date.
 
       Primary field for age-based eligibility thresholds (e.g., over 65).'
-  - name: days_since_qualifying_event
-    description: 'Template calculated field: days between qualifying event and audit
-
-      For clinical eligibility, shows recency of qualifying event.
-
-      NULL for age-based rules. Useful for understanding data freshness.'
   - name: eligibility_priority
     description: 'Template priority ranking for multiple eligibilities
 
@@ -272,8 +266,6 @@ models:
 
     tests:
     - not_null
-  - name: days_since_qualifying_event
-    description: Days between qualifying event and audit end date. Analytical metric for measuring time from qualification to eligibility assessment.
   - name: eligibility_priority
     description: Priority ranking for multiple eligibilities (1=highest). Enables primary eligibility analysis when persons qualify under multiple rules.
 
@@ -402,8 +394,6 @@ models:
 
     tests:
     - not_null
-  - name: days_since_qualifying_event
-    description: Days between qualifying event and audit end date
   - name: eligibility_priority
     description: Priority ranking for multiple eligibilities (1=highest)
 

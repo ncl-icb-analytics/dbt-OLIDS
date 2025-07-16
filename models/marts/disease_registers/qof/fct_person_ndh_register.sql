@@ -203,16 +203,6 @@ register_inclusion AS (
             ELSE 'No NDH diagnosis'
         END AS ndh_status,
 
-        -- Days calculations
-        CASE
-            WHEN nd.earliest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, nd.earliest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_first_ndh,
-
-        CASE
-            WHEN nd.latest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, nd.latest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_latest_ndh
 
     FROM ndh_diagnoses AS nd
     INNER JOIN {{ ref('dim_person_active_patients') }} AS ap
@@ -246,8 +236,6 @@ SELECT
     ri.is_diabetes_resolved,
     ri.earliest_diabetes_diagnosis_date,
     ri.latest_diabetes_resolved_date,
-    ri.days_since_first_ndh,
-    ri.days_since_latest_ndh,
     ri.ndh_diagnosis_codes,
     ri.ndh_diagnosis_displays,
     ri.igt_diagnosis_codes,

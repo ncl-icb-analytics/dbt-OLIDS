@@ -69,10 +69,6 @@ SELECT
     elig.has_any_excluding_condition,
     elig.is_eligible_for_nhs_health_check,
     hc.clinical_effective_date AS latest_health_check_date,
-    CASE
-        WHEN hc.clinical_effective_date IS NOT NULL
-            THEN datediff(DAY, hc.clinical_effective_date, current_date())
-    END AS days_since_last_health_check,
 
     -- Person is due a health check if eligible AND (never had one OR last one > 5 years ago)
     coalesce(

@@ -394,10 +394,6 @@ SELECT
     latest_diagnosis_date,
 
     -- Derived metrics for easier analysis
-    DATEDIFF('year', earliest_diagnosis_date, CURRENT_DATE())
-        AS years_since_first_diagnosis,
-    DATEDIFF('day', latest_diagnosis_date, CURRENT_DATE())
-        AS days_since_latest_diagnosis
 
 FROM condition_union
 ORDER BY person_id, condition_code

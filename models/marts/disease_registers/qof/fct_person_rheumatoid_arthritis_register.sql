@@ -95,16 +95,6 @@ register_inclusion AS (
             ELSE 'No RA diagnosis'
         END AS ra_status,
 
-        -- Days calculations
-        CASE
-            WHEN earliest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, earliest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_first_ra,
-
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, latest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_latest_ra
 
     FROM ra_diagnoses AS rd
     INNER JOIN {{ ref('dim_person_active_patients') }} AS ap
@@ -121,8 +111,6 @@ SELECT
     ri.latest_diagnosis_date,
     ri.age_at_first_ra_diagnosis,
     ri.total_ra_episodes,
-    ri.days_since_first_ra,
-    ri.days_since_latest_ra,
     ri.ra_diagnosis_codes,
     ri.ra_diagnosis_displays,
     ri.all_observation_ids

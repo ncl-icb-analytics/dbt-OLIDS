@@ -58,8 +58,6 @@ SELECT
     CASE WHEN bnf_code LIKE '0205050110%' THEN TRUE ELSE FALSE END AS is_enalapril,
     CASE WHEN bnf_code LIKE '0205050102%' THEN TRUE ELSE FALSE END AS is_captopril,
 
-    -- Calculate time since order
-    DATEDIFF(day, order_date, CURRENT_DATE()) AS days_since_order,
 
     -- Order recency flags (ACE inhibitors are typically long-term therapy)
     CASE

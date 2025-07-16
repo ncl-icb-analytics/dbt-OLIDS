@@ -84,16 +84,6 @@ register_inclusion AS (
             ELSE 'No gestational diabetes diagnosis'
         END AS gestational_diabetes_status,
 
-        -- Days calculations
-        CASE
-            WHEN earliest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, earliest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_first_gestational_diabetes,
-
-        CASE
-            WHEN latest_diagnosis_date IS NOT NULL
-                THEN DATEDIFF(DAY, latest_diagnosis_date, CURRENT_DATE())
-        END AS days_since_latest_gestational_diabetes
 
     FROM gestational_diabetes_diagnoses AS gd
     INNER JOIN {{ ref('dim_person_active_patients') }} AS ap
@@ -107,8 +97,6 @@ SELECT
     ri.earliest_diagnosis_date,
     ri.latest_diagnosis_date,
     ri.total_gestational_diabetes_episodes,
-    ri.days_since_first_gestational_diabetes,
-    ri.days_since_latest_gestational_diabetes,
     ri.gestational_diabetes_diagnosis_codes,
     ri.gestational_diabetes_diagnosis_displays,
     ri.all_observation_ids
