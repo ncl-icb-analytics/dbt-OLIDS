@@ -1,0 +1,245 @@
+version: 2
+models:
+- name: dim_person_conditions
+  description: 'Person Conditions Dimension - Wide format pivot of LTC summary providing boolean flags for each condition per person.
+
+
+    Key Features:
+
+    • One row per person with condition presence flags
+
+    • Boolean columns for each condition (has_diabetes, has_hypertension, etc.)
+
+    • Summary counts for total conditions and QOF conditions
+
+    • Clinical domain counts (cardiovascular, respiratory, etc.)
+
+    • Earliest and latest diagnosis dates across all conditions
+
+
+    Purpose: Simplified analytical table for condition profiling, multi-morbidity analysis, and dashboard consumption. Provides easy boolean lookup for condition presence.'
+
+  columns:
+  - name: person_id
+    description: Unique person identifier
+
+    tests:
+    - not_null
+    - unique
+
+  - name: has_atrial_fibrillation
+    description: Boolean flag indicating if person has Atrial Fibrillation (AF)
+
+    tests:
+    - not_null
+  - name: has_asthma
+    description: Boolean flag indicating if person has Asthma (AST)
+
+    tests:
+    - not_null
+  - name: has_cancer
+    description: Boolean flag indicating if person has Cancer (CAN)
+
+    tests:
+    - not_null
+  - name: has_coronary_heart_disease
+    description: Boolean flag indicating if person has Coronary Heart Disease (CHD)
+
+    tests:
+    - not_null
+  - name: has_chronic_kidney_disease
+    description: Boolean flag indicating if person has Chronic Kidney Disease (CKD)
+
+    tests:
+    - not_null
+  - name: has_copd
+    description: Boolean flag indicating if person has Chronic Obstructive Pulmonary Disease (COPD)
+
+    tests:
+    - not_null
+  - name: has_cyp_asthma
+    description: Boolean flag indicating if person has Children and Young People Asthma (CYP_AST)
+
+    tests:
+    - not_null
+  - name: has_dementia
+    description: Boolean flag indicating if person has Dementia (DEM)
+
+    tests:
+    - not_null
+  - name: has_depression
+    description: Boolean flag indicating if person has Depression (DEP)
+
+    tests:
+    - not_null
+  - name: has_diabetes
+    description: Boolean flag indicating if person has Diabetes Mellitus (DM)
+
+    tests:
+    - not_null
+  - name: has_epilepsy
+    description: Boolean flag indicating if person has Epilepsy (EP)
+
+    tests:
+    - not_null
+  - name: has_familial_hypercholesterolaemia
+    description: Boolean flag indicating if person has Familial Hypercholesterolaemia (FH)
+
+    tests:
+    - not_null
+  - name: has_gestational_diabetes
+    description: Boolean flag indicating if person has Gestational Diabetes (GESTDIAB)
+
+    tests:
+    - not_null
+  - name: has_heart_failure
+    description: Boolean flag indicating if person has Heart Failure (HF)
+
+    tests:
+    - not_null
+  - name: has_hypertension
+    description: Boolean flag indicating if person has Hypertension (HTN)
+
+    tests:
+    - not_null
+  - name: has_learning_disability
+    description: Boolean flag indicating if person has Learning Disability (LD)
+
+    tests:
+    - not_null
+  - name: has_nafld
+    description: Boolean flag indicating if person has Non-Alcoholic Fatty Liver Disease (NAFLD)
+
+    tests:
+    - not_null
+  - name: has_non_diabetic_hyperglycaemia
+    description: Boolean flag indicating if person has Non-Diabetic Hyperglycaemia (NDH)
+
+    tests:
+    - not_null
+  - name: has_obesity
+    description: Boolean flag indicating if person has Obesity (OB)
+
+    tests:
+    - not_null
+  - name: has_osteoporosis
+    description: Boolean flag indicating if person has Osteoporosis (OST)
+
+    tests:
+    - not_null
+  - name: has_peripheral_arterial_disease
+    description: Boolean flag indicating if person has Peripheral Arterial Disease (PAD)
+
+    tests:
+    - not_null
+  - name: has_palliative_care
+    description: Boolean flag indicating if person has Palliative Care (PC)
+
+    tests:
+    - not_null
+  - name: has_rheumatoid_arthritis
+    description: Boolean flag indicating if person has Rheumatoid Arthritis (RA)
+
+    tests:
+    - not_null
+  - name: has_severe_mental_illness
+    description: Boolean flag indicating if person has Severe Mental Illness (SMI)
+
+    tests:
+    - not_null
+  - name: has_stroke_tia
+    description: Boolean flag indicating if person has Stroke and TIA (STIA)
+
+    tests:
+    - not_null
+  - name: total_conditions
+    description: Total number of distinct conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 1
+        max_value: 25
+  - name: total_qof_conditions
+    description: Total number of QOF conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 25
+  - name: total_non_qof_conditions
+    description: Total number of non-QOF conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 25
+  - name: cardiovascular_conditions
+    description: Number of cardiovascular conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 10
+  - name: respiratory_conditions
+    description: Number of respiratory conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 10
+  - name: mental_health_conditions
+    description: Number of mental health conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 10
+  - name: metabolic_conditions
+    description: Number of metabolic conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 10
+  - name: musculoskeletal_conditions
+    description: Number of musculoskeletal conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 10
+  - name: neurology_conditions
+    description: Number of neurology conditions this person has
+
+    tests:
+    - not_null
+    - dbt_utils.accepted_range:
+
+        min_value: 0
+        max_value: 10
+  - name: earliest_condition_diagnosis
+    description: Earliest diagnosis date across all conditions for this person
+
+    tests:
+    - not_null
+  - name: latest_condition_diagnosis
+    description: Latest diagnosis date across all conditions for this person
+
+    tests:
+    - not_null
