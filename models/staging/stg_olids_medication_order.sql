@@ -27,7 +27,7 @@ SELECT
     "duration_days" AS duration_days,
     "estimated_cost" AS estimated_cost,
     "medication_name" AS medication_name,
-    "medication_order_source_concept_id" AS medication_order_source_concept_id,
+    "medication_order_core_concept_id" AS medication_order_core_concept_id,
     "bnf_reference" AS bnf_reference,
     "age_at_event" AS age_at_event,
     "age_at_event_baby" AS age_at_event_baby,

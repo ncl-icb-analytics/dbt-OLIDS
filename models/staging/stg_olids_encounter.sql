@@ -18,7 +18,7 @@ SELECT
     "clinical_effective_date" AS clinical_effective_date,
     "date_precision_concept_id" AS date_precision_concept_id,
     "location" AS location,
-    "encounter_source_concept_id" AS encounter_source_concept_id,
+    "encounter_core_concept_id" AS encounter_core_concept_id,
     "age_at_event" AS age_at_event,
     "age_at_event_baby" AS age_at_event_baby,
     "age_at_event_neonate" AS age_at_event_neonate,

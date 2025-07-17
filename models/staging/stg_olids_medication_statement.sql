@@ -20,7 +20,7 @@ SELECT
     "referral_request_id" AS referral_request_id,
     "authorisation_type_concept_id" AS authorisation_type_concept_id,
     "date_precision_concept_id" AS date_precision_concept_id,
-    "medication_statement_source_concept_id" AS medication_statement_source_concept_id,
+    "medication_statement_core_concept_id" AS medication_statement_core_concept_id,
     "clinical_effective_date" AS clinical_effective_date,
     "cancellation_date" AS cancellation_date,
     "dose" AS dose,

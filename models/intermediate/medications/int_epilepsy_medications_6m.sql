@@ -33,7 +33,7 @@ WITH epilepsy_orders_base AS (
     INNER JOIN {{ ref('stg_olids_medication_order') }} AS mo
         ON ms.id = mo.medication_statement_id
     INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
-        ON ms.medication_statement_source_concept_id = mc.source_code_id
+        ON ms.medication_statement_core_concept_id = mc.source_code_id
     INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
         ON mo.patient_id = pp.patient_id
     INNER JOIN {{ ref('stg_olids_patient') }} AS p

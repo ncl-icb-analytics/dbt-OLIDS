@@ -19,8 +19,8 @@ WITH raw_registrations AS (
         eoc.organisation_id,
         eoc.episode_of_care_start_date,
         eoc.episode_of_care_end_date,
-        eoc.episode_type_source_concept_id,
-        eoc.episode_status_source_concept_id,
+        eoc.episode_type_raw_concept_id,
+        eoc.episode_status_raw_concept_id,
         eoc.care_manager_practitioner_id,
         -- Get practice details
         o.name AS practice_name,
@@ -139,10 +139,10 @@ SELECT
     prs.total_registrations_count,
 
     -- Gap analysis
-    prs.episode_type_source_concept_id,
+    prs.episode_type_raw_concept_id,
 
     -- Practice change detection
-    prs.episode_status_source_concept_id,
+    prs.episode_status_raw_concept_id,
 
     -- Additional metadata
     prs.care_manager_practitioner_id,
