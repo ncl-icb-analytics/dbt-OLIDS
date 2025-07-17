@@ -25,7 +25,6 @@ latest_patient_record_per_person AS (
     SELECT
         pp.person_id,
         p.sk_patient_id,
-        per.ldsbusinessid_primarypatient,
         pip.patient_ids,
         -- Determine if patient is active based on various criteria
         p.is_dummy_patient,
@@ -86,7 +85,6 @@ latest_patient_record_per_person AS (
 SELECT
     person_id,
     sk_patient_id,
-    ldsbusinessid_primarypatient,
     patient_ids,
     is_active,
     is_deceased,

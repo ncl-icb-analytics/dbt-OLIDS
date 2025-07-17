@@ -27,7 +27,7 @@ WITH observations_with_concepts AS (
         ON p.id = pp.patient_id
     -- Join through concept_map to concept (vanilla structure)
     LEFT JOIN {{ ref('stg_olids_term_concept_map') }} AS cm
-        ON o.observation_core_concept_id = cm.source_code_id
+        ON o.observation_source_concept_id = cm.source_code_id
     LEFT JOIN {{ ref('stg_olids_term_concept') }} AS c
         ON cm.target_code_id = c.id
     WHERE

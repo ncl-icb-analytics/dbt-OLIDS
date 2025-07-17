@@ -19,8 +19,7 @@
         o.is_problem,
         o.is_review,
         o.problem_end_date,
-        o.observation_core_concept_id,
-        o.observation_raw_concept_id,
+        o.observation_source_concept_id,
         mc.concept_id AS mapped_concept_id,
         mc.concept_code AS mapped_concept_code,
         mc.code_description AS mapped_concept_display,
@@ -34,7 +33,7 @@
     LEFT JOIN {{ ref('stg_olids_term_concept') }} unit_con
         ON o.result_value_unit_concept_id = unit_con.id
     JOIN {{ ref('stg_codesets_mapped_concepts') }} mc
-        ON o.observation_core_concept_id = mc.source_code_id
+        ON o.observation_source_concept_id = mc.source_code_id
         AND mc.cluster_id IN ({{ cluster_ids }})
         {% if source %}
         AND mc.source = '{{ source }}'

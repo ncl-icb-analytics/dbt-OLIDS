@@ -561,9 +561,7 @@ sources:
       data_type: VARCHAR
     - name: multi_lex_action
       data_type: VARCHAR
-    - name: allergy_intolerance_core_concept_id
-      data_type: VARCHAR
-    - name: allergy_intolerance_raw_concept_id
+    - name: allergy_intolerance_source_concept_id
       data_type: VARCHAR
     - name: age_at_event
       data_type: NUMBER(38,0)
@@ -707,9 +705,7 @@ sources:
       data_type: BOOLEAN
     - name: problem_end_date
       data_type: TIMESTAMP_NTZ(9)
-    - name: diagnostic_order_core_concept_id
-      data_type: VARCHAR
-    - name: diagnostic_order_raw_concept_id
+    - name: diagnostic_order_source_concept_id
       data_type: VARCHAR
     - name: age_at_event
       data_type: NUMBER(38,0)
@@ -757,7 +753,7 @@ sources:
       data_type: VARCHAR
     - name: location
       data_type: VARCHAR
-    - name: encounter_core_concept_id
+    - name: encounter_source_concept_id
       data_type: VARCHAR
     - name: age_at_event
       data_type: NUMBER(38,0)
@@ -803,9 +799,9 @@ sources:
       data_type: VARCHAR
     - name: person_id
       data_type: VARCHAR
-    - name: episode_type_raw_concept_id
+    - name: episode_type_source_concept_id
       data_type: VARCHAR
-    - name: episode_status_raw_concept_id
+    - name: episode_status_source_concept_id
       data_type: VARCHAR
     - name: episode_of_care_start_date
       data_type: TIMESTAMP_NTZ(9)
@@ -973,7 +969,7 @@ sources:
       data_type: FLOAT
     - name: medication_name
       data_type: VARCHAR
-    - name: medication_order_core_concept_id
+    - name: medication_order_source_concept_id
       data_type: VARCHAR
     - name: bnf_reference
       data_type: VARCHAR
@@ -1031,7 +1027,7 @@ sources:
       data_type: VARCHAR
     - name: ldsconceptid_dateprecision
       data_type: VARCHAR
-    - name: medication_statement_core_concept_id
+    - name: medication_statement_source_concept_id
       data_type: VARCHAR
     - name: clinical_effective_date
       data_type: TIMESTAMP_NTZ(9)
@@ -1109,9 +1105,7 @@ sources:
       data_type: BOOLEAN
     - name: problem_end_date
       data_type: TIMESTAMP_NTZ(9)
-    - name: observation_raw_concept_id
-      data_type: VARCHAR
-    - name: observation_core_concept_id
+    - name: observation_source_concept_id
       data_type: VARCHAR
     - name: age_at_event
       data_type: NUMBER(38,0)
@@ -1417,7 +1411,7 @@ sources:
       data_type: TIMESTAMP_NTZ(9)
     - name: description
       data_type: VARCHAR
-    - name: procedure_core_concept_id
+    - name: procedure_source_concept_id
       data_type: VARCHAR
     - name: status_concept_id
       data_type: VARCHAR
@@ -1481,9 +1475,7 @@ sources:
       data_type: BOOLEAN
     - name: is_review
       data_type: BOOLEAN
-    - name: referral_request_core_concept_id
-      data_type: VARCHAR
-    - name: referral_request_raw_concept_id
+    - name: referral_request_source_concept_id
       data_type: VARCHAR
     - name: age_at_event
       data_type: NUMBER(38,0)

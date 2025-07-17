@@ -5,7 +5,6 @@ SELECT
     "lds_id" AS lds_id,
     "id" AS id,
     "lds_dataset_id" AS lds_dataset_id,
-    "LDSBusinessId_PrimaryPatient" AS ldsbusinessid_primarypatient,
     "lds_datetime_data_acquired" AS lds_datetime_data_acquired,
     "requesting_patient_record_id" AS requesting_patient_record_id,
     "unique_reference" AS unique_reference,
