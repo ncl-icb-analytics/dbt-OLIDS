@@ -6,17 +6,12 @@
 }}
 
 -- Person Sex Dimension Table
--- Derives sex from hardcoded gender_concept_id values
+-- Derives sex from gender concepts using dynamic concept lookups
 
 SELECT DISTINCT
     pp.person_id,
-    -- Derives sex by mapping specific gender_concept_id values to 'Female' or 'Male'
-    -- Any other gender_concept_id or a NULL value results in 'Unknown'
-    CASE
-        WHEN p.gender_concept_id = '4907ce31-7168-4385-b91d-a7fe171a1c8f' THEN 'Female' -- Hardcoded ID for Female
-        WHEN p.gender_concept_id = '3ae10994-efd0-47db-ade4-e440eaf0f973' THEN 'Male'   -- Hardcoded ID for Male
-        ELSE 'Unknown' -- Default for NULL or any other gender_concept_id values
-    END AS sex
+    COALESCE(target_concept.display, source_concept.display, 'Unknown') AS sex
 FROM {{ ref('stg_olids_patient') }} AS p
 INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
     ON p.id = pp.patient_id
+{{ join_concept_display('p.gender_concept_id') }}
