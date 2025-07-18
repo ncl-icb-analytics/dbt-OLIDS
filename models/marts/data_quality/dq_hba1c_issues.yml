@@ -1,0 +1,89 @@
+models:
+- name: dq_hba1c_issues
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: IFCCHBAM_COD, DCCTHBA1C_COD
+  description: 'Business data quality monitoring tool for HbA1c measurements.
+
+    Business Logic:
+
+    • Identifies HbA1c measurements with data quality issues: out-of-range values, measurement type ambiguity, extreme outliers, and missing/future dates
+
+    • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve HbA1c recording issues
+
+    • Handles dual measurement scales: IFCC (20-200 mmol/mol) and DCCT (3-20%) with appropriate validation for each
+
+    • Flags measurement type ambiguity where scale detection fails or conflicts
+
+    • Additional flagging for extreme outliers (IFCC >150, DCCT >15) for investigation
+
+    • One row per HbA1c observation with data quality issues for quality assurance reporting'
+
+  columns:
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of HbA1c measurement (can be NULL for date missing issues)
+  - name: hba1c_value
+    description: HbA1c value cast to numeric from int_hba1c_all
+  - name: result_unit_display
+    description: HbA1c measurement unit (mmol/mol for IFCC, % for DCCT)
+  - name: concept_code
+    description: SNOMED concept code for the HbA1c measurement
+  - name: concept_display
+    description: Concept display term for traceability
+  - name: source_cluster_id
+    description: Source cluster ID (IFCCHBAM_COD or DCCTHBA1C_COD)
+  - name: is_ifcc
+    description: TRUE if measurement is IFCC format (mmol/mol)
+  - name: is_dcct
+    description: TRUE if measurement is DCCT format (%)
+  - name: original_result_value
+    description: Original result value from source system (as text)
+  - name: hba1c_result_display
+    description: Formatted result with value and unit
+  - name: hba1c_category
+    description: Original HbA1c category from int_hba1c_all
+  - name: is_hba1c_out_of_range
+    description: TRUE if HbA1c is outside valid range for its measurement type
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_date_missing
+    description: TRUE if clinical_effective_date is NULL
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_future_date
+    description: TRUE if clinical_effective_date is in the future
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_extreme_outlier
+    description: TRUE if HbA1c is extremely high (IFCC >150, DCCT >15)
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_measurement_type_ambiguous
+    description: TRUE if measurement type cannot be determined or conflicts
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: hba1c_category_with_issues
+    description: Clinical HbA1c category including invalid ranges and measurement type issues for context

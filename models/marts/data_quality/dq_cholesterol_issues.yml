@@ -1,0 +1,72 @@
+models:
+- name: dq_cholesterol_issues
+  tests:
+  - cluster_ids_exist:
+      cluster_ids: CHOL2_COD
+  description: 'Business data quality monitoring tool for cholesterol measurements.
+
+    Business Logic:
+
+    • Identifies cholesterol measurements with data quality issues: out-of-range values, extreme outliers, and missing dates
+
+    • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve cholesterol recording issues
+
+    • Flags cholesterol values <0.5 or >20 mmol/L as out-of-range (maintains current clinically validated range)
+
+    • Additional flagging for extreme outliers (>15 mmol/L) for investigation
+
+    • One row per cholesterol observation with data quality issues for quality assurance reporting'
+
+  columns:
+  - name: observation_id
+    description: Unique observation identifier
+    tests:
+    - not_null
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+  - name: clinical_effective_date
+    description: Date of cholesterol measurement (can be NULL for date missing issues)
+  - name: cholesterol_value
+    description: Cholesterol value cast to numeric from int_cholesterol_all
+  - name: result_unit_display
+    description: Cholesterol measurement unit (typically mmol/L)
+  - name: concept_code
+    description: SNOMED concept code for the cholesterol measurement
+  - name: concept_display
+    description: Concept display term for traceability
+  - name: source_cluster_id
+    description: Source cluster ID (CHOL2_COD)
+  - name: original_result_value
+    description: Original result value from source system (as text)
+  - name: is_cholesterol_out_of_range
+    description: TRUE if cholesterol is <0.5 or >20 mmol/L (clinically validated range)
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_date_missing
+    description: TRUE if clinical_effective_date is NULL
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_future_date
+    description: TRUE if clinical_effective_date is in the future
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_extreme_outlier
+    description: TRUE if cholesterol is >15 mmol/L (additional flag for very severe outliers)
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: cholesterol_category_with_issues
+    description: Clinical cholesterol category including invalid ranges for context
