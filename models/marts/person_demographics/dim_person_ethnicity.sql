@@ -30,27 +30,43 @@ WITH latest_ethnicity_per_person AS (
         -- Order by date first, then by observation ID as a tie-breaker
         ORDER BY pea.clinical_effective_date DESC, pea.observation_lds_id DESC
     ) = 1 -- Get only the latest record per person
+),
+
+-- Constructs the final dimension by selecting all persons from the ethnicity records,
+-- then ensuring complete coverage with all persons from the person dimension.
+-- If a person has no ethnicity record, ethnicity-specific fields are populated with 'Not Recorded'.
+
+-- First get all persons with ethnicity records
+persons_with_ethnicity AS (
+    SELECT
+        lepp.person_id,
+        lepp.sk_patient_id,
+        lepp.clinical_effective_date AS latest_ethnicity_date,
+        lepp.concept_id,
+        lepp.snomed_code,
+        lepp.term,
+        lepp.ethnicity_category,
+        lepp.ethnicity_subcategory,
+        lepp.ethnicity_granular
+    FROM latest_ethnicity_per_person AS lepp
+),
+
+-- Then get all persons to ensure complete coverage
+all_persons AS (
+    SELECT person_id
+    FROM {{ ref('dim_person') }}
 )
 
--- Constructs the final dimension by selecting all persons from PATIENT_PERSON and PATIENT tables,
--- then LEFT JOINing their latest ethnicity information (if available) from the LatestEthnicityPerPerson CTE.
--- If a person has no ethnicity record, ethnicity-specific fields are populated with 'Not Recorded'.
 SELECT
-    pp.person_id,
-    p.sk_patient_id, -- Get sk_patient_id from PATIENT table
-    -- Ethnicity fields from the latest record, using COALESCE for NULLs
-    lepp.clinical_effective_date AS latest_ethnicity_date, -- Date remains NULL if no record
-    COALESCE(lepp.concept_id, 'Not Recorded') AS concept_id,
-    COALESCE(lepp.snomed_code, 'Not Recorded') AS snomed_code,
-    COALESCE(lepp.term, 'Not Recorded') AS term,
-    COALESCE(lepp.ethnicity_category, 'Not Recorded') AS ethnicity_category,
-    COALESCE(lepp.ethnicity_subcategory, 'Not Recorded')
-        AS ethnicity_subcategory,
-    COALESCE(lepp.ethnicity_granular, 'Not Recorded') AS ethnicity_granular
-FROM {{ ref('stg_olids_patient_person') }} AS pp -- Start with all persons
--- Use LEFT JOIN to keep persons even if no PATIENT record (unlikely but safe)
-LEFT JOIN {{ ref('stg_olids_patient') }} AS p
-    ON pp.patient_id = p.id
--- Use LEFT JOIN to keep all persons, regardless of whether they have an ethnicity record
-LEFT JOIN latest_ethnicity_per_person AS lepp
-    ON pp.person_id = lepp.person_id
+    ap.person_id,
+    COALESCE(pwe.sk_patient_id, NULL) AS sk_patient_id,
+    pwe.latest_ethnicity_date,
+    COALESCE(pwe.concept_id, 'Not Recorded') AS concept_id,
+    COALESCE(pwe.snomed_code, 'Not Recorded') AS snomed_code,
+    COALESCE(pwe.term, 'Not Recorded') AS term,
+    COALESCE(pwe.ethnicity_category, 'Not Recorded') AS ethnicity_category,
+    COALESCE(pwe.ethnicity_subcategory, 'Not Recorded') AS ethnicity_subcategory,
+    COALESCE(pwe.ethnicity_granular, 'Not Recorded') AS ethnicity_granular
+FROM all_persons AS ap
+LEFT JOIN persons_with_ethnicity AS pwe
+    ON ap.person_id = pwe.person_id

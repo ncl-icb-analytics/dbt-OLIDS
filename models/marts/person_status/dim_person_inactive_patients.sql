@@ -9,23 +9,17 @@
 -- Includes only deceased patients and patients from closed/obsolete practices
 -- Excludes dummy patients as they are not considered real inactive patients
 
-WITH patient_ids_per_person AS (
-    -- First collect all patient IDs for each person
-    SELECT
-        pp.person_id,
-        ARRAY_AGG(DISTINCT pp.patient_id) WITHIN GROUP (
-            ORDER BY pp.patient_id
-        ) AS patient_ids
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
-    GROUP BY pp.person_id
+WITH all_persons AS (
+    SELECT person_id
+    FROM {{ ref('dim_person') }}
 ),
 
 latest_patient_record_per_person AS (
     -- Get the latest patient record for each person
     SELECT
-        pp.person_id,
+        ap.person_id,
         p.sk_patient_id,
-        pip.patient_ids,
+        dp.patient_ids,
         -- Determine if patient is active based on various criteria
         p.is_dummy_patient,
         p.is_confidential,
@@ -63,21 +57,21 @@ latest_patient_record_per_person AS (
         END AS inactive_reason,
         -- Rank to get the latest record
         ROW_NUMBER() OVER (
-            PARTITION BY pp.person_id
+            PARTITION BY ap.person_id
             ORDER BY
                 p.lds_datetime_data_acquired DESC,
                 p.id DESC
         ) AS record_rank
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
-    INNER JOIN {{ ref('stg_olids_patient') }} AS p
-        ON pp.patient_id = p.id
-    INNER JOIN {{ ref('stg_olids_person') }} AS per
-        ON pp.person_id = per.id
-    INNER JOIN patient_ids_per_person AS pip
-        ON pp.person_id = pip.person_id
+    FROM all_persons AS ap
+    LEFT JOIN {{ ref('dim_person') }} AS dp
+        ON ap.person_id = dp.person_id
+    LEFT JOIN {{ ref('stg_olids_patient') }} AS p
+        ON dp.sk_patient_ids[0] = p.sk_patient_id  -- Use first patient ID as primary
+    LEFT JOIN {{ ref('stg_olids_person') }} AS per
+        ON ap.person_id = per.id
     LEFT JOIN {{ ref('dim_person_historical_practice') }} AS php
         ON
-            pp.person_id = php.person_id
+            ap.person_id = php.person_id
             AND php.is_current_registration = TRUE
 )
 

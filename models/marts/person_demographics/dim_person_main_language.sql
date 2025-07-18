@@ -116,30 +116,52 @@ latest_interpreter_needs AS (
             PARTITION BY o.person_id
             ORDER BY o.clinical_effective_date DESC, o.observation_id DESC
         ) = 1
+),
+
+-- Constructs the final dimension by starting with all persons who have language records,
+-- then ensuring complete coverage with all persons from the person dimension
+
+-- First get all persons with language records
+persons_with_language AS (
+    SELECT
+        llpp.person_id,
+        llpp.sk_patient_id,
+        llpp.clinical_effective_date AS latest_language_date,
+        llpp.concept_id,
+        llpp.concept_code,
+        llpp.term,
+        llpp.language,
+        llpp.language_type,
+        llpp.language_category,
+        lin.interpreter_needed,
+        lin.interpreter_type,
+        lin.communication_support_needed,
+        lin.communication_support_type
+    FROM latest_language_per_person llpp
+    LEFT JOIN latest_interpreter_needs lin
+        ON llpp.person_id = lin.person_id
+),
+
+-- Then get all persons to ensure complete coverage
+all_persons AS (
+    SELECT person_id
+    FROM {{ ref('dim_person') }}
 )
 
--- Constructs the final dimension by selecting all persons from PATIENT_PERSON and PATIENT tables,
--- then LEFT JOINing their latest language and interpreter information (if available)
 SELECT
-    pp.person_id,
-    p.sk_patient_id,
-    -- Language fields from the latest record
-    llpp.clinical_effective_date AS latest_language_date,
-    COALESCE(llpp.concept_id, 'Not Recorded') AS concept_id,
-    COALESCE(llpp.concept_code, 'Not Recorded') AS concept_code,
-    COALESCE(llpp.term, 'Not Recorded') AS term,
-    COALESCE(llpp.language, 'Not Recorded') AS language,
-    COALESCE(llpp.language_type, 'Not Recorded') AS language_type,
-    COALESCE(llpp.language_category, 'Not Recorded') AS language_category,
-    -- Interpreter and communication support fields
-    lin.interpreter_needed,
-    lin.interpreter_type,
-    lin.communication_support_needed,
-    lin.communication_support_type
-FROM {{ ref('stg_olids_patient_person') }} pp
-LEFT JOIN {{ ref('stg_olids_patient') }} p
-    ON pp.patient_id = p.id
-LEFT JOIN latest_language_per_person llpp
-    ON pp.person_id = llpp.person_id
-LEFT JOIN latest_interpreter_needs lin
-    ON pp.person_id = lin.person_id
+    ap.person_id,
+    COALESCE(pwl.sk_patient_id, NULL) AS sk_patient_id,
+    pwl.latest_language_date,
+    COALESCE(pwl.concept_id, 'Not Recorded') AS concept_id,
+    COALESCE(pwl.concept_code, 'Not Recorded') AS concept_code,
+    COALESCE(pwl.term, 'Not Recorded') AS term,
+    COALESCE(pwl.language, 'Not Recorded') AS language,
+    COALESCE(pwl.language_type, 'Not Recorded') AS language_type,
+    COALESCE(pwl.language_category, 'Not Recorded') AS language_category,
+    pwl.interpreter_needed,
+    pwl.interpreter_type,
+    pwl.communication_support_needed,
+    pwl.communication_support_type
+FROM all_persons AS ap
+LEFT JOIN persons_with_language AS pwl
+    ON ap.person_id = pwl.person_id

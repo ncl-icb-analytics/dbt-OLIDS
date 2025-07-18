@@ -10,21 +10,17 @@
 -- Includes ALL persons regardless of active status
 
 WITH observations_with_concepts AS (
-    -- Join observations directly through concept_map to concept, then filter by ethnicity codes
+    -- Join observations directly through concept_map to concept, using person_id directly from observations
     SELECT
         o.id AS observation_id,
         o.patient_id,
-        pp.person_id,
-        p.sk_patient_id,
+        o.person_id,
+        NULL AS sk_patient_id,  -- Will be populated later if needed
         o.clinical_effective_date,
         c.code AS concept_code,
         c.display AS concept_display,
         c.id AS concept_id
     FROM {{ ref('stg_olids_observation') }} AS o
-    INNER JOIN {{ ref('stg_olids_patient') }} AS p
-        ON o.patient_id = p.id
-    INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
-        ON p.id = pp.patient_id
     -- Join through concept_map to concept (vanilla structure)
     LEFT JOIN {{ ref('stg_olids_term_concept_map') }} AS cm
         ON o.observation_source_concept_id = cm.source_code_id
@@ -33,6 +29,7 @@ WITH observations_with_concepts AS (
     WHERE
         o.clinical_effective_date IS NOT NULL
         AND c.code IS NOT NULL
+        AND o.person_id IS NOT NULL
 ),
 
 ethnicity_observations AS (

@@ -10,21 +10,16 @@
 -- Filters out deceased patients and dummy patients
 -- Links PATIENT_PERSON, PATIENT, PERSON, and proper registration data
 
-WITH patient_ids_per_person AS (
-    -- First collect all patient IDs for each person
-    SELECT
-        pp.person_id,
-        ARRAY_AGG(DISTINCT pp.patient_id) WITHIN GROUP (
-            ORDER BY pp.patient_id
-        ) AS patient_ids
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
-    GROUP BY pp.person_id
+WITH all_persons AS (
+    SELECT person_id
+    FROM {{ ref('dim_person') }}
 ),
 
 current_registrations AS (
     -- Get current registration details per person
     SELECT
         ipr.person_id,
+        ipr.patient_id,
         ipr.organisation_id AS current_practice_id,
         ipr.practice_name AS current_practice_name,
         ipr.practice_ods_code AS current_practice_code,
@@ -41,9 +36,9 @@ current_registrations AS (
 latest_patient_record_per_person AS (
     -- Get the latest patient record for each person with registration details
     SELECT
-        pp.person_id,
+        ap.person_id,
         p.sk_patient_id,
-        pip.patient_ids,
+        dp.patient_ids,
         -- Determine if patient is active based on various criteria
         p.is_dummy_patient,
         p.is_confidential,
@@ -72,20 +67,20 @@ latest_patient_record_per_person AS (
         p.death_year IS NOT NULL AS is_deceased,
         -- Rank to get the latest record
         ROW_NUMBER() OVER (
-            PARTITION BY pp.person_id
+            PARTITION BY ap.person_id
             ORDER BY
                 p.lds_datetime_data_acquired DESC,
                 p.id DESC
         ) AS record_rank
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
-    INNER JOIN {{ ref('stg_olids_patient') }} AS p
-        ON pp.patient_id = p.id
-    INNER JOIN {{ ref('stg_olids_person') }} AS per
-        ON pp.person_id = per.id
-    INNER JOIN patient_ids_per_person AS pip
-        ON pp.person_id = pip.person_id
+    FROM all_persons AS ap
+    LEFT JOIN {{ ref('dim_person') }} AS dp
+        ON ap.person_id = dp.person_id
     LEFT JOIN current_registrations AS cr
-        ON pp.person_id = cr.person_id
+        ON ap.person_id = cr.person_id
+    LEFT JOIN {{ ref('stg_olids_patient') }} AS p
+        ON cr.patient_id = p.id
+    LEFT JOIN {{ ref('stg_olids_person') }} AS per
+        ON ap.person_id = per.id
 )
 
 -- Select only the latest record per person and only active patients

@@ -9,9 +9,29 @@
 -- Core birth and death information for each person
 -- Designed to be reused by other dimension tables for age calculations
 
-SELECT DISTINCT
-    pp.person_id,
-    p.sk_patient_id,
+WITH current_patient_per_person AS (
+    -- Get the patient_id for current GP registration for each person
+    SELECT
+        ipr.person_id,
+        ipr.patient_id,
+        ipr.sk_patient_id
+    FROM {{ ref('int_patient_registrations') }} AS ipr
+    WHERE ipr.is_current_registration = TRUE
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY ipr.person_id
+        ORDER BY ipr.registration_start_date DESC, ipr.episode_of_care_id DESC
+    ) = 1
+),
+
+-- Get all persons to ensure complete coverage
+all_persons AS (
+    SELECT person_id
+    FROM {{ ref('dim_person') }}
+)
+
+SELECT
+    ap.person_id,
+    COALESCE(cpp.sk_patient_id, NULL) AS sk_patient_id,
     p.birth_year,
     p.birth_month,
     -- Calculate approximate birth date using exact midpoint of the month
@@ -54,7 +74,8 @@ SELECT DISTINCT
     END AS death_date_approx,
     p.death_year IS NOT NULL AS is_deceased,
     COALESCE(p.is_dummy_patient, FALSE) AS is_dummy_patient
-FROM {{ ref('stg_olids_patient') }} AS p
-INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
-    ON p.id = pp.patient_id
-WHERE p.birth_year IS NOT NULL AND p.birth_month IS NOT NULL
+FROM all_persons AS ap
+LEFT JOIN current_patient_per_person AS cpp
+    ON ap.person_id = cpp.person_id
+LEFT JOIN {{ ref('stg_olids_patient') }} AS p
+    ON cpp.patient_id = p.id
