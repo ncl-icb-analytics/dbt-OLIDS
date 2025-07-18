@@ -12,10 +12,12 @@ repos:
     hooks:
       - id: sqlfluff-fix-local
         name: SQLFluff Fix (Auto-format SQL)
-        entry: bash -c 'source venv/Scripts/activate && python -m sqlfluff fix "$@" || true'
+        entry: bash -c 'for file in "$@"; do if [[ "$file" =~ ^(models|macros|tests|analyses)/.*\.sql$ ]]; then source venv/Scripts/activate && python -m sqlfluff fix "$file" --force --disable-progress-bar || true; fi; done'
         language: system
-        files: '^(models|macros|tests|analyses)/.*\.sql$'
+        types: [sql]
         pass_filenames: true
+        require_serial: true
+        verbose: false
 
   # Basic code quality checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
