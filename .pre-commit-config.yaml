@@ -14,7 +14,7 @@ repos:
         name: SQLFluff Fix (Auto-format SQL)
         entry: bash -c 'source venv/Scripts/activate && python -m sqlfluff fix "$@" || true'
         language: system
-        files: '\.sql$'
+        files: '^(models|macros|tests|analyses)/.*\.sql$'
         pass_filenames: true
 
   # Basic code quality checks
