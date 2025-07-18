@@ -21,20 +21,34 @@ Includes both standard PCN names and borough-prefixed variants for North Central
 Geographic fields include version numbers (LSOA_21, IMD_19) to support historical comparisons when new versions become available.
 */
 
-WITH current_addresses AS (
-    -- Get the most recent address for each person
+WITH current_patient_per_person AS (
+    -- Get the patient_id for current GP registration for each person
     SELECT
-        pp.person_id,
+        ipr.person_id,
+        ipr.patient_id,
+        ipr.sk_patient_id
+    FROM {{ ref('int_patient_registrations') }} AS ipr
+    WHERE ipr.is_current_registration = TRUE
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY ipr.person_id
+        ORDER BY ipr.registration_start_date DESC, ipr.episode_of_care_id DESC
+    ) = 1
+),
+
+current_addresses AS (
+    -- Get the most recent address for each person using their current patient record
+    SELECT
+        cpp.person_id,
         pa.post_code_hash,
         -- UPRN hash will be available in real data, placeholder for now
         NULL AS uprn_hash,
         ROW_NUMBER() OVER (
-            PARTITION BY pp.person_id
+            PARTITION BY cpp.person_id
             ORDER BY pa.start_date DESC, pa.lds_datetime_data_acquired DESC
         ) AS address_rank
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
+    FROM current_patient_per_person AS cpp
     INNER JOIN {{ ref('stg_olids_patient_address') }} AS pa
-        ON pp.patient_id = pa.patient_id
+        ON cpp.patient_id = pa.patient_id
     WHERE pa.end_date IS NULL OR pa.end_date >= CURRENT_DATE()
 )
 
