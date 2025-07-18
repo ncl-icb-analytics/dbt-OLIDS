@@ -132,10 +132,10 @@ sources:
       data_type: VARCHAR
     - name: Latitude
       description: "Latitude coordinate"
-      data_type: NUMBER
+      data_type: NUMBER(38,18)
     - name: Longitude
       description: "Longitude coordinate"
-      data_type: NUMBER
+      data_type: NUMBER(38,18)
   - name: OrganisationDescendent
     description: "Organisation descendant relationships from Dictionary"
     identifier: '"OrganisationDescendent"'
@@ -228,9 +228,9 @@ sources:
     - name: CODEDESCRIPTION
       data_type: VARCHAR
     - name: TIMECONSTRAINTYEARS
-      data_type: NUMBER(38,0)
+      data_type: FLOAT
     - name: AGELIMIT
-      data_type: NUMBER(38,0)
+      data_type: FLOAT
     - name: OTHERINSTRUCTIONS
       data_type: VARCHAR
   - name: ETHNICITY_CODES
@@ -344,7 +344,7 @@ sources:
     - name: CODE_CATEGORY
       data_type: VARCHAR
     - name: LOOKBACK_YEARS_OFFSET
-      data_type: NUMBER(38,0)
+      data_type: FLOAT
     - name: VALPROATE_PRODUCT_TERM
       data_type: VARCHAR
 - name: RULESETS
@@ -380,9 +380,9 @@ sources:
     - name: VARIABLE_CATEGORY
       data_type: VARCHAR
     - name: COEFFICIENT
-      data_type: NUMBER(14,12)
+      data_type: FLOAT
     - name: TRANSFORMED_COEFFICIENT
-      data_type: NUMBER(4,3)
+      data_type: FLOAT
     - name: DESCRIPTION
       data_type: VARCHAR
     - name: VARIABLE_TYPE
@@ -398,23 +398,23 @@ sources:
     - name: DEFICIT_TYPE
       data_type: VARCHAR
     - name: TIME_CONSTRAINT_DAYS
-      data_type: NUMBER(4,0)
+      data_type: FLOAT
     - name: TIME_CONSTRAINT_TYPE
       data_type: VARCHAR
     - name: TIME_CONSTRAINT_DESCRIPTION
       data_type: VARCHAR
     - name: MIN_AGE
-      data_type: NUMBER(2,0)
+      data_type: FLOAT
     - name: AGE_RESTRICTION_DESCRIPTION
       data_type: VARCHAR
     - name: CATEGORY_NAME
       data_type: VARCHAR
     - name: CATEGORY_ORDER
-      data_type: NUMBER(1,0)
+      data_type: FLOAT
     - name: CATEGORY_RANGE_START
-      data_type: NUMBER(2,0)
+      data_type: FLOAT
     - name: CATEGORY_RANGE_END
-      data_type: NUMBER(4,1)
+      data_type: FLOAT
     - name: CATEGORY_DESCRIPTION
       data_type: VARCHAR
     - name: THRESHOLD_VALUE
@@ -428,7 +428,7 @@ sources:
     - name: THRESHOLD_TYPE
       data_type: VARCHAR
     - name: READINGS_REQUIRED
-      data_type: NUMBER(1,0)
+      data_type: FLOAT
     - name: READINGS_TIMEFRAME
       data_type: VARCHAR
     - name: SUPERSEDES
@@ -436,39 +436,39 @@ sources:
     - name: SUPERSEDED_BY
       data_type: VARCHAR
     - name: HIERARCHY_LEVEL
-      data_type: NUMBER(1,0)
+      data_type: FLOAT
     - name: RESOLUTION_TEST
       data_type: VARCHAR
     - name: RESOLUTION_THRESHOLD
-      data_type: NUMBER(2,0)
+      data_type: FLOAT
     - name: RESOLUTION_UNIT
       data_type: VARCHAR
     - name: RESOLUTION_GENDER_SPECIFIC
       data_type: BOOLEAN
     - name: RESOLUTION_MALE_THRESHOLD
-      data_type: NUMBER(2,0)
+      data_type: FLOAT
     - name: RESOLUTION_FEMALE_THRESHOLD
-      data_type: NUMBER(3,1)
+      data_type: FLOAT
     - name: VALIDATION_RULE
       data_type: VARCHAR
     - name: VALIDATION_DESCRIPTION
       data_type: VARCHAR
     - name: EFI2_COEFFICIENT
-      data_type: NUMBER(6,5)
+      data_type: FLOAT
     - name: EFI2_TRANSFORMED_COEFFICIENT
-      data_type: NUMBER(4,3)
+      data_type: FLOAT
     - name: EFI_PLUS_FALLS_COEFFICIENT
-      data_type: NUMBER(8,7)
+      data_type: FLOAT
     - name: EFI_PLUS_CARE_HOME_COEFFICIENT
-      data_type: NUMBER(8,7)
+      data_type: FLOAT
     - name: EFI_PLUS_MORTALITY_COEFFICIENT
-      data_type: NUMBER(10,9)
+      data_type: FLOAT
     - name: EFI_PLUS_HOME_CARE_COEFFICIENT
-      data_type: NUMBER(10,9)
+      data_type: FLOAT
     - name: SOURCE_INSTRUCTION
       data_type: VARCHAR
     - name: RULE_PRIORITY
-      data_type: NUMBER(1,0)
+      data_type: NUMBER(38,0)
   - name: IMMS_SCHEDULE_LATEST
     columns:
     - name: VACCINE_ORDER
@@ -1254,9 +1254,9 @@ sources:
     - name: contact_type_concept_id
       data_type: VARCHAR
     - name: start_date
-      data_type: DATE
+      data_type: VARCHAR
     - name: end_date
-      data_type: DATE
+      data_type: VARCHAR
   - name: PATIENT_PERSON
     columns:
     - name: lds_id
