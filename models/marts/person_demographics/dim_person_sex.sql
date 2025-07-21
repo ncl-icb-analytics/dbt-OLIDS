@@ -30,11 +30,24 @@ all_persons AS (
 )
 
 SELECT
-    ap.person_id,
-    COALESCE(target_concept.display, source_concept.display, 'Unknown') AS sex
-FROM all_persons AS ap
-LEFT JOIN current_patient_per_person AS cpp
-    ON ap.person_id = cpp.person_id
-LEFT JOIN {{ ref('stg_olids_patient') }} AS p
-    ON cpp.patient_id = p.id
-{{ join_concept_display('p.gender_concept_id') }}
+    person_id,
+    sex
+FROM (
+    SELECT
+        ap.person_id,
+        COALESCE(target_concept.display, source_concept.display, 'Unknown') AS sex,
+        ROW_NUMBER() OVER (
+            PARTITION BY ap.person_id 
+            ORDER BY 
+                CASE WHEN target_concept.display IS NOT NULL THEN 1 ELSE 2 END,
+                target_concept.display,
+                source_concept.display
+        ) AS rn
+    FROM all_persons AS ap
+    LEFT JOIN current_patient_per_person AS cpp
+        ON ap.person_id = cpp.person_id
+    LEFT JOIN {{ ref('stg_olids_patient') }} AS p
+        ON cpp.patient_id = p.id
+    {{ join_concept_display('p.gender_concept_id') }}
+) ranked
+WHERE rn = 1

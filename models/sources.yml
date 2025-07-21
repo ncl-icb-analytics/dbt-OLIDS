@@ -1305,22 +1305,36 @@ sources:
       data_type: TIMESTAMP_NTZ(9)
     - name: end_date
       data_type: TIMESTAMP_NTZ(9)
-  - name: PERSON
+  - name: PERSON_BACKUP
     columns:
     - name: lds_id
       data_type: VARCHAR
     - name: id
       data_type: VARCHAR
-    - name: lds_business_key
-      data_type: VARCHAR
     - name: lds_dataset_id
       data_type: VARCHAR
-    - name: primary_patient_id
-      data_type: VARCHAR
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ(9)
     - name: lds_start_date_time
       data_type: TIMESTAMP_NTZ(9)
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ(9)
+    - name: requesting_patient_record_id
+      data_type: VARCHAR
+    - name: unique_reference
+      data_type: VARCHAR
+    - name: requesting_nhs_numberhash
+      data_type: BINARY
+    - name: errror_success_code
+      data_type: VARCHAR
+    - name: matched_nhs_numberhash
+      data_type: BINARY
+    - name: sensitivity_flag
+      data_type: VARCHAR
+    - name: matched_algorithm_indicator
+      data_type: VARCHAR
+    - name: requesting_patient_id
+      data_type: VARCHAR
   - name: PRACTITIONER
     columns:
     - name: lds_id

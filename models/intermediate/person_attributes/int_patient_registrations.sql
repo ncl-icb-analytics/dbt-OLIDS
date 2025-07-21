@@ -7,16 +7,31 @@
 
 -- Patient Registrations - Clean registration periods from PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
 -- Processes raw PATIENT_REGISTERED_PRACTITIONER_IN_ROLE into proper registration periods
+-- Uses PATIENT_PERSON bridge table to get canonical person_id (not direct person_id field)
 -- Handles overlapping registrations, active registrations, and historical periods
 -- Forms the foundation for patient-practice relationship analysis
 -- Uses the correct registration criteria for active patient determination
 
-WITH raw_registrations AS (
+WITH patient_to_person AS (
+    -- Get canonical person_id for each patient_id via PATIENT_PERSON bridge table
+    -- This handles the case where person_id in PATIENT_REGISTERED_PRACTITIONER_IN_ROLE is unreliable
+    SELECT 
+        pp.patient_id,
+        pp.person_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY pp.patient_id 
+            ORDER BY pp.lds_start_date_time DESC, pp.id DESC
+        ) AS rn
+    FROM {{ ref('stg_olids_patient_person') }} AS pp
+),
+
+raw_registrations AS (
     -- Get all registration episodes from PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
+    -- Use patient_id to get canonical person_id via PATIENT_PERSON bridge
     SELECT
         prpr.id AS registration_record_id,
         prpr.patient_id,
-        prpr.person_id,
+        ptp.person_id,  -- Use person_id from bridge table instead of direct field
         prpr.organisation_id,
         prpr.start_date AS registration_start_date,
         prpr.end_date AS registration_end_date,
@@ -28,12 +43,15 @@ WITH raw_registrations AS (
         -- Get patient details
         p.sk_patient_id
     FROM {{ ref('stg_olids_patient_registered_practitioner_in_role') }} AS prpr
+    INNER JOIN patient_to_person AS ptp
+        ON prpr.patient_id = ptp.patient_id 
+        AND ptp.rn = 1  -- Only use latest/primary patient-person relationship
     LEFT JOIN {{ ref('stg_olids_organisation') }} AS o
         ON prpr.organisation_id = o.id
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON prpr.patient_id = p.id
     WHERE prpr.start_date IS NOT NULL
-        AND prpr.person_id IS NOT NULL  -- Filter out records without person_id for person-based analysis
+        AND prpr.patient_id IS NOT NULL  -- Filter out records without patient_id
 ),
 
 cleaned_registrations AS (
