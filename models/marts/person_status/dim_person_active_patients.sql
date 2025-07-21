@@ -79,8 +79,6 @@ latest_patient_record_per_person AS (
         ON ap.person_id = cr.person_id
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON cr.patient_id = p.id
-    LEFT JOIN {{ ref('stg_olids_person') }} AS per
-        ON ap.person_id = per.id
 )
 
 -- Select only the latest record per person and only active patients

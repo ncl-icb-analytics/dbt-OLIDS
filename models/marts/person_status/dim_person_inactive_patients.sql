@@ -67,8 +67,6 @@ latest_patient_record_per_person AS (
         ON ap.person_id = dp.person_id
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON dp.sk_patient_ids[0] = p.sk_patient_id  -- Use first patient ID as primary
-    LEFT JOIN {{ ref('stg_olids_person') }} AS per
-        ON ap.person_id = per.id
     LEFT JOIN {{ ref('dim_person_historical_practice') }} AS php
         ON
             ap.person_id = php.person_id
