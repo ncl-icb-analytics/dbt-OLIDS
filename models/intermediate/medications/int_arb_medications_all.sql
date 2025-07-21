@@ -24,53 +24,7 @@ SELECT
     mapped_concept_code,
     mapped_concept_display,
     bnf_code,
-    bnf_name,
-
-    -- Specific ARB classification
-    CASE
-        WHEN bnf_code LIKE '020505205%' THEN 'AZILSARTAN'
-        WHEN bnf_code LIKE '020505210%' THEN 'CANDESARTAN'
-        WHEN bnf_code LIKE '020505215%' THEN 'EPROSARTAN'
-        WHEN bnf_code LIKE '020505220%' THEN 'IRBESARTAN'
-        WHEN bnf_code LIKE '020505225%' THEN 'LOSARTAN'
-        WHEN bnf_code LIKE '020505230%' THEN 'OLMESARTAN'
-        WHEN bnf_code LIKE '020505235%' THEN 'TELMISARTAN'
-        WHEN bnf_code LIKE '020505240%' THEN 'VALSARTAN'
-        ELSE 'OTHER_ARB'
-    END AS arb_type,
-
-    -- Evidence-based ARBs (commonly used in cardiovascular disease)
-    CASE
-        WHEN bnf_code LIKE '020505225%' THEN TRUE  -- Losartan (LIFE trial)
-        WHEN bnf_code LIKE '020505240%' THEN TRUE  -- Valsartan (Val-HeFT trial)
-        WHEN bnf_code LIKE '020505210%' THEN TRUE  -- Candesartan (CHARM trial)
-        WHEN bnf_code LIKE '020505235%' THEN TRUE  -- Telmisartan (ONTARGET trial)
-        ELSE FALSE
-    END AS is_evidence_based_cvd,
-
-    -- Common ARBs flags
-    CASE WHEN bnf_code LIKE '020505225%' THEN TRUE ELSE FALSE END AS is_losartan,
-    CASE WHEN bnf_code LIKE '020505240%' THEN TRUE ELSE FALSE END AS is_valsartan,
-    CASE WHEN bnf_code LIKE '020505210%' THEN TRUE ELSE FALSE END AS is_candesartan,
-    CASE WHEN bnf_code LIKE '020505220%' THEN TRUE ELSE FALSE END AS is_irbesartan,
-    CASE WHEN bnf_code LIKE '020505235%' THEN TRUE ELSE FALSE END AS is_telmisartan,
-
-
-    -- Order recency flags (ARBs are typically long-term therapy)
-    CASE
-        WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE
-        ELSE FALSE
-    END AS is_recent_3m,
-
-    CASE
-        WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 180 THEN TRUE
-        ELSE FALSE
-    END AS is_recent_6m,
-
-    CASE
-        WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 365 THEN TRUE
-        ELSE FALSE
-    END AS is_recent_12m
+    bnf_name
 
 FROM (
     {{ get_medication_orders(bnf_code='0205052') }}
