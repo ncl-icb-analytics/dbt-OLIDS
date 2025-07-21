@@ -1,5 +1,6 @@
--- Staging model for OLIDS_MASKED.PERSON
+-- Staging model for OLIDS_MASKED.PERSON_BACKUP
 -- Source: "Data_Store_OLIDS_UAT".OLIDS_MASKED
+-- Using PERSON_BACKUP as PERSON table was deleted
 
 SELECT
     "lds_id" AS lds_id,
@@ -16,4 +17,4 @@ SELECT
     "requesting_patient_id" AS requesting_patient_id,
     "lds_start_date_time" AS lds_start_date_time,
     "lds_end_date_time" AS lds_end_date_time
-FROM {{ source('OLIDS_MASKED', 'PERSON') }}
+FROM {{ source('OLIDS_MASKED', 'PERSON_BACKUP') }}
