@@ -30,7 +30,7 @@ WITH current_registrations AS (
         total_registrations_count,
         has_changed_practice,
         age_at_registration_start,
-        care_manager_practitioner_id,
+        practitioner_id,
         -- Add row number to handle potential duplicates
         ROW_NUMBER() OVER (
             PARTITION BY person_id 
@@ -67,6 +67,6 @@ SELECT
     
     -- Additional useful fields
     age_at_registration_start,
-    care_manager_practitioner_id
+    practitioner_id
 FROM current_registrations
 WHERE rn = 1  -- Ensure only one row per person

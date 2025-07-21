@@ -28,7 +28,7 @@ current_registrations AS (
         ipr.total_registrations_count,
         ipr.has_changed_practice,
         -- Additional registration metadata
-        ipr.care_manager_practitioner_id
+        ipr.practitioner_id
     FROM {{ ref('int_patient_registrations') }} AS ipr
     WHERE ipr.is_current_registration = TRUE
 ),
@@ -55,7 +55,7 @@ latest_patient_record_per_person AS (
         cr.current_registration_duration,
         cr.total_registrations_count,
         cr.has_changed_practice,
-        cr.care_manager_practitioner_id,
+        cr.practitioner_id,
         p.record_owner_organisation_code AS record_owner_org_code,
         p.lds_datetime_data_acquired AS latest_record_date,
         CASE
@@ -105,7 +105,7 @@ SELECT
     current_registration_duration,
     total_registrations_count,
     has_changed_practice,
-    care_manager_practitioner_id,
+    practitioner_id,
     record_owner_org_code,
     latest_record_date
 FROM latest_patient_record_per_person

@@ -131,8 +131,8 @@ models:
         values:
         - true
         - false
-  - name: care_manager_practitioner_id
-    description: ID of care manager practitioner (if assigned)
+  - name: practitioner_id
+    description: ID of practitioner associated with this registration (if assigned)
   - name: record_owner_org_code
     description: Organisation code that owns this patient record
   - name: latest_record_date
