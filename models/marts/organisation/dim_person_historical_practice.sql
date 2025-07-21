@@ -28,7 +28,7 @@ WITH enriched_registrations AS (
         ipr.total_registrations_count,
         ipr.gap_since_previous_registration_days,
         ipr.has_changed_practice,
-        ipr.care_manager_practitioner_id,
+        ipr.practitioner_id,
         -- Add organisation details
         o.type_code AS practice_type_code,
         o.type_desc AS practice_type_desc,
@@ -115,7 +115,7 @@ SELECT
     gap_since_previous_registration_days,
     has_changed_practice,
     age_at_registration_start,
-    care_manager_practitioner_id,
+    practitioner_id,
     -- Practice transition information
     previous_practice_id,
     previous_practice_name,
