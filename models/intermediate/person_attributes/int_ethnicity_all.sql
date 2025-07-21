@@ -9,43 +9,48 @@
 -- Uses broader ethnicity mapping via ETHNICITY_CODES reference table
 -- Includes ALL persons regardless of active status
 
-WITH observations_with_concepts AS (
-    -- Join observations directly through concept_map to concept, using person_id directly from observations
-    SELECT
-        o.id AS observation_id,
-        o.patient_id,
-        o.person_id,
-        NULL AS sk_patient_id,  -- Will be populated later if needed
-        o.clinical_effective_date,
+WITH ethnicity_source_concepts AS (
+    -- First identify all source concept IDs that map to ethnicity codes
+    SELECT DISTINCT
+        cm.source_code_id,
         c.code AS concept_code,
         c.display AS concept_display,
         c.id AS concept_id
-    FROM {{ ref('stg_olids_observation') }} AS o
-    -- Join through concept_map to concept (vanilla structure)
-    LEFT JOIN {{ ref('stg_olids_term_concept_map') }} AS cm
-        ON o.observation_source_concept_id = cm.source_code_id
-    LEFT JOIN {{ ref('stg_olids_term_concept') }} AS c
-        ON cm.target_code_id = c.id
-    WHERE
-        o.clinical_effective_date IS NOT NULL
-        AND c.code IS NOT NULL
-        AND o.person_id IS NOT NULL
+    FROM {{ ref('stg_codesets_ethnicity_codes') }} AS ec
+    INNER JOIN {{ ref('stg_olids_term_concept') }} AS c
+        ON ec.code = c.code
+    INNER JOIN {{ ref('stg_olids_term_concept_map') }} AS cm
+        ON c.id = cm.target_code_id
 ),
 
 ethnicity_observations AS (
-    -- Filter observations that match ethnicity codes
+    -- Now get only observations that have ethnicity-related source concepts
     SELECT
-        owc.person_id,
-        owc.sk_patient_id,
-        owc.clinical_effective_date,
-        owc.concept_id,
-        owc.concept_code,
-        owc.concept_display,
-        owc.observation_id
-    FROM observations_with_concepts AS owc
-    -- Join to ethnicity codes to filter only valid ethnicity observations
-    INNER JOIN {{ ref('stg_codesets_ethnicity_codes') }} AS ec
-        ON owc.concept_code = ec.code
+        o.id AS observation_id,
+        o.patient_id,
+        pp.person_id,
+        p.sk_patient_id,
+        o.clinical_effective_date,
+        esc.concept_id,
+        esc.concept_code,
+        esc.concept_display
+    FROM {{ ref('stg_olids_observation') }} AS o
+    -- Filter to only ethnicity observations
+    INNER JOIN ethnicity_source_concepts AS esc
+        ON o.observation_source_concept_id = esc.source_code_id
+    -- Join to patient to get sk_patient_id
+    INNER JOIN {{ ref('stg_olids_patient') }} AS p
+        ON o.patient_id = p.id
+    -- Join to patient_person to get proper person_id
+    INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
+        ON p.id = pp.patient_id
+    WHERE
+        o.clinical_effective_date IS NOT NULL
+    -- Deduplicate patient_person mappings (take latest)
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY o.id
+        ORDER BY pp.lds_start_date_time DESC, pp.id DESC
+    ) = 1
 ),
 
 ethnicity_enriched AS (
