@@ -6,7 +6,7 @@
 
 /*
 All ARB (Angiotensin Receptor Blocker) medication orders for cardiovascular and renal protection.
-Uses BNF classification (2.5.5.2) for angiotensin-II receptor antagonists.
+Uses BNF classification (2.5.5.2 - 0205052) for angiotensin-II receptor antagonists.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 */
 
@@ -28,32 +28,32 @@ SELECT
 
     -- Specific ARB classification
     CASE
-        WHEN bnf_code LIKE '0205050205%' THEN 'AZILSARTAN'
-        WHEN bnf_code LIKE '0205050210%' THEN 'CANDESARTAN'
-        WHEN bnf_code LIKE '0205050215%' THEN 'EPROSARTAN'
-        WHEN bnf_code LIKE '0205050220%' THEN 'IRBESARTAN'
-        WHEN bnf_code LIKE '0205050225%' THEN 'LOSARTAN'
-        WHEN bnf_code LIKE '0205050230%' THEN 'OLMESARTAN'
-        WHEN bnf_code LIKE '0205050235%' THEN 'TELMISARTAN'
-        WHEN bnf_code LIKE '0205050240%' THEN 'VALSARTAN'
+        WHEN bnf_code LIKE '020505205%' THEN 'AZILSARTAN'
+        WHEN bnf_code LIKE '020505210%' THEN 'CANDESARTAN'
+        WHEN bnf_code LIKE '020505215%' THEN 'EPROSARTAN'
+        WHEN bnf_code LIKE '020505220%' THEN 'IRBESARTAN'
+        WHEN bnf_code LIKE '020505225%' THEN 'LOSARTAN'
+        WHEN bnf_code LIKE '020505230%' THEN 'OLMESARTAN'
+        WHEN bnf_code LIKE '020505235%' THEN 'TELMISARTAN'
+        WHEN bnf_code LIKE '020505240%' THEN 'VALSARTAN'
         ELSE 'OTHER_ARB'
     END AS arb_type,
 
     -- Evidence-based ARBs (commonly used in cardiovascular disease)
     CASE
-        WHEN bnf_code LIKE '0205050225%' THEN TRUE  -- Losartan (LIFE trial)
-        WHEN bnf_code LIKE '0205050240%' THEN TRUE  -- Valsartan (Val-HeFT trial)
-        WHEN bnf_code LIKE '0205050210%' THEN TRUE  -- Candesartan (CHARM trial)
-        WHEN bnf_code LIKE '0205050235%' THEN TRUE  -- Telmisartan (ONTARGET trial)
+        WHEN bnf_code LIKE '020505225%' THEN TRUE  -- Losartan (LIFE trial)
+        WHEN bnf_code LIKE '020505240%' THEN TRUE  -- Valsartan (Val-HeFT trial)
+        WHEN bnf_code LIKE '020505210%' THEN TRUE  -- Candesartan (CHARM trial)
+        WHEN bnf_code LIKE '020505235%' THEN TRUE  -- Telmisartan (ONTARGET trial)
         ELSE FALSE
     END AS is_evidence_based_cvd,
 
     -- Common ARBs flags
-    CASE WHEN bnf_code LIKE '0205050225%' THEN TRUE ELSE FALSE END AS is_losartan,
-    CASE WHEN bnf_code LIKE '0205050240%' THEN TRUE ELSE FALSE END AS is_valsartan,
-    CASE WHEN bnf_code LIKE '0205050210%' THEN TRUE ELSE FALSE END AS is_candesartan,
-    CASE WHEN bnf_code LIKE '0205050220%' THEN TRUE ELSE FALSE END AS is_irbesartan,
-    CASE WHEN bnf_code LIKE '0205050235%' THEN TRUE ELSE FALSE END AS is_telmisartan,
+    CASE WHEN bnf_code LIKE '020505225%' THEN TRUE ELSE FALSE END AS is_losartan,
+    CASE WHEN bnf_code LIKE '020505240%' THEN TRUE ELSE FALSE END AS is_valsartan,
+    CASE WHEN bnf_code LIKE '020505210%' THEN TRUE ELSE FALSE END AS is_candesartan,
+    CASE WHEN bnf_code LIKE '020505220%' THEN TRUE ELSE FALSE END AS is_irbesartan,
+    CASE WHEN bnf_code LIKE '020505235%' THEN TRUE ELSE FALSE END AS is_telmisartan,
 
 
     -- Order recency flags (ARBs are typically long-term therapy)
@@ -73,6 +73,6 @@ SELECT
     END AS is_recent_12m
 
 FROM (
-    {{ get_medication_orders(bnf_code='02050502') }}
+    {{ get_medication_orders(bnf_code='0205052') }}
 ) base_orders
 ORDER BY person_id, order_date DESC
