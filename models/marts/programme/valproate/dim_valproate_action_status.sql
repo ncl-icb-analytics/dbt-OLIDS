@@ -49,8 +49,8 @@ pregnancy_status AS (
         SELECT
             person_id,
             MAX(CASE WHEN is_pregnancy_code = TRUE THEN clinical_effective_date END) AS latest_preg_date,
-            MAX(CASE WHEN is_pregnancy_outcome_code = TRUE THEN clinical_effective_date END) AS latest_delivery_date
-        FROM {{ ref('int_pregnancy_status_all') }}
+            MAX(CASE WHEN is_delivery_outcome_code = TRUE THEN clinical_effective_date END) AS latest_delivery_date
+        FROM {{ ref('int_pregnancy_observations_all') }}
         GROUP BY person_id
     ) AS preg ON p.person_id = preg.person_id
     LEFT JOIN (

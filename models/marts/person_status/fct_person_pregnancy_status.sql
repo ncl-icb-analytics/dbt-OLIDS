@@ -5,26 +5,46 @@
 }}
 
 -- Pregnancy Status Fact Table
--- Business Logic: Current pregnancy status based on recent pregnancy codes vs delivery codes
+-- Business Logic: Current pregnancy status based on recent pregnancy codes vs delivery/outcome codes
 -- Population: Non-male individuals only
 
 WITH pregnancy_aggregated AS (
     SELECT
         person_id,
+        -- Get latest pregnancy code (indicates active pregnancy)
         MAX(
-            CASE WHEN is_pregnancy_code = TRUE THEN clinical_effective_date END
+            CASE 
+                WHEN is_pregnancy_code = TRUE 
+                THEN clinical_effective_date 
+            END
         ) AS latest_preg_date,
+        -- Get latest delivery/outcome code (indicates pregnancy has ended)
         MAX(
             CASE
-                WHEN
-                    is_pregnancy_outcome_code = TRUE
-                    THEN clinical_effective_date
+                WHEN is_delivery_outcome_code = TRUE
+                THEN clinical_effective_date
             END
         ) AS latest_delivery_date,
-        ARRAY_AGG(DISTINCT concept_code) AS all_preg_concept_codes,
-        ARRAY_AGG(DISTINCT concept_display) AS all_preg_concept_displays,
-        ARRAY_AGG(DISTINCT source_cluster_id) AS all_preg_source_cluster_ids
-    FROM {{ ref('int_pregnancy_status_all') }}
+        -- Only include codes from the last 9 months for traceability
+        ARRAY_AGG(DISTINCT 
+            CASE 
+                WHEN clinical_effective_date >= DATEADD(MONTH, -9, CURRENT_DATE())
+                THEN concept_code 
+            END
+        ) AS all_preg_concept_codes,
+        ARRAY_AGG(DISTINCT 
+            CASE 
+                WHEN clinical_effective_date >= DATEADD(MONTH, -9, CURRENT_DATE())
+                THEN concept_display 
+            END
+        ) AS all_preg_concept_displays,
+        ARRAY_AGG(DISTINCT 
+            CASE 
+                WHEN clinical_effective_date >= DATEADD(MONTH, -9, CURRENT_DATE())
+                THEN source_cluster_id 
+            END
+        ) AS all_preg_source_cluster_ids
+    FROM {{ ref('int_pregnancy_observations_all') }}
     GROUP BY person_id
 ),
 
