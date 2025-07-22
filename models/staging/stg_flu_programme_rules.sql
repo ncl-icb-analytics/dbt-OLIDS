@@ -108,8 +108,8 @@ SELECT
         WHEN lc.date_qualifier = 'LATEST_AFTER' AND cd_specific.latest_after_date IS NOT NULL 
             THEN cd_specific.latest_after_date
         WHEN lc.date_qualifier IN ('EARLIEST', 'LATEST') 
-            THEN 'PARAMETER'  -- Will be passed as parameter
-        ELSE 'PARAMETER'
+            THEN COALESCE(cd_specific.audit_end_dat, cd_all.audit_end_dat)  -- Use audit end date instead of PARAMETER
+        ELSE COALESCE(cd_specific.audit_end_dat, cd_all.audit_end_dat)
     END AS resolved_reference_date
 
 FROM logic_with_clusters lc

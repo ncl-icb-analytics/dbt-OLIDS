@@ -95,29 +95,25 @@ observation_events AS (
 
 -- Apply date filtering based on date_qualifier
 filtered_events AS (
-    SELECT 
-        campaign_id,
-        rule_group_id,
-        rule_group_name,
-        person_id,
-        event_date,
-        date_qualifier,
-        resolved_reference_date,
-        age_min_months,
-        age_max_years,
-        description
+    SELECT *
     FROM observation_events
-    WHERE 1=1
-        -- Apply date filters based on qualifier
-        AND CASE 
-            WHEN date_qualifier = 'EARLIEST' THEN event_date <= {{ get_flu_audit_date(current_campaign) }}
-            WHEN date_qualifier = 'LATEST' THEN event_date <= {{ get_flu_audit_date(current_campaign) }}
-            WHEN date_qualifier = 'LATEST_SINCE' AND resolved_reference_date != 'PARAMETER' 
-                THEN event_date >= resolved_reference_date
-            WHEN date_qualifier = 'LATEST_AFTER' AND resolved_reference_date != 'PARAMETER' 
-                THEN event_date > resolved_reference_date
-            ELSE TRUE
-        END
+    WHERE 
+        -- For EARLIEST/LATEST, check event is before the resolved reference date
+        (date_qualifier IN ('EARLIEST', 'LATEST') 
+         AND event_date <= resolved_reference_date::DATE)
+        
+        -- For LATEST_SINCE, use the reference_date from config
+        OR (date_qualifier = 'LATEST_SINCE' 
+            AND event_date >= resolved_reference_date::DATE
+            AND event_date <= {{ get_flu_audit_date(current_campaign) }})
+        
+        -- For LATEST_AFTER, use the reference_date from config  
+        OR (date_qualifier = 'LATEST_AFTER'
+            AND event_date > resolved_reference_date::DATE
+            AND event_date <= {{ get_flu_audit_date(current_campaign) }})
+            
+        -- Handle any other date qualifiers
+        OR (date_qualifier NOT IN ('EARLIEST', 'LATEST', 'LATEST_SINCE', 'LATEST_AFTER'))
 ),
 
 -- Get the qualifying event per person (earliest or latest based on qualifier)
