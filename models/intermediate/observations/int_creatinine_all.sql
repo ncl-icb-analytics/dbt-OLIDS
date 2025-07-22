@@ -15,7 +15,7 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        CAST(obs.result_value AS NUMBER(6,1)) AS creatinine_value,
+        CAST(obs.result_value AS NUMBER(10,1)) AS creatinine_value,
         obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,

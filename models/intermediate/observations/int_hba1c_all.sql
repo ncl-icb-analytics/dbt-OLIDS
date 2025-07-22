@@ -16,7 +16,7 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        CAST(obs.result_value AS NUMBER(6,2)) AS hba1c_value,
+        CAST(obs.result_value AS NUMBER(10,2)) AS hba1c_value,
         obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
