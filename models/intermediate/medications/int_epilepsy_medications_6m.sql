@@ -7,7 +7,7 @@
 
 /*
 Epilepsy medication orders from the last 6 months for seizure management monitoring.
-Uses cluster ID EPILDRUG_COD for anti-epileptic drugs from Primary Care Domain.
+Uses cluster ID EPILDRUG_COD for anti-epileptic drugs.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 */
 
@@ -30,7 +30,7 @@ SELECT
     bnf_name,
     cluster_id
 FROM (
-    {{ get_medication_orders(ecl_cluster='epildrug_cod') }}
+    {{ get_medication_orders(cluster_id='EPILDRUG_COD') }}
 ) base_orders
 WHERE order_date >= CURRENT_DATE() - INTERVAL '6 months'
 ORDER BY person_id, order_date DESC

@@ -1,9 +1,8 @@
-{% macro get_medication_orders(bnf_code=none, cluster_id=none, ecl_cluster=none, source=none) %}
+{% macro get_medication_orders(bnf_code=none, cluster_id=none, source=none) %}
     -- Simpler: emit a single SELECT, no CTEs, cluster_id IN (...), always includes cluster_id in output
     -- Optional source parameter to filter to specific refset (e.g., 'LTC_LCS')
-    -- Optional ecl_cluster parameter to pull codes from ECL cache instead of mapped_concepts
-    {% if bnf_code is none and cluster_id is none and ecl_cluster is none %}
-    {{ exceptions.raise_compiler_error("Must provide either bnf_code, cluster_id, or ecl_cluster parameter to get_medication_orders macro") }}
+    {% if bnf_code is none and cluster_id is none %}
+    {{ exceptions.raise_compiler_error("Must provide either bnf_code or cluster_id parameter to get_medication_orders macro") }}
 {% endif %}
 
 {# Accept cluster_id as string or list, convert to a comma-separated quoted list #}
@@ -34,9 +33,7 @@
         ms.medication_name AS statement_medication_name,
         c.code AS mapped_concept_code,
         c.display AS mapped_concept_display,
-        {% if ecl_cluster is not none %}
-        '{{ ecl_cluster|upper }}' AS cluster_id,
-        {% elif cluster_id is not none %}
+        {% if cluster_id is not none %}
         cc.cluster_id,
         {% else %}
         NULL AS cluster_id,
@@ -51,10 +48,6 @@
         ON ms.medication_statement_core_concept_id = cm.source_code_id
     JOIN {{ ref('stg_olids_term_concept') }} c
         ON cm.target_code_id = c.id
-    {% if ecl_cluster is not none %}
-    JOIN TABLE(DATA_LAB_OLIDS_UAT.REFERENCE.ECL_CACHED_DETAILS('{{ ecl_cluster|lower }}')) ecl
-        ON c.code = ecl.code
-    {% endif %}
     LEFT JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
         ON c.code = bnf.snomed_code
     JOIN {{ ref('int_patient_person_unique') }} pp
@@ -64,7 +57,7 @@
     {% if cluster_id is not none %}
     JOIN {{ ref('stg_codesets_combined_codesets') }} cc
         ON c.code = cc.code
-        AND cc.cluster_id IN ('{{ cluster_ids_str }}')
+        AND UPPER(cc.cluster_id) IN ('{{ cluster_ids_str }}')
         {% if source is not none %}
         AND cc.source = '{{ source }}'
         {% endif %}
