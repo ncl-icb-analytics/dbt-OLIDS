@@ -14,6 +14,6 @@ INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
     ON o.observation_source_concept_id = mc.source_code_id
 INNER JOIN {{ ref('stg_codesets_valproate_prog_codes') }} AS vpc
     ON mc.concept_code = vpc.code
-INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
+INNER JOIN {{ ref('int_patient_person_unique') }} AS pp
     ON o.patient_id = pp.patient_id
 WHERE vpc.code_category = 'REFERRAL'

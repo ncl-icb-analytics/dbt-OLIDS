@@ -13,16 +13,12 @@
 -- Uses the correct registration criteria for active patient determination
 
 WITH patient_to_person AS (
-    -- Get canonical person_id for each patient_id via PATIENT_PERSON bridge table
-    -- This handles the case where person_id in PATIENT_REGISTERED_PRACTITIONER_IN_ROLE is unreliable
+    -- Get canonical person_id for each patient_id via deduplicated PATIENT_PERSON bridge table
+    -- int_patient_person_unique already handles deduplication, so no ROW_NUMBER needed
     SELECT 
         pp.patient_id,
-        pp.person_id,
-        ROW_NUMBER() OVER (
-            PARTITION BY pp.patient_id 
-            ORDER BY pp.lds_start_date_time DESC, pp.id DESC
-        ) AS rn
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
+        pp.person_id
+    FROM {{ ref('int_patient_person_unique') }} AS pp
 ),
 
 raw_registrations AS (
@@ -44,8 +40,7 @@ raw_registrations AS (
         p.sk_patient_id
     FROM {{ ref('stg_olids_patient_registered_practitioner_in_role') }} AS prpr
     INNER JOIN patient_to_person AS ptp
-        ON prpr.patient_id = ptp.patient_id 
-        AND ptp.rn = 1  -- Only use latest/primary patient-person relationship
+        ON prpr.patient_id = ptp.patient_id
     LEFT JOIN {{ ref('stg_olids_organisation') }} AS o
         ON prpr.organisation_id = o.id
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p

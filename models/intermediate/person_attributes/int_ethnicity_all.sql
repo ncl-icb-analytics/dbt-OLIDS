@@ -42,15 +42,10 @@ ethnicity_observations AS (
     INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON o.patient_id = p.id
     -- Join to patient_person to get proper person_id
-    INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
+    INNER JOIN {{ ref('int_patient_person_unique') }} AS pp
         ON p.id = pp.patient_id
     WHERE
         o.clinical_effective_date IS NOT NULL
-    -- Deduplicate patient_person mappings (take latest)
-    QUALIFY ROW_NUMBER() OVER (
-        PARTITION BY o.id
-        ORDER BY pp.lds_start_date_time DESC, pp.id DESC
-    ) = 1
 ),
 
 ethnicity_enriched AS (

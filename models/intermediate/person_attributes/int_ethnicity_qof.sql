@@ -27,7 +27,7 @@ WITH mapped_observations AS (
     FROM {{ ref('stg_olids_observation') }} AS o
     INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON o.patient_id = p.id
-    INNER JOIN {{ ref('stg_olids_patient_person') }} AS pp
+    INNER JOIN {{ ref('int_patient_person_unique') }} AS pp
         ON p.id = pp.patient_id
     INNER JOIN {{ ref('stg_codesets_mapped_concepts') }} AS mc
         ON
