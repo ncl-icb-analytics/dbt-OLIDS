@@ -20,7 +20,7 @@ Clinical Purpose:
 
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 This is OBSERVATION-LEVEL data - one row per diabetes observation.
-When an observation belongs to multiple clusters, we prioritize the most clinically specific.
+When an observation belongs to multiple clusters, we flag ALL applicable categories rather than just the most specific.
 Use this model as input for fct_person_diabetes_register.sql which applies person-level aggregation and QOF business rules.
 */
 
@@ -32,34 +32,36 @@ WITH diabetes_observations_all_clusters AS (
         obs.clinical_effective_date,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
-        obs.cluster_id AS source_cluster_id,
-
-        -- Assign priority ranking for cluster selection
-        CASE obs.cluster_id
-            WHEN 'DMTYPE1_COD' THEN 1  -- Highest priority: Type 1 specific
-            WHEN 'DMTYPE2_COD' THEN 2  -- Type 2 specific
-            WHEN 'DM_COD' THEN 3       -- General diabetes
-            WHEN 'DMRES_COD' THEN 4    -- Lowest priority: Resolved
-            ELSE 999
-        END AS cluster_priority
+        obs.cluster_id AS source_cluster_id
     FROM ({{ get_observations("'DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD', 'DMRES_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
 ),
 
-diabetes_observations_prioritized AS (
-    -- Select only the highest priority cluster per observation
+diabetes_observations_categorised AS (
+    -- Flag ALL applicable categories per observation (not just highest priority)
     SELECT
         observation_id,
         person_id,
         clinical_effective_date,
         concept_code,
         concept_display,
-        source_cluster_id,
-        ROW_NUMBER() OVER (
-            PARTITION BY observation_id
-            ORDER BY cluster_priority, source_cluster_id
-        ) AS cluster_rank
+        
+        -- Flag all applicable diabetes categories for each observation
+        MAX(CASE WHEN source_cluster_id = 'DM_COD' THEN TRUE ELSE FALSE END) AS is_general_diabetes_code,
+        MAX(CASE WHEN source_cluster_id = 'DMTYPE1_COD' THEN TRUE ELSE FALSE END) AS is_type1_diabetes_code,
+        MAX(CASE WHEN source_cluster_id = 'DMTYPE2_COD' THEN TRUE ELSE FALSE END) AS is_type2_diabetes_code,
+        MAX(CASE WHEN source_cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END) AS is_diabetes_resolved_code,
+        
+        -- For traceability, keep the most specific cluster as source_cluster_id
+        CASE 
+            WHEN MAX(CASE WHEN source_cluster_id = 'DMTYPE1_COD' THEN 1 ELSE 0 END) = 1 THEN 'DMTYPE1_COD'
+            WHEN MAX(CASE WHEN source_cluster_id = 'DMTYPE2_COD' THEN 1 ELSE 0 END) = 1 THEN 'DMTYPE2_COD'
+            WHEN MAX(CASE WHEN source_cluster_id = 'DM_COD' THEN 1 ELSE 0 END) = 1 THEN 'DM_COD'
+            WHEN MAX(CASE WHEN source_cluster_id = 'DMRES_COD' THEN 1 ELSE 0 END) = 1 THEN 'DMRES_COD'
+            ELSE 'UNKNOWN'
+        END AS source_cluster_id
     FROM diabetes_observations_all_clusters
+    GROUP BY observation_id, person_id, clinical_effective_date, concept_code, concept_display
 )
 
 SELECT
@@ -71,10 +73,11 @@ SELECT
     source_cluster_id,
 
     -- Flag different types of diabetes codes following QOF definitions
-    CASE WHEN source_cluster_id = 'DM_COD' THEN TRUE ELSE FALSE END AS is_general_diabetes_code,
-    CASE WHEN source_cluster_id = 'DMTYPE1_COD' THEN TRUE ELSE FALSE END AS is_type1_diabetes_code,
-    CASE WHEN source_cluster_id = 'DMTYPE2_COD' THEN TRUE ELSE FALSE END AS is_type2_diabetes_code,
-    CASE WHEN source_cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END AS is_diabetes_resolved_code,
+    -- Now using the cumulative flags from the categorised CTE
+    is_general_diabetes_code,
+    is_type1_diabetes_code,
+    is_type2_diabetes_code,
+    is_diabetes_resolved_code,
 
     -- Diabetes type determination (for individual observation context)
     CASE
@@ -85,6 +88,5 @@ SELECT
         ELSE 'Unknown'
     END AS diabetes_observation_type
 
-FROM diabetes_observations_prioritized
-WHERE cluster_rank = 1  -- Only keep the highest priority cluster per observation
+FROM diabetes_observations_categorised
 ORDER BY person_id, clinical_effective_date, observation_id
