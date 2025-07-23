@@ -16,7 +16,7 @@ WITH person_patients AS (
         ARRAY_AGG(DISTINCT p.sk_patient_id) AS sk_patient_ids,
         ARRAY_AGG(DISTINCT p.id) AS patient_ids,
         COUNT(DISTINCT p.id) AS total_patients
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
+    FROM {{ ref('int_patient_person_unique') }} AS pp
     INNER JOIN {{ ref('stg_olids_patient') }} AS p
         ON pp.patient_id = p.id
     GROUP BY pp.person_id
