@@ -64,7 +64,7 @@
     {% if cluster_id is not none %}
     JOIN {{ ref('stg_codesets_combined_codesets') }} cc
         ON c.code = cc.code
-        AND cc.cluster_id IN ('{{ cluster_ids_str }}')
+        AND UPPER(cc.cluster_id) IN ('{{ cluster_ids_str }}')
         {% if source is not none %}
         AND cc.source = '{{ source }}'
         {% endif %}

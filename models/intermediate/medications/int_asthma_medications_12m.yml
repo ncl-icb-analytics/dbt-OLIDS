@@ -3,7 +3,7 @@ models:
 - name: int_asthma_medications_12m
   tests:
   - cluster_ids_exist:
-      cluster_ids: ASTRX_COD
+      cluster_ids: ASTTRT_COD
   description: 'Intermediate: Asthma Medication Orders (12 months) - Recent asthma treatment prescriptions for QOF monitoring.
 
 
@@ -22,7 +22,7 @@ models:
 
     • Includes all patients regardless of status (active/inactive/deceased)
 
-    • Uses ASTRX_COD cluster for asthma treatment identification
+    • Uses ASTTRT_COD cluster for asthma treatment identification (per QOF specification)
 
 
     Key Features:
