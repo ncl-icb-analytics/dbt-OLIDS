@@ -7,13 +7,13 @@
 
 /*
 Asthma medication orders from the last 12 months for QOF asthma care monitoring.
-Uses cluster ID ASTRX_COD for asthma treatment medications.
+Uses cluster ID ASTTRT_COD for asthma treatment medications (per QOF specification).
 Critical for asthma register and QOF quality indicators.
 Includes ALL persons (active, inactive, deceased) following intermediate layer principles.
 */
 
 WITH asthma_orders_base AS (
-    -- Get all medication orders using ASTRX_COD cluster for asthma treatments
+    -- Get all medication orders using ASTTRT_COD cluster for asthma treatments
     SELECT
         mo.person_id,
         mo.medication_order_id,
@@ -21,9 +21,9 @@ WITH asthma_orders_base AS (
         mo.order_medication_name,
         mo.mapped_concept_code,
         mo.mapped_concept_display,
-        'ASTRX_COD' AS cluster_id
+        'ASTTRT_COD' AS cluster_id
 
-    FROM ({{ get_medication_orders(cluster_id='ASTRX_COD') }}) mo
+    FROM ({{ get_medication_orders(cluster_id='ASTTRT_COD') }}) mo
     WHERE mo.order_date >= CURRENT_DATE() - INTERVAL '12 months'
         AND mo.order_date <= CURRENT_DATE()
 ),

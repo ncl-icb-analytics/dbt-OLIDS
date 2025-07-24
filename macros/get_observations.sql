@@ -37,7 +37,7 @@
         ON o.result_value_unit_concept_id = unit_con.id
     JOIN {{ ref('stg_codesets_combined_codesets') }} cc
         ON c.code = cc.code
-        AND cc.cluster_id IN ({{ cluster_ids }})
+        AND UPPER(cc.cluster_id) IN ({{ cluster_ids|upper }})
         {% if source %}
         AND cc.source = '{{ source }}'
         {% endif %}
