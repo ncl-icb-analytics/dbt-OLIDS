@@ -1,0 +1,153 @@
+/*
+Simplified Diabetes Eligibility Rule
+
+Business Rule: Person is eligible if they have:
+1. Addison's disease diagnosis (ADDIS_COD) - earliest occurrence, OR
+2. Diabetes diagnosis (DIAB_COD) that is NOT superseded by a more recent 
+   diabetes resolved code (DMRES_COD)
+3. AND aged 6 months to under 65 years
+
+The exclusion logic ensures that people whose diabetes is resolved
+are not eligible unless they have a more recent diabetes code.
+*/
+
+{{ config(materialized='table') }}
+
+WITH all_campaigns AS (
+    -- Generate data for both current and previous campaigns automatically
+    SELECT * FROM ({{ flu_campaign_config(var('flu_current_campaign', 'flu_2024_25')) }})
+    UNION ALL
+    SELECT * FROM ({{ flu_campaign_config(var('flu_previous_campaign', 'flu_2023_24')) }})
+),
+
+-- Step 1: Find people with Addison's disease (always eligible, for all campaigns)
+people_with_addisons AS (
+    SELECT 
+        cc.campaign_id,
+        obs.person_id,
+        MIN(obs.clinical_effective_date) AS first_addisons_date,
+        'Addisons disease' AS eligibility_reason,
+        cc.audit_end_date
+    FROM ({{ get_observations("'ADDIS_COD'", 'UKHSA_FLU') }}) obs
+    CROSS JOIN all_campaigns cc
+    WHERE obs.clinical_effective_date IS NOT NULL
+        AND obs.clinical_effective_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, obs.person_id, cc.audit_end_date
+),
+
+-- Step 2: Find people with diabetes diagnosis codes (for all campaigns)
+people_with_diabetes_codes AS (
+    SELECT 
+        cc.campaign_id,
+        obs.person_id,
+        MAX(obs.clinical_effective_date) AS latest_diabetes_date,
+        cc.audit_end_date
+    FROM ({{ get_observations("'DIAB_COD'", 'UKHSA_FLU') }}) obs
+    CROSS JOIN all_campaigns cc
+    WHERE obs.clinical_effective_date IS NOT NULL
+        AND obs.clinical_effective_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, obs.person_id, cc.audit_end_date
+),
+
+-- Step 3: Find people with diabetes resolved codes (for all campaigns)
+people_with_diabetes_resolved_codes AS (
+    SELECT 
+        cc.campaign_id,
+        obs.person_id,
+        MAX(obs.clinical_effective_date) AS latest_resolved_date,
+        cc.audit_end_date
+    FROM ({{ get_observations("'DMRES_COD'", 'UKHSA_FLU') }}) obs
+    CROSS JOIN all_campaigns cc
+    WHERE obs.clinical_effective_date IS NOT NULL
+        AND obs.clinical_effective_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, obs.person_id, cc.audit_end_date
+),
+
+-- Step 4: Apply exclusion logic for diabetes (for all campaigns)
+people_with_active_diabetes AS (
+    SELECT 
+        diab.campaign_id,
+        diab.person_id,
+        diab.latest_diabetes_date,
+        'Active diabetes (not resolved)' AS eligibility_reason,
+        'Diabetes date: ' || diab.latest_diabetes_date || 
+        ', Resolved date: ' || COALESCE(resolved.latest_resolved_date::VARCHAR, 'none') AS resolution_comparison,
+        diab.audit_end_date
+    FROM people_with_diabetes_codes diab
+    LEFT JOIN people_with_diabetes_resolved_codes resolved
+        ON diab.campaign_id = resolved.campaign_id
+        AND diab.person_id = resolved.person_id
+    WHERE 1=1
+        -- Include if no resolved code OR diabetes code is more recent than resolved code
+        AND (resolved.latest_resolved_date IS NULL 
+             OR diab.latest_diabetes_date > resolved.latest_resolved_date)
+),
+
+-- Step 5: Combine all diabetes eligibility paths (for all campaigns)
+all_diabetes_eligible_people AS (
+    -- Path 1: Addison's disease
+    SELECT 
+        campaign_id,
+        person_id,
+        first_addisons_date AS qualifying_event_date,
+        eligibility_reason,
+        NULL AS resolution_comparison,
+        audit_end_date
+    FROM people_with_addisons
+    
+    UNION
+    
+    -- Path 2: Active diabetes (not resolved)
+    SELECT 
+        campaign_id,
+        person_id,
+        latest_diabetes_date AS qualifying_event_date,
+        eligibility_reason,
+        resolution_comparison,
+        audit_end_date
+    FROM people_with_active_diabetes
+),
+
+-- Step 6: Remove duplicates and pick best qualifying event per person (for all campaigns)
+best_diabetes_eligibility AS (
+    SELECT 
+        campaign_id,
+        person_id,
+        qualifying_event_date,
+        eligibility_reason,
+        resolution_comparison,
+        audit_end_date,
+        ROW_NUMBER() OVER (
+            PARTITION BY campaign_id, person_id 
+            ORDER BY qualifying_event_date DESC, eligibility_reason
+        ) AS rn
+    FROM all_diabetes_eligible_people
+),
+
+-- Step 7: Add demographics and apply age restrictions (for all campaigns)
+final_eligibility AS (
+    SELECT 
+        bde.campaign_id,
+        'DIAB_GROUP' AS rule_group_id,
+        'Diabetes' AS rule_group_name,
+        bde.person_id,
+        bde.qualifying_event_date,
+        cc.campaign_reference_date AS reference_date,
+        'People with diabetes (type 1, type 2) or Addisons disease' AS description,
+        demo.birth_date_approx,
+        DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) AS age_months_at_ref_date,
+        DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) AS age_years_at_ref_date,
+        bde.audit_end_date AS created_at
+    FROM best_diabetes_eligibility bde
+    JOIN all_campaigns cc
+        ON bde.campaign_id = cc.campaign_id
+    JOIN {{ ref('dim_person_demographics') }} demo
+        ON bde.person_id = demo.person_id
+    WHERE bde.rn = 1  -- Only the best eligibility per person
+        -- Apply age restrictions: 6 months to under 65 years
+        AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 6
+        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
+)
+
+SELECT * FROM final_eligibility
+ORDER BY person_id

@@ -1,7 +1,3 @@
-{{ config(
-    materialized='table',
-    description='Intermediate table containing all Pregnancy Prevention Programme (PPP) events from source systems. Raw data collection layer that feeds the PPP dimension table.') }}
-
 SELECT
     pp.person_id,
     o.clinical_effective_date::date AS ppp_event_date,

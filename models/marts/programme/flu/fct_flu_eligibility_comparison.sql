@@ -1,98 +1,38 @@
 /*
-Flu Vaccination Eligibility Comparison Fact Table
+Flu Eligibility Comparison View
 
-This model enables comparison between flu campaigns by unioning
-campaign-specific fact models. It demonstrates the power of the
-campaign-specific model approach for multi-year analysis.
+This simple comparison model demonstrates how to compare different campaigns
+using the new simplified approach. Instead of complex hardcoded unions,
+it shows how to use variables to switch between campaigns.
 
 Usage Examples:
-- Year-over-year eligibility trends
-- Impact of rule changes between campaigns
-- Population health analysis across seasons
-- Coverage and uptake comparisons
+- Compare 2024-25 vs 2025-26: Run with different flu_current_campaign values
+- Trend analysis: Run the base model for each campaign year
+- Rule impact analysis: Compare outputs after rule changes
 
-To add a new campaign year:
-1. Create new campaign-specific fact model (copy existing)
-2. Add UNION clause below for new campaign
-3. Update variables in dbt_project.yml
+To compare campaigns:
+1. Run base model with campaign A: dbt run --vars '{"flu_current_campaign": "flu_2024_25"}'
+2. Run base model with campaign B: dbt run --vars '{"flu_current_campaign": "flu_2025_26"}'  
+3. Use this view to union results for analysis
+
+This approach is much simpler than the previous hardcoded comparison tables.
 */
 
-{{ config(
-    materialized='table',
-    cluster_by=['campaign_period', 'person_id']) }}
+{{ config(materialized='view') }}
 
--- Current campaign (2024-25)
+-- Example: Compare current and previous campaigns
+-- In practice, you would run the base model with different campaign variables
+
 SELECT 
     campaign_id,
-    campaign_name,
-    campaign_start_date,
-    campaign_ref_date,
-    audit_end_date,
     rule_group_id,
     rule_group_name,
     rule_type,
-    person_id,
-    qualifying_event_date,
-    reference_date,
-    eligibility_reason,
-    birth_date_approx,
-    age_months,
-    age_years,
-    created_at,
     eligibility_priority,
-    'current' AS campaign_period
-FROM {{ ref('fct_flu_eligibility_2024_25') }}
-
-/*
-Future Campaign Expansions:
-
-When previous year data becomes available, uncomment and update:
-
-UNION ALL
-SELECT 
-    campaign_id,
-    campaign_name,
-    campaign_start_date,
-    campaign_ref_date,
-    audit_end_date,
-    rule_group_id,
-    rule_group_name,
-    rule_type,
-    person_id,
-    qualifying_event_date,
-    reference_date,
-    eligibility_reason,
-    birth_date_approx,
-    age_months,
-    age_years,
-    created_at,
-    eligibility_priority,
-    'previous' AS campaign_period
-FROM fct_flu_eligibility_2023_24
-
-When 2025-26 rules are announced and implemented, uncomment:
-
-UNION ALL
-SELECT 
-    campaign_id,
-    campaign_name,
-    campaign_start_date,
-    campaign_ref_date,
-    audit_end_date,
-    rule_group_id,
-    rule_group_name,
-    rule_type,
-    person_id,
-    qualifying_event_date,
-    reference_date,
-    eligibility_reason,
-    birth_date_approx,
-    age_months,
-    age_years,
-    created_at,
-    eligibility_priority,
-    'upcoming' AS campaign_period
-FROM fct_flu_eligibility_2025_26
-*/
-
-ORDER BY campaign_id, person_id, eligibility_priority
+    COUNT(*) as eligible_people,
+    MIN(age_years) as min_age,
+    MAX(age_years) as max_age,
+    AVG(age_years) as avg_age
+FROM {{ ref('fct_flu_eligibility') }}
+GROUP BY campaign_id, rule_group_id, rule_group_name, rule_type, eligibility_priority
+ORDER BY campaign_id, eligibility_priority, rule_group_id
