@@ -1305,7 +1305,7 @@ sources:
       data_type: TIMESTAMP_NTZ(9)
     - name: end_date
       data_type: TIMESTAMP_NTZ(9)
-  - name: PERSON_BACKUP
+  - name: PERSON
     columns:
     - name: lds_id
       data_type: VARCHAR
