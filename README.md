@@ -253,6 +253,14 @@ New to dbt? Here are some helpful resources:
 - [SQL Style Guide](https://docs.getdbt.com/guides/best-practices/how-we-style/2-how-we-style-our-sql) - Writing clean SQL
 - [Testing in dbt](https://docs.getdbt.com/docs/build/tests) - Data quality testing
 
+## Contributing
+
+Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+- Setting up SSH keys and commit signing
+- Branch protection rules and workflow
+- Commit message conventions
+- Creating pull requests
+
 ## License
 
 This repository is dual licensed under the Open Government v3 & MIT. All code outputs are subject to Crown Copyright.
