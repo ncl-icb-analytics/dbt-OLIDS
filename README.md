@@ -34,7 +34,7 @@ Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
 
 ## Quick Start
 
-**Prerequisites:** Python 3.8+ and access to Snowflake
+**Prerequisites:** Python 3.8+, access to Snowflake, requirements outlined in the [Contributing Guide](CONTRIBUTING.md) 
 
 ```bash
 # 1. Get the code
