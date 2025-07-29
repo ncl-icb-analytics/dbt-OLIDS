@@ -1,0 +1,308 @@
+version: 2
+
+# Flu Eligibility Rule Definitions
+# This file defines all flu eligibility rules using composable components
+# Each rule specifies the conditions that must be met for eligibility
+
+flu_eligibility_rules:
+  
+  # Clinical Condition Rules
+  asthma_active:
+    name: "Active Asthma Management"
+    description: "People with asthma who have recent medication or hospital admission"
+    priority: 3
+    components:
+      # Must have asthma diagnosis (earliest occurrence)
+      - type: has_diagnosis
+        cluster_id: AST_COD
+        date_qualifier: EARLIEST
+        required: true
+      # AND must have evidence of active management (any of these)
+      - type: any_of
+        components:
+          - type: has_medication
+            cluster_id: ASTRX_COD
+            since_date: medication_lookback_date
+          - type: has_diagnosis
+            cluster_id: ASTMED_COD
+            date_qualifier: LATEST_SINCE
+            reference_date: medication_lookback_date
+          - type: has_diagnosis
+            cluster_id: ASTADM_COD
+            date_qualifier: LATEST
+      # AND must be in age range
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  chronic_heart_disease:
+    name: "Chronic Heart Disease"
+    description: "People with CHD, heart failure, or stroke"
+    priority: 3
+    components:
+      - type: has_diagnosis
+        cluster_id: CHD_COD
+        date_qualifier: EARLIEST
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  chronic_kidney_disease:
+    name: "Chronic Kidney Disease (Stage 3-5)"
+    description: "People with CKD stage 3-5 or CKD diagnosis"
+    priority: 3
+    components:
+      - type: any_of
+        components:
+          # Direct CKD diagnosis
+          - type: has_diagnosis
+            cluster_id: CKD_COD
+            date_qualifier: EARLIEST
+          # OR Stage 3-5 more recent than any stage
+          - type: code_more_recent_than
+            code_a: CKD35_COD
+            code_b: CKD15_COD
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  chronic_liver_disease:
+    name: "Chronic Liver Disease"
+    description: "People with cirrhosis, hepatitis, or other chronic liver conditions"
+    priority: 3
+    components:
+      - type: has_diagnosis
+        cluster_id: CLD_COD
+        date_qualifier: EARLIEST
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  diabetes:
+    name: "Diabetes"
+    description: "People with diabetes (excluding resolved cases) or Addison's disease"
+    priority: 3
+    components:
+      - type: any_of
+        components:
+          # Addison's disease
+          - type: has_diagnosis
+            cluster_id: ADDIS_COD
+            date_qualifier: EARLIEST
+          # OR Diabetes without resolution
+          - type: all_of
+            components:
+              - type: has_diagnosis
+                cluster_id: DIAB_COD
+                date_qualifier: LATEST
+              - type: not_more_recent_than
+                code_a: DMRES_COD
+                code_b: DIAB_COD
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  immunosuppression:
+    name: "Immunosuppression"
+    description: "People with weakened immune systems or on immunosuppressive treatment"
+    priority: 2
+    components:
+      - type: any_of
+        components:
+          - type: has_diagnosis
+            cluster_id: IMMDX_COD
+            date_qualifier: LATEST
+          - type: has_medication
+            cluster_id: IMMRX_COD
+            since_date: immuno_medication_lookback_date
+          - type: has_diagnosis
+            cluster_id: IMMADM_COD
+            date_qualifier: LATEST_SINCE
+            reference_date: immuno_medication_lookback_date
+          - type: has_diagnosis
+            cluster_id: DXT_CHEMO_COD
+            date_qualifier: LATEST_SINCE
+            reference_date: immuno_medication_lookback_date
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  chronic_neurological:
+    name: "Chronic Neurological Disease"
+    description: "People with MS, motor neurone disease, or similar conditions"
+    priority: 3
+    components:
+      - type: has_diagnosis
+        cluster_id: CNSGROUP_COD
+        date_qualifier: EARLIEST
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  asplenia:
+    name: "Asplenia or Splenic Dysfunction"
+    description: "People without a functioning spleen"
+    priority: 3
+    components:
+      - type: has_diagnosis
+        cluster_id: PNSPLEEN_COD
+        date_qualifier: EARLIEST
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  severe_obesity:
+    name: "Severe Obesity"
+    description: "Adults with BMI 40+ or severe obesity diagnosis"
+    priority: 4
+    components:
+      - type: any_of
+        components:
+          - type: has_bmi_over
+            threshold: 40
+          - type: has_diagnosis
+            cluster_id: SEV_OBESITY_COD
+            date_qualifier: LATEST
+      - type: age_between
+        min_months: 216  # 18 years
+        max_years: 65
+
+  pregnancy:
+    name: "Pregnancy"
+    description: "Pregnant women"
+    priority: 2
+    components:
+      - type: pregnancy_active
+        pregnancy_code: PREG_COD
+        delivery_code: PREGDEL_COD
+      - type: age_between
+        min_months: 144  # 12 years
+        max_years: 65
+
+  learning_disability:
+    name: "Learning Disability"
+    description: "People with learning disabilities"
+    priority: 4
+    components:
+      - type: has_diagnosis
+        cluster_id: LEARNDIS_COD
+        date_qualifier: LATEST
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  # Age-based Rules
+  over_65:
+    name: "Age 65 and Over"
+    description: "Everyone aged 65+ at campaign reference date"
+    priority: 1
+    components:
+      - type: age_over
+        years: 65
+        reference_date: campaign_ref_date
+
+  children_2_3:
+    name: "Children Aged 2-3"
+    description: "Children aged 2-3 years"
+    priority: 1
+    components:
+      - type: birth_date_between
+        start_date: child_2_3_birth_start
+        end_date: child_2_3_birth_end
+
+  children_4_16:
+    name: "School Children Aged 4-16"
+    description: "Children in school years Reception to Year 11"
+    priority: 1
+    components:
+      - type: birth_date_between
+        start_date: child_4_16_birth_start
+        end_date: child_4_16_birth_end
+
+  # Social Factor Rules
+  unpaid_carer:
+    name: "Unpaid Carer"
+    description: "Unpaid carers not eligible through other routes"
+    priority: 5
+    components:
+      - type: all_of
+        components:
+          - type: has_diagnosis
+            cluster_id: CARER_COD
+            date_qualifier: LATEST
+          - type: not_more_recent_than
+            code_a: NOTCARER_COD
+            code_b: CARER_COD
+      - type: not_eligible_via
+        groups: [clinical_conditions, severe_obesity, pregnancy]
+      - type: age_between
+        min_months: 60  # 5 years
+        max_years: 65
+
+  homeless:
+    name: "Homeless"
+    description: "People experiencing homelessness"
+    priority: 4
+    components:
+      - type: latest_code_is
+        cluster_ids: [RESIDE_COD]
+        target_code: HOMELESS_COD
+      - type: age_between
+        min_months: 192  # 16 years
+        max_years: 65
+
+  residential_care:
+    name: "Long-term Residential Care"
+    description: "People in care homes or long-term residential care"
+    priority: 2
+    components:
+      - type: latest_code_is
+        cluster_ids: [RESIDE_COD]
+        target_code: LONGRES_COD
+      - type: age_between
+        min_months: 6
+
+  household_immunocompromised:
+    name: "Household Contact of Immunocompromised"
+    description: "Living with someone who has a weakened immune system"
+    priority: 4
+    components:
+      - type: has_diagnosis
+        cluster_id: HHLD_IMDEF_COD
+        date_qualifier: LATEST
+      - type: age_between
+        min_months: 6
+        max_years: 65
+
+  health_social_care_worker:
+    name: "Health and Social Care Worker"
+    description: "Staff in health and social care settings"
+    priority: 4
+    components:
+      - type: any_of
+        components:
+          - type: has_diagnosis
+            cluster_id: CAREHOME_COD
+            date_qualifier: LATEST
+          - type: has_diagnosis
+            cluster_id: NURSEHOME_COD
+            date_qualifier: LATEST
+          - type: has_diagnosis
+            cluster_id: DOMCARE_COD
+            date_qualifier: LATEST
+      - type: age_between
+        min_months: 192  # 16 years
+        max_years: 65
+
+# Rule groupings for exclusion logic
+rule_groups:
+  clinical_conditions:
+    - asthma_active
+    - chronic_heart_disease
+    - chronic_kidney_disease
+    - chronic_liver_disease
+    - diabetes
+    - immunosuppression
+    - chronic_neurological
+    - asplenia
+    - learning_disability
