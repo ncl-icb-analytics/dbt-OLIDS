@@ -73,7 +73,16 @@ dbt test        # Runs data quality tests
    - `SNOWFLAKE_ROLE`: Your assigned role
    - `SNOWFLAKE_WAREHOUSE`: Your warehouse name
    - `SNOWFLAKE_PASSWORD`: Optional (you can use SSO or key-pair authentication)
-3. **Verify connection:**
+
+3. **Create the a profile.yml:**
+Follow the instructions in the [profiles.yml.template](profiles.yml.template)
+
+4. **Run start_dbt.ps1 to initialise your .env:**
+```bash
+   .\start_dbt.ps1
+```
+
+5. **Verify connection:**
 
    ```bash
    dbt debug
