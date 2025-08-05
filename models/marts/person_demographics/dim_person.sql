@@ -36,6 +36,7 @@ person_practices AS (
 
 current_practices AS (
     -- Get the current practice for each person
+    -- FIXED: Handle multiple current registrations per person by selecting the most recent
     SELECT
         person_id,
         practice_id AS current_practice_id,
@@ -43,6 +44,11 @@ current_practices AS (
         practice_name AS current_practice_name
     FROM {{ ref('dim_person_historical_practice') }}
     WHERE is_current_registration = TRUE
+    -- Deduplicate: Choose the most recent current registration if multiple exist
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY person_id 
+        ORDER BY registration_start_date DESC, practice_id DESC
+    ) = 1
 )
 
 -- Final aggregation
