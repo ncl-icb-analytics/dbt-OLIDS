@@ -47,6 +47,17 @@ raw_registrations AS (
         ON prpr.patient_id = p.id
     WHERE prpr.start_date IS NOT NULL
         AND prpr.patient_id IS NOT NULL  -- Filter out records without patient_id
+    -- FIX: Deduplicate identical registration records from source data
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY 
+            prpr.patient_id,
+            prpr.organisation_id,
+            prpr.start_date,
+            prpr.end_date,
+            prpr.practitioner_id,
+            prpr.episode_of_care_id
+        ORDER BY prpr.id  -- Use ID as tie-breaker for deterministic results
+    ) = 1
 ),
 
 cleaned_registrations AS (

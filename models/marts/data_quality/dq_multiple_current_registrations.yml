@@ -1,0 +1,128 @@
+models:
+- name: dq_multiple_current_registrations
+  description: 'Business data quality monitoring tool for patient registration data.
+
+    Business Logic:
+
+    • Identifies persons with multiple simultaneous current registrations
+
+    • Supports clinical governance teams in monitoring registration data quality
+
+    • Flags registration end date issues: NULL dates, future dates, and illogical date sequences
+
+    • Detects overlapping registration periods across different practices
+
+    • Provides severity scoring to prioritise data quality remediation efforts
+
+    • One row per current registration for persons with multiple current registrations
+
+    Data Quality Impact:
+
+    • Multiple current registrations cause duplicates in dim_person and downstream models
+
+    • Affects accurate patient counting and practice list sizes
+
+    • May impact funding calculations based on registered patient numbers'
+
+  columns:
+  - name: person_id
+    description: Unique person identifier
+    tests:
+    - not_null
+  - name: sk_patient_id
+    description: Patient identifier from source system
+  - name: practice_id
+    description: Practice identifier for this registration
+  - name: practice_code
+    description: ODS code of the practice
+  - name: practice_name
+    description: Name of the practice
+  - name: practice_type_desc
+    description: Type of practice (e.g., GP Practice)
+  - name: practice_postcode
+    description: Postcode of the practice
+  - name: registration_start_date
+    description: Date registration began
+    tests:
+    - not_null
+  - name: registration_end_date
+    description: Date registration ended (NULL for active registrations)
+  - name: effective_end_date
+    description: Calculated effective end date considering business rules
+  - name: registration_duration_days
+    description: Duration of registration in days (NULL for active)
+  - name: registration_status
+    description: Status of registration (Active/Historical)
+  - name: registration_type
+    description: Type of registration (Open/Closed)
+  - name: is_latest_registration
+    description: TRUE if this is the most recent registration for the person
+  - name: registration_sequence
+    description: Sequential number of this registration for the person
+  - name: total_registrations_count
+    description: Total number of registrations (historical and current) for this person
+  - name: current_registration_count
+    description: Number of current registrations for this person
+    tests:
+    - not_null
+  - name: registration_recency_rank
+    description: Rank of current registrations by recency (1 = most recent)
+  - name: practitioner_id
+    description: ID of the registered practitioner
+  - name: current_registration_reason
+    description: Reason why registration is considered current (NULL_END_DATE, FUTURE_END_DATE, END_BEFORE_START, OTHER)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - NULL_END_DATE
+        - FUTURE_END_DATE
+        - END_BEFORE_START
+        - OTHER
+  - name: overlaps_with_previous
+    description: TRUE if this registration overlaps with the previous registration period
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: is_same_practice_as_previous
+    description: TRUE if this is the same practice as the previous registration
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: dq_issue_type
+    description: Type of data quality issue identified
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - Missing End Date
+        - Future End Date
+        - End Before Start (Data Error)
+        - Unknown Issue
+  - name: dq_severity
+    description: Severity of the data quality issue (HIGH, MEDIUM, LOW)
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - HIGH
+        - MEDIUM
+        - LOW
+  - name: has_more_than_two_current
+    description: TRUE if person has more than 2 current registrations
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
+  - name: has_conflicting_practice_overlap
+    description: TRUE if person has overlapping registrations at different practices
+    tests:
+    - accepted_values:
+        values:
+        - true
+        - false
