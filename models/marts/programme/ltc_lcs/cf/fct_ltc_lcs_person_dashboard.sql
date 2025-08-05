@@ -31,7 +31,7 @@ SELECT
     demo.ethnicity_subcategory,
     demo.ethnicity_granular,
     demo.main_language,
-    demo.language_category,
+    demo.language_type,
     demo.interpreter_type,
     
     -- Geographic and deprivation context

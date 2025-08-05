@@ -115,8 +115,8 @@ models:
     description: Most granular ethnicity detail available
   - name: main_language
     description: Main spoken language
-  - name: language_category
-    description: Language category (e.g., English, Other)
+  - name: language_type
+    description: Type of language communication (Sign, Spoken, Other Communication Method)
   - name: interpreter_needed
     description: Whether an interpreter is needed
 

@@ -83,7 +83,7 @@ SELECT
 
     -- Language and Communication
     lang.language AS main_language,
-    lang.language_category,
+    lang.language_type,
     lang.interpreter_type,
     COALESCE(lang.interpreter_needed, FALSE) AS interpreter_needed,
     

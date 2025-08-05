@@ -24,7 +24,8 @@
         c.code AS mapped_concept_code,
         c.display AS mapped_concept_display,
         cc.cluster_id,
-        cc.cluster_description
+        cc.cluster_description,
+        cc.code_description
     FROM {{ ref('stg_olids_observation') }} o
     -- Join through CONCEPT_MAP to CONCEPT (native terminology path)
     JOIN {{ ref('stg_olids_term_concept_map') }} cm

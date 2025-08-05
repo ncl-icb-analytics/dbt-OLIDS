@@ -10,46 +10,104 @@
 -- Starts from PATIENT_PERSON and LEFT JOINs the latest language and interpreter records if available
 -- Language fields display 'Not Recorded' for persons with no recorded preferred language
 
-WITH latest_language_per_person AS (
-    -- Identifies the single most recent language record for each person from the OBSERVATION table
-    -- Uses ROW_NUMBER() partitioned by person_id, ordered by clinical_effective_date (desc) and observation_lds_id (desc as tie-breaker)
+WITH all_language_and_interpreter_records AS (
+    -- Get all language preference records
     SELECT
         o.person_id,
         o.sk_patient_id,
         o.clinical_effective_date,
         o.mapped_concept_id AS concept_id,
         o.mapped_concept_code AS concept_code,
-        o.mapped_concept_display AS term,
-        -- Extract just the language name from the description
+        o.code_description AS term,
+        'PREFLANG_COD' AS record_type,
+        -- Extract language name from language preference descriptions
         CASE
-            WHEN o.mapped_concept_display LIKE 'Main spoken language %' THEN
-                REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Main spoken language ', ''), ' \\(finding\\)$', '')
-            WHEN o.mapped_concept_display LIKE 'Using %' THEN
-                REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Using ', ''), ' \\(observable entity\\)$', '')
-            WHEN o.mapped_concept_display LIKE 'Uses %' THEN
-                REGEXP_REPLACE(REGEXP_REPLACE(o.mapped_concept_display, '^Uses ', ''), ' \\(finding\\)$', '')
-            WHEN o.mapped_concept_display LIKE 'Preferred method of communication: %' THEN
-                REGEXP_REPLACE(o.mapped_concept_display, '^Preferred method of communication: ', '')
-            ELSE o.mapped_concept_display
+            WHEN o.code_description LIKE 'Main spoken language %' THEN
+                REGEXP_REPLACE(REGEXP_REPLACE(o.code_description, '^Main spoken language ', ''), ' \\(finding\\)$', '')
+            WHEN o.code_description LIKE 'Using %' THEN
+                REGEXP_REPLACE(REGEXP_REPLACE(o.code_description, '^Using ', ''), ' \\(observable entity\\)$', '')
+            WHEN o.code_description LIKE 'Uses %' THEN
+                REGEXP_REPLACE(REGEXP_REPLACE(o.code_description, '^Uses ', ''), ' \\(finding\\)$', '')
+            WHEN o.code_description LIKE 'Preferred method of communication: %' THEN
+                REGEXP_REPLACE(o.code_description, '^Preferred method of communication: ', '')
+            ELSE o.code_description
         END AS language,
         -- Categorise the language type
         CASE
-            WHEN o.mapped_concept_display LIKE '%sign language%' OR
-                 o.mapped_concept_display LIKE '%Sign Language%' THEN 'Sign'
-            WHEN o.mapped_concept_display LIKE '%Makaton%' OR
-                 o.mapped_concept_display LIKE '%Preferred method of communication%' THEN 'Other Communication Method'
+            WHEN o.code_description LIKE '%sign language%' OR
+                 o.code_description LIKE '%Sign Language%' THEN 'Sign'
+            WHEN o.code_description LIKE '%Makaton%' OR
+                 o.code_description LIKE '%Preferred method of communication%' THEN 'Other Communication Method'
             ELSE 'Spoken'
         END AS language_type,
-        o.cluster_description AS language_category,
-        o.observation_id AS observation_lds_id -- Include for potential tie-breaking
+        o.observation_id AS observation_lds_id
     FROM (
         {{ get_observations("'PREFLANG_COD'") }}
     ) o
+    
+    UNION ALL
+    
+    -- Get interpreter requirement records that specify a language
+    SELECT
+        o.person_id,
+        o.sk_patient_id,
+        o.clinical_effective_date,
+        o.mapped_concept_id AS concept_id,
+        o.mapped_concept_code AS concept_code,
+        o.code_description AS term,
+        'REQINTERPRETER_COD' AS record_type,
+        -- Extract language from interpreter requirement descriptions
+        CASE
+            -- Special sign language types
+            WHEN o.code_description LIKE 'British Sign Language interpreter needed%' THEN 'British Sign Language'
+            WHEN o.code_description LIKE 'Makaton Sign Language interpreter needed%' THEN 'Makaton Sign Language'
+            WHEN o.code_description LIKE 'Sign Supported English interpreter needed%' THEN 'Sign Supported English'
+            WHEN o.code_description LIKE 'Visual frame sign language interpreter needed%' THEN 'Visual Frame Sign Language'
+            WHEN o.code_description LIKE 'Hands-on signing interpreter needed%' THEN 'Hands-on Signing'
+            -- Standard language patterns - check for "language interpreter needed" first
+            WHEN o.code_description LIKE '%language interpreter needed%' THEN
+                REGEXP_REPLACE(o.code_description, ' language interpreter needed.*$', '')
+            -- Then check for just "interpreter needed"
+            WHEN o.code_description LIKE '%interpreter needed%' AND 
+                 o.code_description NOT LIKE 'Requires language interpretation service%' THEN
+                REGEXP_REPLACE(o.code_description, ' interpreter needed.*$', '')
+            ELSE NULL
+        END AS language,
+        -- Categorise the language type based on interpreter descriptions
+        CASE
+            WHEN o.code_description LIKE '%Sign Language%' OR
+                 o.code_description LIKE '%sign language%' OR
+                 o.code_description LIKE '%signing%' THEN 'Sign'
+            ELSE 'Spoken'
+        END AS language_type,
+        o.observation_id AS observation_lds_id
+    FROM (
+        {{ get_observations("'REQINTERPRETER_COD'") }}
+    ) o
+    WHERE o.code_description LIKE '%interpreter needed%'
+      AND o.code_description NOT LIKE 'Requires language interpretation service%'
+      AND o.code_description NOT LIKE '%interpreter not needed%'
+),
+
+latest_language_per_person AS (
+    -- Get the most recent language record (from either preference or interpreter requirement)
+    SELECT
+        person_id,
+        sk_patient_id,
+        clinical_effective_date,
+        concept_id,
+        concept_code,
+        term,
+        record_type,
+        language,
+        language_type,
+        observation_lds_id
+    FROM all_language_and_interpreter_records
+    WHERE language IS NOT NULL  -- Only include records where we could extract a language
     QUALIFY ROW_NUMBER() OVER (
-            PARTITION BY o.person_id
-            -- Order by date first, then by observation ID as a tie-breaker
-            ORDER BY o.clinical_effective_date DESC, o.observation_id DESC
-        ) = 1 -- Get only the latest record per person
+        PARTITION BY person_id
+        ORDER BY clinical_effective_date DESC, observation_lds_id DESC
+    ) = 1
 ),
 
 latest_interpreter_needs AS (
@@ -58,54 +116,65 @@ latest_interpreter_needs AS (
         o.person_id,
         o.clinical_effective_date,
         o.mapped_concept_id AS concept_id,
-        o.mapped_concept_display AS term,
+        o.code_description AS term,
         -- Determine if interpreter is needed
         CASE
-            WHEN o.mapped_concept_display LIKE '%interpreter needed%' OR
-                 o.mapped_concept_display LIKE '%Requires %interpreter%' OR
-                 o.mapped_concept_display LIKE '%Uses %interpreter%' THEN TRUE
-            WHEN o.mapped_concept_display LIKE '%interpreter not needed%' THEN FALSE
+            WHEN o.code_description LIKE '%interpreter needed%' OR
+                 o.code_description LIKE '%Requires %interpreter%' OR
+                 o.code_description LIKE '%Uses %interpreter%' THEN TRUE
+            WHEN o.code_description LIKE '%interpreter not needed%' THEN FALSE
             ELSE NULL
         END AS interpreter_needed,
-        -- Categorise interpreter type
+        -- Extract specific interpreter language/type
         CASE
-            WHEN o.mapped_concept_display LIKE '%sign language%' OR
-                 o.mapped_concept_display LIKE '%Sign Language%' THEN 'Sign Language'
-            WHEN o.mapped_concept_display LIKE '%deafblind%' THEN 'Deafblind'
-            WHEN o.mapped_concept_display LIKE '%language interpreter%' THEN 'Language'
-            WHEN o.mapped_concept_display LIKE '%lipspeaker%' OR
-                 o.mapped_concept_display LIKE '%note taker%' OR
-                 o.mapped_concept_display LIKE '%speech to text%' THEN 'Other'
+            -- Special sign language types
+            WHEN o.code_description LIKE 'British Sign Language interpreter needed%' THEN 'British Sign Language'
+            WHEN o.code_description LIKE 'Makaton Sign Language interpreter needed%' THEN 'Makaton Sign Language'
+            WHEN o.code_description LIKE 'Sign Supported English interpreter needed%' THEN 'Sign Supported English'
+            WHEN o.code_description LIKE 'Visual frame sign language interpreter needed%' THEN 'Visual Frame Sign Language'
+            WHEN o.code_description LIKE 'Hands-on signing interpreter needed%' THEN 'Hands-on Signing'
+            -- Special service types
+            WHEN o.code_description LIKE 'Requires language interpretation service%' THEN 'Language Interpretation Service'
+            -- Standard language patterns - check for "language interpreter needed" first
+            WHEN o.code_description LIKE '%language interpreter needed%' THEN
+                REGEXP_REPLACE(o.code_description, ' language interpreter needed.*$', '')
+            -- Then check for just "interpreter needed"
+            WHEN o.code_description LIKE '%interpreter needed%' THEN
+                REGEXP_REPLACE(o.code_description, ' interpreter needed.*$', '')
+            -- Other communication support types
+            WHEN o.code_description LIKE '%lipspeaker%' OR
+                 o.code_description LIKE '%note taker%' OR
+                 o.code_description LIKE '%speech to text%' THEN 'Other'
             ELSE NULL
         END AS interpreter_type,
         -- Determine if additional communication support is needed
         CASE
-            WHEN o.mapped_concept_display LIKE '%lipspeaker%' OR
-                 o.mapped_concept_display LIKE '%note taker%' OR
-                 o.mapped_concept_display LIKE '%speech to text%' OR
-                 o.mapped_concept_display LIKE '%aphasia-friendly%' OR
-                 o.mapped_concept_display LIKE '%support for %communication%' OR
-                 o.mapped_concept_display LIKE '%deafblind%' OR
-                 o.mapped_concept_display LIKE '%manual alphabet%' OR
-                 o.mapped_concept_display LIKE '%block alphabet%' OR
-                 o.mapped_concept_display LIKE '%sighted guide%' OR
-                 o.mapped_concept_display LIKE '%communicator guide%' THEN TRUE
-            WHEN o.mapped_concept_display LIKE '%interpreter not needed%' OR
-                 o.mapped_concept_display LIKE '%no support needed%' THEN FALSE
+            WHEN o.code_description LIKE '%lipspeaker%' OR
+                 o.code_description LIKE '%note taker%' OR
+                 o.code_description LIKE '%speech to text%' OR
+                 o.code_description LIKE '%aphasia-friendly%' OR
+                 o.code_description LIKE '%support for %communication%' OR
+                 o.code_description LIKE '%deafblind%' OR
+                 o.code_description LIKE '%manual alphabet%' OR
+                 o.code_description LIKE '%block alphabet%' OR
+                 o.code_description LIKE '%sighted guide%' OR
+                 o.code_description LIKE '%communicator guide%' THEN TRUE
+            WHEN o.code_description LIKE '%interpreter not needed%' OR
+                 o.code_description LIKE '%no support needed%' THEN FALSE
             ELSE NULL
         END AS communication_support_needed,
         -- Categorise communication support type
         CASE
-            WHEN o.mapped_concept_display LIKE '%lipspeaker%' THEN 'Lipspeaker'
-            WHEN o.mapped_concept_display LIKE '%note taker%' THEN 'Note Taker'
-            WHEN o.mapped_concept_display LIKE '%speech to text%' THEN 'Speech to Text'
-            WHEN o.mapped_concept_display LIKE '%aphasia-friendly%' THEN 'Aphasia Support'
-            WHEN o.mapped_concept_display LIKE '%deafblind%' THEN 'Deafblind Support'
-            WHEN o.mapped_concept_display LIKE '%manual alphabet%' OR
-                 o.mapped_concept_display LIKE '%block alphabet%' THEN 'Deafblind Alphabet'
-            WHEN o.mapped_concept_display LIKE '%sighted guide%' THEN 'Sighted Guide'
-            WHEN o.mapped_concept_display LIKE '%communicator guide%' THEN 'Communicator Guide'
-            WHEN o.mapped_concept_display LIKE '%support for %communication%' THEN 'Communication Support'
+            WHEN o.code_description LIKE '%lipspeaker%' THEN 'Lipspeaker'
+            WHEN o.code_description LIKE '%note taker%' THEN 'Note Taker'
+            WHEN o.code_description LIKE '%speech to text%' THEN 'Speech to Text'
+            WHEN o.code_description LIKE '%aphasia-friendly%' THEN 'Aphasia Support'
+            WHEN o.code_description LIKE '%deafblind%' THEN 'Deafblind Support'
+            WHEN o.code_description LIKE '%manual alphabet%' OR
+                 o.code_description LIKE '%block alphabet%' THEN 'Deafblind Alphabet'
+            WHEN o.code_description LIKE '%sighted guide%' THEN 'Sighted Guide'
+            WHEN o.code_description LIKE '%communicator guide%' THEN 'Communicator Guide'
+            WHEN o.code_description LIKE '%support for %communication%' THEN 'Communication Support'
             ELSE NULL
         END AS communication_support_type,
         o.observation_id AS observation_lds_id
@@ -132,7 +201,7 @@ persons_with_language AS (
         llpp.term,
         llpp.language,
         llpp.language_type,
-        llpp.language_category,
+        llpp.record_type AS language_source,  -- Track whether main language came from preference or interpreter record
         lin.interpreter_needed,
         lin.interpreter_type,
         lin.communication_support_needed,
@@ -157,7 +226,7 @@ SELECT
     COALESCE(pwl.term, 'Not Recorded') AS term,
     COALESCE(pwl.language, 'Not Recorded') AS language,
     COALESCE(pwl.language_type, 'Not Recorded') AS language_type,
-    COALESCE(pwl.language_category, 'Not Recorded') AS language_category,
+    pwl.language_source,
     pwl.interpreter_needed,
     pwl.interpreter_type,
     pwl.communication_support_needed,
