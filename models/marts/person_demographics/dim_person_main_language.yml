@@ -8,13 +8,30 @@ models:
   columns:
   - name: person_id
     description: Unique person identifier - primary key
-
     tests:
     - not_null
     - unique
-  - name: main_language_code
-    description: ISO language code for main language
-  - name: main_language_name
-    description: Full name of main language
-  - name: language_family
-    description: Language family grouping for resource planning
+  - name: sk_patient_id
+    description: Patient identifier from source system
+  - name: latest_language_date
+    description: Date of the most recent language observation
+  - name: concept_id
+    description: Concept identifier for the language observation, defaults to 'Not Recorded' if no language recorded
+  - name: concept_code
+    description: Concept code for the language observation, defaults to 'Not Recorded' if no language recorded
+  - name: term
+    description: Raw term description from code_description, defaults to 'Not Recorded' if no language recorded
+  - name: language
+    description: Clean language name extracted from term (without prefixes/suffixes), defaults to 'Not Recorded' if no language recorded
+  - name: language_type
+    description: Type of language communication (Sign, Spoken, Other Communication Method), defaults to 'Not Recorded' if no language recorded
+  - name: language_source
+    description: Source of the main language determination (PREFLANG_COD for language preference, REQINTERPRETER_COD for interpreter requirement)
+  - name: interpreter_needed
+    description: Boolean indicating if interpreter services are needed (TRUE/FALSE/NULL)
+  - name: interpreter_type
+    description: Type of interpreter needed (Sign Language, Deafblind, Language, Other)
+  - name: communication_support_needed
+    description: Boolean indicating if additional communication support is needed (TRUE/FALSE/NULL)
+  - name: communication_support_type
+    description: Type of communication support needed (Lipspeaker, Note Taker, Speech to Text, etc.)
