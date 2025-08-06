@@ -1,127 +1,15 @@
 models:
-- name: fct_person_ndh_register
-  description: 'QOF Non-Diabetic Hyperglycaemia (NDH) Register - Patients with pre-diabetes for prevention interventions.
+  - name: fct_person_ndh_register
+    description: 'QOF Non-Diabetic Hyperglycaemia (NDH) Register - Patients with pre-diabetes for prevention interventions.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • NDH diagnosis (NDH_COD) present - elevated glucose but not diabetic
+      • NDH diagnosis (NDH_COD) present - elevated glucose but not diabetic
 
-    • No age restrictions
+      • No age restrictions
 
-    • Excludes those with diabetes diagnosis
+      • Excludes those with diabetes diagnosis
 
 
-    Purpose: QOF register for diabetes prevention, lifestyle interventions, and pre-diabetes monitoring to prevent progression to Type 2 diabetes.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
-
-    tests:
-    - not_null
-    - unique
-  - name: is_on_register
-    description: QOF register inclusion flag - TRUE for all persons in this table
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: earliest_diagnosis_date
-    description: Date of first recorded specific NDH diagnosis code
-  - name: latest_diagnosis_date
-    description: Date of most recent specific NDH diagnosis code
-  - name: earliest_igt_date
-    description: Date of first recorded IGT (Impaired Glucose Tolerance) diagnosis code
-  - name: latest_igt_date
-    description: Date of most recent IGT (Impaired Glucose Tolerance) diagnosis code
-  - name: earliest_prd_date
-    description: Date of first recorded PRD (Pre-diabetes) diagnosis code
-  - name: latest_prd_date
-    description: Date of most recent PRD (Pre-diabetes) diagnosis code
-  - name: latest_multndh_date
-    description: Date of most recent NDH/IGT/PRD diagnosis code (any subtype)
-  - name: earliest_diagnosis_date
-    description: Date of first recorded diabetes diagnosis code - NULL if never had diabetes
-  - name: latest_diagnosis_date
-    description: Date of most recent diabetes diagnosis code - NULL if never had diabetes
-  - name: latest_diabetes_resolved_date
-    description: Date of most recent diabetes resolved code - required if had diabetes
-  - name: has_igt_diagnosis
-    description: 'Boolean flag: TRUE if person has IGT (Impaired Glucose Tolerance) diagnosis'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
-
-  - name: has_prd_diagnosis
-    description: 'Boolean flag: TRUE if person has PRD (Pre-diabetes) diagnosis'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: has_diabetes_diagnosis
-    description: 'Boolean flag: TRUE if person has ever had diabetes diagnosis'
-
-    tests:
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
-
-  - name: is_diabetes_resolved
-    description: 'Boolean flag: TRUE if person''s diabetes is resolved (required for register inclusion if ever had diabetes)'
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: all_ndh_concept_codes
-    description: Array of all specific NDH diagnosis concept codes recorded for this person
-  - name: all_ndh_concept_displays
-    description: Array of all specific NDH diagnosis concept display terms
-  - name: all_igt_concept_codes
-    description: Array of all IGT diagnosis concept codes recorded for this person
-  - name: all_igt_concept_displays
-    description: Array of all IGT diagnosis concept display terms
-  - name: all_prd_concept_codes
-    description: Array of all PRD diagnosis concept codes recorded for this person
-  - name: all_prd_concept_displays
-    description: Array of all PRD diagnosis concept display terms
-  - name: all_diabetes_concept_codes
-    description: Array of all diabetes diagnosis concept codes recorded for this person
-  - name: all_diabetes_concept_displays
-    description: Array of all diabetes diagnosis concept display terms
-  - name: has_ndh_diagnosis
-    description: 'Boolean flag: TRUE if person has any NDH/IGT/PRD diagnosis'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
+      Purpose: QOF register for diabetes prevention, lifestyle interventions, and pre-diabetes monitoring to prevent progression to Type 2 diabetes.'

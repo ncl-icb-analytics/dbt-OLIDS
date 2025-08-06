@@ -1,153 +1,33 @@
 version: 2
 models:
-- name: int_foot_examination_latest
-  description: 'Intermediate: Latest Foot Examination Observations - Most recent foot examination status per person.
+  - name: int_foot_examination_latest
+    description: 'Intermediate: Latest Foot Examination Observations - Most recent foot examination status per person.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current diabetic foot examination status for diabetes care monitoring
+      • Provides current diabetic foot examination status for diabetes care monitoring
 
-    • Supports foot risk assessment and QOF diabetes indicator reporting
+      • Supports foot risk assessment and QOF diabetes indicator reporting
 
-    • Enables current foot health status evaluation and care planning
-
-
-    Data Granularity:
-
-    • One row per person with their most recent foot examination
-
-    • Includes all patients with foot examination records
-
-    • Comprehensive examination status and risk assessment data
+      • Enables current foot health status evaluation and care planning
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest foot examination identification with completion status
+      • One row per person with their most recent foot examination
 
-    • Current foot risk level assessment for clinical decision-making
+      • Includes all patients with foot examination records
 
-    • Bilateral foot status with anatomical considerations
+      • Comprehensive examination status and risk assessment data
 
-    • Complete examination metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the latest foot examination
+      • Latest foot examination identification with completion status
 
-    tests:
-    - not_null
-    - test_no_future_dates
-  - name: is_unsuitable
-    description: Flag indicating foot check deemed unsuitable
+      • Current foot risk level assessment for clinical decision-making
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Bilateral foot status with anatomical considerations
 
-        values:
-        - true
-        - false
-  - name: is_declined
-    description: Flag indicating patient declined foot check
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: left_foot_checked
-    description: Flag indicating left foot was checked
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: right_foot_checked
-    description: Flag indicating right foot was checked
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: both_feet_checked
-    description: Flag indicating both feet were checked
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: left_foot_absent
-    description: Flag indicating congenital absence of left foot
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: right_foot_absent
-    description: Flag indicating congenital absence of right foot
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: left_foot_amputated
-    description: Flag indicating left foot amputation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: right_foot_amputated
-    description: Flag indicating right foot amputation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: examination_status
-    description: Overall status of foot examination
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Unsuitable
-        - Declined
-        - Complete - Both Feet
-        - Complete - Left Only (Right Missing)
-        - Complete - Right Only (Left Missing)
-        - Partial - Left Only
-        - Partial - Right Only
-        - Not Done
+      • Complete examination metadata for clinical context'

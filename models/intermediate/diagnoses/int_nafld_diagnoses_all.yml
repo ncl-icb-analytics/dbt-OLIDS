@@ -1,81 +1,33 @@
 version: 2
 models:
-- name: int_nafld_diagnoses_all
-  description: 'Intermediate: NAFLD Diagnoses - All Non-Alcoholic Fatty Liver Disease diagnosis observations from clinical records.
+  - name: int_nafld_diagnoses_all
+    description: 'Intermediate: NAFLD Diagnoses - All Non-Alcoholic Fatty Liver Disease diagnosis observations from clinical records.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• NAFLD diagnosis tracking and liver health assessment
+      • NAFLD diagnosis tracking and liver health assessment
 
-• Metabolic syndrome monitoring and risk stratification
+      • Metabolic syndrome monitoring and risk stratification
 
-• Integration with diabetes and obesity management pathways
-
-
-Data Granularity:
-
-• One row per NAFLD diagnosis observation
-
-• Includes all patients with recorded NAFLD diagnoses
-
-• Complete clinical history with all diagnosis dates
-
-• Uses hardcoded SNOMED concepts (pending NAFLD_COD cluster availability)
+      • Integration with diabetes and obesity management pathways
 
 
-Key Features:
+      Data Granularity:
 
-• Progressive liver disease monitoring capability
+      • One row per NAFLD diagnosis observation
 
-• Links to metabolic risk factors and comorbidities
+      • Includes all patients with recorded NAFLD diagnoses
 
-• Awaiting formal cluster implementation for complete coverage
-• Supports comprehensive liver health assessment'
+      • Complete clinical history with all diagnosis dates
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      • Uses hardcoded SNOMED concepts (pending NAFLD_COD cluster availability)
 
-    tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date when the NAFLD diagnosis was clinically effective
+      Key Features:
 
-    tests:
-    - not_null
-    - test_no_future_dates
-  - name: concept_code
-    description: SNOMED concept code for the NAFLD diagnosis
+      • Progressive liver disease monitoring capability
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Links to metabolic risk factors and comorbidities
 
-        values:
-        - '197315008'
-        - '1197739005'
-        - '1231824009'
-        - '442685003'
-        - '722866000'
-        - '503681000000108'
-  - name: concept_display
-    description: Human-readable description of the NAFLD diagnosis concept
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster identifier (currently hardcoded as 'HARDCODED_NAFLD')
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - HARDCODED_NAFLD
+      • Awaiting formal cluster implementation for complete coverage • Supports comprehensive liver health assessment'

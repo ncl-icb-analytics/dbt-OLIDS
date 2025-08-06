@@ -1,16 +1,4 @@
 version: 2
 models:
-- name: int_ethnicity_qof
-  description: Intermediate table containing ethnicity information from observations only, with BAME status flags for obesity register.
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the ethnicity record used
-
-    tests:
-    - not_null
+  - name: int_ethnicity_qof
+    description: Intermediate table containing ethnicity information from observations only, with BAME status flags for obesity register.

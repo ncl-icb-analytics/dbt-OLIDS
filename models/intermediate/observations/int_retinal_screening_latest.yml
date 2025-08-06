@@ -1,108 +1,33 @@
 version: 2
 models:
-- name: int_retinal_screening_latest
-  description: 'Intermediate: Latest Retinal Screening Observations - Most recent diabetes retinal screening completion per person.
+  - name: int_retinal_screening_latest
+    description: 'Intermediate: Latest Retinal Screening Observations - Most recent diabetes retinal screening completion per person.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current retinal screening status for diabetes care monitoring
+      • Provides current retinal screening status for diabetes care monitoring
 
-    • Supports QOF diabetes care process reporting and compliance assessment
+      • Supports QOF diabetes care process reporting and compliance assessment
 
-    • Enables current eye care status evaluation and screening programme management
-
-
-    Data Granularity:
-
-    • One row per person with their most recent completed retinal screening
-
-    • Includes only patients with completed screening records
-
-    • Focused on screening currency and compliance assessment
+      • Enables current eye care status evaluation and screening programme management
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest screening identification with currency flags (12m, 24m)
+      • One row per person with their most recent completed retinal screening
 
-    • Screening completion status for diabetes care pathway compliance
+      • Includes only patients with completed screening records
 
-    • Time-based screening status for QOF reporting
+      • Focused on screening currency and compliance assessment
 
-    • Essential data for diabetes care process monitoring'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: observation_id
-    description: Unique observation identifier
+      • Latest screening identification with currency flags (12m, 24m)
 
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the latest retinal screening
+      • Screening completion status for diabetes care pathway compliance
 
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for retinal screening
+      • Time-based screening status for QOF reporting
 
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the screening code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster ID (RETSCREN_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - RETSCREN_COD
-  - name: is_completed_screening
-    description: Flag indicating completed screening (always TRUE)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: days_since_screening
-    description: Number of days since latest screening
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 50000
-        severity: warn
-  - name: screening_current_12m
-    description: Flag indicating screening within 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: screening_current_24m
-    description: Flag indicating screening within 24 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Essential data for diabetes care process monitoring'

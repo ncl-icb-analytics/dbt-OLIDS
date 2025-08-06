@@ -1,117 +1,31 @@
 version: 2
 models:
-- name: int_cardiac_glycoside_medications_all
-  description: 'Intermediate: Cardiac Glycoside Medications - All recorded cardiac glycoside prescriptions with dosing classifications.
+  - name: int_cardiac_glycoside_medications_all
+    description: 'Intermediate: Cardiac Glycoside Medications - All recorded cardiac glycoside prescriptions with dosing classifications.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Supports heart failure medication monitoring and therapeutic drug monitoring
+      • Supports heart failure medication monitoring and therapeutic drug monitoring
 
-• Enables arrhythmia management pathway tracking
+      • Enables arrhythmia management pathway tracking
 
-• Facilitates elderly and renal impairment dosing analysis
-
-
-Data Granularity:
-
-• One row per medication order
-
-• Includes all patients with cardiac glycoside prescriptions (digoxin, digitoxin)
-
-• Historical data spanning entire medication history
+      • Facilitates elderly and renal impairment dosing analysis
 
 
-Key Features:
+      Data Granularity:
 
-• Cardiac glycoside type identification and classification
+      • One row per medication order
 
-• Digoxin dose categorisation with therapeutic ranges
+      • Includes all patients with cardiac glycoside prescriptions (digoxin, digitoxin)
 
-• Clinical indication mapping (heart failure vs arrhythmia)
-• Special population dosing flags for safety monitoring'
+      • Historical data spanning entire medication history
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: cardiac_glycoside_type
-    description: Specific cardiac glycoside medication type
+      • Cardiac glycoside type identification and classification
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Digoxin dose categorisation with therapeutic ranges
 
-        values:
-        - DIGOXIN
-        - DIGITOXIN
-        - OTHER_CARDIAC_GLYCOSIDE
-  - name: is_digoxin
-    description: Boolean flag indicating digoxin use (most common cardiac glycoside)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: digoxin_dose_category
-    description: Digoxin dose classification for therapeutic monitoring
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - STANDARD_DOSE
-        - HIGH_DOSE
-        - LOW_DOSE
-        - UNKNOWN_DOSE
-  - name: is_heart_failure_dose
-    description: Boolean flag indicating typical heart failure dosing
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_arrhythmia_dose
-    description: Boolean flag indicating higher dose for arrhythmia control
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_elderly_renal_dose
-    description: Boolean flag indicating reduced dose for elderly or renal impairment
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: '020101'
+      • Clinical indication mapping (heart failure vs arrhythmia) • Special population dosing flags for safety monitoring'

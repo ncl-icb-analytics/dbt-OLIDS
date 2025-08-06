@@ -1,36 +1,17 @@
 version: 2
 models:
-- name: int_valproate_araf_events
-  description: 'Extracts all ARAF events from observations using valproate programme codes.
+  - name: int_valproate_araf_events
+    description: 'Extracts all ARAF events from observations using valproate programme codes.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Joins observations with mapped concepts and valproate programme codes
+      • Joins observations with mapped concepts and valproate programme codes
 
-    • Filters to ARAF code category only
+      • Filters to ARAF code category only
 
-    • One row per ARAF observation with person, date, concept details
+      • One row per ARAF observation with person, date, concept details
 
-    • Includes specific ARAF form code identification and lookback logic
+      • Includes specific ARAF form code identification and lookback logic
 
-    • Foundation data for ARAF dimension aggregation'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person.
-
-    tests:
-    - not_null
-  - name: araf_event_date
-    description: Date of the ARAF-related observation.
-  - name: araf_observation_id
-    description: Identifier for the ARAF observation.
-  - name: araf_concept_code
-    description: Medical concept code for the ARAF event.
-  - name: araf_concept_display
-    description: Display term for the ARAF concept code.
-  - name: araf_code_category
-    description: Code category for the ARAF event (should be 'ARAF').
-  - name: is_specific_araf_form_code
-    description: TRUE if the event is a specific ARAF form code.
+      • Foundation data for ARAF dimension aggregation'

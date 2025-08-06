@@ -1,102 +1,39 @@
 version: 2
 models:
-- name: int_dementia_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: DEM_COD
-  description: 'Intermediate: Dementia Diagnoses - All recorded dementia diagnosis observations for QOF register management.
+  - name: int_dementia_diagnoses_all
+    description: 'Intermediate: Dementia Diagnoses - All recorded dementia diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Supports QOF dementia register maintenance and reporting
+      • Supports QOF dementia register maintenance and reporting
 
-    • Tracks dementia care pathway coordination and cognitive assessment
+      • Tracks dementia care pathway coordination and cognitive assessment
 
-    • Enables mental health service utilisation and quality improvement
+      • Enables mental health service utilisation and quality improvement
 
-    • Supports long-term care planning and support service coordination
-
-
-    Data Granularity:
-
-    • One row per dementia diagnosis observation
-
-    • Includes all patients with dementia-related codes regardless of current status
-
-    • Uses cluster ID: DEM_COD (diagnosis)
+      • Supports long-term care planning and support service coordination
 
 
-    Key Features:
+      Data Granularity:
 
-    • Permanent condition tracking with no resolution codes
+      • One row per dementia diagnosis observation
 
-    • No specific age restrictions for dementia register inclusion
+      • Includes all patients with dementia-related codes regardless of current status
 
-    • Provides earliest/latest dates for diagnosis events
+      • Uses cluster ID: DEM_COD (diagnosis)
 
-    • Includes comprehensive arrays of all related concept codes per person'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Permanent condition tracking with no resolution codes
+
+      • No specific age restrictions for dementia register inclusion
+
+      • Provides earliest/latest dates for diagnosis events
+
+      • Includes comprehensive arrays of all related concept codes per person'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the dementia diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for dementia diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the dementia diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (DEM_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - DEM_COD
-  - name: is_dementia_diagnosis_code
-    description: Flag indicating dementia diagnosis (DEM_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_dementia_date
-    description: Earliest dementia diagnosis date for this person
-  - name: latest_dementia_date
-    description: Latest dementia diagnosis date for this person
-  - name: dementia_observation_type
-    description: Classification of this specific observation (Dementia Diagnosis, Unknown)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Dementia Diagnosis
-        - Unknown
-  - name: all_dementia_concept_codes
-    description: Array of all dementia diagnosis concept codes for this person
-  - name: all_dementia_concept_displays
-    description: Array of all dementia diagnosis concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: DEM_COD

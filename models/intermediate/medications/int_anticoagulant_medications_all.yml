@@ -1,163 +1,33 @@
 version: 2
 models:
-- name: int_anticoagulant_medications_all
-  description: 'Intermediate: Anticoagulant Medications - All recorded oral anticoagulant prescriptions.
+  - name: int_anticoagulant_medications_all
+    description: 'Intermediate: Anticoagulant Medications - All recorded oral anticoagulant prescriptions.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Supports thrombosis prevention and atrial fibrillation management monitoring
+      • Supports thrombosis prevention and atrial fibrillation management monitoring
 
-• Enables anticoagulation pathway tracking and medication review processes
+      • Enables anticoagulation pathway tracking and medication review processes
 
-• Facilitates DOAC vs VKA prescribing pattern analysis
-
-
-Data Granularity:
-
-• One row per medication order
-
-• Includes all patients with anticoagulant prescriptions
-
-• Historical data spanning entire medication history
+      • Facilitates DOAC vs VKA prescribing pattern analysis
 
 
-Key Features:
+      Data Granularity:
 
-• Anticoagulant type classification (DOAC vs VKA)
+      • One row per medication order
 
-• Specific medication mapping (warfarin, apixaban, rivaroxaban, etc.)
+      • Includes all patients with anticoagulant prescriptions
 
-• Evidence-based therapy flags with clinical trial references
+      • Historical data spanning entire medication history
 
-• Therapy monitoring indicators across multiple timeframes'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
+      Key Features:
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      • Anticoagulant type classification (DOAC vs VKA)
 
-    tests:
-    - not_null
-    - unique
-  - name: anticoagulant_type
-    description: High-level anticoagulant type classification
+      • Specific medication mapping (warfarin, apixaban, rivaroxaban, etc.)
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Evidence-based therapy flags with clinical trial references
 
-        values:
-        - DOAC
-        - VKA
-        - OTHER_ANTICOAGULANT
-  - name: specific_anticoagulant
-    description: Specific anticoagulant medication type
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - APIXABAN
-        - DABIGATRAN
-        - EDOXABAN
-        - RIVAROXABAN
-        - WARFARIN
-        - ACENOCOUMAROL
-        - PHENINDIONE
-        - PHENPROCOUMON
-        - OTHER_ANTICOAGULANT
-  - name: is_evidence_based_af
-    description: Boolean flag indicating evidence-based anticoagulant for atrial fibrillation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_warfarin
-    description: Boolean flag indicating warfarin use (gold standard VKA)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_apixaban
-    description: Boolean flag indicating apixaban use (ARISTOTLE trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_rivaroxaban
-    description: Boolean flag indicating rivaroxaban use (ROCKET-AF trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_dabigatran
-    description: Boolean flag indicating dabigatran use (RE-LY trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_edoxaban
-    description: Boolean flag indicating edoxaban use (ENGAGE-AF trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_doac
-    description: Boolean flag indicating Direct Oral Anticoagulant (DOAC)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_vka
-    description: Boolean flag indicating Vitamin K Antagonist (VKA)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: 020802
+      • Therapy monitoring indicators across multiple timeframes'

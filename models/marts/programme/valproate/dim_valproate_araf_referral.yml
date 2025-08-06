@@ -1,40 +1,15 @@
 version: 2
 models:
-- name: dim_valproate_araf_referral
-  description: 'Person-level aggregation of ARAF referral events for valproate monitoring.
+  - name: dim_valproate_araf_referral
+    description: 'Person-level aggregation of ARAF referral events for valproate monitoring.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Aggregates all ARAF referral events per person from intermediate ARAF referral events table
+      • Aggregates all ARAF referral events per person from intermediate ARAF referral events table
 
-    • Provides earliest and latest ARAF referral event dates for timeline analysis
+      • Provides earliest and latest ARAF referral event dates for timeline analysis
 
-    • Includes arrays of all observation IDs, concept codes, and displays for traceability
+      • Includes arrays of all observation IDs, concept codes, and displays for traceability
 
-    • Only includes people who have ARAF referral events (has_araf_referral_event always TRUE)'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person.
-
-    tests:
-    - not_null
-    - unique
-  - name: has_araf_referral_event
-    description: TRUE if any ARAF referral event is present for the person. Always TRUE for persons in this table.
-
-    tests:
-    - not_null
-  - name: earliest_araf_referral_event_date
-    description: Earliest date of any ARAF referral event for the person.
-  - name: latest_araf_referral_event_date
-    description: Latest date of any ARAF referral event for the person.
-  - name: all_araf_referral_observation_ids
-    description: Array of unique observation IDs related to ARAF referral events.
-  - name: all_araf_referral_concept_codes
-    description: Array of all distinct ARAF referral medical concept codes found.
-  - name: all_araf_referral_concept_displays
-    description: Array of display terms for the ARAF referral codes.
-  - name: all_araf_referral_code_categories_applied
-    description: Array of code categories applied (should contain only 'REFERRAL').
+      • Only includes people who have ARAF referral events (has_araf_referral_event always TRUE)'

@@ -1,74 +1,33 @@
 version: 2
 models:
-- name: int_bmi_latest
-  description: 'Intermediate: Latest BMI Observations - Most recent valid BMI measurement per person.
+  - name: int_bmi_latest
+    description: 'Intermediate: Latest BMI Observations - Most recent valid BMI measurement per person.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current BMI status for obesity management and clinical decision-making
+      • Provides current BMI status for obesity management and clinical decision-making
 
-    • Supports weight management programme eligibility and QOF reporting
+      • Supports weight management programme eligibility and QOF reporting
 
-    • Enables current health status assessment and risk stratification
-
-
-    Data Granularity:
-
-    • One row per person with their most recent valid BMI
-
-    • Includes only patients with valid BMI measurements
-
-    • Filtered to exclude implausible values for clinical accuracy
+      • Enables current health status assessment and risk stratification
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest valid BMI identification using comprehensive filtering
+      • One row per person with their most recent valid BMI
 
-    • Clinical BMI categorisation with obesity class classification
+      • Includes only patients with valid BMI measurements
 
-    • Data quality assurance with validation flags
+      • Filtered to exclude implausible values for clinical accuracy
 
-    • Complete observation metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the BMI measurement
+      • Latest valid BMI identification using comprehensive filtering
 
-    tests:
-    - not_null
-  - name: bmi_value
-    description: BMI value in kg/m² (valid range only)
+      • Clinical BMI categorisation with obesity class classification
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 5
-        max_value: 400
-        severity: warn
-  - name: original_result_value
-    description: Original BMI value as recorded
+      • Data quality assurance with validation flags
 
-    tests:
-    - not_null
-  - name: bmi_category
-    description: Clinical BMI category (excludes 'Invalid')
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Underweight
-        - Normal
-        - Overweight
-        - Obese Class I
-        - Obese Class II
-        - Obese Class III
+      • Complete observation metadata for clinical context'

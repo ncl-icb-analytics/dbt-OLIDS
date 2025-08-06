@@ -1,63 +1,37 @@
 version: 2
 models:
-- name: int_hba1c_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: DCCTHBA1C_COD, IFCCHBAM_COD
-  description: 'Intermediate: HbA1c Observations - All recorded HbA1c measurements with diabetes assessment.
+  - name: int_hba1c_all
+    description: 'Intermediate: HbA1c Observations - All recorded HbA1c measurements with diabetes assessment.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks HbA1c levels for diabetes diagnosis, monitoring and management
+      • Tracks HbA1c levels for diabetes diagnosis, monitoring and management
 
-    • Supports diabetes care pathways and QOF target achievement monitoring
+      • Supports diabetes care pathways and QOF target achievement monitoring
 
-    • Enables glycaemic control assessment and treatment optimisation
-
-
-    Data Granularity:
-
-    • One row per HbA1c observation
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Handles both IFCC (mmol/mol) and DCCT (%) measurement types
+      • Enables glycaemic control assessment and treatment optimisation
 
 
-    Key Features:
+      Data Granularity:
 
-    • Dual measurement type support with proper unit validation
+      • One row per HbA1c observation
 
-    • Clinical HbA1c categorisation (normal, prediabetes, diabetes control levels)
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • QOF target achievement flags for diabetes quality indicators
+      • Handles both IFCC (mmol/mol) and DCCT (%) measurement types
 
-    • Diabetes diagnostic thresholds and clinical decision support'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Dual measurement type support with proper unit validation
+
+      • Clinical HbA1c categorisation (normal, prediabetes, diabetes control levels)
+
+      • QOF target achievement flags for diabetes quality indicators
+
+      • Diabetes diagnostic thresholds and clinical decision support'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the HbA1c measurement
-
-    tests:
-    - not_null
-  - name: is_valid_hba1c
-    description: Flag indicating if HbA1c is within valid range
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: DCCTHBA1C_COD, IFCCHBAM_COD

@@ -1,53 +1,22 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_dm_62
-  description: 'Mart: LTC LCS Case Finding DM_62 - Identifies patients with gestational diabetes history requiring ongoing diabetes surveillance.
+  - name: dim_ltc_lcs_cf_dm_62
+    description: 'Mart: LTC LCS Case Finding DM_62 - Identifies patients with gestational diabetes history requiring ongoing diabetes surveillance.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Patients aged 17+ from LTC case finding base population
+      • Patients aged 17+ from LTC case finding base population
 
-    • Gestational diabetes and pregnancy risk history
+      • Gestational diabetes and pregnancy risk history
 
-    • No HbA1c assessment within 12 months
+      • No HbA1c assessment within 12 months
 
 
-    Key Features:
+      Key Features:
 
-    • Gestational diabetes history identification
+      • Gestational diabetes history identification
 
-    • HbA1c surveillance gap detection
+      • HbA1c surveillance gap detection
 
-    • Evidence-based case finding for post-pregnancy diabetes risk management'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Age of the patient (17+)
-
-    tests:
-    - not_null
-  - name: has_gestational_diabetes_risk
-    description: Boolean flag indicating if person has gestational diabetes with pregnancy risk and missing HbA1c
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_hba1c_date
-    description: Date of most recent HbA1c reading (if any)
-  - name: latest_hba1c_value
-    description: Most recent HbA1c value (if any)
-  - name: all_gestational_diabetes_codes
-    description: Array of all gestational diabetes with pregnancy risk concept codes
-  - name: all_gestational_diabetes_displays
-    description: Array of all gestational diabetes with pregnancy risk concept displays
+      • Evidence-based case finding for post-pregnancy diabetes risk management'

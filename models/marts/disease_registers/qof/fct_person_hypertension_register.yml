@@ -1,96 +1,17 @@
 version: 2
 models:
-- name: fct_person_hypertension_register
-  description: 'QOF Hypertension Register - Patients aged 18+ with active hypertension diagnosis and clinical staging.
+  - name: fct_person_hypertension_register
+    description: 'QOF Hypertension Register - Patients aged 18+ with active hypertension diagnosis and clinical staging.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Age 18+ years
+      • Age 18+ years
 
-    • Active hypertension diagnosis: latest HTN_COD > latest HTNRES_COD
+      • Active hypertension diagnosis: latest HTN_COD > latest HTNRES_COD
 
-    • Clinical staging based on latest BP with NICE-aligned thresholds
+      • Clinical staging based on latest BP with NICE-aligned thresholds
 
-    • Context-aware thresholds: Home/ABPM vs Clinic readings
+      • Context-aware thresholds: Home/ABPM vs Clinic readings
 
-    • One row per person with current register status'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: person_id
-    description: Unique person identifier linking to dim_person
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: Register inclusion flag (always TRUE in this table as filtered view)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: earliest_diagnosis_date
-    description: Date of first recorded hypertension diagnosis code
-
-    tests:
-    - not_null
-  - name: latest_diagnosis_date
-    description: Date of most recent hypertension diagnosis code
-
-    tests:
-    - not_null
-  - name: latest_htn_resolved_date
-    description: Date of most recent hypertension resolution code (null if never resolved)
-  - name: latest_bp_date
-    description: Date of most recent blood pressure reading
-  - name: latest_bp_systolic_value
-    description: Systolic value of latest BP reading (mmHg)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 40
-        max_value: 350
-        severity: warn
-  - name: latest_bp_diastolic_value
-    description: Diastolic value of latest BP reading (mmHg)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 20
-        max_value: 200
-        severity: warn
-  - name: latest_bp_htn_stage
-
-    description: 'Clinical staging of latest BP reading using context-specific NICE thresholds:
-
-      - Severe HTN (≥180/120)
-
-      - Stage 2/1 HTN with Home/ABPM or Clinic threshold context
-
-      - Normal with context indication'
-
-    tests:
-    - accepted_values:
-
-        values:
-        - Severe HTN
-        - Stage 2 HTN
-        - Stage 1 HTN
-        - Normal / High Normal
-  - name: meets_age_criteria
-    description: Flag indicating if person meets age ≥18 requirement
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
+      • One row per person with current register status'

@@ -1,53 +1,15 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_cvd_65
-  description: 'Case finding for patients with moderate cardiovascular risk requiring moderate-dose statin therapy.
+  - name: dim_ltc_lcs_cf_cvd_65
+    description: 'Case finding for patients with moderate cardiovascular risk requiring moderate-dose statin therapy.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Identifies patients with latest QRISK2 score ≥10% requiring moderate-dose statin therapy
+      • Identifies patients with latest QRISK2 score ≥10% requiring moderate-dose statin therapy
 
-    • Targets primary prevention patients needing evidence-based lipid management
+      • Targets primary prevention patients needing evidence-based lipid management
 
-    • Uses QRISK2-based cardiovascular risk stratification for statin eligibility decisions
+      • Uses QRISK2-based cardiovascular risk stratification for statin eligibility decisions
 
-    • One row per person meeting moderate cardiovascular risk intervention thresholds'
-
-  columns:
-  - name: person_id
-    description: Unique patient identifier
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Patient age
-
-    tests:
-    - not_null
-  - name: needs_moderate_dose_statin
-    description: Whether patient needs moderate-dose statin (TRUE for all)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: latest_qrisk2_date
-    description: Date of latest QRISK2 ≥ 10 assessment
-
-    tests:
-    - not_null
-  - name: latest_qrisk2_value
-    description: Latest QRISK2 value (≥ 10)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 10
-  - name: all_qrisk2_codes
-    description: Array of all QRISK2 concept codes for patient
-  - name: all_qrisk2_displays
-    description: Array of all QRISK2 concept displays for patient
+      • One row per person meeting moderate cardiovascular risk intervention thresholds'

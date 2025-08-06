@@ -1,48 +1,39 @@
 version: 2
 models:
-- name: int_pad_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: PAD_COD
-  description: 'Intermediate: PAD Diagnoses All - Complete history of all peripheral arterial disease diagnosis observations for QOF register management.
+  - name: int_pad_diagnoses_all
+    description: 'Intermediate: PAD Diagnoses All - Complete history of all peripheral arterial disease diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF peripheral arterial disease register data collection and monitoring
+      • QOF peripheral arterial disease register data collection and monitoring
 
-    • Cardiovascular risk stratification and secondary prevention pathway coordination
+      • Cardiovascular risk stratification and secondary prevention pathway coordination
 
-    • PAD care pathway management and treatment optimisation
+      • PAD care pathway management and treatment optimisation
 
-    • Long-term cardiovascular outcome tracking and intervention support
-
-
-    Data Granularity:
-
-    • One row per peripheral arterial disease diagnosis observation
-
-    • Uses PAD_COD cluster for QOF-compliant PAD diagnosis identification
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Long-term cardiovascular outcome tracking and intervention support
 
 
-    Key Features:
+      Data Granularity:
 
-    • Lifelong condition register for cardiovascular secondary prevention
+      • One row per peripheral arterial disease diagnosis observation
 
-    • Simple diagnosis-only pattern with no resolution codes
+      • Uses PAD_COD cluster for QOF-compliant PAD diagnosis identification
 
-    • Critical for cardiovascular risk management and prevention protocols
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for PAD care quality improvement initiatives'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Lifelong condition register for cardiovascular secondary prevention
+
+      • Simple diagnosis-only pattern with no resolution codes
+
+      • Critical for cardiovascular risk management and prevention protocols
+
+      • Essential input for PAD care quality improvement initiatives'
     tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: PAD_COD

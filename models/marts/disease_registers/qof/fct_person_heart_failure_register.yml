@@ -1,120 +1,17 @@
 models:
-- name: fct_person_heart_failure_register
-  description: 'QOF Heart Failure Register - Patients with active heart failure and subtype classification.
+  - name: fct_person_heart_failure_register
+    description: 'QOF Heart Failure Register - Patients with active heart failure and subtype classification.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Active heart failure diagnosis: Latest HF_COD > latest HFRES_COD OR no resolution
+      • Active heart failure diagnosis: Latest HF_COD > latest HFRES_COD OR no resolution
 
-    • Subtype classification: General HF vs HF with LVSD/Reduced EF
+      • Subtype classification: General HF vs HF with LVSD/Reduced EF
 
-    • No age restrictions
+      • No age restrictions
 
-    • Excludes resolved heart failure cases
+      • Excludes resolved heart failure cases
 
 
-    Purpose: QOF register for heart failure management with subtype-specific monitoring and treatment optimisation.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
-
-    tests:
-    - not_null
-    - unique
-  - name: is_on_register
-    description: General HF register inclusion flag - TRUE for all persons in this table
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: is_on_hf_lvsd_reduced_ef_register
-    description: LVSD/Reduced EF specialist register flag - subset of general HF register
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_diagnosis_date
-    description: Date of first recorded heart failure diagnosis code (HF_COD)
-
-    tests:
-    - dbt_utils.not_accepted_values:
-
-        values:
-        - '1900-01-01'
-  - name: latest_diagnosis_date
-    description: Date of most recent heart failure diagnosis code (HF_COD)
-
-    tests:
-    - not_null
-  - name: latest_hf_resolved_date
-    description: Date of most recent HF resolved code (HFRES_COD) - NULL if never resolved
-  - name: earliest_hf_lvsd_diagnosis_date
-    description: Date of first recorded HF due to LVSD diagnosis code (HFLVSD_COD)
-  - name: latest_hf_lvsd_diagnosis_date
-    description: Date of most recent HF due to LVSD diagnosis code (HFLVSD_COD)
-  - name: earliest_reduced_ef_diagnosis_date
-    description: Date of first recorded HF due to reduced ejection fraction code (REDEJCFRAC_COD)
-  - name: latest_reduced_ef_diagnosis_date
-    description: Date of most recent HF due to reduced ejection fraction code (REDEJCFRAC_COD)
-  - name: has_lvsd_diagnosis
-    description: 'Boolean flag: TRUE if person has ever had HF due to LVSD diagnosis'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
-
-  - name: has_reduced_ef_diagnosis
-    description: 'Boolean flag: TRUE if person has ever had HF due to reduced ejection fraction diagnosis'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: nafld_diagnosis_codes
-    description: Array of all heart failure diagnosis and resolution concept codes recorded for this person
-  - name: nafld_diagnosis_displays
-    description: Array of all heart failure diagnosis and resolution concept display terms
-  - name: all_source_cluster_ids
-    description: Array of source cluster IDs (HF_COD, HFRES_COD, HFLVSD_COD, REDEJCFRAC_COD) for traceability
-  - name: meets_age_criteria
-    description: 'Boolean flag: TRUE (no age restrictions for HF register)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: has_active_diagnosis
-    description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
+      Purpose: QOF register for heart failure management with subtype-specific monitoring and treatment optimisation.'

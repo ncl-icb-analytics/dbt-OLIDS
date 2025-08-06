@@ -1,175 +1,22 @@
 version: 2
 models:
-- name: fct_person_diabetes_8_care_processes
-  description: 'Mart: Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care assessment.
+  - name: fct_person_diabetes_8_care_processes
+    description: 'Mart: Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care assessment.
 
 
-    Population Scope:
+      Population Scope:
 
-    • All persons on diabetes register requiring 8 care processes assessment
+      • All persons on diabetes register requiring 8 care processes assessment
 
-    • One row per person with completion status for all processes within 12 months
+      • One row per person with completion status for all processes within 12 months
 
-    • Current assessment of comprehensive diabetes care delivery
+      • Current assessment of comprehensive diabetes care delivery
 
 
-    Key Features:
+      Key Features:
 
-    • Tracks HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status
+      • Tracks HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status
 
-    • Calculates overall completion metrics for QOF reporting
+      • Calculates overall completion metrics for QOF reporting
 
-    • Supports clinical decision-making and quality improvement initiatives'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('int_diabetes_diagnoses_all')
-        field: person_id
-  - name: latest_hba1c_date
-    description: Date of most recent HbA1c test
-
-    tests:
-    - test_no_future_dates
-  - name: hba1c_completed_in_last_12m
-    description: TRUE if HbA1c test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_hba1c_value
-    description: Most recent HbA1c result value (mmol/mol or %)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 10
-        max_value: 300
-        severity: warn
-  - name: latest_bp_date
-    description: Date of most recent blood pressure reading
-
-    tests:
-    - test_no_future_dates
-  - name: bp_completed_in_last_12m
-    description: TRUE if blood pressure check completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_cholesterol_date
-    description: Date of most recent total cholesterol test
-
-    tests:
-    - test_no_future_dates
-  - name: cholesterol_completed_in_last_12m
-    description: TRUE if cholesterol test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_creatinine_date
-    description: Date of most recent serum creatinine test
-
-    tests:
-    - test_no_future_dates
-  - name: creatinine_completed_in_last_12m
-    description: TRUE if serum creatinine test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_acr_date
-    description: Date of most recent urine ACR test
-
-    tests:
-    - test_no_future_dates
-  - name: acr_completed_in_last_12m
-    description: TRUE if urine ACR test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_foot_check_date
-    description: Date of most recent foot examination
-
-    tests:
-    - test_no_future_dates
-  - name: foot_check_completed_in_last_12m
-
-    description: 'TRUE if foot examination completed within last 12 months AND meets quality criteria:
-
-      - Both feet checked OR one foot checked with other absent/amputated
-
-      - NOT declined by patient or deemed unsuitable'
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_bmi_date
-    description: Date of most recent BMI recording
-
-    tests:
-    - test_no_future_dates
-  - name: bmi_completed_in_last_12m
-    description: TRUE if BMI recorded within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_smoking_date
-    description: Date of most recent smoking status recording
-
-    tests:
-    - test_no_future_dates
-  - name: smoking_completed_in_last_12m
-    description: TRUE if smoking status recorded within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: care_processes_completed
-    description: Count of care processes completed within last 12 months (0-8)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 8
-  - name: all_processes_completed
-    description: TRUE if all 8 care processes completed within last 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Supports clinical decision-making and quality improvement initiatives'

@@ -1,121 +1,29 @@
 version: 2
 models:
-- name: int_smoking_status_latest
-  description: 'Intermediate: Smoking Status Latest - Most recent smoking status per person.
+  - name: int_smoking_status_latest
+    description: 'Intermediate: Smoking Status Latest - Most recent smoking status per person.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Current smoking status determination for clinical decision support
+      • Current smoking status determination for clinical decision support
 
-• QOF smoking indicator extraction and cardiovascular risk assessment
+      • QOF smoking indicator extraction and cardiovascular risk assessment
 
-• Smoking cessation programme targeting and health improvement tracking
-
-
-Data Granularity:
-
-• One row per person representing most recent smoking status observation
-
-• Uses QOF cluster prioritisation for specific status codes over general codes
-
-• Includes all persons regardless of status for comprehensive QOF reporting
+      • Smoking cessation programme targeting and health improvement tracking
 
 
-Key Features:
+      Data Granularity:
 
-• Latest smoking status with specific code prioritisation logic
+      • One row per person representing most recent smoking status observation
 
-• SNOMED concept code mapping to smoking status categories
-• Boolean flags for current smoker, ex-smoker, and never smoked classifications'
+      • Uses QOF cluster prioritisation for specific status codes over general codes
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      • Includes all persons regardless of status for comprehensive QOF reporting
 
-    tests:
-    - not_null
-    - unique
-  - name: observation_id
-    description: Unique observation identifier
 
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the latest smoking status observation
+      Key Features:
 
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for smoking status
+      • Latest smoking status with specific code prioritisation logic
 
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster ID
-
-    tests:
-    - not_null
-  - name: is_smoker_code
-    description: Flag indicating current smoker code
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_ex_smoker_code
-    description: Flag indicating ex-smoker code
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_never_smoked_code
-    description: Flag indicating never smoked code
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: smoking_status
-    description: Latest smoking status category
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Current Smoker
-        - Ex-Smoker
-        - Never Smoked
-        - General Smoking Code
-        - Unknown
-  - name: is_current_smoker
-    description: Flag indicating current smoking status
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_ex_smoker
-    description: Flag indicating ex-smoker status
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • SNOMED concept code mapping to smoking status categories • Boolean flags for current smoker, ex-smoker, and never smoked classifications'

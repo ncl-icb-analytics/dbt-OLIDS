@@ -1,107 +1,16 @@
 version: 2
 models:
-- name: fct_person_obesity_register
-  description: 'QOF Obesity Register - Patients aged 18+ with obesity using ethnicity-specific BMI thresholds.
+  - name: fct_person_obesity_register
+    description: 'QOF Obesity Register - Patients aged 18+ with obesity using ethnicity-specific BMI thresholds.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Age: 18 years or older
+      • Age: 18 years or older
 
-    • BMI ≥30 (all ethnicities) OR BMI ≥27.5 (BAME populations)
+      • BMI ≥30 (all ethnicities) OR BMI ≥27.5 (BAME populations)
 
-    • Ethnicity-specific thresholds for register inclusion
+      • Ethnicity-specific thresholds for register inclusion
 
 
-    Purpose: QOF register for obesity management, weight reduction interventions, and ethnicity-appropriate health monitoring.'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: person_id
-    description: Unique person identifier linking to dim_person
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: Register inclusion flag (always TRUE in this table as filtered view)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: meets_age_criteria
-    description: Flag indicating if person meets age ≥18 requirement
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_bmi_30_plus
-    description: Flag indicating if person has BMI ≥30 kg/m² (standard obesity threshold)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: has_bmi_27_5_plus
-    description: Flag indicating if person has BMI ≥27.5 kg/m² (BAME-specific threshold)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_bame
-    description: Flag indicating Black, Asian and Minority Ethnic (BAME) classification
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_bmi_date
-    description: Date of most recent BMI recording (any validity)
-  - name: latest_valid_bmi_date
-    description: Date of most recent clinically valid BMI recording
-  - name: latest_valid_bmi_value
-    description: Most recent clinically valid BMI value (kg/m²)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 10
-        max_value: 100
-        severity: warn
-  - name: latest_ethnicity_date
-    description: Date of most recent ethnicity recording
-  - name: latest_bame_date
-    description: Date of most recent BAME ethnicity recording
-  - name: all_bmi_concept_codes
-    description: Array of all BMI-related concept codes recorded for traceability
-
-    tests:
-    - not_null
-  - name: all_bmi_concept_displays
-    description: Array of human-readable terms for BMI concept codes
-
-    tests:
-    - not_null
-  - name: all_ethnicity_concept_codes
-    description: Array of all ethnicity-related concept codes recorded
-  - name: all_ethnicity_concept_displays
-    description: Array of human-readable terms for ethnicity concept codes
+      Purpose: QOF register for obesity management, weight reduction interventions, and ethnicity-appropriate health monitoring.'

@@ -1,149 +1,31 @@
 version: 2
 models:
-- name: int_antiplatelet_medications_all
-  description: 'Intermediate: Antiplatelet Medications - All recorded antiplatelet prescriptions.
+  - name: int_antiplatelet_medications_all
+    description: 'Intermediate: Antiplatelet Medications - All recorded antiplatelet prescriptions.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Supports cardiovascular protection and thrombosis prevention monitoring
+      • Supports cardiovascular protection and thrombosis prevention monitoring
 
-• Enables dual antiplatelet therapy (DAPT) pathway tracking
+      • Enables dual antiplatelet therapy (DAPT) pathway tracking
 
-• Facilitates P2Y12 inhibitor prescribing pattern analysis
-
-
-Data Granularity:
-
-• One row per medication order
-
-• Includes all patients with antiplatelet prescriptions
-
-• Historical data spanning entire medication history
+      • Facilitates P2Y12 inhibitor prescribing pattern analysis
 
 
-Key Features:
+      Data Granularity:
 
-• Specific antiplatelet type classification (aspirin, clopidogrel, ticagrelor, etc.)
+      • One row per medication order
 
-• P2Y12 inhibitor identification for DAPT analysis
+      • Includes all patients with antiplatelet prescriptions
 
-• Evidence-based therapy flags with clinical trial references
-• Low-dose aspirin identification for cardioprotection'
+      • Historical data spanning entire medication history
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: antiplatelet_type
-    description: Specific antiplatelet medication type
+      • Specific antiplatelet type classification (aspirin, clopidogrel, ticagrelor, etc.)
 
-    tests:
-    - not_null
-    - accepted_values:
+      • P2Y12 inhibitor identification for DAPT analysis
 
-        values:
-        - ASPIRIN
-        - CLOPIDOGREL
-        - DIPYRIDAMOLE
-        - PRASUGREL
-        - TICAGRELOR
-        - TICLOPIDINE
-        - OTHER_ANTIPLATELET
-  - name: is_p2y12_inhibitor
-    description: Boolean flag indicating P2Y12 inhibitor for dual antiplatelet therapy
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_evidence_based_cvd
-    description: Boolean flag indicating evidence-based antiplatelet for cardiovascular disease
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_aspirin
-    description: Boolean flag indicating aspirin use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_clopidogrel
-    description: Boolean flag indicating clopidogrel use (CAPRIE, CURE trials evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_ticagrelor
-    description: Boolean flag indicating ticagrelor use (PLATO trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_prasugrel
-    description: Boolean flag indicating prasugrel use (TRITON-TIMI trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_dipyridamole
-    description: Boolean flag indicating dipyridamole use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_low_dose_aspirin
-    description: Boolean flag indicating low-dose aspirin (typically 75mg for cardioprotection)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: 0209
+      • Evidence-based therapy flags with clinical trial references • Low-dose aspirin identification for cardioprotection'

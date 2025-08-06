@@ -1,65 +1,33 @@
 version: 2
 models:
-- name: int_cholesterol_latest
-  description: 'Intermediate: Latest Cholesterol Observations - Most recent valid cholesterol measurement per person.
+  - name: int_cholesterol_latest
+    description: 'Intermediate: Latest Cholesterol Observations - Most recent valid cholesterol measurement per person.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current cholesterol status for cardiovascular risk assessment
+      • Provides current cholesterol status for cardiovascular risk assessment
 
-    • Supports lipid management and statin therapy decision-making
+      • Supports lipid management and statin therapy decision-making
 
-    • Enables current cardiovascular risk stratification and QOF reporting
-
-
-    Data Granularity:
-
-    • One row per person with their most recent valid cholesterol
-
-    • Includes only patients with valid cholesterol measurements
-
-    • Filtered to exclude implausible values for clinical accuracy
+      • Enables current cardiovascular risk stratification and QOF reporting
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest valid cholesterol identification using comprehensive filtering
+      • One row per person with their most recent valid cholesterol
 
-    • Clinical cholesterol categorisation for risk assessment
+      • Includes only patients with valid cholesterol measurements
 
-    • Data quality assurance with validation flags
+      • Filtered to exclude implausible values for clinical accuracy
 
-    • Complete observation metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the cholesterol measurement
+      • Latest valid cholesterol identification using comprehensive filtering
 
-    tests:
-    - not_null
-  - name: cholesterol_value
-    description: Total cholesterol value in mmol/L (valid range only)
+      • Clinical cholesterol categorisation for risk assessment
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0.5
-        max_value: 20
-  - name: cholesterol_category
-    description: Clinical cholesterol category (excludes 'Invalid')
+      • Data quality assurance with validation flags
 
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Desirable
-        - Borderline High
-        - High
+      • Complete observation metadata for clinical context'

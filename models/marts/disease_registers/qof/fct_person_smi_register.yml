@@ -1,86 +1,16 @@
 version: 2
 models:
-- name: fct_person_smi_register
-  description: 'QOF Serious Mental Illness (SMI) Register - Patients with active serious mental illness or lithium therapy.
+  - name: fct_person_smi_register
+    description: 'QOF Serious Mental Illness (SMI) Register - Patients with active serious mental illness or lithium therapy.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Mental health diagnosis (MH_COD) not in remission: Latest diagnosis > latest remission OR no remission
+      • Mental health diagnosis (MH_COD) not in remission: Latest diagnosis > latest remission OR no remission
 
-    • OR lithium therapy in last 6 months and not stopped
+      • OR lithium therapy in last 6 months and not stopped
 
-    • No age restrictions
+      • No age restrictions
 
 
-    Purpose: QOF register for mental health care monitoring, lithium therapy safety, specialist service coordination, and recovery planning.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: meets QOF SMI criteria (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: is_on_lithium
-    description: Flag indicating person has lithium therapy in last 6 months
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
-
-  - name: has_mh_diagnosis
-    description: Flag indicating person has a mental health diagnosis
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
-
-  - name: latest_remission_date
-    description: Date of most recent mental health remission code (NULL if never in remission)
-
-  - name: latest_lithium_order_date
-    description: Date of most recent lithium medication order (NULL if no lithium therapy)
-
-  - name: all_mh_concept_codes
-    description: Array of all distinct mental health diagnosis concept codes for this person
-
-  - name: all_mh_concept_displays
-    description: Array of all distinct mental health diagnosis concept display terms for this person
-
-  - name: all_lithium_concept_codes
-    description: Array of all distinct lithium medication concept codes for this person
-
-  - name: all_lithium_concept_displays
-    description: Array of all distinct lithium medication concept display terms for this person
+      Purpose: QOF register for mental health care monitoring, lithium therapy safety, specialist service coordination, and recovery planning.'

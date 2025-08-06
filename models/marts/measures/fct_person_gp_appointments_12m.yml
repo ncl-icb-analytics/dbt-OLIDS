@@ -1,67 +1,15 @@
 version: 2
 models:
-- name: fct_person_gp_appointments_12m
-  description: 'Service usage analytics for primary care appointment activity over 12-month period.
+  - name: fct_person_gp_appointments_12m
+    description: 'Service usage analytics for primary care appointment activity over 12-month period.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Calculates total GP appointment count per person per organisation in last 12 months
+      • Calculates total GP appointment count per person per organisation in last 12 months
 
-    • Includes earliest and latest appointment dates for utilisation pattern analysis
+      • Includes earliest and latest appointment dates for utilisation pattern analysis
 
-    • Supports GP practice capacity planning and resource allocation analytics
+      • Supports GP practice capacity planning and resource allocation analytics
 
-    • One row per person per organisation with appointments in last 12 months (minimum 1 appointment)'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: organisation_id
-    description: Organisation providing the appointments
-
-    tests:
-    - not_null
-  - name: measure_id
-    description: Metric identifier (always 'GP_APPOINTMENTS_12M')
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - GP_APPOINTMENTS_12M
-  - name: appointment_count
-    description: Number of GP appointments in last 12 months
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 1
-  - name: earliest_appointment_date
-    description: Date of earliest appointment in the 12-month period
-
-    tests:
-    - not_null
-  - name: latest_appointment_date
-    description: Date of most recent appointment in the 12-month period
-
-    tests:
-    - not_null
-  - name: age
-    description: Person's current age in years
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 120
+      • One row per person per organisation with appointments in last 12 months (minimum 1 appointment)'

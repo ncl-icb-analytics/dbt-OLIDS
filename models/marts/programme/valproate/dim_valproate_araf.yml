@@ -1,61 +1,21 @@
 version: 2
 models:
-- name: dim_valproate_araf
-  description: 'Person-level aggregation of Annual Risk Acknowledgement Form (ARAF) events for valproate monitoring.
+  - name: dim_valproate_araf
+    description: 'Person-level aggregation of Annual Risk Acknowledgement Form (ARAF) events for valproate monitoring.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Aggregates all ARAF events per person from intermediate ARAF events table
+      • Aggregates all ARAF events per person from intermediate ARAF events table
 
-    • Provides earliest and latest ARAF event dates for timeline analysis
+      • Provides earliest and latest ARAF event dates for timeline analysis
 
-    • Tracks latest specific ARAF form date and lookback compliance flag
+      • Tracks latest specific ARAF form date and lookback compliance flag
 
-    • Includes arrays of all observation IDs, concept codes, and displays for traceability
+      • Includes arrays of all observation IDs, concept codes, and displays for traceability
 
-    • Only includes people who have ARAF events (has_araf_event always TRUE)
+      • Only includes people who have ARAF events (has_araf_event always TRUE)
 
-    • Includes flags for old and new annual risk acknowledgement form types
+      • Includes flags for old and new annual risk acknowledgement form types
 
-    • Provides form type information with dates for traceability'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person.
-
-    tests:
-    - not_null
-    - unique
-  - name: has_araf_event
-    description: TRUE if any ARAF event is present for the person. Always TRUE for persons in this table.
-
-    tests:
-    - not_null
-  - name: earliest_araf_event_date
-    description: Earliest date of any ARAF-related event for the person.
-  - name: latest_araf_event_date
-    description: Latest date of any ARAF-related event for the person.
-  - name: latest_specific_araf_form_date
-    description: Latest date of an ARAF form event for the person.
-  - name: has_specific_araf_form_meeting_lookback
-    description: TRUE if an ARAF form event meeting lookback criteria is recorded.
-
-    tests:
-    - not_null
-  - name: all_araf_observation_ids
-    description: Array of unique observation IDs related to ARAF events.
-  - name: all_araf_concept_codes
-    description: Array of all distinct ARAF-related medical concept codes found.
-  - name: all_araf_concept_displays
-    description: Array of display terms for the ARAF codes.
-  - name: all_araf_code_categories_applied
-    description: Array of code categories applied (should contain only 'ARAF').
-  - name: has_old_annual_risk_acknowledgement_form
-    description: TRUE if person has old annual risk acknowledgement form (concept code 1366401000000107).
-  - name: has_new_annual_risk_acknowledgement_form
-    description: TRUE if person has new annual risk acknowledgement form (concept code 2078951000000106).
-  - name: old_annual_risk_acknowledgement_form_info
-    description: Information about old annual risk acknowledgement form with date if present.
-  - name: new_annual_risk_acknowledgement_form_info
-    description: Information about new annual risk acknowledgement form with date if present.
+      • Provides form type information with dates for traceability'

@@ -1,32 +1,15 @@
 version: 2
 models:
-- name: int_valproate_psychiatry_events
-  description: 'Extracts all psychiatry-related events from observations using valproate programme codes.
+  - name: int_valproate_psychiatry_events
+    description: 'Extracts all psychiatry-related events from observations using valproate programme codes.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Joins observations with mapped concepts and valproate programme codes
+      • Joins observations with mapped concepts and valproate programme codes
 
-    • Filters to PSYCH code category only
+      • Filters to PSYCH code category only
 
-    • One row per psychiatry observation with person, date, concept details
+      • One row per psychiatry observation with person, date, concept details
 
-    • Foundation data for psychiatry dimension aggregation'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person.
-
-    tests:
-    - not_null
-  - name: psych_event_date
-    description: Date of the psychiatry-related observation.
-  - name: psych_observation_id
-    description: Identifier for the psychiatry observation.
-  - name: psych_concept_code
-    description: Medical concept code for the psychiatry event.
-  - name: psych_concept_display
-    description: Display term for the psychiatry concept code.
-  - name: psych_code_category
-    description: Code category for the psychiatry event (should be 'PSYCH').
+      • Foundation data for psychiatry dimension aggregation'

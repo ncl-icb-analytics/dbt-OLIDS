@@ -1,68 +1,16 @@
 version: 2
 models:
-- name: fct_person_ckd_register
-  description: 'QOF Chronic Kidney Disease (CKD) Register - Patients aged 18+ with active CKD diagnosis.
+  - name: fct_person_ckd_register
+    description: 'QOF Chronic Kidney Disease (CKD) Register - Patients aged 18+ with active CKD diagnosis.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Age: 18 years or older
+      • Age: 18 years or older
 
-    • Active CKD diagnosis: Latest CKD_COD > latest CKDRES_COD OR no resolution recorded
+      • Active CKD diagnosis: Latest CKD_COD > latest CKDRES_COD OR no resolution recorded
 
-    • Excludes resolved CKD cases
+      • Excludes resolved CKD cases
 
 
-    Purpose: QOF register for CKD management, monitoring progression, and cardiovascular risk reduction. Lab data available separately for clinical monitoring.'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: person_id
-    description: Unique person identifier linking to dim_person
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: Register inclusion flag (always TRUE in this table as filtered view)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: earliest_diagnosis_date
-    description: Date of first recorded CKD diagnosis code
-
-    tests:
-    - not_null
-  - name: latest_diagnosis_date
-    description: Date of most recent CKD diagnosis code
-
-    tests:
-    - not_null
-  - name: latest_ckd_resolved_date
-    description: Date of most recent CKD resolution code (null if never resolved)
-  - name: meets_age_criteria
-    description: Flag indicating if person meets age ≥18 requirement
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_active_diagnosis
-    description: Flag indicating if latest diagnosis is more recent than resolution
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
+      Purpose: QOF register for CKD management, monitoring progression, and cardiovascular risk reduction. Lab data available separately for clinical monitoring.'

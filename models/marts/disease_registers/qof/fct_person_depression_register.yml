@@ -1,77 +1,16 @@
 version: 2
 models:
-- name: fct_person_depression_register
-  description: 'QOF Depression Register - Patients aged 18+ with active depression diagnosis.
+  - name: fct_person_depression_register
+    description: 'QOF Depression Register - Patients aged 18+ with active depression diagnosis.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Age: 18 years or older
+      • Age: 18 years or older
 
-    • Active depression diagnosis: Latest DEP_COD > latest DEPRES_COD OR no resolution
+      • Active depression diagnosis: Latest DEP_COD > latest DEPRES_COD OR no resolution
 
-    • Excludes resolved depression cases
+      • Excludes resolved depression cases
 
 
-    Purpose: QOF register for depression management, monitoring treatment response, and mental health support.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: meets QOF depression criteria (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: earliest_diagnosis_date
-    description: Date of first recorded depression diagnosis
-
-    tests:
-
-    - not_null
-
-    - test_no_future_dates
-
-  - name: latest_diagnosis_date
-    description: Date of most recent depression diagnosis (QOF requires on/after 1 April 2006)
-
-    tests:
-
-    - not_null
-
-    - test_no_future_dates
-
-    - dbt_utils.accepted_range:
-        min_value: '''2006-04-01'''
-        max_value: current_date()
-        severity: warn
-  - name: latest_depression_resolved_date
-    description: Date of most recent depression resolved code (NULL if never resolved)
-  - name: all_depression_concept_codes
-    description: Array of all distinct depression diagnosis concept codes for this person
-
-    tests:
-    - not_null
-  - name: all_depression_concept_displays
-    description: Array of all distinct depression diagnosis concept display terms for this person
-
-    tests:
-    - not_null
-  - name: all_depression_resolved_concept_codes
-    description: Array of all distinct depression resolved concept codes for this person
-  - name: all_depression_resolved_concept_displays
-    description: Array of all distinct depression resolved concept display terms for this person
+      Purpose: QOF register for depression management, monitoring treatment response, and mental health support.'

@@ -1,74 +1,19 @@
 models:
-- name: dq_bmi_issues
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: BMIVAL_COD
-  description: 'Business data quality monitoring tool for BMI measurements.
+  - name: dq_bmi_issues
+    description: 'Business data quality monitoring tool for BMI measurements.
 
-    Business Logic:
+      Business Logic:
 
-    • Identifies BMI measurements with data quality issues: out-of-range values, extreme outliers, and missing dates
+      • Identifies BMI measurements with data quality issues: out-of-range values, extreme outliers, and missing dates
 
-    • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve BMI recording issues
+      • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve BMI recording issues
 
-    • Flags BMI values <10 or >150 as out-of-range
+      • Flags BMI values <10 or >150 as out-of-range
 
-    • Additional flagging for extreme outliers (<8 or >100) for investigation
+      • Additional flagging for extreme outliers (<8 or >100) for investigation
 
-    • One row per BMI observation with data quality issues for quality assurance reporting'
-
-  columns:
-  - name: observation_id
-    description: Unique observation identifier
+      • One row per BMI observation with data quality issues for quality assurance reporting'
     tests:
-    - not_null
-  - name: person_id
-    description: Unique person identifier
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of BMI measurement (can be NULL for date missing issues)
-  - name: bmi_value
-    description: BMI value cast to numeric from int_bmi_all
-  - name: result_unit_display
-    description: BMI measurement unit (typically kg/m²)
-  - name: concept_code
-    description: SNOMED concept code for the BMI measurement
-  - name: concept_display
-    description: Concept display term for traceability
-  - name: source_cluster_id
-    description: Source cluster ID (BMIVAL_COD)
-  - name: original_result_value
-    description: Original result value from source system (as text)
-  - name: bmi_category
-    description: Original BMI category from int_bmi_all
-  - name: is_bmi_out_of_range
-    description: TRUE if BMI is <10 or >150 (clinically appropriate range)
-    tests:
-    - accepted_values:
-        values:
-        - true
-        - false
-  - name: is_date_missing
-    description: TRUE if clinical_effective_date is NULL
-    tests:
-    - accepted_values:
-        values:
-        - true
-        - false
-  - name: is_future_date
-    description: TRUE if clinical_effective_date is in the future
-    tests:
-    - accepted_values:
-        values:
-        - true
-        - false
-  - name: is_extreme_outlier
-    description: TRUE if BMI is <8 or >100 (additional flag for very severe outliers)
-    tests:
-    - accepted_values:
-        values:
-        - true
-        - false
-  - name: bmi_category_with_issues
-    description: Clinical BMI category including invalid ranges for context
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: BMIVAL_COD

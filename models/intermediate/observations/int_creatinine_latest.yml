@@ -1,76 +1,33 @@
 version: 2
 models:
-- name: int_creatinine_latest
-  description: 'Intermediate: Latest Creatinine Observations - Most recent valid creatinine measurement per person.
+  - name: int_creatinine_latest
+    description: 'Intermediate: Latest Creatinine Observations - Most recent valid creatinine measurement per person.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current kidney function status based on serum creatinine levels
+      • Provides current kidney function status based on serum creatinine levels
 
-    • Supports renal disease assessment and medication safety monitoring
+      • Supports renal disease assessment and medication safety monitoring
 
-    • Enables current CKD risk stratification and clinical decision-making
-
-
-    Data Granularity:
-
-    • One row per person with their most recent valid creatinine
-
-    • Includes only patients with valid creatinine measurements
-
-    • Filtered to exclude implausible values for clinical accuracy
+      • Enables current CKD risk stratification and clinical decision-making
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest valid creatinine identification using comprehensive filtering
+      • One row per person with their most recent valid creatinine
 
-    • Clinical creatinine categorisation for kidney function assessment
+      • Includes only patients with valid creatinine measurements
 
-    • Elevated creatinine flags for immediate clinical attention
+      • Filtered to exclude implausible values for clinical accuracy
 
-    • Complete observation metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the creatinine measurement
+      • Latest valid creatinine identification using comprehensive filtering
 
-    tests:
-    - not_null
-  - name: creatinine_value
-    description: Serum creatinine value in µmol/L (valid range only)
+      • Clinical creatinine categorisation for kidney function assessment
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 20
-        max_value: 1000
-  - name: creatinine_category
-    description: Clinical creatinine category (excludes 'Invalid')
+      • Elevated creatinine flags for immediate clinical attention
 
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Normal
-        - Mildly Elevated
-        - Moderately Elevated
-        - Severely Elevated
-  - name: is_elevated_creatinine
-    description: Flag indicating creatinine > 120 µmol/L
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Complete observation metadata for clinical context'

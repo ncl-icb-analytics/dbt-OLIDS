@@ -1,99 +1,31 @@
 version: 2
 models:
-- name: int_nhs_health_check_latest
-  description: 'Intermediate: NHS Health Check Latest - Most recent NHS Health Check completion per person.
+  - name: int_nhs_health_check_latest
+    description: 'Intermediate: NHS Health Check Latest - Most recent NHS Health Check completion per person.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Tracks latest NHS Health Check completion status for each person
+      • Tracks latest NHS Health Check completion status for each person
 
-• Supports health check programme analysis and eligibility assessment
+      • Supports health check programme analysis and eligibility assessment
 
-• Enables identification of patients requiring health check invitations or follow-up
-
-
-Data Granularity:
-
-• One row per person representing their most recent NHS Health Check completion
-
-• Includes patients with completed NHS Health Checks recorded in clinical systems
-
-• Contains health check currency flags for 12m, 24m, and 5y intervals
+      • Enables identification of patients requiring health check invitations or follow-up
 
 
-Key Features:
+      Data Granularity:
 
-• Latest event selection per person using clinical_effective_date ordering
+      • One row per person representing their most recent NHS Health Check completion
 
-• Health check currency flags for programme eligibility assessment
+      • Includes patients with completed NHS Health Checks recorded in clinical systems
 
-• Time-based calculations for programme planning and invitation scheduling
-• Integration with comprehensive NHS Health Check events for complete programme analysis'
+      • Contains health check currency flags for 12m, 24m, and 5y intervals
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
 
-    tests:
-    - not_null
-    - unique
-  - name: observation_id
-    description: Unique observation identifier
+      Key Features:
 
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the latest NHS Health Check
+      • Latest event selection per person using clinical_effective_date ordering
 
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for NHS Health Check
+      • Health check currency flags for programme eligibility assessment
 
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the health check code
-
-    tests:
-    - not_null
-  - name: is_completed_health_check
-    description: Flag indicating completed health check (always TRUE)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: health_check_current_12m
-    description: Flag indicating health check within 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: health_check_current_24m
-    description: Flag indicating health check within 24 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: health_check_current_5y
-    description: Flag indicating health check within 5 years (NHS cycle)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Time-based calculations for programme planning and invitation scheduling • Integration with comprehensive NHS Health Check events for complete programme analysis'

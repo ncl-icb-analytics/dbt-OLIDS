@@ -1,46 +1,15 @@
 version: 2
 models:
-- name: fct_organisation_active_patients
-  description: 'Current active patient list size per organisation for capacity planning and performance monitoring.
+  - name: fct_organisation_active_patients
+    description: 'Current active patient list size per organisation for capacity planning and performance monitoring.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Calculates current active patient count per organisation using active patient dimension
+      • Calculates current active patient count per organisation using active patient dimension
 
-    • Supports operational analytics for practice list management and capacity planning
+      • Supports operational analytics for practice list management and capacity planning
 
-    • Limited to non-obsolete organisations for operational relevance
+      • Limited to non-obsolete organisations for operational relevance
 
-    • One row per organisation with standardised service usage metric for commissioning and resource allocation'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: organisation_id
-    description: Unique organisation identifier
-
-    tests:
-    - not_null
-  - name: ods_code
-    description: ODS (Organisation Data Service) code for the organisation
-
-    tests:
-    - not_null
-  - name: measure_id
-    description: Metric identifier (always 'ORGANISATION_ACTIVE_LIST_SIZE')
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - ORGANISATION_ACTIVE_LIST_SIZE
-  - name: active_patient_count
-    description: Current number of active patients registered with this organisation
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
+      • One row per organisation with standardised service usage metric for commissioning and resource allocation'

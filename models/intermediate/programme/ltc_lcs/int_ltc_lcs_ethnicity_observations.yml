@@ -1,71 +1,41 @@
 version: 2
 models:
-- name: int_ltc_lcs_ethnicity_observations
-  description: 'Intermediate: LTC LCS Ethnicity Observations - Collects ethnicity-relevant observations for Long Term Conditions case finding measures with diabetes screening focus.
+  - name: int_ltc_lcs_ethnicity_observations
+    description: 'Intermediate: LTC LCS Ethnicity Observations - Collects ethnicity-relevant observations for Long Term Conditions case finding measures with diabetes screening focus.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Gathers ethnicity classification data for diabetes case finding algorithms
+      • Gathers ethnicity classification data for diabetes case finding algorithms
 
-    • Supports ethnicity-based risk stratification for diabetes screening programmes
+      • Supports ethnicity-based risk stratification for diabetes screening programmes
 
-    • Enables identification of BAME populations at higher risk for Type 2 diabetes
+      • Enables identification of BAME populations at higher risk for Type 2 diabetes
 
-    • Provides foundation data for ethnicity-adjusted diabetes case finding measures
-
-
-    Data Granularity:
-
-    • One row per ethnicity observation for diabetes case finding
-
-    • Covers BAME ethnicity, White British ethnicity, and diabetes screening excluded ethnicities
-
-    • Sourced from LTC_LCS programme observation clusters for ethnicity classification
-
-    • Includes all historical and current ethnicity observations relevant to diabetes screening
+      • Provides foundation data for ethnicity-adjusted diabetes case finding measures
 
 
-    Key Features:
+      Data Granularity:
 
-    • Cluster IDs: ETHNICITY_BAME, ETHNICITY_WHITE_BRITISH, DIABETES_EXCLUDED_ETHNICITY
+      • One row per ethnicity observation for diabetes case finding
 
-    • Supports ethnicity-based diabetes case finding measure requirements
+      • Covers BAME ethnicity, White British ethnicity, and diabetes screening excluded ethnicities
 
-    • Comprehensive ethnicity classification for diabetes risk stratification
+      • Sourced from LTC_LCS programme observation clusters for ethnicity classification
 
-    • Integration with LTC_LCS programme ethnicity tracking systems for diabetes screening'
+      • Includes all historical and current ethnicity observations relevant to diabetes screening
 
-  columns:
-  - name: observation_id
-    description: Unique identifier for the observation
 
+      Key Features:
+
+      • Cluster IDs: ETHNICITY_BAME, ETHNICITY_WHITE_BRITISH, DIABETES_EXCLUDED_ETHNICITY
+
+      • Supports ethnicity-based diabetes case finding measure requirements
+
+      • Comprehensive ethnicity classification for diabetes risk stratification
+
+      • Integration with LTC_LCS programme ethnicity tracking systems for diabetes screening'
     tests:
-    - not_null
-  - name: person_id
-    description: Unique identifier for the person
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date when the ethnicity observation was recorded
-  - name: mapped_concept_code
-    description: Mapped concept code for the ethnicity classification
-  - name: mapped_concept_display
-    description: Human-readable description of the ethnicity classification
-  - name: cluster_id
-    description: Cluster identifier for the ethnicity type
-
-    tests:
-    - accepted_values:
-
-        values:
-        - ETHNICITY_BAME
-        - ETHNICITY_WHITE_BRITISH
-        - DIABETES_EXCLUDED_ETHNICITY
-  - name: cluster_description
-    description: Description of the ethnicity cluster
-
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: ETHNICITY_BAME,ETHNICITY_WHITE_BRITISH,DIABETES_EXCLUDED_ETHNICITY
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: ETHNICITY_BAME,ETHNICITY_WHITE_BRITISH,DIABETES_EXCLUDED_ETHNICITY

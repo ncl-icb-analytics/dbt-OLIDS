@@ -1,35 +1,15 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_ckd_63
-  description: 'Case finding for patients with significantly elevated single UACR reading indicating substantial kidney damage.
+  - name: dim_ltc_lcs_cf_ckd_63
+    description: 'Case finding for patients with significantly elevated single UACR reading indicating substantial kidney damage.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Identifies patients aged 17+ with latest UACR reading > 70 (excludes patients from CKD_62)
+      • Identifies patients aged 17+ with latest UACR reading > 70 (excludes patients from CKD_62)
 
-    • Targets patients with severe proteinuria requiring immediate clinical attention and nephrology referral
+      • Targets patients with severe proteinuria requiring immediate clinical attention and nephrology referral
 
-    • Takes maximum UACR value per day to handle multiple readings on same date
+      • Takes maximum UACR value per day to handle multiple readings on same date
 
-    • One row per person with clinically significant single elevated UACR reading'
-
-  columns:
-  - name: person_id
-    description: The unique identifier for the patient
-
-    tests:
-    - not_null
-    - unique
-  - name: first_ckd_diagnosis_date
-    description: The date of the patient's first CKD diagnosis
-  - name: latest_hba1c_date
-    description: The date of the patient's most recent HbA1c test (if any in last 12 months)
-  - name: has_ckd_diagnosis
-    description: Boolean indicating if the patient has a CKD diagnosis
-  - name: has_recent_hba1c_test
-    description: Boolean indicating if the patient has had an HbA1c test in the last 12 months
-  - name: has_excluding_condition
-    description: Boolean indicating if the patient has any conditions that would exclude them from this case finding
-  - name: meets_criteria
-    description: Boolean indicating if the patient meets all criteria for CKD_63 case finding
+      • One row per person with clinically significant single elevated UACR reading'

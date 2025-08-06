@@ -1,147 +1,33 @@
 version: 2
 models:
-- name: int_pregnancy_observations_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: PREGDEL_COD, PREG_COD
-  description: 'Intermediate: Pregnancy Observations All - Complete history of all pregnancy-related observations.
+  - name: int_pregnancy_observations_all
+    description: 'Intermediate: Pregnancy Observations All - Complete history of all pregnancy-related observations.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Pregnancy status tracking and maternity care pathway coordination
+      • Pregnancy status tracking and maternity care pathway coordination
 
-• Medication safety monitoring during pregnancy and post-pregnancy periods
+      • Medication safety monitoring during pregnancy and post-pregnancy periods
 
-• Clinical decision support for pregnancy-contraindicated treatments
-
-
-Data Granularity:
-
-• One row per pregnancy-related observation with enhanced timeframe analysis
-
-• Uses PREG_COD (pregnancy status) and PREGDEL_COD (delivery events) QOF clusters
-
-• Includes all patients regardless of status for comprehensive maternity care
+      • Clinical decision support for pregnancy-contraindicated treatments
 
 
-Key Features:
+      Data Granularity:
 
-• Enhanced pregnancy status categorisation and clinical safety context
+      • One row per pregnancy-related observation with enhanced timeframe analysis
 
-• Maternity care timeframe analysis for clinical decision support
-• Pregnancy outcome tracking including live births and terminations'
+      • Uses PREG_COD (pregnancy status) and PREGDEL_COD (delivery events) QOF clusters
 
-  config:
-    materialized: table
+      • Includes all patients regardless of status for comprehensive maternity care
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
 
+      Key Features:
+
+      • Enhanced pregnancy status categorisation and clinical safety context
+
+      • Maternity care timeframe analysis for clinical decision support • Pregnancy outcome tracking including live births and terminations'
     tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: clinical_effective_date
-    description: Date when pregnancy observation was clinically effective
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for pregnancy observation
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Human-readable display term for concept code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster ID (PREG_COD or PREGDEL_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - PREG_COD
-        - PREGDEL_COD
-  - name: from_preg_cod_cluster
-    description: 'Flag: TRUE if observation comes from PREG_COD cluster'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: from_pregdel_cod_cluster
-    description: 'Flag: TRUE if observation comes from PREGDEL_COD cluster'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: code_exists_in_preg_cod
-    description: 'Flag: TRUE if this concept code exists in PREG_COD cluster'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: code_exists_in_pregdel_cod
-    description: 'Flag: TRUE if this concept code exists in PREGDEL_COD cluster'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: code_type
-    description: 'Categorization of code based on description: pregnancy, delivery, pregnancy_loss, or other'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - pregnancy
-        - delivery
-        - pregnancy_loss
-        - other
-  - name: is_pregnancy_code
-    description: 'Flag: TRUE if observation indicates active pregnancy (not delivery/outcome)'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_delivery_outcome_code
-    description: 'Flag: TRUE if observation indicates pregnancy has ended (delivery or loss)'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: pregnancy_status_category
-    description: Categorized pregnancy status (e.g., Active Pregnancy, Live Birth, Miscarriage)
-  - name: clinical_safety_context
-    description: Clinical context for medication safety and care planning
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: PREGDEL_COD, PREG_COD

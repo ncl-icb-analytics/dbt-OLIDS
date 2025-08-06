@@ -1,48 +1,39 @@
 version: 2
 models:
-- name: int_rheumatoid_arthritis_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: RARTH_COD
-  description: 'Intermediate: Rheumatoid Arthritis Diagnoses All - Complete history of all rheumatoid arthritis diagnosis observations for QOF register management.
+  - name: int_rheumatoid_arthritis_diagnoses_all
+    description: 'Intermediate: Rheumatoid Arthritis Diagnoses All - Complete history of all rheumatoid arthritis diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF rheumatoid arthritis register data collection and monitoring
+      • QOF rheumatoid arthritis register data collection and monitoring
 
-    • Musculoskeletal disease management and inflammatory arthritis care pathway
+      • Musculoskeletal disease management and inflammatory arthritis care pathway
 
-    • Disease activity monitoring and treatment response assessment
+      • Disease activity monitoring and treatment response assessment
 
-    • Long-term joint health and mobility outcome tracking
-
-
-    Data Granularity:
-
-    • One row per rheumatoid arthritis diagnosis observation
-
-    • Uses RA_COD cluster for QOF-compliant RA diagnosis identification
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Long-term joint health and mobility outcome tracking
 
 
-    Key Features:
+      Data Granularity:
 
-    • Lifelong condition register for ongoing disease management
+      • One row per rheumatoid arthritis diagnosis observation
 
-    • Simple diagnosis-only pattern with no resolution codes
+      • Uses RA_COD cluster for QOF-compliant RA diagnosis identification
 
-    • Critical for inflammatory arthritis treatment optimisation
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for rheumatoid arthritis care quality improvement initiatives'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Lifelong condition register for ongoing disease management
+
+      • Simple diagnosis-only pattern with no resolution codes
+
+      • Critical for inflammatory arthritis treatment optimisation
+
+      • Essential input for rheumatoid arthritis care quality improvement initiatives'
     tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: RARTH_COD

@@ -1,191 +1,37 @@
 version: 2
 models:
-- name: int_retinal_screening_all
-  description: 'Intermediate: Retinal Screening Observations - All completed diabetes retinal screening procedures with result categorisation.
+  - name: int_retinal_screening_all
+    description: 'Intermediate: Retinal Screening Observations - All completed diabetes retinal screening procedures with result categorisation.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks diabetes retinal screening completions for eye care monitoring and QOF reporting
+      • Tracks diabetes retinal screening completions for eye care monitoring and QOF reporting
 
-    • Supports diabetic retinopathy risk assessment and ophthalmology referral processes
+      • Supports diabetic retinopathy risk assessment and ophthalmology referral processes
 
-    • Enables diabetes care pathway compliance and screening programme analysis
-
-
-    Data Granularity:
-
-    • One row per completed retinal screening observation
-
-    • Includes only completed screenings (excludes declined/unsuitable)
-
-    • Uses RETSCREN_COD cluster for screening completion identification
+      • Enables diabetes care pathway compliance and screening programme analysis
 
 
-    Key Features:
+      Data Granularity:
 
-    • Comprehensive screening result categorisation (normal, background, proliferative, maculopathy)
+      • One row per completed retinal screening observation
 
-    • Diabetes eye risk assessment with sight-threatening retinopathy identification
+      • Includes only completed screenings (excludes declined/unsuitable)
 
-    • QOF screening requirement compliance flags (12m, 24m currency)
+      • Uses RETSCREN_COD cluster for screening completion identification
 
-    • Clinical interpretation and ophthalmology referral indicators'
 
-  columns:
-  - name: observation_id
-    description: Unique observation identifier
+      Key Features:
 
+      • Comprehensive screening result categorisation (normal, background, proliferative, maculopathy)
+
+      • Diabetes eye risk assessment with sight-threatening retinopathy identification
+
+      • QOF screening requirement compliance flags (12m, 24m currency)
+
+      • Clinical interpretation and ophthalmology referral indicators'
     tests:
-    - not_null
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the retinal screening
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for retinal screening
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the screening code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster ID (RETSCREN_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - RETSCREN_COD
-  - name: is_completed_screening
-    description: Flag indicating completed screening (always TRUE)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: is_retinal_screening_code
-    description: Flag indicating retinal screening code (always TRUE)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: screening_result_category
-    description: Enhanced screening result categorisation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Normal
-        - Background Retinopathy
-        - Pre-proliferative
-        - Proliferative
-        - Maculopathy
-        - Referral Required
-        - Screening Completed
-  - name: diabetes_eye_risk_category
-    description: Diabetes eye risk assessment based on screening results
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Low Risk (Normal)
-        - Low-Moderate Risk (Background)
-        - Moderate Risk (Pre-proliferative)
-        - High Risk (Sight-threatening)
-        - Requires Clinical Assessment
-        - Risk Assessment Required
-  - name: is_normal_screening
-    description: Flag indicating normal screening result
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_sight_threatening_retinopathy
-    description: Flag indicating sight-threatening retinopathy
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: requires_ophthalmology_referral
-    description: Flag indicating ophthalmology referral required
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: screening_current_12m
-    description: Flag indicating screening within 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: screening_current_24m
-    description: Flag indicating screening within 24 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: meets_qof_screening_requirement
-    description: Flag indicating screening meets QOF requirement (within 12 months)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: screening_status_interpretation
-    description: Clinical interpretation of screening currency
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Current (within 12 months)
-        - Recent (within 24 months)
-        - Overdue (>24 months)
-
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: RETSCREN_COD
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: RETSCREN_COD

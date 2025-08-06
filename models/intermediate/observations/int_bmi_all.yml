@@ -1,93 +1,37 @@
 version: 2
 models:
-- name: int_bmi_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: BMIVAL_COD
-  description: 'Intermediate: BMI Observations - All recorded BMI measurements with clinical categorisation.
+  - name: int_bmi_all
+    description: 'Intermediate: BMI Observations - All recorded BMI measurements with clinical categorisation.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks BMI measurements for obesity management and health monitoring
+      • Tracks BMI measurements for obesity management and health monitoring
 
-    • Supports weight management programmes and QOF reporting
+      • Supports weight management programmes and QOF reporting
 
-    • Enables longitudinal analysis of BMI trends and clinical outcomes
-
-
-    Data Granularity:
-
-    • One row per BMI observation
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Uses BMIVAL_COD cluster for BMI value identification
+      • Enables longitudinal analysis of BMI trends and clinical outcomes
 
 
-    Key Features:
+      Data Granularity:
 
-    • Data quality validation with plausible range filtering (5-400)
+      • One row per BMI observation
 
-    • Clinical BMI categorisation (underweight, normal, overweight, obese classes)
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • Original value preservation for audit and quality assurance
+      • Uses BMIVAL_COD cluster for BMI value identification
 
-    • Comprehensive observation metadata for traceability'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Data quality validation with plausible range filtering (5-400)
+
+      • Clinical BMI categorisation (underweight, normal, overweight, obese classes)
+
+      • Original value preservation for audit and quality assurance
+
+      • Comprehensive observation metadata for traceability'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the BMI measurement
-
-    tests:
-    - not_null
-  - name: bmi_value
-    description: BMI value in kg/m²
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 5
-        max_value: 150
-        severity: warn
-  - name: original_result_value
-    description: Original BMI value as recorded
-
-    tests:
-    - not_null
-  - name: is_valid_bmi
-    description: Flag indicating if BMI is within valid range (10-80)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: bmi_category
-    description: Clinical BMI category
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Invalid
-        - Underweight
-        - Normal
-        - Overweight
-        - Obese Class I
-        - Obese Class II
-        - Obese Class III
-        - Unknown
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: BMIVAL_COD

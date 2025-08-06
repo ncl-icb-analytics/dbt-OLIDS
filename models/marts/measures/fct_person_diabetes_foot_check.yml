@@ -1,156 +1,35 @@
 version: 2
 models:
-- name: fct_person_diabetes_foot_check
-  description: 'Mart: Diabetes Foot Check Status - Foot examination assessment for diabetes patients to support QOF reporting.
+  - name: fct_person_diabetes_foot_check
+    description: 'Mart: Diabetes Foot Check Status - Foot examination assessment for diabetes patients to support QOF reporting.
 
 
-    Business Purpose:
+      Business Purpose:
 
-    • Support QOF reporting for diabetes foot examination indicators
+      • Support QOF reporting for diabetes foot examination indicators
 
-    • Enable clinical teams to identify patients requiring foot examination review
+      • Enable clinical teams to identify patients requiring foot examination review
 
-    • Provide population health analytics for diabetes complication prevention programmes
+      • Provide population health analytics for diabetes complication prevention programmes
 
-    • Support business intelligence reporting on diabetes care quality and risk management
-
-
-    Data Granularity:
-
-    • One row per person on diabetes register
-
-    • Includes foot examination completion status and risk assessment results
-
-    • Current assessment of foot examination delivery and risk levels
+      • Support business intelligence reporting on diabetes care quality and risk management
 
 
-    Key Features:
+      Data Granularity:
 
-    • Tracks foot examination completion with complex business rules for exempt patients
+      • One row per person on diabetes register
 
-    • Includes Townson scale risk level assessment and individual foot status
+      • Includes foot examination completion status and risk assessment results
 
-    • Supports clinical decision-making for diabetes foot care management
+      • Current assessment of foot examination delivery and risk levels
 
-    • Enables population health management and diabetes complication prevention'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: diabetes_type
-    description: Type of diabetes diagnosis (Type 1, Type 2, Other)
+      • Tracks foot examination completion with complex business rules for exempt patients
 
-    tests:
-    - accepted_values:
+      • Includes Townson scale risk level assessment and individual foot status
 
-        values:
-        - Type 1
-        - Type 2
-        - Unknown
-  - name: latest_foot_check_date
-    description: Date of most recent foot examination
+      • Supports clinical decision-making for diabetes foot care management
 
-    tests:
-    - test_no_future_dates
-  - name: foot_check_completed_in_last_12m
-    description: Flag indicating valid foot check completed within last 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_permanently_exempt
-    description: Flag indicating permanent exemption (both feet absent/amputated)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_check_status
-    description: Status of most recent foot check attempt
-
-    tests:
-    - accepted_values:
-
-        values:
-        - Not Done
-        - Declined
-        - Unsuitable
-        - Complete - Both Feet
-        - Complete - Left Only (Right Missing)
-        - Complete - Right Only (Left Missing)
-        - Partial - Left Only
-        - Partial - Right Only
-  - name: foot_check_status
-    description: Detailed foot check status including exemptions
-
-    tests:
-    - accepted_values:
-
-        values:
-        - Permanently Exempt - Both Feet Missing
-        - Not Appropriate - Unsuitable
-        - Not Appropriate - Declined
-        - Complete - Both Feet
-        - Complete - Left Only (Right Missing)
-        - Complete - Right Only (Left Missing)
-        - Partial - Left Only
-        - Partial - Right Only
-        - Not Done
-  - name: left_foot_status
-    description: Status and risk level of left foot
-
-    tests:
-    - accepted_values:
-
-        values:
-        - Absent (Congenital)
-        - Amputated
-        - Low Risk
-        - Moderate Risk
-        - High Risk
-        - Ulcerated Risk
-        - Risk Level Not Recorded
-        - Not Assessed
-  - name: right_foot_status
-    description: Status and risk level of right foot
-
-    tests:
-    - accepted_values:
-
-        values:
-        - Absent (Congenital)
-        - Amputated
-        - Low Risk
-        - Moderate Risk
-        - High Risk
-        - Ulcerated Risk
-        - Risk Level Not Recorded
-        - Not Assessed
-  - name: townson_scale_level
-    description: Young Townson footskin scale level if applicable
-
-    tests:
-    - accepted_values:
-
-        values:
-        - Level 1
-        - Level 2
-        - Level 3
-        - Level 4
-  - name: all_concept_codes
-    description: Array of all SNOMED concept codes from latest foot check
-  - name: all_concept_displays
-    description: Array of all concept display terms from latest foot check
-  - name: all_source_cluster_ids
-    description: Array of all source cluster IDs from latest foot check
+      • Enables population health management and diabetes complication prevention'

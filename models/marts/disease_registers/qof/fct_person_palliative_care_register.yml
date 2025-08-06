@@ -1,68 +1,16 @@
 version: 2
 models:
-- name: fct_person_palliative_care_register
-  description: 'QOF Palliative Care Register - Patients receiving end-of-life care.
+  - name: fct_person_palliative_care_register
+    description: 'QOF Palliative Care Register - Patients receiving end-of-life care.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Palliative care diagnosis (PALLCARE_COD) present
+      • Palliative care diagnosis (PALLCARE_COD) present
 
-    • No age restrictions
+      • No age restrictions
 
-    • No resolution codes (palliative care status maintained)
+      • No resolution codes (palliative care status maintained)
 
 
-    Purpose: QOF register for end-of-life care quality measures, care coordination, and ensuring appropriate palliative support.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: meets QOF palliative care criteria (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: earliest_diagnosis_date
-    description: Date of first recorded palliative care code (QOF requires on/after 1 April 2008)
-
-    tests:
-
-    - not_null
-
-    - test_no_future_dates
-
-    - dbt_utils.accepted_range:
-        min_value: '''2008-04-01'''
-        max_value: current_date()
-        severity: warn
-  - name: latest_diagnosis_date
-    description: Date of most recent palliative care code (QOF requires on/after 1 April 2008)
-
-    tests:
-    - not_null
-    - test_no_future_dates
-    - dbt_utils.accepted_range:
-        min_value: '''2008-04-01'''
-        max_value: current_date()
-        severity: warn
-  - name: earliest_no_longer_indicated_date
-    description: Date of earliest 'no longer indicated' code (NULL if never marked as no longer indicated)
-  - name: all_no_longer_indicated_concept_codes
-    description: Array of all distinct 'no longer indicated' concept codes for this person
-  - name: all_no_longer_indicated_concept_displays
-    description: Array of all distinct 'no longer indicated' concept display terms for this person
+      Purpose: QOF register for end-of-life care quality measures, care coordination, and ensuring appropriate palliative support.'

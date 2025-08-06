@@ -1,96 +1,33 @@
 version: 2
 models:
-- name: int_urine_acr_latest
-  description: 'Intermediate: Latest Urine ACR Observations - Most recent valid ACR measurement per person for kidney function assessment.
+  - name: int_urine_acr_latest
+    description: 'Intermediate: Latest Urine ACR Observations - Most recent valid ACR measurement per person for kidney function assessment.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current kidney function status based on albumin-to-creatinine ratio
+      • Provides current kidney function status based on albumin-to-creatinine ratio
 
-    • Supports CKD staging and diabetic nephropathy assessment
+      • Supports CKD staging and diabetic nephropathy assessment
 
-    • Enables current proteinuria status evaluation and clinical decision-making
-
-
-    Data Granularity:
-
-    • One row per person with their most recent valid ACR
-
-    • Includes only patients with valid ACR measurements
-
-    • Filtered to exclude implausible values for clinical accuracy
+      • Enables current proteinuria status evaluation and clinical decision-making
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest valid ACR identification using comprehensive filtering
+      • One row per person with their most recent valid ACR
 
-    • Clinical ACR categorisation for kidney damage assessment
+      • Includes only patients with valid ACR measurements
 
-    • Microalbuminuria and macroalbuminuria flags for staging
+      • Filtered to exclude implausible values for clinical accuracy
 
-    • Complete observation metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the ACR measurement
+      • Latest valid ACR identification using comprehensive filtering
 
-    tests:
-    - not_null
-  - name: acr_value
-    description: Urine ACR value in mg/mmol (valid range only)
+      • Clinical ACR categorisation for kidney damage assessment
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 1000
-  - name: acr_category
-    description: Clinical ACR category (excludes 'Invalid')
+      • Microalbuminuria and macroalbuminuria flags for staging
 
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Normal (<3)
-        - Mildly Increased (3-30)
-        - Moderately Increased (30-300)
-        - Severely Increased (≥300)
-  - name: is_acr_elevated
-    description: Flag indicating ACR ≥3 mg/mmol
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_microalbuminuria
-    description: Flag indicating microalbuminuria (3-30 mg/mmol)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_macroalbuminuria
-    description: Flag indicating macroalbuminuria (≥30 mg/mmol)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Complete observation metadata for clinical context'

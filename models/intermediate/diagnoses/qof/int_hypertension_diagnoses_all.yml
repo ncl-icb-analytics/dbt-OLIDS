@@ -1,122 +1,39 @@
 version: 2
 models:
-- name: int_hypertension_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: HYPRES_COD, HYP_COD
-  description: 'Intermediate: Hypertension Diagnoses All - Complete history of all hypertension diagnosis and resolution observations for QOF register management.
+  - name: int_hypertension_diagnoses_all
+    description: 'Intermediate: Hypertension Diagnoses All - Complete history of all hypertension diagnosis and resolution observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF hypertension register data collection and monitoring
+      • QOF hypertension register data collection and monitoring
 
-    • Blood pressure management and cardiovascular risk assessment
+      • Blood pressure management and cardiovascular risk assessment
 
-    • Hypertension care pathway coordination and clinical decision support
+      • Hypertension care pathway coordination and clinical decision support
 
-    • Resolution status tracking for improved cardiovascular outcomes
-
-
-    Data Granularity:
-
-    • One row per hypertension diagnosis or resolution observation
-
-    • Uses HYP_COD (diagnosis) and HYPRES_COD (resolved) QOF clusters
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Resolution status tracking for improved cardiovascular outcomes
 
 
-    Key Features:
+      Data Granularity:
 
-    • Diagnosis and resolution code classification for register eligibility
+      • One row per hypertension diagnosis or resolution observation
 
-    • Critical for blood pressure management and cardiovascular risk reduction
+      • Uses HYP_COD (diagnosis) and HYPRES_COD (resolved) QOF clusters
 
-    • Supports complex QOF business rules and clinical pathway integration
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for hypertension quality improvement initiatives'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Diagnosis and resolution code classification for register eligibility
+
+      • Critical for blood pressure management and cardiovascular risk reduction
+
+      • Supports complex QOF business rules and clinical pathway integration
+
+      • Essential input for hypertension quality improvement initiatives'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the hypertension diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for hypertension diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the hypertension diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (HYP_COD, HYPRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - HYP_COD
-        - HYPRES_COD
-  - name: is_hypertension_diagnosis_code
-    description: Flag indicating hypertension diagnosis (HYP_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_hypertension_resolved_code
-    description: Flag indicating hypertension resolved/remission (HYPRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_hypertension_date
-    description: Earliest hypertension diagnosis date for this person
-  - name: latest_hypertension_date
-    description: Latest hypertension diagnosis date for this person
-  - name: earliest_resolved_date
-    description: Earliest hypertension resolved date for this person
-  - name: latest_resolved_date
-    description: Latest hypertension resolved date for this person
-  - name: hypertension_observation_type
-    description: Classification of this specific observation (Hypertension Diagnosis, Hypertension Resolved, Unknown)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Hypertension Diagnosis
-        - Hypertension Resolved
-        - Unknown
-  - name: all_hypertension_concept_codes
-    description: Array of all hypertension diagnosis concept codes for this person
-  - name: all_hypertension_concept_displays
-    description: Array of all hypertension diagnosis concept displays for this person
-  - name: all_resolved_concept_codes
-    description: Array of all hypertension resolved concept codes for this person
-  - name: all_resolved_concept_displays
-    description: Array of all hypertension resolved concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: HYPRES_COD, HYP_COD

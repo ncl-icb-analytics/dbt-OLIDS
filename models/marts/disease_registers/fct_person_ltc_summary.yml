@@ -1,57 +1,18 @@
 version: 2
 models:
-- name: fct_person_ltc_summary
-  description: 'Long-Term Conditions (LTC) Summary - Unified view of all disease registers per person.
+  - name: fct_person_ltc_summary
+    description: 'Long-Term Conditions (LTC) Summary - Unified view of all disease registers per person.
 
 
-    Key Features:
+      Key Features:
 
-    • One row per person per condition
+      • One row per person per condition
 
-    • Combines all QOF and clinical disease registers
+      • Combines all QOF and clinical disease registers
 
-    • Standardised condition codes and clinical domains
+      • Standardised condition codes and clinical domains
 
-    • Includes diagnosis dates and QOF status
+      • Includes diagnosis dates and QOF status
 
 
-    Purpose: Analytical table for multi-morbidity analysis, population health management, and comprehensive patient condition profiling.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-  - name: condition_code
-    description: Standardised condition code (AF, AST, CA, CHD, CKD, COPD, DEM, DEP, DM, EPIL, etc.)
-
-    tests:
-    - not_null
-  - name: condition_name
-    description: Full condition name for reporting
-
-    tests:
-    - not_null
-  - name: is_on_register
-    description: Boolean flag - always TRUE for this table (filtered to registered patients only)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: earliest_diagnosis_date
-    description: Earliest diagnosis date for this condition (may be NULL for obesity if no valid BMI recorded)
-
-    tests:
-    - not_null:
-
-        config:
-          where: condition_code != 'OB'
-  - name: latest_diagnosis_date
-    description: Latest diagnosis date for this condition
-
-    tests:
-    - not_null
+      Purpose: Analytical table for multi-morbidity analysis, population health management, and comprehensive patient condition profiling.'

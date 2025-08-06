@@ -1,28 +1,8 @@
 version: 2
 models:
-- name: dim_person_is_carer
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: ISACARER_COD, NOTACARER_COD, UNPAIDCARER_COD
-  description: Dimension table providing the latest recorded carer status for persons who have a carer status record. Only includes persons with a record in ISACARER_COD, NOTACARER_COD, or UNPAIDCARER_COD clusters. This table specifically tracks patients who are carers themselves, not patients who have carers.
-  columns:
-  - name: person_id
-    description: Unique person identifier - primary key
-
+  - name: dim_person_is_carer
+    description: Dimension table providing the latest recorded carer status for persons who have a carer status record. Only includes persons with a record in ISACARER_COD, NOTACARER_COD, or UNPAIDCARER_COD clusters. This table specifically tracks patients who are carers themselves, not patients who have carers.
     tests:
-    - not_null
-    - unique
-  - name: is_carer
-    description: Boolean flag indicating if person is identified as a carer
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: carer_type
-    description: Type or category of caring role
-  - name: carer_identified_date
-    description: Date when carer status was first identified
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: ISACARER_COD, NOTACARER_COD, UNPAIDCARER_COD

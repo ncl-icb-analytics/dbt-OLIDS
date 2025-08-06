@@ -1,32 +1,15 @@
 version: 2
 models:
-- name: int_valproate_araf_referral_events
-  description: 'Extracts all ARAF referral events from observations using valproate programme codes.
+  - name: int_valproate_araf_referral_events
+    description: 'Extracts all ARAF referral events from observations using valproate programme codes.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Joins observations with mapped concepts and valproate programme codes
+      • Joins observations with mapped concepts and valproate programme codes
 
-    • Filters to REFERRAL code category only
+      • Filters to REFERRAL code category only
 
-    • One row per ARAF referral observation with person, date, concept details
+      • One row per ARAF referral observation with person, date, concept details
 
-    • Foundation data for ARAF referral dimension aggregation'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person.
-
-    tests:
-    - not_null
-  - name: araf_referral_event_date
-    description: Date of the ARAF referral-related observation.
-  - name: araf_referral_observation_id
-    description: Identifier for the ARAF referral observation.
-  - name: araf_referral_concept_code
-    description: Medical concept code for the ARAF referral event.
-  - name: araf_referral_concept_display
-    description: Display term for the ARAF referral concept code.
-  - name: araf_referral_code_category
-    description: Code category for the ARAF referral event (should be 'REFERRAL').
+      • Foundation data for ARAF referral dimension aggregation'

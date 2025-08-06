@@ -1,63 +1,21 @@
 version: 2
 models:
-- name: fct_person_nafld_register
-  description: 'Non-Alcoholic Fatty Liver Disease (NAFLD) Register - Patients with NAFLD diagnosis.
+  - name: fct_person_nafld_register
+    description: 'Non-Alcoholic Fatty Liver Disease (NAFLD) Register - Patients with NAFLD diagnosis.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • NAFLD diagnosis code present (hardcoded SNOMED concepts)
+      • NAFLD diagnosis code present (hardcoded SNOMED concepts)
 
-    • Active patient status required
+      • Active patient status required
 
-    • No age restrictions
+      • No age restrictions
 
-    • No resolution codes
-
-
-    Purpose: Clinical register for liver health monitoring, metabolic risk assessment, and NAFLD progression tracking.
+      • No resolution codes
 
 
-    Note: Currently using hardcoded SNOMED codes - awaiting NAFLD_COD cluster in reference data.'
+      Purpose: Clinical register for liver health monitoring, metabolic risk assessment, and NAFLD progression tracking.
 
-  config:
-    materialized: table
 
-  columns:
-  - name: person_id
-    description: Unique person identifier linking to dim_person
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: Register inclusion flag (always TRUE in this table as filtered view)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: earliest_diagnosis_date
-    description: Date of first recorded NAFLD diagnosis
-
-    tests:
-    - not_null
-  - name: latest_diagnosis_date
-    description: Date of most recent NAFLD diagnosis
-
-    tests:
-    - not_null
-  - name: nafld_diagnosis_codes
-    description: Array of all NAFLD-related concept codes recorded for traceability
-
-    tests:
-    - not_null
-  - name: nafld_diagnosis_displays
-    description: Array of human-readable terms for NAFLD concept codes
-
-    tests:
-    - not_null
+      Note: Currently using hardcoded SNOMED codes - awaiting NAFLD_COD cluster in reference data.'

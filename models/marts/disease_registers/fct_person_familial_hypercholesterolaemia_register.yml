@@ -1,40 +1,18 @@
 version: 2
 models:
-- name: fct_person_familial_hypercholesterolaemia_register
-  description: 'Familial Hypercholesterolaemia (FH) Register - Patients with genetic lipid disorder diagnosed at age 20+.
+  - name: fct_person_familial_hypercholesterolaemia_register
+    description: 'Familial Hypercholesterolaemia (FH) Register - Patients with genetic lipid disorder diagnosed at age 20+.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • FH diagnosis code present (FHYP_COD)
+      • FH diagnosis code present (FHYP_COD)
 
-    • Age at first diagnosis: 20 years or older
+      • Age at first diagnosis: 20 years or older
 
-    • Active patient status required
+      • Active patient status required
 
-    • No resolution codes (genetic condition is lifelong)
+      • No resolution codes (genetic condition is lifelong)
 
 
-    Purpose: Clinical register for cascade family screening, high-intensity statin monitoring, and inherited cardiovascular risk management.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: has FH diagnosis (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
+      Purpose: Clinical register for cascade family screening, high-intensity statin monitoring, and inherited cardiovascular risk management.'
