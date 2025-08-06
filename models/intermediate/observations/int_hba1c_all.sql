@@ -16,7 +16,12 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        CAST(obs.result_value AS NUMBER(10,2)) AS hba1c_value,
+        -- Handle extreme values gracefully - cap at reasonable HbA1c ranges
+        CASE 
+            WHEN TRY_CAST(obs.result_value AS FLOAT) > 1000 THEN NULL  -- Likely data error
+            WHEN TRY_CAST(obs.result_value AS FLOAT) < 0 THEN NULL     -- Negative values invalid
+            ELSE CAST(obs.result_value AS NUMBER(10,2))
+        END AS hba1c_value,
         obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
