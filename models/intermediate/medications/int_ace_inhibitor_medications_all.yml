@@ -1,135 +1,33 @@
 version: 2
 models:
-- name: int_ace_inhibitor_medications_all
-  description: 'Intermediate: ACE Inhibitor Medication Orders - All recorded ACE inhibitor prescriptions.
+  - name: int_ace_inhibitor_medications_all
+    description: 'Intermediate: ACE Inhibitor Medication Orders - All recorded ACE inhibitor prescriptions.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks ACE inhibitor therapy for cardiovascular and renal protection
+      • Tracks ACE inhibitor therapy for cardiovascular and renal protection
 
-    • Supports clinical monitoring and medication review processes
+      • Supports clinical monitoring and medication review processes
 
-    • Enables analysis of prescribing patterns by specific ACE inhibitor type
-
-
-    Data Granularity:
-
-    • One row per medication order
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Historical data maintained for longitudinal analysis
+      • Enables analysis of prescribing patterns by specific ACE inhibitor type
 
 
-    Key Features:
+      Data Granularity:
 
-    • Classification by specific ACE inhibitor type (ramipril, lisinopril, etc.)
+      • One row per medication order
 
-    • Evidence-based medication flags for cardiovascular disease management
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • Recency indicators for therapy monitoring (3m, 6m, 12m)
+      • Historical data maintained for longitudinal analysis
 
-    • Clinical trial evidence mapping (HOPE, EUROPA, GISSI-3, SOLVD trials)'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
+      Key Features:
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      • Classification by specific ACE inhibitor type (ramipril, lisinopril, etc.)
 
-    tests:
-    - not_null
-    - unique
-  - name: ace_inhibitor_type
-    description: Specific ACE inhibitor medication type
+      • Evidence-based medication flags for cardiovascular disease management
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Recency indicators for therapy monitoring (3m, 6m, 12m)
 
-        values:
-        - CAPTOPRIL
-        - CILAZAPRIL
-        - ENALAPRIL
-        - FOSINOPRIL
-        - IMIDAPRIL
-        - LISINOPRIL
-        - MOEXIPRIL
-        - PERINDOPRIL
-        - QUINAPRIL
-        - RAMIPRIL
-        - TRANDOLAPRIL
-        - OTHER_ACE_INHIBITOR
-  - name: is_evidence_based_cvd
-    description: Boolean flag indicating evidence-based ACE inhibitor for cardiovascular disease (ramipril, perindopril, lisinopril, enalapril)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_ramipril
-    description: Boolean flag indicating ramipril use (HOPE trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_lisinopril
-    description: Boolean flag indicating lisinopril use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_perindopril
-    description: Boolean flag indicating perindopril use (EUROPA trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_enalapril
-    description: Boolean flag indicating enalapril use (SOLVD trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_captopril
-    description: Boolean flag indicating captopril use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: '02050501'
+      • Clinical trial evidence mapping (HOPE, EUROPA, GISSI-3, SOLVD trials)'

@@ -1,98 +1,37 @@
 version: 2
 models:
-- name: int_unable_spirometry_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: SPIRPU_COD
-  description: 'Intermediate: Unable Spirometry Observations - All records where spirometry testing was unsuitable or contraindicated.
+  - name: int_unable_spirometry_all
+    description: 'Intermediate: Unable Spirometry Observations - All records where spirometry testing was unsuitable or contraindicated.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks spirometry contraindications for COPD register confirmation requirements
+      • Tracks spirometry contraindications for COPD register confirmation requirements
 
-    • Supports alternative pathway for COPD register inclusion when spirometry cannot be performed
+      • Supports alternative pathway for COPD register inclusion when spirometry cannot be performed
 
-    • Enables documentation of clinical assessment limitations and patient factors
-
-
-    Data Granularity:
-
-    • One row per unable spirometry observation
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Uses SPIRPU_COD cluster for spirometry unsuitability identification
+      • Enables documentation of clinical assessment limitations and patient factors
 
 
-    Key Features:
+      Data Granularity:
 
-    • Comprehensive documentation of spirometry contraindications
+      • One row per unable spirometry observation
 
-    • Alternative evidence pathway for COPD register eligibility
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • Clinical assessment limitation tracking for quality assurance
+      • Uses SPIRPU_COD cluster for spirometry unsuitability identification
 
-    • Essential for COPD register spirometry validation processes'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Comprehensive documentation of spirometry contraindications
+
+      • Alternative evidence pathway for COPD register eligibility
+
+      • Clinical assessment limitation tracking for quality assurance
+
+      • Essential for COPD register spirometry validation processes'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the unable-to-have-spirometry observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for unable spirometry
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the unable spirometry code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster ID (UNABLESPI_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - UNABLESPI_COD
-  - name: earliest_unable_spirometry_date
-    description: Earliest unable spirometry date for this person
-  - name: latest_unable_spirometry_date
-    description: Latest unable spirometry date for this person
-  - name: is_unable_spirometry_record
-    description: Flag indicating this is an unable spirometry record (always TRUE)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: spirometry_observation_type
-    description: Classification of this spirometry observation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Unable to Perform Spirometry
-  - name: all_unable_spirometry_concept_codes
-    description: Array of all unable spirometry concept codes for this person
-  - name: all_unable_spirometry_concept_displays
-    description: Array of all unable spirometry concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: SPIRPU_COD

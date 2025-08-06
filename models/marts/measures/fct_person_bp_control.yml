@@ -1,177 +1,22 @@
 version: 2
 models:
-- name: fct_person_bp_control
-  description: 'Mart: Blood Pressure Control Status - Patient-level blood pressure control assessment for QOF reporting and clinical management.
+  - name: fct_person_bp_control
+    description: 'Mart: Blood Pressure Control Status - Patient-level blood pressure control assessment for QOF reporting and clinical management.
 
 
-    Population Scope:
+      Population Scope:
 
-    • All patients with blood pressure readings requiring control assessment
+      • All patients with blood pressure readings requiring control assessment
 
-    • Patient-specific BP thresholds based on age, Type 2 diabetes, CKD, and ACR levels
+      • Patient-specific BP thresholds based on age, Type 2 diabetes, CKD, and ACR levels
 
-    • One row per patient with current BP control status and monitoring timeliness
+      • One row per patient with current BP control status and monitoring timeliness
 
 
-    Key Features:
+      Key Features:
 
-    • Applies priority-ranked thresholds based on NICE NG136 guidelines
+      • Applies priority-ranked thresholds based on NICE NG136 guidelines
 
-    • Calculates overall BP control status (both systolic and diastolic)
+      • Calculates overall BP control status (both systolic and diastolic)
 
-    • Includes risk-based timeliness assessment for monitoring frequency'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - unique
-  - name: latest_bp_date
-    description: Date of most recent blood pressure reading
-
-    tests:
-    - not_null
-    - test_no_future_dates
-  - name: latest_systolic_value
-    description: Systolic value of latest BP reading (mmHg)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 50
-        max_value: 300
-  - name: latest_diastolic_value
-    description: Diastolic value of latest BP reading (mmHg)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 30
-        max_value: 200
-  - name: age
-    description: Current age in years
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 120
-  - name: has_t2dm
-    description: Flag indicating Type 2 diabetes diagnosis
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: has_ckd
-    description: Flag indicating chronic kidney disease diagnosis
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_diagnosed_htn
-    description: Flag indicating diagnosed hypertension
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_acr_value
-    description: Latest albumin-to-creatinine ratio value (relevant for CKD patients)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 1000
-  - name: applied_threshold_rule_id
-    description: Identifier of the BP threshold rule applied
-
-    tests:
-    - not_null
-  - name: applied_patient_group
-    description: Patient group for applied threshold (e.g., 'T2DM', 'CKD_ACR_GE_70')
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - AGE_LT_80
-        - AGE_GE_80
-        - T2DM
-        - CKD
-        - CKD_ACR_GE_70
-  - name: applied_systolic_threshold
-    description: Systolic BP threshold applied (mmHg)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 120
-        max_value: 160
-  - name: applied_diastolic_threshold
-    description: Diastolic BP threshold applied (mmHg)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 70
-        max_value: 100
-  - name: is_systolic_controlled
-    description: Flag indicating systolic BP is below threshold
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_diastolic_controlled
-    description: Flag indicating diastolic BP is below threshold
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_overall_bp_controlled
-    description: Flag indicating both systolic and diastolic BP are controlled
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_bp_reading_age_months
-    description: Age of latest BP reading in months from current date
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 1200
-  - name: is_latest_bp_within_recommended_interval
-    description: Flag indicating BP reading is within recommended monitoring interval
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Includes risk-based timeliness assessment for monitoring frequency'

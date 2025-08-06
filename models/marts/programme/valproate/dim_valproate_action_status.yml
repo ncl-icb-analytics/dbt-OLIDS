@@ -1,73 +1,28 @@
 version: 2
 models:
-- name: dim_valproate_action_status
-  description: 'Dimension table implementing Valproate safety monitoring clinical decision logic.
+  - name: dim_valproate_action_status
+    description: 'Dimension table implementing Valproate safety monitoring clinical decision logic.
 
 
-    Calculates recommended actions and priority order (1-9) based on:
+      Calculates recommended actions and priority order (1-9) based on:
 
-    • Pregnancy status
+      • Pregnancy status
 
-    • PPP enrollment  
+      • PPP enrollment
 
-    • ARAF completion
+      • ARAF completion
 
-    • Age and risk factors
+      • Age and risk factors
 
 
-    Action priorities:
+      Action priorities:
 
-    • 1 = Pregnancy (urgent)
+      • 1 = Pregnancy (urgent)
 
-    • 2-4 = Missing safety measures by age/vulnerability
+      • 2-4 = Missing safety measures by age/vulnerability
 
-    • 5 = PPP non-enrolled (monitor)
+      • 5 = PPP non-enrolled (monitor)
 
-    • 6-8 = Safety measures present (check ARAF expiry)
+      • 6-8 = Safety measures present (check ARAF expiry)
 
-    • 9 = Low risk (no action)'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person.
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Age of the person at time of calculation.
-  - name: sex
-    description: Patient's sex.
-  - name: has_ppp_status
-    description: TRUE if person has any PPP record in the system.
-  - name: is_ppp_enrolled
-    description: TRUE if enrolled in PPP, FALSE otherwise.
-  - name: is_ppp_non_enrolled
-    description: TRUE if PPP status is discontinued/not needed/declined.
-  - name: ppp_status_description
-    description: Description of PPP status.
-  - name: has_araf_event
-    description: TRUE if person has any ARAF record in the system.
-  - name: has_current_araf
-    description: TRUE if person has ARAF meeting lookback requirements.
-  - name: has_permanent_absence_pregnancy_risk
-    description: TRUE if permanent absence of pregnancy risk recorded.
-  - name: has_learning_disability
-    description: TRUE if learning disability recorded.
-  - name: has_pregnancy
-    description: TRUE if currently pregnant.
-  - name: has_neurology
-    description: TRUE if person has neurology-related conditions.
-  - name: has_psychiatry
-    description: TRUE if person has psychiatry-related conditions.
-  - name: risk_of_pregnancy
-    description: 'Risk category: Low Risk, Medium Risk, High Risk.'
-  - name: action
-    description: Recommended action based on business rules.
-  - name: action_order
-    description: Numeric priority order for action (1=highest priority).
-  - name: additional_findings
-    description: Summary of pregnancy and learning disability findings.
-  - name: condition_group
-    description: Summary of neurology and psychiatry condition groups.
-  - name: calculation_date
-    description: Date when this calculation was performed.
+      • 9 = Low risk (no action)'

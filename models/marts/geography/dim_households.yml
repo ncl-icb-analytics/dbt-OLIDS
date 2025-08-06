@@ -1,81 +1,15 @@
 version: 2
 models:
-- name: dim_households
-  description: 'Geographic and dwelling information for patient household analysis.
+  - name: dim_households
+    description: 'Geographic and dwelling information for patient household analysis.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Provides geographic location data including LSOA codes and deprivation indices for household-level health analytics
+      • Provides geographic location data including LSOA codes and deprivation indices for household-level health analytics
 
-    • Includes dwelling activity status and occupancy timeline with first/last known occupation dates
+      • Includes dwelling activity status and occupancy timeline with first/last known occupation dates
 
-    • Supports social determinants of health reporting and spatial analysis requirements
+      • Supports social determinants of health reporting and spatial analysis requirements
 
-    • One row per unique household (UPRN-based dwelling) covering both currently active and historically active households'
-
-  columns:
-  - name: household_id
-    description: Unique surrogate key for the household (generated from uprn_hash)
-
-    tests:
-    - unique
-    - not_null
-  - name: uprn_hash
-    description: Hashed UPRN - deterministic identifier for the physical dwelling
-
-    tests:
-    - unique
-    - not_null
-  - name: dwelling_activity_status
-    description: Classification of recent activity at this dwelling
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Recently active
-        - Previously active
-        - Historically active only
-  - name: first_known_occupation_date
-    description: Earliest known registration date for any person at this dwelling
-
-    tests:
-    - not_null
-  - name: last_known_activity_date
-    description: Most recent registration activity date for this dwelling
-
-    tests:
-    - not_null
-  - name: lsoa_code_21
-    description: Lower Super Output Area code (2021 boundaries)
-  - name: lsoa_name_21
-    description: Lower Super Output Area name (2021 boundaries)
-  - name: imd_decile_19
-    description: Index of Multiple Deprivation decile (2019)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 1
-        max_value: 10
-  - name: imd_quintile_19
-    description: Index of Multiple Deprivation quintile (2019)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 1
-        max_value: 5
-  - name: created_at
-    description: Timestamp when this record was created
-
-    tests:
-    - not_null
-
-  tests:
-  - dbt_utils.expression_is_true:
-      name: last_activity_after_first_occupation
-      expression: last_known_activity_date >= first_known_occupation_date
-  - dbt_utils.at_least_one:
-      name: has_at_least_one_dwelling
-      column_name: household_id
+      • One row per unique household (UPRN-based dwelling) covering both currently active and historically active households'

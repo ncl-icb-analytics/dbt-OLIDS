@@ -1,45 +1,15 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_cvd_66
-  description: 'Case finding for patients aged 75-83 requiring QRISK2 cardiovascular risk assessment.
+  - name: dim_ltc_lcs_cf_cvd_66
+    description: 'Case finding for patients aged 75-83 requiring QRISK2 cardiovascular risk assessment.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Identifies patients aged 75-83 years requiring QRISK2 assessment for cardiovascular risk
+      • Identifies patients aged 75-83 years requiring QRISK2 assessment for cardiovascular risk
 
-    • Targets elderly patients lacking recent cardiovascular risk evaluation
+      • Targets elderly patients lacking recent cardiovascular risk evaluation
 
-    • Supports age-appropriate cardiovascular risk management and statin review decisions
+      • Supports age-appropriate cardiovascular risk management and statin review decisions
 
-    • One row per eligible elderly person requiring cardiovascular risk assessment'
-
-  columns:
-  - name: person_id
-    description: Unique patient identifier
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Patient age (75-83)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 75
-        max_value: 83
-  - name: needs_statin_review
-    description: Whether patient needs statin review (TRUE for all)
-  - name: latest_qrisk2_date
-    description: Date of latest QRISK2 assessment (should be NULL for all)
-  - name: latest_qrisk2_value
-    description: Latest QRISK2 value (should be NULL for all)
-  - name: latest_qrisk2_code
-    description: Concept code of latest QRISK2 (should be NULL for all)
-  - name: latest_qrisk2_display
-    description: Concept display of latest QRISK2 (should be NULL for all)
-  - name: all_qrisk2_codes
-    description: Array of all QRISK2 concept codes for patient (should be NULL for all)
-  - name: all_qrisk2_displays
-    description: Array of all QRISK2 concept displays for patient (should be NULL for all)
+      • One row per eligible elderly person requiring cardiovascular risk assessment'

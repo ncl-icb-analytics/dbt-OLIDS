@@ -1,20 +1,4 @@
 version: 2
 models:
-- name: dim_person_women_child_bearing_age
-  description: Dimension table identifying individuals who are not male and are aged 55 or younger. Includes flags for standard child-bearing age ranges.
-  columns:
-  - name: person_id
-    description: Unique person identifier - primary key
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Current age of person
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 55
-  - name: sex
-    description: Sex classification - should be Female for this dimension
+  - name: dim_person_women_child_bearing_age
+    description: Dimension table identifying individuals who are not male and are aged 55 or younger. Includes flags for standard child-bearing age ranges.

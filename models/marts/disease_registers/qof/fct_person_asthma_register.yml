@@ -1,108 +1,16 @@
 models:
-- name: fct_person_asthma_register
-  description: 'QOF Asthma Register - Patients aged 6+ with active asthma requiring ongoing management.
+  - name: fct_person_asthma_register
+    description: 'QOF Asthma Register - Patients aged 6+ with active asthma requiring ongoing management.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Age 6+ years
+      • Age 6+ years
 
-    • Active asthma diagnosis: latest AST_COD > latest ASTRES_COD
+      • Active asthma diagnosis: latest AST_COD > latest ASTRES_COD
 
-    • Recent medication: asthma medication prescribed within last 12 months
+      • Recent medication: asthma medication prescribed within last 12 months
 
-    • External validation: medication requirement ensures active management
+      • External validation: medication requirement ensures active management
 
-    • One row per person with current register status'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
-
-    tests:
-    - not_null
-    - unique
-  - name: is_on_register
-    description: QOF register inclusion flag - TRUE for all persons in this table
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: earliest_diagnosis_date
-    description: Date of first recorded asthma diagnosis code (AST_COD)
-
-    tests:
-    - dbt_utils.not_accepted_values:
-
-        values:
-        - '1900-01-01'
-  - name: latest_diagnosis_date
-    description: Date of most recent asthma diagnosis code (AST_COD)
-
-    tests:
-    - not_null
-  - name: latest_asthma_resolved_date
-    description: Date of most recent asthma resolved code (ASTRES_COD) - NULL if never resolved
-  - name: latest_asthma_medication_date
-    description: Date of most recent asthma medication prescription - required for register inclusion
-
-    tests:
-    - not_null
-  - name: latest_asthma_medication_name
-    description: Name of most recent asthma medication prescribed
-  - name: latest_asthma_medication_dose
-    description: Dosage of most recent asthma medication prescribed
-  - name: latest_asthma_medication_concept_code
-    description: Standardised concept code for most recent asthma medication
-  - name: latest_asthma_medication_concept_display
-    description: Display term for most recent asthma medication concept
-  - name: recent_asthma_medication_count
-    description: Count of asthma medication prescriptions in last 12 months
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 1
-        severity: warn
-  - name: nafld_diagnosis_codes
-    description: Array of all asthma diagnosis and resolution concept codes recorded for this person
-  - name: nafld_diagnosis_displays
-    description: Array of all asthma diagnosis and resolution concept display terms
-  - name: all_source_cluster_ids
-    description: Array of source cluster IDs (AST_COD, ASTRES_COD) for traceability
-  - name: meets_age_criteria
-    description: 'Boolean flag: TRUE if person meets age ≥6 requirement'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: has_active_diagnosis
-    description: 'Boolean flag: TRUE if latest diagnosis > latest resolution (or no resolution)'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_recent_medication
-    description: 'Boolean flag: TRUE if asthma medication prescribed within last 12 months'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
+      • One row per person with current register status'

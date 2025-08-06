@@ -1,148 +1,39 @@
 version: 2
 models:
-- name: int_depression_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: DEPRES_COD, DEPR_COD
-  description: 'Intermediate: Depression Diagnoses - All recorded depression diagnosis and resolution observations for QOF register management.
+  - name: int_depression_diagnoses_all
+    description: 'Intermediate: Depression Diagnoses - All recorded depression diagnosis and resolution observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Supports QOF depression register maintenance and reporting
+      • Supports QOF depression register maintenance and reporting
 
-    • Tracks depression diagnoses and resolution/remission status
+      • Tracks depression diagnoses and resolution/remission status
 
-    • Enables comprehensive depression patient identification and management
+      • Enables comprehensive depression patient identification and management
 
-    • Supports PCA (patient care adjustments) and review tracking
-
-
-    Data Granularity:
-
-    • One row per depression diagnosis or resolution observation
-
-    • Includes all patients with depression-related codes regardless of current status
-
-    • Uses cluster IDs: DEPR_COD (diagnosis), DEPRES_COD (resolution)
+      • Supports PCA (patient care adjustments) and review tracking
 
 
-    Key Features:
+      Data Granularity:
 
-    • Captures both diagnosis and resolution codes in single dataset
+      • One row per depression diagnosis or resolution observation
 
-    • Provides earliest/latest dates for diagnosis and resolution events
+      • Includes all patients with depression-related codes regardless of current status
 
-    • Includes comprehensive arrays of all related concept codes per person
+      • Uses cluster IDs: DEPR_COD (diagnosis), DEPRES_COD (resolution)
 
-    • Supports QOF register calculation and clinical pathway tracking'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Captures both diagnosis and resolution codes in single dataset
+
+      • Provides earliest/latest dates for diagnosis and resolution events
+
+      • Includes comprehensive arrays of all related concept codes per person
+
+      • Supports QOF register calculation and clinical pathway tracking'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the depression-related observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for depression-related observation
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the depression-related code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID for depression care pathway
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - DEPR_COD
-        - DEPRES_COD
-  - name: is_depression_diagnosis_code
-    description: Flag indicating depression diagnosis (DEPR_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_depression_resolved_code
-    description: Flag indicating depression resolved/remission (DEPRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_depression_date
-    description: Earliest depression diagnosis date for this person
-  - name: latest_depression_date
-    description: Latest depression diagnosis date for this person
-  - name: earliest_resolved_date
-    description: Earliest depression resolved date for this person
-  - name: latest_resolved_date
-    description: Latest depression resolved date for this person
-  - name: earliest_review_date
-    description: Earliest depression review date for this person
-  - name: latest_review_date
-    description: Latest depression review date for this person
-  - name: earliest_invite_date
-    description: Earliest depression invite date for this person
-  - name: latest_invite_date
-    description: Latest depression invite date for this person
-  - name: earliest_pca_decline_date
-    description: Earliest depression PCA decline date for this person
-  - name: latest_pca_decline_date
-    description: Latest depression PCA decline date for this person
-  - name: earliest_pca_unsuitable_date
-    description: Earliest depression PCA unsuitable date for this person
-  - name: latest_pca_unsuitable_date
-    description: Latest depression PCA unsuitable date for this person
-  - name: depression_observation_type
-    description: Classification of this specific observation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Depression Diagnosis
-        - Depression Resolved
-        - Depression Review
-        - Depression Invite
-        - Depression PCA Decline
-        - Depression PCA Unsuitable
-        - Unknown
-  - name: all_depression_concept_codes
-    description: Array of all depression diagnosis concept codes for this person
-  - name: all_depression_concept_displays
-    description: Array of all depression diagnosis concept displays for this person
-  - name: all_resolved_concept_codes
-    description: Array of all depression resolved concept codes for this person
-  - name: all_review_concept_codes
-    description: Array of all depression review concept codes for this person
-  - name: all_invite_concept_codes
-    description: Array of all depression invite concept codes for this person
-  - name: all_pca_decline_concept_codes
-    description: Array of all depression PCA decline concept codes for this person
-  - name: all_pca_unsuitable_concept_codes
-    description: Array of all depression PCA unsuitable concept codes for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: DEPRES_COD, DEPR_COD

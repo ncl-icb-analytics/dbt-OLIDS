@@ -1,48 +1,39 @@
 version: 2
 models:
-- name: int_cancer_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: CAN_COD
-  description: 'Intermediate: Cancer Diagnoses - All recorded cancer diagnosis observations for QOF register management.
+  - name: int_cancer_diagnoses_all
+    description: 'Intermediate: Cancer Diagnoses - All recorded cancer diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Supports QOF cancer register maintenance and reporting
+      • Supports QOF cancer register maintenance and reporting
 
-    • Tracks cancer care pathway coordination and treatment tracking
+      • Tracks cancer care pathway coordination and treatment tracking
 
-    • Enables oncology service utilisation and quality improvement
+      • Enables oncology service utilisation and quality improvement
 
-    • Supports resolution and remission status tracking
-
-
-    Data Granularity:
-
-    • One row per cancer diagnosis observation
-
-    • Includes all patients with cancer-related codes regardless of current status
-
-    • Uses cluster ID: CAN_COD (diagnosis)
+      • Supports resolution and remission status tracking
 
 
-    Key Features:
+      Data Granularity:
 
-    • Comprehensive cancer diagnosis tracking across all age groups
+      • One row per cancer diagnosis observation
 
-    • No specific age restrictions for cancer register inclusion
+      • Includes all patients with cancer-related codes regardless of current status
 
-    • Provides earliest/latest dates for diagnosis events
+      • Uses cluster ID: CAN_COD (diagnosis)
 
-    • Includes comprehensive arrays of all related concept codes per person'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Comprehensive cancer diagnosis tracking across all age groups
+
+      • No specific age restrictions for cancer register inclusion
+
+      • Provides earliest/latest dates for diagnosis events
+
+      • Includes comprehensive arrays of all related concept codes per person'
     tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: CAN_COD

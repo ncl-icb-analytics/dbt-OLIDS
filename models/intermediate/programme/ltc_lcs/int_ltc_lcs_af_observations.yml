@@ -1,68 +1,39 @@
 version: 2
 models:
-- name: int_ltc_lcs_af_observations
-  description: 'Intermediate: LTC LCS AF Observations - All atrial fibrillation-relevant observations for Long Term Conditions case finding measures.
+  - name: int_ltc_lcs_af_observations
+    description: 'Intermediate: LTC LCS AF Observations - All atrial fibrillation-relevant observations for Long Term Conditions case finding measures.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Tracks comprehensive AF-related clinical observation data for case finding algorithms
+      • Tracks comprehensive AF-related clinical observation data for case finding algorithms
 
-• Supports identification of patients with undiagnosed atrial fibrillation through clinical observations
+      • Supports identification of patients with undiagnosed atrial fibrillation through clinical observations
 
-• Enables observation-based risk stratification for AF case finding measures
+      • Enables observation-based risk stratification for AF case finding measures
 
-• Provides foundation data for AF_61 and AF_62 case finding indicators
-
-
-Data Granularity:
-
-• One row per clinical observation for AF-relevant observations
-
-• Includes AF observations, exclusions, deep vein thrombosis, atrial flutter, pulse measurements
-
-• Sourced from LTC_LCS programme observation clusters
-
-• Covers all historical and current AF clinical observation patterns
+      • Provides foundation data for AF_61 and AF_62 case finding indicators
 
 
-Key Features:
+      Data Granularity:
 
-• Cluster IDs: AF_OBSERVATIONS, AF_EXCLUSIONS, DEEP_VEIN_THROMBOSIS, ATRIAL_FLUTTER, ATRIAL_FIBRILLATION_61_EXCLUSIONS, PULSE_RATE, PULSE_RHYTHM
+      • One row per clinical observation for AF-relevant observations
 
-• Supports both AF_61 and AF_62 case finding measure requirements
+      • Includes AF observations, exclusions, deep vein thrombosis, atrial flutter, pulse measurements
 
-• Comprehensive clinical observation analysis for undiagnosed AF detection
-• Integration with LTC_LCS programme clinical observation tracking systems'
+      • Sourced from LTC_LCS programme observation clusters
 
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER
+      • Covers all historical and current AF clinical observation patterns
 
-  columns:
-  - name: observation_id
-    description: Unique identifier for the observation
 
+      Key Features:
+
+      • Cluster IDs: AF_OBSERVATIONS, AF_EXCLUSIONS, DEEP_VEIN_THROMBOSIS, ATRIAL_FLUTTER, ATRIAL_FIBRILLATION_61_EXCLUSIONS, PULSE_RATE, PULSE_RHYTHM
+
+      • Supports both AF_61 and AF_62 case finding measure requirements
+
+      • Comprehensive clinical observation analysis for undiagnosed AF detection • Integration with LTC_LCS programme clinical observation tracking systems'
     tests:
-    - not_null
-  - name: person_id
-    description: Unique identifier for the person
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the observation
-  - name: mapped_concept_code
-    description: Mapped concept code for the observation
-  - name: mapped_concept_display
-    description: Display term for the mapped concept
-  - name: cluster_id
-    description: Cluster ID for the observation (AF, exclusions, etc.)
-  - name: cluster_description
-    description: Description of the cluster
-  - name: result_value
-    description: Numeric result value for observations, if applicable
-  - name: result_unit_display
-    description: Display term for the result unit
-  - name: result_text
-    description: Text result for observations, if applicable
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER

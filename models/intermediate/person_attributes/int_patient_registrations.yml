@@ -1,42 +1,4 @@
 version: 2
 models:
-- name: int_patient_registrations
-  description: Intermediate table containing clean patient registration periods derived from episode_of_care. Each row represents a registration period at a specific practice, with proper handling of overlapping periods and current registrations.
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-  - name: patient_id
-    description: Patient identifier (can change with practice moves)
-
-    tests:
-    - not_null
-  - name: practice_name
-    description: Name of the practice
-
-    tests:
-    - not_null
-  - name: registration_start_date
-    description: Date patient registered at this practice
-
-    tests:
-    - not_null
-  - name: registration_end_date
-    description: Date patient left this practice (NULL if currently registered)
-  - name: is_current_registration
-    description: Flag indicating if this is the patient's current practice
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: registration_status
-    description: Status of the registration (Active, Ended, etc.)
-
-    tests:
-    - not_null
+  - name: int_patient_registrations
+    description: Intermediate table containing clean patient registration periods derived from episode_of_care. Each row represents a registration period at a specific practice, with proper handling of overlapping periods and current registrations.

@@ -1,40 +1,39 @@
 version: 2
 models:
-- name: int_ltc_lcs_ckd_observations
-  description: 'Intermediate: LTC LCS CKD Observations - All chronic kidney disease-relevant observations for Long Term Conditions case finding measures.
+  - name: int_ltc_lcs_ckd_observations
+    description: 'Intermediate: LTC LCS CKD Observations - All chronic kidney disease-relevant observations for Long Term Conditions case finding measures.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Tracks comprehensive CKD-related clinical observation data for case finding algorithms
+      • Tracks comprehensive CKD-related clinical observation data for case finding algorithms
 
-• Supports identification of patients with undiagnosed chronic kidney disease through laboratory and clinical observations
+      • Supports identification of patients with undiagnosed chronic kidney disease through laboratory and clinical observations
 
-• Enables observation-based risk stratification for CKD case finding measures CKD_61 and CKD_62
+      • Enables observation-based risk stratification for CKD case finding measures CKD_61 and CKD_62
 
-• Provides foundation data for CKD case finding indicators including consecutive low eGFR readings
-
-
-Data Granularity:
-
-• One row per clinical observation for CKD-relevant observations
-
-• Includes urine ACR testing, eGFR testing, acute kidney injury, BPH/gout, haematuria, proteinuria
-
-• Covers medication-related observations: lithium, sulfasalazine, tacrolimus
-
-• Sourced from LTC_LCS programme observation clusters
+      • Provides foundation data for CKD case finding indicators including consecutive low eGFR readings
 
 
-Key Features:
+      Data Granularity:
 
-• Cluster IDs: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS
+      • One row per clinical observation for CKD-relevant observations
 
-• Supports CKD_61 (consecutive low eGFR) and CKD_62 (elevated ACR) case finding measures
+      • Includes urine ACR testing, eGFR testing, acute kidney injury, BPH/gout, haematuria, proteinuria
 
-• Comprehensive laboratory and clinical observation analysis for undiagnosed CKD detection
-• Integration with LTC_LCS programme clinical observation tracking systems'
+      • Covers medication-related observations: lithium, sulfasalazine, tacrolimus
 
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS
+      • Sourced from LTC_LCS programme observation clusters
+
+
+      Key Features:
+
+      • Cluster IDs: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS
+
+      • Supports CKD_61 (consecutive low eGFR) and CKD_62 (elevated ACR) case finding measures
+
+      • Comprehensive laboratory and clinical observation analysis for undiagnosed CKD detection • Integration with LTC_LCS programme clinical observation tracking systems'
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: UACR_TESTING, EGFR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS

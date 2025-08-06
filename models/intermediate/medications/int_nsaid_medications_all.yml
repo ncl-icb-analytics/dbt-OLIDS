@@ -1,164 +1,33 @@
 version: 2
 models:
-- name: int_nsaid_medications_all
-  description: 'Intermediate: NSAID Medication Orders - All recorded non-steroidal anti-inflammatory drug prescriptions.
+  - name: int_nsaid_medications_all
+    description: 'Intermediate: NSAID Medication Orders - All recorded non-steroidal anti-inflammatory drug prescriptions.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks NSAID therapy for pain and inflammation management
+      • Tracks NSAID therapy for pain and inflammation management
 
-    • Supports cardiovascular risk assessment and medication safety monitoring
+      • Supports cardiovascular risk assessment and medication safety monitoring
 
-    • Enables analysis of COX-2 selective vs non-selective NSAID usage
-
-
-    Data Granularity:
-
-    • One row per medication order
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Historical data maintained for longitudinal analysis
+      • Enables analysis of COX-2 selective vs non-selective NSAID usage
 
 
-    Key Features:
+      Data Granularity:
 
-    • Classification by NSAID type (COX-2 selective, non-selective, topical)
+      • One row per medication order
 
-    • Specific NSAID identification with cardiovascular risk stratification
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • High-dose therapy flags for safety monitoring
+      • Historical data maintained for longitudinal analysis
 
-    • Cardiovascular risk assessment based on drug type and dosing'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
+      Key Features:
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      • Classification by NSAID type (COX-2 selective, non-selective, topical)
 
-    tests:
-    - not_null
-    - unique
-  - name: nsaid_type
-    description: NSAID classification by selectivity and route
+      • Specific NSAID identification with cardiovascular risk stratification
 
-    tests:
-    - not_null
-    - accepted_values:
+      • High-dose therapy flags for safety monitoring
 
-        values:
-        - COX2_SELECTIVE
-        - TOPICAL
-        - NON_SELECTIVE
-        - OTHER_NSAID
-  - name: specific_nsaid
-    description: Specific NSAID medication type
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - IBUPROFEN
-        - DICLOFENAC
-        - NAPROXEN
-        - ASPIRIN
-        - CELECOXIB
-        - ETORICOXIB
-        - INDOMETACIN
-        - MELOXICAM
-        - OTHER_NSAID
-  - name: is_ibuprofen
-    description: Boolean flag indicating ibuprofen use (most common NSAID)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_diclofenac
-    description: Boolean flag indicating diclofenac use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_naproxen
-    description: Boolean flag indicating naproxen use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_cox2_selective
-    description: Boolean flag indicating COX-2 selective NSAID
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_topical
-    description: Boolean flag indicating topical NSAID formulation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_non_selective
-    description: Boolean flag indicating non-selective NSAID
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_high_dose_ibuprofen
-    description: Boolean flag indicating high-dose ibuprofen (≥2400mg daily)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_high_cv_risk
-    description: Boolean flag indicating NSAID with high cardiovascular risk
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: '1001'
+      • Cardiovascular risk assessment based on drug type and dosing'

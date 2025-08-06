@@ -1,133 +1,33 @@
 version: 2
 models:
-- name: int_lithium_medications_all
-  description: 'Intermediate: Lithium Medication Orders - All recorded lithium prescriptions for bipolar disorder.
+  - name: int_lithium_medications_all
+    description: 'Intermediate: Lithium Medication Orders - All recorded lithium prescriptions for bipolar disorder.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks lithium therapy for bipolar disorder and severe depression management
+      • Tracks lithium therapy for bipolar disorder and severe depression management
 
-    • Supports therapeutic drug monitoring and medication safety processes
+      • Supports therapeutic drug monitoring and medication safety processes
 
-    • Enables analysis of brand consistency and bioequivalence considerations
-
-
-    Data Granularity:
-
-    • One row per medication order
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Historical data maintained for longitudinal analysis
+      • Enables analysis of brand consistency and bioequivalence considerations
 
 
-    Key Features:
+      Data Granularity:
 
-    • Classification by lithium preparation type (carbonate vs citrate)
+      • One row per medication order
 
-    • Brand identification for bioequivalence monitoring (Priadel, Camcolit)
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • Dose categorisation for therapeutic range assessment
+      • Historical data maintained for longitudinal analysis
 
-    • Mandatory monitoring requirement flags for patient safety'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
+      Key Features:
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      • Classification by lithium preparation type (carbonate vs citrate)
 
-    tests:
-    - not_null
-    - unique
-  - name: lithium_type
-    description: Lithium preparation type (carbonate vs citrate)
+      • Brand identification for bioequivalence monitoring (Priadel, Camcolit)
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Dose categorisation for therapeutic range assessment
 
-        values:
-        - LITHIUM_CARBONATE
-        - LITHIUM_CITRATE
-        - OTHER_LITHIUM
-  - name: lithium_brand
-    description: Lithium brand name (critical for bioequivalence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - PRIADEL
-        - CAMCOLIT
-        - LISKONUM
-        - LI_LIQUID
-        - OTHER_BRAND
-  - name: is_lithium_carbonate
-    description: Boolean flag indicating lithium carbonate preparation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_priadel
-    description: Boolean flag indicating Priadel brand (most common)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: lithium_dose_category
-    description: Lithium dose classification for therapeutic monitoring
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - STANDARD_DOSE
-        - HIGH_DOSE
-        - LOW_DOSE
-        - UNKNOWN_DOSE
-  - name: formulation_type
-    description: Lithium formulation type
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - TABLET
-        - CAPSULE
-        - LIQUID
-        - UNKNOWN_FORMULATION
-  - name: requires_monitoring
-    description: Boolean flag indicating monitoring requirement (always true for lithium)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: '040203'
+      • Mandatory monitoring requirement flags for patient safety'

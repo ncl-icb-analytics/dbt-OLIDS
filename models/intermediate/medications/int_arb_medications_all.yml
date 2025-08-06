@@ -1,131 +1,31 @@
 version: 2
 models:
-- name: int_arb_medications_all
-  description: 'Intermediate: ARB Medications - All recorded angiotensin receptor blocker prescriptions.
+  - name: int_arb_medications_all
+    description: 'Intermediate: ARB Medications - All recorded angiotensin receptor blocker prescriptions.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Supports cardiovascular and renal protection monitoring
+      • Supports cardiovascular and renal protection monitoring
 
-• Enables blood pressure management pathway tracking
+      • Enables blood pressure management pathway tracking
 
-• Facilitates ARB therapy analysis as ACE inhibitor alternative
-
-
-Data Granularity:
-
-• One row per medication order
-
-• Includes all patients with ARB prescriptions
-
-• Historical data spanning entire medication history
+      • Facilitates ARB therapy analysis as ACE inhibitor alternative
 
 
-Key Features:
+      Data Granularity:
 
-• Specific ARB type classification (losartan, valsartan, candesartan, etc.)
+      • One row per medication order
 
-• Evidence-based cardiovascular disease therapy flags
+      • Includes all patients with ARB prescriptions
 
-• Clinical trial evidence mapping for guideline adherence
-• Therapy monitoring indicators across multiple timeframes'
+      • Historical data spanning entire medication history
 
-  columns:
-  - name: person_id
-    description: Unique person identifier across the HEI system
 
-    tests:
-    - not_null
-  - name: medication_order_id
-    description: Unique identifier for the medication order record
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: arb_type
-    description: Specific ARB medication type
+      • Specific ARB type classification (losartan, valsartan, candesartan, etc.)
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Evidence-based cardiovascular disease therapy flags
 
-        values:
-        - AZILSARTAN
-        - CANDESARTAN
-        - EPROSARTAN
-        - IRBESARTAN
-        - LOSARTAN
-        - OLMESARTAN
-        - TELMISARTAN
-        - VALSARTAN
-        - OTHER_ARB
-  - name: is_evidence_based_cvd
-    description: Boolean flag indicating evidence-based ARB for cardiovascular disease (losartan, valsartan, candesartan, telmisartan)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_losartan
-    description: Boolean flag indicating losartan use (LIFE trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_valsartan
-    description: Boolean flag indicating valsartan use (Val-HeFT trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_candesartan
-    description: Boolean flag indicating candesartan use (CHARM trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_irbesartan
-    description: Boolean flag indicating irbesartan use
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_telmisartan
-    description: Boolean flag indicating telmisartan use (ONTARGET trial evidence)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - person_id
-      - medication_order_id
-  - bnf_codes_exist:
-      bnf_codes: '02050502'
+      • Clinical trial evidence mapping for guideline adherence • Therapy monitoring indicators across multiple timeframes'

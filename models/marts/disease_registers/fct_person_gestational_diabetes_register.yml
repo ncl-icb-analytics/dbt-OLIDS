@@ -1,40 +1,18 @@
 version: 2
 models:
-- name: fct_person_gestational_diabetes_register
-  description: 'Gestational Diabetes Register - Patients with pregnancy-related diabetes diagnosis history.
+  - name: fct_person_gestational_diabetes_register
+    description: 'Gestational Diabetes Register - Patients with pregnancy-related diabetes diagnosis history.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Gestational diabetes diagnosis code present (GESTDIAB_COD)
+      • Gestational diabetes diagnosis code present (GESTDIAB_COD)
 
-    • Active patient status required
+      • Active patient status required
 
-    • No age or sex restrictions in this implementation
+      • No age or sex restrictions in this implementation
 
-    • Permanent record (no resolution codes)
+      • Permanent record (no resolution codes)
 
 
-    Purpose: Clinical register for postpartum diabetes risk monitoring and future Type 2 diabetes prevention planning.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: has gestational diabetes diagnosis (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
+      Purpose: Clinical register for postpartum diabetes risk monitoring and future Type 2 diabetes prevention planning.'

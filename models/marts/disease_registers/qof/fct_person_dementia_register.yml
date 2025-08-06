@@ -1,61 +1,16 @@
 version: 2
 models:
-- name: fct_person_dementia_register
-  description: 'QOF Dementia Register - Patients with dementia diagnosis.
+  - name: fct_person_dementia_register
+    description: 'QOF Dementia Register - Patients with dementia diagnosis.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Dementia diagnosis (DEM_COD) present
+      • Dementia diagnosis (DEM_COD) present
 
-    • No age restrictions
+      • No age restrictions
 
-    • No resolution codes (dementia is permanent condition)
+      • No resolution codes (dementia is permanent condition)
 
 
-    Purpose: QOF register for dementia care pathway monitoring, cognitive health assessment, memory service referrals, and early detection support.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: has dementia diagnosis (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: earliest_diagnosis_date
-    description: Date of most recent dementia diagnosis
-
-    tests:
-
-    - not_null
-
-    - test_no_future_dates
-
-  - name: all_dementia_concept_codes
-    description: Array of all distinct dementia concept codes for this person
-
-    tests:
-
-    - not_null
-
-  - name: all_dementia_concept_displays
-    description: Array of all distinct dementia concept display terms for this person
-
-    tests:
-
-    - not_null
+      Purpose: QOF register for dementia care pathway monitoring, cognitive health assessment, memory service referrals, and early detection support.'

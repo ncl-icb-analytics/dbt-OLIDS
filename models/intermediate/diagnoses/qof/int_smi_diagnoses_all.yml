@@ -1,91 +1,39 @@
 version: 2
 models:
-- name: int_smi_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: MH_COD, MHREM_COD
-  description: 'Intermediate: SMI Diagnoses All - Complete history of all serious mental illness diagnosis and remission observations for QOF register management.
+  - name: int_smi_diagnoses_all
+    description: 'Intermediate: SMI Diagnoses All - Complete history of all serious mental illness diagnosis and remission observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF serious mental illness register data collection and monitoring
+      • QOF serious mental illness register data collection and monitoring
 
-    • Mental health care pathway coordination for schizophrenia, bipolar disorder, and psychoses
+      • Mental health care pathway coordination for schizophrenia, bipolar disorder, and psychoses
 
-    • SMI treatment response monitoring and clinical decision support
+      • SMI treatment response monitoring and clinical decision support
 
-    • Remission status tracking for improved mental health outcomes
-
-
-    Data Granularity:
-
-    • One row per serious mental illness diagnosis or remission observation
-
-    • Uses MH_COD (diagnosis) and MHREM_COD (remission) QOF clusters
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Remission status tracking for improved mental health outcomes
 
 
-    Key Features:
+      Data Granularity:
 
-    • Diagnosis and remission code classification for register eligibility
+      • One row per serious mental illness diagnosis or remission observation
 
-    • Age restrictions typically ≥18 years applied in downstream processing
+      • Uses MH_COD (diagnosis) and MHREM_COD (remission) QOF clusters
 
-    • Critical for serious mental illness care pathway optimisation
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for SMI quality improvement and treatment monitoring'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Diagnosis and remission code classification for register eligibility
+
+      • Age restrictions typically ≥18 years applied in downstream processing
+
+      • Critical for serious mental illness care pathway optimisation
+
+      • Essential input for SMI quality improvement and treatment monitoring'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the mental health diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for mental health diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the mental health diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (MH_COD, MHREM_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - MH_COD
-        - MHREM_COD
-  - name: earliest_mh_diagnosis_date
-    description: Earliest mental health diagnosis date for this person
-  - name: latest_mh_diagnosis_date
-    description: Latest mental health diagnosis date for this person
-  - name: earliest_remission_date
-    description: Earliest mental health remission date for this person
-  - name: latest_remission_date
-    description: Latest mental health remission date for this person
-  - name: all_mh_diagnosis_concept_codes
-    description: Array of all mental health diagnosis concept codes for this person
-  - name: all_mh_diagnosis_concept_displays
-    description: Array of all mental health diagnosis concept displays for this person
-  - name: all_remission_concept_codes
-    description: Array of all mental health remission concept codes for this person
-  - name: all_remission_concept_displays
-    description: Array of all mental health remission concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: MH_COD, MHREM_COD

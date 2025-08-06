@@ -1,80 +1,37 @@
 version: 2
 models:
-- name: int_bmi_qof
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: BMI30_COD, BMIVAL_COD
-  description: 'Intermediate: BMI QOF Observations - BMI measurements with QOF-specific obesity register logic.
+  - name: int_bmi_qof
+    description: 'Intermediate: BMI QOF Observations - BMI measurements with QOF-specific obesity register logic.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks BMI measurements for QOF obesity register eligibility and reporting
+      • Tracks BMI measurements for QOF obesity register eligibility and reporting
 
-    • Supports obesity programme management with ethnicity-adjusted thresholds
+      • Supports obesity programme management with ethnicity-adjusted thresholds
 
-    • Enables QOF indicator monitoring and obesity prevalence analysis
-
-
-    Data Granularity:
-
-    • One row per person with latest BMI observation and aggregated QOF flags
-
-    • Combines numeric BMI values (BMIVAL_COD) and BMI30+ codes (BMI30_COD)
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Enables QOF indicator monitoring and obesity prevalence analysis
 
 
-    Key Features:
+      Data Granularity:
 
-    • QOF-specific BMI thresholds (25+, 27.5+, 30+ for different populations)
+      • One row per person with latest BMI observation and aggregated QOF flags
 
-    • Ever-flags for obesity register inclusion criteria
+      • Combines numeric BMI values (BMIVAL_COD) and BMI30+ codes (BMI30_COD)
 
-    • Latest valid BMI with person-level aggregation
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Comprehensive concept tracking for audit and quality assurance'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • QOF-specific BMI thresholds (25+, 27.5+, 30+ for different populations)
+
+      • Ever-flags for obesity register inclusion criteria
+
+      • Latest valid BMI with person-level aggregation
+
+      • Comprehensive concept tracking for audit and quality assurance'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the BMI measurement
-
-    tests:
-    - not_null
-  - name: bmi_value
-    description: BMI value in kg/m²
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 5
-        max_value: 150
-        severity: warn
-  - name: original_result_value
-    description: Original BMI value as recorded (NULL for BMI30_COD codes which are descriptive)
-
-    tests:
-    - not_null:
-
-        config:
-          where: source_cluster_id != 'BMI30_COD'
-  - name: is_valid_bmi
-    description: Flag indicating if BMI is within valid range (10-80)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: BMI30_COD, BMIVAL_COD

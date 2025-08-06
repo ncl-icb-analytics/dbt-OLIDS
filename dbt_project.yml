@@ -35,11 +35,6 @@ models:
       +materialized: view
       +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
       +post-hook: "{{ add_model_comment() }}"
-      # Models reading from Data_Store_OLIDS_UAT
-      olids:
-        +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"  # Where to create the views
-        +grants:
-          reference_usage: ["{{ env_var('SNOWFLAKE_SOURCE_DATABASE', 'Data_Store_OLIDS_UAT') }}"]  # Database we need to read from
     intermediate:
       +materialized: table
       +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
@@ -49,7 +44,3 @@ models:
       +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
       +post-hook: "{{ add_model_comment() }}"
 
-seeds:
-  snowflake_hei_migration:
-    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-    +schema: REFERENCE

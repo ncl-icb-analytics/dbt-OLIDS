@@ -1,78 +1,29 @@
 version: 2
 models:
-- name: int_pregnancy_absence_risk_all
-  description: 'Intermediate: Pregnancy Absence Risk All - Complete history of all observations indicating permanent absence of pregnancy risk.
+  - name: int_pregnancy_absence_risk_all
+    description: 'Intermediate: Pregnancy Absence Risk All - Complete history of all observations indicating permanent absence of pregnancy risk.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Valproate medication safety monitoring and pregnancy risk assessment
+      • Valproate medication safety monitoring and pregnancy risk assessment
 
-• Clinical decision support for contraindicated medications during pregnancy
+      • Clinical decision support for contraindicated medications during pregnancy
 
-• Safety-critical pharmaceutical prescribing and monitoring
-
-
-Data Granularity:
-
-• One row per pregnancy absence risk observation
-
-• Uses PREGRISK category codes from valproate programme
-
-• Includes all patients regardless of status for comprehensive safety monitoring
+      • Safety-critical pharmaceutical prescribing and monitoring
 
 
-Key Features:
+      Data Granularity:
 
-• Permanent pregnancy risk absence indicators for medication safety
+      • One row per pregnancy absence risk observation
 
-• Critical for teratogenic medication prescribing decisions
-• Essential for clinical safety and pharmaceutical risk management'
+      • Uses PREGRISK category codes from valproate programme
 
-  config:
-    materialized: table
+      • Includes all patients regardless of status for comprehensive safety monitoring
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
 
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: clinical_effective_date
-    description: Date when observation was clinically effective
+      Key Features:
 
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for pregnancy risk absence observation
+      • Permanent pregnancy risk absence indicators for medication safety
 
-    tests:
-    - not_null
-  - name: concept_display
-    description: Human-readable display term for concept code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster ID from mapped concepts
-
-    tests:
-    - not_null
-  - name: code_category
-    description: Code category from valproate programme (always 'PREGRISK')
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - PREGRISK
-  - name: lookback_years_offset
-    description: Lookback period in years for code validity (NULL = all historical)
-  - name: date_recorded
-    description: Date when observation was recorded in system
-  - name: lds_datetime_data_acquired
-    description: LDS processing timestamp
+      • Critical for teratogenic medication prescribing decisions • Essential for clinical safety and pharmaceutical risk management'

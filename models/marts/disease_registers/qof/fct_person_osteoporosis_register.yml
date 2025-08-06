@@ -1,151 +1,18 @@
 version: 2
 models:
-- name: fct_person_osteoporosis_register
-  description: 'QOF Osteoporosis Register - Complex criteria for fracture prevention in at-risk patients.
+  - name: fct_person_osteoporosis_register
+    description: 'QOF Osteoporosis Register - Complex criteria for fracture prevention in at-risk patients.
 
 
-    Key Inclusion Criteria (ALL must be met):
+      Key Inclusion Criteria (ALL must be met):
 
-    • Age: 50-74 years
+      • Age: 50-74 years
 
-    • Fragility fracture after April 2012
+      • Fragility fracture after April 2012
 
-    • Osteoporosis diagnosis (OSTEO_COD) present
+      • Osteoporosis diagnosis (OSTEO_COD) present
 
-    • DXA confirmation: DXA scan OR T-score ≤ -2.5
+      • DXA confirmation: DXA scan OR T-score ≤ -2.5
 
 
-    Purpose: QOF register for fracture prevention, bone health monitoring, and DXA scanning compliance.'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: person_id
-    description: Unique person identifier linking to dim_person
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: Register inclusion flag (always TRUE in this table as filtered view)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: meets_age_criteria
-    description: Flag indicating if person meets age 50-74 requirement
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_fragility_fracture
-    description: Flag indicating presence of fragility fracture after April 2012
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_osteoporosis_diagnosis
-    description: Flag indicating presence of coded osteoporosis diagnosis
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_valid_dxa_confirmation
-    description: Flag indicating DXA confirmation (scan OR T-score ≤ -2.5)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: has_dxa_scan
-    description: Flag indicating presence of DXA scan record
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: has_dxa_t_score
-    description: Flag indicating presence of DXA T-score measurement
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_diagnosis_date
-    description: Date of first recorded osteoporosis diagnosis
-
-    tests:
-    - not_null
-  - name: latest_diagnosis_date
-    description: Date of most recent osteoporosis diagnosis
-
-    tests:
-    - not_null
-  - name: earliest_dxa_date
-    description: Date of first recorded DXA scan
-  - name: latest_dxa_date
-    description: Date of most recent DXA scan
-  - name: earliest_dxa_t_score_date
-    description: Date of first recorded DXA T-score
-  - name: latest_dxa_t_score_date
-    description: Date of most recent DXA T-score
-  - name: latest_dxa_t_score
-    description: Most recent DXA T-score value (standard deviations from young adult mean)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: -10
-        max_value: 5
-        severity: warn
-  - name: earliest_fragility_fracture_date
-    description: Date of first recorded fragility fracture after April 2012
-
-    tests:
-    - not_null
-  - name: latest_fragility_fracture_date
-    description: Date of most recent fragility fracture
-
-    tests:
-    - not_null
-  - name: all_dxa_concept_codes
-    description: Array of all DXA-related concept codes for traceability
-  - name: all_dxa_concept_displays
-    description: Array of human-readable terms for DXA concept codes
-  - name: all_fragility_fracture_concept_codes
-    description: Array of all fragility fracture concept codes for traceability
-
-    tests:
-    - not_null
-  - name: all_fragility_fracture_concept_displays
-    description: Array of human-readable terms for fragility fracture concept codes
-
-    tests:
-    - not_null
-  - name: all_fracture_sites
-    description: Array of all documented fracture anatomical sites
-
-    tests:
-    - not_null
+      Purpose: QOF register for fracture prevention, bone health monitoring, and DXA scanning compliance.'

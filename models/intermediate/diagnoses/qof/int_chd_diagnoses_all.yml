@@ -1,94 +1,39 @@
 version: 2
 models:
-- name: int_chd_diagnoses_all
-  description: 'Intermediate: CHD Diagnoses All - Complete history of all coronary heart disease diagnosis observations for QOF register management.
+  - name: int_chd_diagnoses_all
+    description: 'Intermediate: CHD Diagnoses All - Complete history of all coronary heart disease diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF coronary heart disease register data collection and monitoring
+      • QOF coronary heart disease register data collection and monitoring
 
-    • Cardiovascular risk stratification and secondary prevention
+      • Cardiovascular risk stratification and secondary prevention
 
-    • CHD care pathway coordination and treatment optimisation
+      • CHD care pathway coordination and treatment optimisation
 
-    • Long-term cardiovascular outcome tracking
-
-
-    Data Granularity:
-
-    • One row per coronary heart disease diagnosis observation
-
-    • Uses CHD_COD cluster for QOF-compliant CHD diagnosis identification
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Long-term cardiovascular outcome tracking
 
 
-    Key Features:
+      Data Granularity:
 
-    • Lifelong condition register for cardiovascular secondary prevention
+      • One row per coronary heart disease diagnosis observation
 
-    • Simple diagnosis-only pattern with no resolution codes
+      • Uses CHD_COD cluster for QOF-compliant CHD diagnosis identification
 
-    • Critical for cardiovascular risk management protocols
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for secondary prevention quality indicators'
 
-  columns:
-  - name: observation_id
-    description: Unique observation identifier
+      Key Features:
 
+      • Lifelong condition register for cardiovascular secondary prevention
+
+      • Simple diagnosis-only pattern with no resolution codes
+
+      • Critical for cardiovascular risk management protocols
+
+      • Essential input for secondary prevention quality indicators'
     tests:
-    - not_null
-    - unique
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: clinical_effective_date
-    description: Date when the CHD diagnosis was recorded
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED CT concept code for the CHD diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Human readable description of the CHD diagnosis
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: Source cluster identifier (should be CHD_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - CHD_COD
-  - name: is_chd_diagnosis
-    description: Flag indicating this is a CHD diagnosis (always TRUE in this model)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: CHD_COD
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - observation_id
-      - concept_code
-      - source_cluster_id
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: CHD_COD

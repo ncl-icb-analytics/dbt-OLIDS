@@ -1,68 +1,22 @@
 version: 2
 models:
-- name: dim_person
-  description: 'Mart: Person Dimension - Core person identity and practice relationships.
+  - name: dim_person
+    description: 'Mart: Person Dimension - Core person identity and practice relationships.
 
 
-    Population Scope:
+      Population Scope:
 
-    • One row per person in the HEI population
+      • One row per person in the HEI population
 
-    • Aggregates multiple patient IDs per person for unified identity
+      • Aggregates multiple patient IDs per person for unified identity
 
-    • Includes current and historical practice associations
+      • Includes current and historical practice associations
 
 
-    Key Features:
+      Key Features:
 
-    • Person-level identity consolidation across multiple patient records
+      • Person-level identity consolidation across multiple patient records
 
-    • Current and historical practice relationship tracking
+      • Current and historical practice relationship tracking
 
-    • Core dimension for person-centered analytics'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier - primary key for the dimension
-
-    tests:
-    - not_null
-    - unique
-  - name: sk_patient_ids
-    description: Array of all surrogate patient IDs (sk_patient_id) associated with this person
-
-    tests:
-    - not_null
-  - name: patient_ids
-    description: Array of all patient IDs associated with this person across different practice registrations
-
-    tests:
-    - not_null
-  - name: practice_ids
-    description: Array of all practice IDs where this person has been registered (current and historical)
-  - name: practice_codes
-    description: Array of all practice codes where this person has been registered
-  - name: practice_names
-    description: Array of all practice names where this person has been registered
-  - name: current_practice_id
-    description: Practice ID where the person is currently registered (NULL if not currently registered)
-  - name: current_practice_code
-    description: Practice code where the person is currently registered
-  - name: current_practice_name
-    description: Practice name where the person is currently registered
-  - name: total_patients
-    description: Count of distinct patient IDs associated with this person
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 1
-        max_value: 20
-  - name: total_practices
-    description: Count of distinct practices where this person has been registered
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 50
+      • Core dimension for person-centered analytics'

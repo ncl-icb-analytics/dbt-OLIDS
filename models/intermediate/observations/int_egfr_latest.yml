@@ -1,78 +1,33 @@
 version: 2
 models:
-- name: int_egfr_latest
-  description: 'Intermediate: Latest eGFR Observations - Most recent valid eGFR measurement per person with CKD staging.
+  - name: int_egfr_latest
+    description: 'Intermediate: Latest eGFR Observations - Most recent valid eGFR measurement per person with CKD staging.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current kidney function status based on estimated glomerular filtration rate
+      • Provides current kidney function status based on estimated glomerular filtration rate
 
-    • Supports CKD monitoring and clinical decision-making
+      • Supports CKD monitoring and clinical decision-making
 
-    • Enables current CKD stage assessment and progression tracking
-
-
-    Data Granularity:
-
-    • One row per person with their most recent valid eGFR
-
-    • Includes only patients with valid eGFR measurements
-
-    • Filtered to exclude implausible values for clinical accuracy
+      • Enables current CKD stage assessment and progression tracking
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest valid eGFR identification using comprehensive filtering
+      • One row per person with their most recent valid eGFR
 
-    • CKD stage classification (stages 1-5) for clinical management
+      • Includes only patients with valid eGFR measurements
 
-    • CKD indicator flags for immediate clinical attention
+      • Filtered to exclude implausible values for clinical accuracy
 
-    • Complete observation metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the eGFR measurement
+      • Latest valid eGFR identification using comprehensive filtering
 
-    tests:
-    - not_null
-  - name: egfr_value
-    description: eGFR value in mL/min/1.73m² (valid range only)
+      • CKD stage classification (stages 1-5) for clinical management
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 1
-        max_value: 200
-  - name: ckd_stage
-    description: CKD stage classification (excludes 'Invalid')
+      • CKD indicator flags for immediate clinical attention
 
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Normal/High (≥90)
-        - Mild decrease (60-89)
-        - CKD Stage 3a (45-59)
-        - CKD Stage 3b (30-44)
-        - CKD Stage 4 (15-29)
-        - CKD Stage 5 (<15)
-  - name: is_ckd_indicator
-    description: Flag indicating eGFR < 60 (suggests CKD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Complete observation metadata for clinical context'

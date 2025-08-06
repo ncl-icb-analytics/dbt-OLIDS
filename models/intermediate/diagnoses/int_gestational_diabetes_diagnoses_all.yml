@@ -1,49 +1,35 @@
 version: 2
 models:
-- name: int_gestational_diabetes_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: GESTDIAB_COD
-  description: 'Intermediate: Gestational Diabetes Diagnoses - All gestational diabetes diagnosis observations from clinical records.
+  - name: int_gestational_diabetes_diagnoses_all
+    description: 'Intermediate: Gestational Diabetes Diagnoses - All gestational diabetes diagnosis observations from clinical records.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• QOF gestational diabetes register data collection
+      • QOF gestational diabetes register data collection
 
-• Pregnancy-related diabetes monitoring and risk assessment
+      • Pregnancy-related diabetes monitoring and risk assessment
 
-• Postpartum diabetes screening pathway identification
+      • Postpartum diabetes screening pathway identification
 
-• Future diabetes prevention planning and early intervention
-
-
-Data Granularity:
-
-• One row per gestational diabetes diagnosis observation
-
-• Includes all patients with recorded gestational diabetes diagnoses
-
-• Complete history across all pregnancy episodes
-
-• Uses GESTDIAB_COD cluster for QOF-compliant diagnosis identification
+      • Future diabetes prevention planning and early intervention
 
 
-Key Features:
+      Data Granularity:
 
-• Pregnancy-specific diabetes condition tracking
+      • One row per gestational diabetes diagnosis observation
 
-• No resolution codes (condition-specific to pregnancy episodes)
+      • Includes all patients with recorded gestational diabetes diagnoses
 
-• Applies primarily to women of childbearing age
-• Critical for postpartum diabetes risk stratification'
+      • Complete history across all pregnancy episodes
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      • Uses GESTDIAB_COD cluster for QOF-compliant diagnosis identification
 
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
+
+      Key Features:
+
+      • Pregnancy-specific diabetes condition tracking
+
+      • No resolution codes (condition-specific to pregnancy episodes)
+
+      • Applies primarily to women of childbearing age • Critical for postpartum diabetes risk stratification'

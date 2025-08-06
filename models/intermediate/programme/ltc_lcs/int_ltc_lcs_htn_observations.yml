@@ -1,93 +1,41 @@
 version: 2
 models:
-- name: int_ltc_lcs_htn_observations
-  description: 'Intermediate: LTC LCS HTN Observations - Collects all hypertension-relevant observations for Long Term Conditions case finding measures including blood pressure measurements.
+  - name: int_ltc_lcs_htn_observations
+    description: 'Intermediate: LTC LCS HTN Observations - Collects all hypertension-relevant observations for Long Term Conditions case finding measures including blood pressure measurements.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Gathers comprehensive hypertension-related clinical observation data for case finding algorithms
+      • Gathers comprehensive hypertension-related clinical observation data for case finding algorithms
 
-    • Supports identification of patients with undiagnosed hypertension through blood pressure measurements
+      • Supports identification of patients with undiagnosed hypertension through blood pressure measurements
 
-    • Enables observation-based risk stratification using clinic, home, and ABPM blood pressure readings
+      • Enables observation-based risk stratification using clinic, home, and ABPM blood pressure readings
 
-    • Provides foundation data for hypertension case finding indicators with proper BP measurement pairing
-
-
-    Data Granularity:
-
-    • One row per clinical observation for hypertension-relevant observations
-
-    • Covers clinic, home, and ABPM blood pressure events with systolic/diastolic pairing
-
-    • Includes other hypertension-related observations: eGFR, BMI, BSA, cardiovascular complications
-
-    • Sourced from int_blood_pressure_all and LTC_LCS programme observation clusters
+      • Provides foundation data for hypertension case finding indicators with proper BP measurement pairing
 
 
-    Key Features:
+      Data Granularity:
 
-    • Cluster IDs: HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM, HYPERTENSION_EGFR, HYPERTENSION_BMI, HYPERTENSION_BSA, HYPERTENSION_MYOCARDIAL, HYPERTENSION_CEREBRAL, HYPERTENSION_CLAUDICATION, HYPERTENSION_DIABETES
+      • One row per clinical observation for hypertension-relevant observations
 
-    • Proper blood pressure measurement pairing logic with observation type classification
+      • Covers clinic, home, and ABPM blood pressure events with systolic/diastolic pairing
 
-    • Comprehensive hypertension risk factor and diagnostic observation analysis
+      • Includes other hypertension-related observations: eGFR, BMI, BSA, cardiovascular complications
 
-    • Integration with existing blood pressure intermediate model and LTC_LCS observation clusters'
+      • Sourced from int_blood_pressure_all and LTC_LCS programme observation clusters
 
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: HYPERTENSION_EGFR,HYPERTENSION_BMI,HYPERTENSION_BSA,HYPERTENSION_MYOCARDIAL,HYPERTENSION_CEREBRAL,HYPERTENSION_CLAUDICATION,HYPERTENSION_DIABETES
 
-  columns:
-  - name: person_id
-    description: Unique identifier for the person
+      Key Features:
 
+      • Cluster IDs: HYPERTENSION_BP_CLINIC, HYPERTENSION_BP_HOME, HYPERTENSION_BP_ABPM, HYPERTENSION_EGFR, HYPERTENSION_BMI, HYPERTENSION_BSA, HYPERTENSION_MYOCARDIAL, HYPERTENSION_CEREBRAL, HYPERTENSION_CLAUDICATION, HYPERTENSION_DIABETES
+
+      • Proper blood pressure measurement pairing logic with observation type classification
+
+      • Comprehensive hypertension risk factor and diagnostic observation analysis
+
+      • Integration with existing blood pressure intermediate model and LTC_LCS observation clusters'
     tests:
-    - not_null
-  - name: cluster_id
-    description: Cluster identifier for the observation type
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - HYPERTENSION_BP_CLINIC
-        - HYPERTENSION_BP_HOME
-        - HYPERTENSION_BP_ABPM
-        - HYPERTENSION_EGFR
-        - HYPERTENSION_BMI
-        - HYPERTENSION_BSA
-        - HYPERTENSION_MYOCARDIAL
-        - HYPERTENSION_CEREBRAL
-        - HYPERTENSION_CLAUDICATION
-        - HYPERTENSION_DIABETES
-  - name: clinical_effective_date
-    description: Date when the observation was clinically effective
-
-    tests:
-    - not_null
-  - name: result_value
-    description: Numeric result value (for BP systolic/diastolic, eGFR, BMI measurements)
-  - name: mapped_concept_codes
-    description: Array of mapped concept codes for the observation
-  - name: mapped_concept_displays
-    description: Array of mapped concept display terms for the observation
-  - name: observation_type
-    description: 'Type of observation: BP_SYSTOLIC, BP_DIASTOLIC, or OTHER'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - BP_SYSTOLIC
-
-        - BP_DIASTOLIC
-
-        - OTHER
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: HYPERTENSION_EGFR,HYPERTENSION_BMI,HYPERTENSION_BSA,HYPERTENSION_MYOCARDIAL,HYPERTENSION_CEREBRAL,HYPERTENSION_CLAUDICATION,HYPERTENSION_DIABETES

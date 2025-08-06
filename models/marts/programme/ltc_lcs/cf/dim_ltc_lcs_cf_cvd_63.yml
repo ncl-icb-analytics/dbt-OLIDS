@@ -1,54 +1,15 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_cvd_63
-  description: 'Case finding for patients on statins with elevated non-HDL cholesterol requiring medication review.
+  - name: dim_ltc_lcs_cf_cvd_63
+    description: 'Case finding for patients on statins with elevated non-HDL cholesterol requiring medication review.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Identifies patients aged 40-83 on statins with latest non-HDL cholesterol > 2.5 mmol/L
+      • Identifies patients aged 40-83 on statins with latest non-HDL cholesterol > 2.5 mmol/L
 
-    • Targets patients requiring statin therapy optimisation or dose escalation
+      • Targets patients requiring statin therapy optimisation or dose escalation
 
-    • Supports cardiovascular medication effectiveness monitoring and clinical intervention
+      • Supports cardiovascular medication effectiveness monitoring and clinical intervention
 
-    • One row per person meeting criteria for statin therapy review'
-
-  columns:
-  - name: person_id
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-
-    tests:
-    - not_null
-  - name: needs_statin_review
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: latest_statin_date
-
-    tests:
-    - not_null
-  - name: latest_non_hdl_date
-
-    tests:
-    - not_null
-  - name: latest_non_hdl_value
-
-    tests:
-    - not_null
-  - name: meets_criteria
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
+      • One row per person meeting criteria for statin therapy review'

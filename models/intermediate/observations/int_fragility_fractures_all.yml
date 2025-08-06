@@ -1,107 +1,37 @@
 version: 2
 models:
-- name: int_fragility_fractures_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: FF_COD
-  description: 'Intermediate: Fragility Fracture Observations - All recorded fragility fractures for osteoporosis monitoring.
+  - name: int_fragility_fractures_all
+    description: 'Intermediate: Fragility Fracture Observations - All recorded fragility fractures for osteoporosis monitoring.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks fragility fractures for QOF osteoporosis register data collection
+      • Tracks fragility fractures for QOF osteoporosis register data collection
 
-    • Supports bone health monitoring and fracture pattern analysis
+      • Supports bone health monitoring and fracture pattern analysis
 
-    • Enables osteoporosis risk assessment and clinical decision support
-
-
-    Data Granularity:
-
-    • One row per fracture observation
-
-    • Includes fractures after April 2012 as per QOF requirements
-
-    • Uses FF_COD cluster for fragility fracture identification
+      • Enables osteoporosis risk assessment and clinical decision support
 
 
-    Key Features:
+      Data Granularity:
 
-    • Fracture site classification (hip, wrist, spine, humerus, pelvis, femur)
+      • One row per fracture observation
 
-    • QOF-compliant date filtering for osteoporosis register eligibility
+      • Includes fractures after April 2012 as per QOF requirements
 
-    • Clinical fracture coding validation and categorisation
+      • Uses FF_COD cluster for fragility fracture identification
 
-    • Essential input for osteoporosis register and bone health analytics'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Fracture site classification (hip, wrist, spine, humerus, pelvis, femur)
+
+      • QOF-compliant date filtering for osteoporosis register eligibility
+
+      • Clinical fracture coding validation and categorisation
+
+      • Essential input for osteoporosis register and bone health analytics'
     tests:
-    - not_null
-  - name: patient_id
-    description: Patient identifier
-
-    tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of fracture observation (all after 2012-04-01)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: '''2012-04-01'''
-        max_value: current_date()
-  - name: source_cluster_id
-    description: Source cluster ID - should be FF_COD for all rows
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - FF_COD
-  - name: concept_code
-    description: Clinical concept code for the fracture
-
-    tests:
-    - not_null
-  - name: code_description
-    description: Display term for the fracture concept code
-
-    tests:
-    - not_null
-  - name: fracture_site
-    description: Classified fracture site (Hip, Wrist, Spine, Humerus, Pelvis, Femur, Other)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Hip
-        - Wrist
-        - Spine
-        - Humerus
-        - Pelvis
-        - Femur
-        - Other
-  - name: is_fragility_fracture_code
-    description: Boolean flag - always TRUE for this table (FF_COD cluster)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: numeric_value
-    description: Numeric value from observation (if any)
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: FF_COD

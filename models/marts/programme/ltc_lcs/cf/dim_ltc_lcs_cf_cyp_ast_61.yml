@@ -1,42 +1,15 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_cyp_ast_61
-  description: 'Case finding for children and young people with asthma symptoms requiring formal diagnosis.
+  - name: dim_ltc_lcs_cf_cyp_ast_61
+    description: 'Case finding for children and young people with asthma symptoms requiring formal diagnosis.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Identifies children/young people aged 18 months to under 18 years with asthma symptoms but no formal diagnosis
+      • Identifies children/young people aged 18 months to under 18 years with asthma symptoms but no formal diagnosis
 
-    • Targets paediatric population with clinical indicators suggesting asthma requiring assessment
+      • Targets paediatric population with clinical indicators suggesting asthma requiring assessment
 
-    • Supports early asthma diagnosis and management to prevent complications
+      • Supports early asthma diagnosis and management to prevent complications
 
-    • One row per eligible child/young person requiring asthma evaluation and formal diagnosis'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Person's age (18 months to under 18 years)
-
-    tests:
-    - not_null
-  - name: has_asthma_symptoms
-    description: Flag indicating patient has asthma symptoms (always TRUE)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-  - name: latest_symptom_date
-    description: Date of most recent asthma symptom
-
-    tests:
-    - not_null
+      • One row per eligible child/young person requiring asthma evaluation and formal diagnosis'

@@ -1,283 +1,39 @@
 version: 2
 models:
-- name: fct_ltc_lcs_practice_summary
-  description: 'Fact: LTC LCS Practice Summary - Practice-level aggregation of case finding indicators optimised for PowerBI dashboards.
+  - name: fct_ltc_lcs_practice_summary
+    description: 'Fact: LTC LCS Practice Summary - Practice-level aggregation of case finding indicators optimised for PowerBI dashboards.
 
 
-    Population Scope:
+      Population Scope:
 
-    • One row per practice with case finding activity
+      • One row per practice with case finding activity
 
-    • Aggregates all LTC case finding indicators by practice
+      • Aggregates all LTC case finding indicators by practice
 
-    • Includes demographic breakdowns and population denominators
+      • Includes demographic breakdowns and population denominators
 
-    • Pre-calculated rates and percentages for dashboard performance
-
-
-    Key Features:
-
-    • Practice-level counts and rates for all 25+ case finding indicators
-
-    • Demographic stratification (age bands, ethnicity, deprivation quintiles)
-
-    • Population denominators for accurate rate calculations
-
-    • PowerBI-optimised structure for fast dashboard loading
-
-    • Practice comparison and league table support
+      • Pre-calculated rates and percentages for dashboard performance
 
 
-    Dashboard Use Cases:
+      Key Features:
 
-    • Practice performance league tables
+      • Practice-level counts and rates for all 25+ case finding indicators
 
-    • Geographic heat maps and practice comparisons
+      • Demographic stratification (age bands, ethnicity, deprivation quintiles)
 
-    • Indicator-specific practice benchmarking
+      • Population denominators for accurate rate calculations
 
-    • Population health monitoring by practice catchment'
+      • PowerBI-optimised structure for fast dashboard loading
 
-  columns:
-  - name: practice_code
-    description: Unique practice identifier code
+      • Practice comparison and league table support
 
-    tests:
-    - not_null
-    - unique
-  - name: practice_name
-    description: Practice name
 
-    tests:
-    - not_null
-  - name: practice_postcode
-    description: Practice postcode
-  - name: pcn_code
-    description: Primary Care Network code
-  - name: pcn_name
-    description: Primary Care Network name
-  - name: local_authority
-    description: Local authority area
-  - name: practice_neighbourhood
-    description: Practice neighbourhood classification
-  - name: total_population
-    description: Total registered patient population at practice
+      Dashboard Use Cases:
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_eligible_population
-    description: Number of patients eligible for LTC case finding (excludes those already in programmes)
+      • Practice performance league tables
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: total_case_finding_count
-    description: Total number of patients meeting any case finding criteria
+      • Geographic heat maps and practice comparisons
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_0_9
-    description: Population aged 0-9 years
+      • Indicator-specific practice benchmarking
 
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_10_19
-    description: Population aged 10-19 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_20_29
-    description: Population aged 20-29 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_30_39
-    description: Population aged 30-39 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_40_49
-    description: Population aged 40-49 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_50_59
-    description: Population aged 50-59 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_60_69
-    description: Population aged 60-69 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_70_79
-    description: Population aged 70-79 years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_age_80_plus
-    description: Population aged 80+ years
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_ethnicity_white
-    description: Population with White ethnicity
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_ethnicity_mixed
-    description: Population with Mixed ethnicity
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_ethnicity_asian
-    description: Population with Asian ethnicity
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_ethnicity_black
-    description: Population with Black ethnicity
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_ethnicity_other
-    description: Population with Other ethnicity
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_ethnicity_unknown
-    description: Population with Unknown ethnicity
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_imd_quintile_1_most_deprived
-    description: Population in IMD quintile 1 (most deprived)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_imd_quintile_2
-    description: Population in IMD quintile 2
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_imd_quintile_3
-    description: Population in IMD quintile 3
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_imd_quintile_4
-    description: Population in IMD quintile 4
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_imd_quintile_5_least_deprived
-    description: Population in IMD quintile 5 (least deprived)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: pop_imd_unknown
-    description: Population with unknown IMD quintile
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_af_61_count
-    description: Count of patients meeting AF_61 case finding criteria
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_af_62_count
-    description: Count of patients meeting AF_62 case finding criteria
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_cvd_61_count
-    description: Count of patients meeting CVD_61 case finding criteria (high QRISK2)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_cvd_62_count
-    description: Count of patients meeting CVD_62 case finding criteria (moderate QRISK2)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_dm_61_count
-    description: Count of patients meeting DM_61 case finding criteria
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_rate_per_1000
-    description: Case finding rate per 1000 population
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 1000
-  - name: case_finding_percentage
-    description: Case finding percentage of total population
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 100
-  - name: practice_size_category
-    description: Practice size category for benchmarking (Small, Medium, Large, Very Large)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Small (<3k)
-        - Medium (3-7k)
-        - Large (7-12k)
-        - Very Large (12k+)
-  - name: data_refresh_date
-    description: Date when data was last refreshed
-
-    tests:
-    - not_null
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - practice_code
+      • Population health monitoring by practice catchment'

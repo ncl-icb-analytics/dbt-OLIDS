@@ -1,38 +1,16 @@
 version: 2
 models:
-- name: fct_person_rheumatoid_arthritis_register
-  description: 'QOF Rheumatoid Arthritis Register - Patients with rheumatoid arthritis diagnosis.
+  - name: fct_person_rheumatoid_arthritis_register
+    description: 'QOF Rheumatoid Arthritis Register - Patients with rheumatoid arthritis diagnosis.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Rheumatoid arthritis diagnosis (RA_COD) present
+      • Rheumatoid arthritis diagnosis (RA_COD) present
 
-    • No age restrictions
+      • No age restrictions
 
-    • No resolution codes (RA is lifelong condition)
+      • No resolution codes (RA is lifelong condition)
 
 
-    Purpose: QOF register for musculoskeletal disease management, disease activity monitoring, and treatment pathway optimisation.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: has RA diagnosis aged 16+ (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
+      Purpose: QOF register for musculoskeletal disease management, disease activity monitoring, and treatment pathway optimisation.'

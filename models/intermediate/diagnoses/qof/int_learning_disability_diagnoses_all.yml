@@ -1,98 +1,39 @@
 version: 2
 models:
-- name: int_learning_disability_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: LD_COD
-  description: 'Intermediate: Learning Disability Diagnoses All - Complete history of all learning disability diagnosis observations for QOF register management.
+  - name: int_learning_disability_diagnoses_all
+    description: 'Intermediate: Learning Disability Diagnoses All - Complete history of all learning disability diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF learning disability register data collection and monitoring
+      • QOF learning disability register data collection and monitoring
 
-    • Learning disability support service coordination and annual health checks
+      • Learning disability support service coordination and annual health checks
 
-    • Disability support pathway management and clinical decision support
+      • Disability support pathway management and clinical decision support
 
-    • Learning disability care quality improvement and outcome tracking
-
-
-    Data Granularity:
-
-    • One row per learning disability diagnosis observation
-
-    • Uses LD_COD cluster for QOF-compliant learning disability identification
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Learning disability care quality improvement and outcome tracking
 
 
-    Key Features:
+      Data Granularity:
 
-    • Annual health check eligibility determination (typically ≥14 years)
+      • One row per learning disability diagnosis observation
 
-    • Learning disability support service coordination
+      • Uses LD_COD cluster for QOF-compliant learning disability identification
 
-    • Critical for disability care pathway optimisation
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for learning disability quality improvement initiatives'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Annual health check eligibility determination (typically ≥14 years)
+
+      • Learning disability support service coordination
+
+      • Critical for disability care pathway optimisation
+
+      • Essential input for learning disability quality improvement initiatives'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the learning disability diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for learning disability diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the learning disability diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (LD_COD)
-
-    tests:
-    - not_null
-  - name: is_learning_disability_diagnosis_code
-    description: Flag indicating learning disability diagnosis (LD_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: learning_disability_observation_type
-    description: Classification of this specific observation
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Learning Disability Diagnosis
-        - Unknown
-  - name: earliest_ld_diagnosis_date
-    description: Earliest learning disability diagnosis date for this person
-  - name: latest_ld_diagnosis_date
-    description: Latest learning disability diagnosis date for this person
-  - name: all_ld_concept_codes
-    description: Array of all learning disability diagnosis concept codes for this person
-  - name: all_ld_concept_displays
-    description: Array of all learning disability diagnosis concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: LD_COD

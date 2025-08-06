@@ -1,86 +1,37 @@
 version: 2
 models:
-- name: int_qrisk_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: QRISKSCORE_COD
-  description: 'Intermediate: QRISK Observations - All recorded cardiovascular risk scores with clinical categorisation.
+  - name: int_qrisk_all
+    description: 'Intermediate: QRISK Observations - All recorded cardiovascular risk scores with clinical categorisation.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks QRISK scores for cardiovascular disease risk assessment and management
+      • Tracks QRISK scores for cardiovascular disease risk assessment and management
 
-    • Supports primary prevention strategies and statin therapy decision-making
+      • Supports primary prevention strategies and statin therapy decision-making
 
-    • Enables cardiovascular risk stratification and population health monitoring
-
-
-    Data Granularity:
-
-    • One row per QRISK observation
-
-    • Includes all patients regardless of status (active/inactive/deceased)
-
-    • Uses QRISKSCORE_COD cluster for cardiovascular risk score identification
+      • Enables cardiovascular risk stratification and population health monitoring
 
 
-    Key Features:
+      Data Granularity:
 
-    • QRISK type identification (QRISK2, QRISK3) with score validation
+      • One row per QRISK observation
 
-    • Clinical risk categorisation (low, moderate, high CVD risk)
+      • Includes all patients regardless of status (active/inactive/deceased)
 
-    • Statin consideration thresholds and treatment decision support
+      • Uses QRISKSCORE_COD cluster for cardiovascular risk score identification
 
-    • Cardiovascular prevention guideline compliance indicators'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • QRISK type identification (QRISK2, QRISK3) with score validation
+
+      • Clinical risk categorisation (low, moderate, high CVD risk)
+
+      • Statin consideration thresholds and treatment decision support
+
+      • Cardiovascular prevention guideline compliance indicators'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the QRISK assessment
-
-    tests:
-    - not_null
-  - name: is_valid_qrisk
-    description: Flag indicating if QRISK is within valid range (0-100)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: cvd_risk_category
-    description: CVD risk category based on QRISK score
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Invalid
-        - Low Risk (<10%)
-        - Moderate Risk (10-20%)
-        - High Risk (≥20%)
-        - Unknown
-  - name: is_high_cvd_risk
-    description: Flag indicating QRISK ≥20% (high risk)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: QRISKSCORE_COD

@@ -1,134 +1,39 @@
 version: 2
 models:
-- name: int_copd_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: COPDRES_COD, COPD_COD
-  description: 'Intermediate: COPD Diagnoses - All recorded COPD diagnosis and resolution observations for QOF register management.
+  - name: int_copd_diagnoses_all
+    description: 'Intermediate: COPD Diagnoses - All recorded COPD diagnosis and resolution observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Supports QOF COPD register maintenance and reporting
+      • Supports QOF COPD register maintenance and reporting
 
-    • Tracks respiratory function assessment and spirometry confirmation requirements
+      • Tracks respiratory function assessment and spirometry confirmation requirements
 
-    • Enables COPD management pathway coordination and clinical decision support
+      • Enables COPD management pathway coordination and clinical decision support
 
-    • Supports resolution status tracking for improved respiratory outcomes
-
-
-    Data Granularity:
-
-    • One row per COPD diagnosis or resolution observation
-
-    • Includes all patients with COPD-related codes regardless of current status
-
-    • Uses cluster IDs: COPD_COD (diagnosis), COPDRES_COD (resolved)
+      • Supports resolution status tracking for improved respiratory outcomes
 
 
-    Key Features:
+      Data Granularity:
 
-    • Post-April 2023 spirometry confirmation requirements (FEV1/FVC <0.7)
+      • One row per COPD diagnosis or resolution observation
 
-    • Integration with unable-to-have-spirometry status tracking
+      • Includes all patients with COPD-related codes regardless of current status
 
-    • Provides earliest/latest dates for diagnosis and resolution events
+      • Uses cluster IDs: COPD_COD (diagnosis), COPDRES_COD (resolved)
 
-    • Includes comprehensive arrays of all related concept codes per person'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Post-April 2023 spirometry confirmation requirements (FEV1/FVC <0.7)
+
+      • Integration with unable-to-have-spirometry status tracking
+
+      • Provides earliest/latest dates for diagnosis and resolution events
+
+      • Includes comprehensive arrays of all related concept codes per person'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the COPD diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for COPD diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the COPD diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (COPD_COD, COPDRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - COPD_COD
-        - COPDRES_COD
-  - name: is_copd_diagnosis_code
-    description: Flag indicating COPD diagnosis (COPD_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_copd_resolved_code
-    description: Flag indicating COPD resolved/remission (COPDRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_copd_date
-    description: Earliest COPD diagnosis date for this person
-  - name: latest_copd_date
-    description: Latest COPD diagnosis date for this person
-  - name: earliest_resolved_date
-    description: Earliest COPD resolved date for this person
-  - name: latest_resolved_date
-    description: Latest COPD resolved date for this person
-  - name: earliest_unresolved_diagnosis_date
-    description: 'QOF field: Earliest unresolved COPD diagnosis date (EUNRESCOPD_DAT equivalent)'
-
-  - name: copd_observation_type
-    description: Classification of this specific observation (COPD Diagnosis, COPD Resolved, Unknown)
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - COPD Diagnosis
-
-        - COPD Resolved
-
-        - Unknown
-
-  - name: all_copd_concept_codes
-    description: Array of all COPD diagnosis concept codes for this person
-
-  - name: all_copd_concept_displays
-    description: Array of all COPD diagnosis concept displays for this person
-
-  - name: all_resolved_concept_codes
-    description: Array of all COPD resolved concept codes for this person
-
-  - name: all_resolved_concept_displays
-    description: Array of all COPD resolved concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: COPDRES_COD, COPD_COD

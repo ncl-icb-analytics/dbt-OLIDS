@@ -1,104 +1,37 @@
 version: 2
 models:
-- name: int_asthma_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: AST_COD, ASTRES_COD
-  description: 'Intermediate: Asthma Diagnoses - All recorded asthma diagnosis and resolution codes for QOF register management.
+  - name: int_asthma_diagnoses_all
+    description: 'Intermediate: Asthma Diagnoses - All recorded asthma diagnosis and resolution codes for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Tracks asthma diagnoses for QOF asthma register inclusion and respiratory care pathways
+      • Tracks asthma diagnoses for QOF asthma register inclusion and respiratory care pathways
 
-    • Supports asthma management programmes and clinical monitoring
+      • Supports asthma management programmes and clinical monitoring
 
-    • Enables childhood and adult asthma care coordination and quality improvement
-
-
-    Data Granularity:
-
-    • One row per asthma diagnosis or resolution code
-
-    • Uses AST_COD (diagnosis) and ASTRES_COD (resolved) QOF clusters
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Enables childhood and adult asthma care coordination and quality improvement
 
 
-    Key Features:
+      Data Granularity:
 
-    • Diagnosis and resolution code classification for register eligibility
+      • One row per asthma diagnosis or resolution code
 
-    • QOF-compliant asthma register logic with resolution tracking
+      • Uses AST_COD (diagnosis) and ASTRES_COD (resolved) QOF clusters
 
-    • Age and clinical context considerations for downstream processing
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for QOF asthma register and respiratory care analytics'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Diagnosis and resolution code classification for register eligibility
+
+      • QOF-compliant asthma register logic with resolution tracking
+
+      • Age and clinical context considerations for downstream processing
+
+      • Essential input for QOF asthma register and respiratory care analytics'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the asthma diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for asthma diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the asthma diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (AST_COD, ASTRES_COD)
-
-    tests:
-    - not_null
-  - name: is_asthma_diagnosis_code
-    description: Flag indicating asthma diagnosis (AST_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_asthma_resolved_code
-    description: Flag indicating asthma resolved/remission (ASTRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_asthma_date
-    description: Earliest asthma diagnosis date for this person
-  - name: latest_asthma_date
-    description: Latest asthma diagnosis date for this person
-  - name: earliest_resolved_date
-    description: Earliest asthma resolved date for this person
-  - name: latest_resolved_date
-    description: Latest asthma resolved date for this person
-  - name: all_asthma_concept_codes
-    description: Array of all asthma diagnosis concept codes for this person
-  - name: all_asthma_concept_displays
-    description: Array of all asthma diagnosis concept displays for this person
-  - name: all_resolved_concept_codes
-    description: Array of all asthma resolved concept codes for this person
-  - name: all_resolved_concept_displays
-    description: Array of all asthma resolved concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: AST_COD, ASTRES_COD

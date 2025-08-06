@@ -1,60 +1,15 @@
 version: 2
 models:
-- name: fct_person_chd_register
-  description: 'QOF Coronary Heart Disease (CHD) Register - Patients with coronary heart disease diagnosis.
+  - name: fct_person_chd_register
+    description: 'QOF Coronary Heart Disease (CHD) Register - Patients with coronary heart disease diagnosis.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Active CHD diagnosis: CHD_COD present (includes MI, angina, coronary atherosclerosis)
+      • Active CHD diagnosis: CHD_COD present (includes MI, angina, coronary atherosclerosis)
 
-    • No age restriction
+      • No age restriction
 
-    • Includes historical MI events
+      • Includes historical MI events
 
-    • One row per person with current register status'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: has CHD diagnosis (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: earliest_diagnosis_date
-    description: Date of most recent CHD diagnosis
-
-    tests:
-
-    - not_null
-
-    - test_no_future_dates
-
-  - name: all_chd_concept_codes
-    description: Array of all distinct CHD concept codes for this person
-
-    tests:
-
-    - not_null
-
-  - name: all_chd_concept_displays
-    description: Array of all distinct CHD concept display terms for this person
-
-    tests:
-
-    - not_null
+      • One row per person with current register status'

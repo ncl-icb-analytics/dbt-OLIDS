@@ -1,134 +1,39 @@
 version: 2
 models:
-- name: int_ndh_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: IGT_COD, NDH_COD, PRD_COD
-  description: 'Intermediate: NDH Diagnoses All - Complete history of all non-diabetic hyperglycaemia diagnosis observations for QOF register management.
+  - name: int_ndh_diagnoses_all
+    description: 'Intermediate: NDH Diagnoses All - Complete history of all non-diabetic hyperglycaemia diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF non-diabetic hyperglycaemia register data collection and monitoring
+      • QOF non-diabetic hyperglycaemia register data collection and monitoring
 
-    • Pre-diabetes identification and diabetes prevention pathway coordination
+      • Pre-diabetes identification and diabetes prevention pathway coordination
 
-    • Glucose metabolism disorder tracking and intervention support
+      • Glucose metabolism disorder tracking and intervention support
 
-    • Early intervention and lifestyle modification programme eligibility
-
-
-    Data Granularity:
-
-    • One row per NDH, IGT, or pre-diabetes diagnosis observation
-
-    • Uses NDH_COD, IGT_COD, and PRD_COD clusters
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Early intervention and lifestyle modification programme eligibility
 
 
-    Key Features:
+      Data Granularity:
 
-    • Pre-diabetes and impaired glucose tolerance identification
+      • One row per NDH, IGT, or pre-diabetes diagnosis observation
 
-    • Age restrictions (typically ≥18 years) applied in downstream processing
+      • Uses NDH_COD, IGT_COD, and PRD_COD clusters
 
-    • Diabetes prevention programme eligibility determination
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Critical for early intervention and diabetes prevention strategies'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Pre-diabetes and impaired glucose tolerance identification
+
+      • Age restrictions (typically ≥18 years) applied in downstream processing
+
+      • Diabetes prevention programme eligibility determination
+
+      • Critical for early intervention and diabetes prevention strategies'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the NDH-related observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for NDH observation
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the NDH code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID for NDH pathway
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - NDH_COD
-        - IGT_COD
-        - PRD_COD
-  - name: is_ndh_diagnosis_code
-    description: Flag indicating non-diabetic hyperglycaemia code (NDH_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_igt_diagnosis_code
-    description: Flag indicating impaired glucose tolerance code (IGT_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_pre_diabetes_diagnosis_code
-    description: Flag indicating pre-diabetes code (PRD_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_ndh_date
-    description: Earliest NDH diagnosis date for this person
-  - name: latest_ndh_date
-    description: Latest NDH diagnosis date for this person
-  - name: earliest_igt_date
-    description: Earliest IGT diagnosis date for this person
-  - name: latest_igt_date
-    description: Latest IGT diagnosis date for this person
-  - name: earliest_pre_diabetes_date
-    description: Earliest pre-diabetes diagnosis date for this person
-  - name: latest_pre_diabetes_date
-    description: Latest pre-diabetes diagnosis date for this person
-  - name: earliest_multi_ndh_date
-    description: Earliest date across all NDH-related diagnoses for this person
-  - name: latest_multi_ndh_date
-    description: Latest date across all NDH-related diagnoses for this person
-  - name: all_ndh_concept_codes
-    description: Array of all NDH concept codes for this person
-  - name: all_ndh_concept_displays
-    description: Array of all NDH concept displays for this person
-  - name: all_igt_concept_codes
-    description: Array of all IGT concept codes for this person
-  - name: all_igt_concept_displays
-    description: Array of all IGT concept displays for this person
-  - name: all_pre_diabetes_concept_codes
-    description: Array of all pre-diabetes concept codes for this person
-  - name: all_pre_diabetes_concept_displays
-    description: Array of all pre-diabetes concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: IGT_COD, NDH_COD, PRD_COD

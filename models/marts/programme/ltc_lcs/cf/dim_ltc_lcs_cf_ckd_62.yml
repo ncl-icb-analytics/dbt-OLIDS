@@ -1,42 +1,22 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_ckd_62
-  description: 'Mart: LTC LCS Case Finding CKD_62 - Identifies patients with two consecutive high UACR readings suggesting kidney damage and undiagnosed CKD.
+  - name: dim_ltc_lcs_cf_ckd_62
+    description: 'Mart: LTC LCS Case Finding CKD_62 - Identifies patients with two consecutive high UACR readings suggesting kidney damage and undiagnosed CKD.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Patients aged 17+ from LTC case finding base population
+      • Patients aged 17+ from LTC case finding base population
 
-    • Two consecutive UACR readings above 4
+      • Two consecutive UACR readings above 4
 
-    • Excludes patients already on CKD or diabetes registers
+      • Excludes patients already on CKD or diabetes registers
 
 
-    Key Features:
+      Key Features:
 
-    • Maximum daily UACR values with adjacent day duplicate filtering
+      • Maximum daily UACR values with adjacent day duplicate filtering
 
-    • Complete UACR testing history with latest and previous readings
+      • Complete UACR testing history with latest and previous readings
 
-    • Evidence-based case finding criteria for early kidney damage detection'
-
-  columns:
-  - name: person_id
-    description: The unique identifier for the patient
-
-    tests:
-    - not_null
-    - unique
-  - name: first_ckd_diagnosis_date
-    description: The date of the patient's first CKD diagnosis
-  - name: latest_bp_date
-    description: The date of the patient's most recent blood pressure measurement (if any in last 12 months)
-  - name: has_ckd_diagnosis
-    description: Boolean indicating if the patient has a CKD diagnosis
-  - name: has_recent_bp_measurement
-    description: Boolean indicating if the patient has had a blood pressure measurement in the last 12 months
-  - name: has_excluding_condition
-    description: Boolean indicating if the patient has any conditions that would exclude them from this case finding
-  - name: meets_criteria
-    description: Boolean indicating if the patient meets all criteria for CKD_62 case finding
+      • Evidence-based case finding criteria for early kidney damage detection'

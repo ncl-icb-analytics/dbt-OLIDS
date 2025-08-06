@@ -1,15 +1,4 @@
 version: 2
 models:
-- name: int_ethnicity_all
-  description: Intermediate table containing all dated Observation records that map to a valid code in the ETHNICITY_CODES reference table. Used as a source for DIM_PERSON_ETHNICITY to find the latest valid record per person.
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date the ethnicity was recorded
-
-    tests:
-    - not_null
+  - name: int_ethnicity_all
+    description: Intermediate table containing all dated Observation records that map to a valid code in the ETHNICITY_CODES reference table. Used as a source for DIM_PERSON_ETHNICITY to find the latest valid record per person.

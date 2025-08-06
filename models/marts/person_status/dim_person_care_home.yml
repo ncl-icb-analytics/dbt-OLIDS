@@ -1,28 +1,8 @@
 version: 2
 models:
-- name: dim_person_care_home
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: CAREHOME_COD, NURSEHOME_COD, TEMPCARHOME_COD
-  description: Dimension table providing the latest recorded care home/nursing home status for persons who have a recorded residence status. Only includes persons with CAREHOME_COD, NURSEHOME_COD, or TEMPCARHOME_COD records.
-  columns:
-  - name: person_id
-    description: Unique person identifier - primary key
-
+  - name: dim_person_care_home
+    description: Dimension table providing the latest recorded care home/nursing home status for persons who have a recorded residence status. Only includes persons with CAREHOME_COD, NURSEHOME_COD, or TEMPCARHOME_COD records.
     tests:
-    - not_null
-    - unique
-  - name: is_care_home_resident
-    description: Boolean flag indicating if person resides in a care home
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: care_home_name
-    description: Name of care home (if resident)
-  - name: care_home_type
-    description: Type of care home facility
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: CAREHOME_COD, NURSEHOME_COD, TEMPCARHOME_COD

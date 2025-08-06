@@ -1,115 +1,37 @@
 version: 2
 models:
-- name: int_epilepsy_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: EPIL_COD, EPILRES_COD
-  description: 'Intermediate: Epilepsy Diagnoses - All recorded epilepsy diagnosis and resolution observations for QOF register management.
+  - name: int_epilepsy_diagnoses_all
+    description: 'Intermediate: Epilepsy Diagnoses - All recorded epilepsy diagnosis and resolution observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Supports QOF epilepsy register maintenance and reporting
+      • Supports QOF epilepsy register maintenance and reporting
 
-    • Tracks epilepsy diagnoses and resolution/remission status
+      • Tracks epilepsy diagnoses and resolution/remission status
 
-    • Enables comprehensive epilepsy patient identification and management
-
-
-    Data Granularity:
-
-    • One row per epilepsy diagnosis or resolution observation
-
-    • Includes all patients with epilepsy-related codes regardless of current status
-
-    • Uses cluster IDs: EPIL_COD (diagnosis), EPILRES_COD (resolution)
+      • Enables comprehensive epilepsy patient identification and management
 
 
-    Key Features:
+      Data Granularity:
 
-    • Captures both diagnosis and resolution codes in single dataset
+      • One row per epilepsy diagnosis or resolution observation
 
-    • Provides earliest/latest dates for diagnosis and resolution events
+      • Includes all patients with epilepsy-related codes regardless of current status
 
-    • Includes comprehensive arrays of all related concept codes per person
+      • Uses cluster IDs: EPIL_COD (diagnosis), EPILRES_COD (resolution)
 
-    • Supports QOF register calculation and clinical pathway tracking'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Captures both diagnosis and resolution codes in single dataset
+
+      • Provides earliest/latest dates for diagnosis and resolution events
+
+      • Includes comprehensive arrays of all related concept codes per person
+
+      • Supports QOF register calculation and clinical pathway tracking'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the epilepsy diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for epilepsy diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the epilepsy diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (EPIL_COD, EPILRES_COD)
-
-    tests:
-    - not_null
-  - name: is_epilepsy_diagnosis_code
-    description: Flag indicating epilepsy diagnosis (EPIL_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: is_epilepsy_resolved_code
-    description: Flag indicating epilepsy resolved/remission (EPILRES_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: earliest_epilepsy_date
-    description: Earliest epilepsy diagnosis date for this person
-  - name: latest_epilepsy_date
-    description: Latest epilepsy diagnosis date for this person
-  - name: earliest_resolved_date
-    description: Earliest epilepsy resolved date for this person
-  - name: latest_resolved_date
-    description: Latest epilepsy resolved date for this person
-  - name: epilepsy_observation_type
-    description: Classification of this specific observation (Epilepsy Diagnosis, Epilepsy Resolved, Unknown)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Epilepsy Diagnosis
-        - Epilepsy Resolved
-        - Unknown
-  - name: all_epilepsy_concept_codes
-    description: Array of all epilepsy diagnosis concept codes for this person
-  - name: all_epilepsy_concept_displays
-    description: Array of all epilepsy diagnosis concept displays for this person
-  - name: all_resolved_concept_codes
-    description: Array of all epilepsy resolved concept codes for this person
-  - name: all_resolved_concept_displays
-    description: Array of all epilepsy resolved concept displays for this person
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: EPIL_COD, EPILRES_COD

@@ -1,67 +1,33 @@
 version: 2
 models:
-- name: int_qrisk_latest
-  description: 'Intermediate: Latest QRISK Observations - Most recent valid cardiovascular risk score per person.
+  - name: int_qrisk_latest
+    description: 'Intermediate: Latest QRISK Observations - Most recent valid cardiovascular risk score per person.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • Provides current cardiovascular risk status for primary prevention strategies
+      • Provides current cardiovascular risk status for primary prevention strategies
 
-    • Supports statin therapy decision-making and CVD risk management
+      • Supports statin therapy decision-making and CVD risk management
 
-    • Enables current risk stratification and population health assessment
-
-
-    Data Granularity:
-
-    • One row per person with their most recent valid QRISK score
-
-    • Includes only patients with valid QRISK measurements
-
-    • Filtered to exclude implausible values for clinical accuracy
+      • Enables current risk stratification and population health assessment
 
 
-    Key Features:
+      Data Granularity:
 
-    • Latest valid QRISK identification with type preservation (QRISK2/3)
+      • One row per person with their most recent valid QRISK score
 
-    • Clinical cardiovascular risk categorisation for treatment planning
+      • Includes only patients with valid QRISK measurements
 
-    • Statin consideration flags based on prevention guidelines
+      • Filtered to exclude implausible values for clinical accuracy
 
-    • Complete risk assessment metadata for clinical context'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - unique
-  - name: clinical_effective_date
-    description: Date of the QRISK assessment
+      • Latest valid QRISK identification with type preservation (QRISK2/3)
 
-    tests:
-    - not_null
-  - name: cvd_risk_category
-    description: CVD risk category (excludes 'Invalid')
+      • Clinical cardiovascular risk categorisation for treatment planning
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Statin consideration flags based on prevention guidelines
 
-        values:
-        - Low Risk (<10%)
-        - Moderate Risk (10-20%)
-        - High Risk (≥20%)
-  - name: is_high_cvd_risk
-    description: Flag indicating QRISK ≥20% (high risk)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Complete risk assessment metadata for clinical context'

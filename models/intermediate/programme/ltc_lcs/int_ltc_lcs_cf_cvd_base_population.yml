@@ -1,85 +1,35 @@
 version: 2
 models:
-- name: int_ltc_lcs_cf_cvd_base_population
-  description: 'Intermediate: LTC LCS CF CVD Base Population - Specialised CVD base population for Long Term Conditions case finding indicators with statin exclusions.
+  - name: int_ltc_lcs_cf_cvd_base_population
+    description: 'Intermediate: LTC LCS CF CVD Base Population - Specialised CVD base population for Long Term Conditions case finding indicators with statin exclusions.
 
 
-Clinical Purpose:
+      Clinical Purpose:
 
-• Establishes specialised base population for CVD case finding measures requiring statin status filtering
+      • Establishes specialised base population for CVD case finding measures requiring statin status filtering
 
-• Applies comprehensive statin exclusions for patients already on statins, with allergies, or recent decisions
+      • Applies comprehensive statin exclusions for patients already on statins, with allergies, or recent decisions
 
-• Ensures appropriate population selection for CVD primary prevention case finding
+      • Ensures appropriate population selection for CVD primary prevention case finding
 
-• Provides consistent population denominator for CVD case finding indicators requiring statin-naive patients
-
-
-Data Granularity:
-
-• One row per eligible person aged 40-83 years for CVD case finding programmes
-
-• Excludes patients on statins in last 12 months, with statin allergies/contraindications, or recent statin decisions
-
-• Builds on standard LTC case finding base population with additional CVD-specific exclusions
-
-• Includes statin status flags and latest dates for comprehensive filtering
+      • Provides consistent population denominator for CVD case finding indicators requiring statin-naive patients
 
 
-Key Features:
+      Data Granularity:
 
-• Age-specific population: 40-83 years for CVD primary prevention targeting
+      • One row per eligible person aged 40-83 years for CVD case finding programmes
 
-• Comprehensive statin exclusion logic: current statins, allergies, contraindications, recent decisions
+      • Excludes patients on statins in last 12 months, with statin allergies/contraindications, or recent statin decisions
 
-• Integration with CVD medications and observations for statin status determination
-• Reusable base population for multiple CVD case finding indicators requiring statin-naive patients'
+      • Builds on standard LTC case finding base population with additional CVD-specific exclusions
 
-  columns:
-  - name: person_id
-    description: Unique patient identifier
+      • Includes statin status flags and latest dates for comprehensive filtering
 
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Patient age (40-83)
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 40
-        max_value: 83
-  - name: has_statin
-    description: Whether patient has statin medication in last 12 months (should be FALSE for all)
+      Key Features:
 
-    tests:
-    - not_null
-    - accepted_values:
+      • Age-specific population: 40-83 years for CVD primary prevention targeting
 
-        values:
-        - false
-  - name: has_statin_allergy
-    description: Whether patient has statin allergy/contraindication (should be FALSE for all)
+      • Comprehensive statin exclusion logic: current statins, allergies, contraindications, recent decisions
 
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - false
-  - name: has_statin_decision
-    description: Whether patient has statin decision in last 60 months (should be FALSE for all)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - false
-  - name: latest_statin_date
-    description: Latest statin medication date (should be NULL for all)
-  - name: latest_statin_allergy_date
-    description: Latest statin allergy/contraindication date (should be NULL for all)
-  - name: latest_statin_decision_date
-    description: Latest statin decision date (should be NULL for all)
+      • Integration with CVD medications and observations for statin status determination • Reusable base population for multiple CVD case finding indicators requiring statin-naive patients'

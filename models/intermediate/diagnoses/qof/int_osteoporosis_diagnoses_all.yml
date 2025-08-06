@@ -1,84 +1,39 @@
 version: 2
 models:
-- name: int_osteoporosis_diagnoses_all
-  tests:
-  - cluster_ids_exist:
-      cluster_ids: OSTEO_COD
-  description: 'Intermediate: Osteoporosis Diagnoses All - Complete history of all osteoporosis diagnosis observations for QOF register management.
+  - name: int_osteoporosis_diagnoses_all
+    description: 'Intermediate: Osteoporosis Diagnoses All - Complete history of all osteoporosis diagnosis observations for QOF register management.
 
 
-    Clinical Purpose:
+      Clinical Purpose:
 
-    • QOF osteoporosis register data collection and monitoring
+      • QOF osteoporosis register data collection and monitoring
 
-    • Bone health assessment and fracture risk stratification
+      • Bone health assessment and fracture risk stratification
 
-    • Osteoporosis care pathway coordination and treatment monitoring
+      • Osteoporosis care pathway coordination and treatment monitoring
 
-    • Integration with DXA scan results for comprehensive bone health evaluation
-
-
-    Data Granularity:
-
-    • One row per osteoporosis diagnosis observation
-
-    • Uses OSTEO_COD cluster for QOF-compliant osteoporosis identification
-
-    • Includes all patients regardless of status for comprehensive QOF reporting
+      • Integration with DXA scan results for comprehensive bone health evaluation
 
 
-    Key Features:
+      Data Granularity:
 
-    • Clinical osteoporosis diagnosis tracking
+      • One row per osteoporosis diagnosis observation
 
-    • Integration with DXA scan confirmation logic (handled in fact layer)
+      • Uses OSTEO_COD cluster for QOF-compliant osteoporosis identification
 
-    • Critical for bone health preservation and fracture prevention
+      • Includes all patients regardless of status for comprehensive QOF reporting
 
-    • Essential input for osteoporosis care quality improvement initiatives'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
+      • Clinical osteoporosis diagnosis tracking
+
+      • Integration with DXA scan confirmation logic (handled in fact layer)
+
+      • Critical for bone health preservation and fracture prevention
+
+      • Essential input for osteoporosis care quality improvement initiatives'
     tests:
-    - not_null
-  - name: observation_id
-    description: Unique observation identifier
-
-    tests:
-    - not_null
-  - name: clinical_effective_date
-    description: Date of the osteoporosis diagnosis observation
-
-    tests:
-    - not_null
-  - name: concept_code
-    description: SNOMED concept code for osteoporosis diagnosis
-
-    tests:
-    - not_null
-  - name: concept_display
-    description: Description of the osteoporosis diagnosis code
-
-    tests:
-    - not_null
-  - name: source_cluster_id
-    description: QOF cluster ID (OSTEO_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - OSTEO_COD
-  - name: is_osteoporosis_diagnosis_code
-    description: Flag indicating osteoporosis diagnosis (OSTEO_COD)
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: OSTEO_COD

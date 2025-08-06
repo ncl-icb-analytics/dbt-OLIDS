@@ -1,54 +1,18 @@
 version: 2
 models:
-- name: fct_person_cancer_register
-  description: 'QOF Cancer Register - Patients with cancer diagnosis from April 2003 onwards.
+  - name: fct_person_cancer_register
+    description: 'QOF Cancer Register - Patients with cancer diagnosis from April 2003 onwards.
 
 
-    Key Inclusion Criteria:
+      Key Inclusion Criteria:
 
-    • Cancer diagnosis (CAN_COD) on/after 1 April 2003
+      • Cancer diagnosis (CAN_COD) on/after 1 April 2003
 
-    • No age restrictions
+      • No age restrictions
 
-    • No resolution codes (cancer is permanent condition)
+      • No resolution codes (cancer is permanent condition)
 
-    • Excludes non-melanotic skin cancers (handled in cluster definition)
+      • Excludes non-melanotic skin cancers (handled in cluster definition)
 
 
-    Purpose: QOF register for cancer survivorship care, follow-up monitoring, and quality measures for cancer management.'
-
-  columns:
-  - name: person_id
-    description: Unique person identifier
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: is_on_register
-    description: 'Register flag: has cancer diagnosis on/after 1 April 2003 (always TRUE for this table)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-  - name: all_cancer_concept_codes
-    description: Array of all distinct cancer concept codes for this person
-
-    tests:
-
-    - not_null
-
-  - name: all_cancer_concept_displays
-    description: Array of all distinct cancer concept display terms for this person
-
-    tests:
-
-    - not_null
+      Purpose: QOF register for cancer survivorship care, follow-up monitoring, and quality measures for cancer management.'

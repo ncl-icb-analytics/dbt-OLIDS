@@ -1,215 +1,35 @@
 version: 2
 models:
-- name: fct_person_diabetes_9_care_processes
-  description: 'Mart: Diabetes 9 Care Processes Achievement - Enhanced QOF quality measure for comprehensive diabetes care assessment.
+  - name: fct_person_diabetes_9_care_processes
+    description: 'Mart: Diabetes 9 Care Processes Achievement - Enhanced QOF quality measure for comprehensive diabetes care assessment.
 
 
-    Business Purpose:
+      Business Purpose:
 
-    • Support QOF reporting for diabetes care processes achievement indicators including retinal screening
+      • Support QOF reporting for diabetes care processes achievement indicators including retinal screening
 
-    • Enable clinical teams to identify patients requiring diabetes care review and eye screening
+      • Enable clinical teams to identify patients requiring diabetes care review and eye screening
 
-    • Provide population health analytics for diabetes management programmes
+      • Provide population health analytics for diabetes management programmes
 
-    • Support business intelligence reporting on practice performance and clinical quality
-
-
-    Data Granularity:
-
-    • One row per person on diabetes register
-
-    • Includes completion status for all 9 care processes within 12 months
-
-    • Current assessment of comprehensive diabetes care delivery including sight-threatening complication prevention
+      • Support business intelligence reporting on practice performance and clinical quality
 
 
-    Key Features:
+      Data Granularity:
 
-    • Tracks all 8 standard diabetes care processes plus retinal screening
+      • One row per person on diabetes register
 
-    • Calculates overall completion metrics for QOF reporting
+      • Includes completion status for all 9 care processes within 12 months
 
-    • Supports clinical decision-making and quality improvement initiatives
+      • Current assessment of comprehensive diabetes care delivery including sight-threatening complication prevention
 
-    • Enables population health management and diabetes care optimisation'
 
-  columns:
-  - name: person_id
-    description: Unique person identifier
+      Key Features:
 
-    tests:
-    - not_null
-    - relationships:
-        to: ref('fct_person_diabetes_8_care_processes')
-        field: person_id
-  - name: latest_hba1c_date
-    description: Date of most recent HbA1c test
+      • Tracks all 8 standard diabetes care processes plus retinal screening
 
-    tests:
-    - test_no_future_dates
-  - name: hba1c_completed_in_last_12m
-    description: TRUE if HbA1c test completed within last 12 months
+      • Calculates overall completion metrics for QOF reporting
 
-    tests:
-    - accepted_values:
+      • Supports clinical decision-making and quality improvement initiatives
 
-        values:
-        - true
-        - false
-  - name: latest_hba1c_value
-    description: Most recent HbA1c result value (mmol/mol or %)
-
-    tests:
-    - dbt_utils.accepted_range:
-        min_value: 10
-        max_value: 300
-        severity: warn
-  - name: latest_bp_date
-    description: Date of most recent blood pressure reading
-
-    tests:
-    - test_no_future_dates
-  - name: bp_completed_in_last_12m
-    description: TRUE if blood pressure check completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_cholesterol_date
-    description: Date of most recent total cholesterol test
-
-    tests:
-    - test_no_future_dates
-  - name: cholesterol_completed_in_last_12m
-    description: TRUE if cholesterol test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_creatinine_date
-    description: Date of most recent serum creatinine test
-
-    tests:
-    - test_no_future_dates
-  - name: creatinine_completed_in_last_12m
-    description: TRUE if serum creatinine test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_acr_date
-    description: Date of most recent urine ACR test
-
-    tests:
-    - test_no_future_dates
-  - name: acr_completed_in_last_12m
-    description: TRUE if urine ACR test completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_foot_check_date
-    description: Date of most recent foot examination
-
-    tests:
-    - test_no_future_dates
-  - name: foot_check_completed_in_last_12m
-    description: TRUE if foot examination completed within last 12 months with quality criteria met
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_bmi_date
-    description: Date of most recent BMI recording
-
-    tests:
-    - test_no_future_dates
-  - name: bmi_completed_in_last_12m
-    description: TRUE if BMI recorded within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_smoking_date
-    description: Date of most recent smoking status recording
-
-    tests:
-    - test_no_future_dates
-  - name: smoking_completed_in_last_12m
-    description: TRUE if smoking status recorded within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_retinal_screening_date
-    description: Date of most recent retinal screening
-
-    tests:
-    - test_no_future_dates
-  - name: retinal_screening_completed_in_last_12m
-    description: TRUE if retinal screening completed within last 12 months
-
-    tests:
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: care_processes_8_completed
-    description: Count of original 8 care processes completed within last 12 months (0-8)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 8
-  - name: care_processes_9_completed
-    description: Count of all 9 care processes completed within last 12 months (0-9)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 9
-  - name: all_8_processes_completed
-    description: TRUE if all original 8 care processes completed within last 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: all_9_processes_completed
-    description: TRUE if all 9 care processes completed within last 12 months
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
+      • Enables population health management and diabetes care optimisation'

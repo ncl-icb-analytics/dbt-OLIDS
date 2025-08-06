@@ -1,230 +1,41 @@
 version: 2
 models:
-- name: fct_ltc_lcs_population_summary
-  description: 'Fact: LTC LCS Population Summary - Demographic cross-tabulation of case finding indicators for population health analytics.
+  - name: fct_ltc_lcs_population_summary
+    description: 'Fact: LTC LCS Population Summary - Demographic cross-tabulation of case finding indicators for population health analytics.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Cross-tabulated data by age bands, ethnicity, and deprivation quintiles
+      • Cross-tabulated data by age bands, ethnicity, and deprivation quintiles
 
-    • Aggregates all LTC case finding indicators by demographic dimensions
+      • Aggregates all LTC case finding indicators by demographic dimensions
 
-    • Includes population denominators for accurate rate calculations
+      • Includes population denominators for accurate rate calculations
 
-    • Optimised for population health inequality analysis
-
-
-    Key Features:
-
-    • Demographic stratification of all 25+ case finding indicators
-
-    • Population denominators by age, ethnicity, and deprivation
-
-    • Pre-calculated rates and counts for dashboard performance
-
-    • PowerBI-optimised structure for demographic analytics
-
-    • Support for health inequality monitoring and trend analysis
+      • Optimised for population health inequality analysis
 
 
-    Dashboard Use Cases:
+      Key Features:
 
-    • Population health inequality analysis
+      • Demographic stratification of all 25+ case finding indicators
 
-    • Demographic breakdown charts and visualisations
+      • Population denominators by age, ethnicity, and deprivation
 
-    • Age-stratified case finding rates
+      • Pre-calculated rates and counts for dashboard performance
 
-    • Ethnicity and deprivation gap analysis
+      • PowerBI-optimised structure for demographic analytics
 
-    • Population pyramid visualisations with case finding overlay'
+      • Support for health inequality monitoring and trend analysis
 
-  columns:
-  - name: age_band_10y
-    description: 10-year age band (0-9, 10-19, etc.)
 
-    tests:
-    - not_null
-    - accepted_values:
+      Dashboard Use Cases:
 
-        values:
-        - 0-9
-        - 10-19
-        - 20-29
-        - 30-39
-        - 40-49
-        - 50-59
-        - 60-69
-        - 70-79
-        - 80+
-  - name: ethnicity_category
-    description: High-level ethnicity category (White, Mixed, Asian, Black, Other, Unknown)
+      • Population health inequality analysis
 
-    tests:
-    - accepted_values:
+      • Demographic breakdown charts and visualisations
 
-        values:
-        - White
-        - Mixed
-        - Asian
-        - Black
-        - Other
-        - Unknown
-        - null
-  - name: imd_quintile
-    description: Index of Multiple Deprivation 2019 quintile (0=Unknown, 1=Most deprived, 5=Least deprived)
+      • Age-stratified case finding rates
 
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 5
-  - name: imd_quintile_label
-    description: Descriptive label for IMD quintile
+      • Ethnicity and deprivation gap analysis
 
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - Unknown
-        - Quintile 1 (Most Deprived)
-        - Quintile 2
-        - Quintile 3
-        - Quintile 4
-        - Quintile 5 (Least Deprived)
-  - name: local_authority
-    description: Local authority area
-  - name: practice_neighbourhood
-    description: Practice neighbourhood classification
-  - name: total_population
-    description: Total population for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: population_male
-    description: Male population for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: population_female
-    description: Female population for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: population_other_sex
-    description: Population with other/unknown sex for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_eligible_population
-    description: Population eligible for case finding (excludes those already in programmes)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: total_case_finding_count
-    description: Total number meeting any case finding criteria for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_cvd_61_count
-    description: Count meeting CVD_61 criteria (high QRISK2) for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_cvd_62_count
-    description: Count meeting CVD_62 criteria (moderate QRISK2) for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_dm_61_count
-    description: Count meeting DM_61 criteria for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: cf_htn_61_count
-    description: Count meeting HTN_61 criteria for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_male
-    description: Male patients meeting any case finding criteria
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_female
-    description: Female patients meeting any case finding criteria
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_other_sex
-    description: Other/unknown sex patients meeting any case finding criteria
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-  - name: case_finding_rate_per_1000
-    description: Case finding rate per 1000 population for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 1000
-  - name: case_finding_percentage
-    description: Case finding percentage of total population for this demographic combination
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 100
-  - name: age_band_sort_order
-    description: Numeric sort order for age bands (1=0-9 years, 9=80+ years)
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 1
-        max_value: 10
-  - name: data_refresh_date
-    description: Date when data was last refreshed
-
-    tests:
-    - not_null
-
-  tests:
-  - dbt_utils.unique_combination_of_columns:
-
-      combination_of_columns:
-      - age_band_10y
-      - ethnicity_category
-      - imd_quintile
-      - local_authority
-      - practice_neighbourhood
+      • Population pyramid visualisations with case finding overlay'

@@ -1,77 +1,15 @@
 version: 2
 models:
-- name: dim_nhs_health_check_eligibility
-  description: 'Eligibility assessment and due status for NHS Health Check programme.
+  - name: dim_nhs_health_check_eligibility
+    description: 'Eligibility assessment and due status for NHS Health Check programme.
 
 
-    Business Logic:
+      Business Logic:
 
-    • Determines eligibility based on age 40-74 and absence of excluding chronic conditions
+      • Determines eligibility based on age 40-74 and absence of excluding chronic conditions
 
-    • Checks for excluding conditions: CHD, diabetes, stroke, CKD, AF, heart failure, familial hypercholesterolaemia
+      • Checks for excluding conditions: CHD, diabetes, stroke, CKD, AF, heart failure, familial hypercholesterolaemia
 
-    • Calculates due status: eligible patients who never had a check or last check >5 years ago (1825 days)
+      • Calculates due status: eligible patients who never had a check or last check >5 years ago (1825 days)
 
-    • One row per person with eligibility flags and latest health check date'
-
-  config:
-    materialized: table
-
-  columns:
-  - name: person_id
-    description: Unique person identifier linking to dim_person
-
-    tests:
-    - not_null
-    - relationships:
-        to: ref('dim_person')
-        field: person_id
-  - name: age
-    description: Person's current age in years
-
-    tests:
-    - not_null
-    - dbt_utils.accepted_range:
-        min_value: 0
-        max_value: 120
-  - name: has_any_excluding_condition
-    description: 'Flag: TRUE if person has any condition excluding them from NHS Health Checks'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
-
-  - name: is_eligible_for_nhs_health_check
-    description: 'Flag: TRUE if person is eligible (age 40-74 without excluding conditions)'
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_health_check_date
-    description: Date of most recent NHS Health Check (NULL if never had one)
-  - name: due_nhs_health_check
-    description: 'Flag: TRUE if person is due an NHS Health Check (eligible + >5 years or never)'
-
-    tests:
-
-    - not_null
-
-    - accepted_values:
-
-        values:
-
-        - true
-
-        - false
+      • One row per person with eligibility flags and latest health check date'

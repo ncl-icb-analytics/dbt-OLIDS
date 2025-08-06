@@ -1,71 +1,22 @@
 version: 2
 models:
-- name: dim_ltc_lcs_cf_dm_61
-  description: 'Mart: LTC LCS Case Finding DM_61 - Identifies patients at high risk of diabetes through multiple risk assessment criteria.
+  - name: dim_ltc_lcs_cf_dm_61
+    description: 'Mart: LTC LCS Case Finding DM_61 - Identifies patients at high risk of diabetes through multiple risk assessment criteria.
 
 
-    Population Scope:
+      Population Scope:
 
-    • Patients aged 17+ from LTC case finding base population
+      • Patients aged 17+ from LTC case finding base population
 
-    • Meeting any high-risk diabetes criteria: HbA1c ≥42, QDiabetes ≥5.6%, QRisk2 >20%, or gestational diabetes history
+      • Meeting any high-risk diabetes criteria: HbA1c ≥42, QDiabetes ≥5.6%, QRisk2 >20%, or gestational diabetes history
 
-    • Excludes patients already on diabetes register or with recent NHS Health Check
+      • Excludes patients already on diabetes register or with recent NHS Health Check
 
 
-    Key Features:
+      Key Features:
 
-    • Multi-criteria diabetes risk assessment with 5-year assessment window
+      • Multi-criteria diabetes risk assessment with 5-year assessment window
 
-    • Evidence-based case finding aligned with NICE guidelines
+      • Evidence-based case finding aligned with NICE guidelines
 
-    • Integration with diabetes prevention pathways'
-
-  columns:
-  - name: person_id
-    description: Unique identifier for the person
-
-    tests:
-    - not_null
-    - unique
-  - name: age
-    description: Age of the patient (17+)
-
-    tests:
-    - not_null
-  - name: has_diabetes_risk
-    description: Boolean flag indicating if person meets any diabetes risk criteria
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: latest_hba1c_date
-    description: Date of most recent HbA1c reading within last 5 years
-  - name: latest_hba1c_value
-    description: Most recent HbA1c value (mmol/mol)
-  - name: latest_qdiabetes_date
-    description: Date of most recent QDiabetes risk score
-  - name: latest_qdiabetes_value
-    description: Most recent QDiabetes risk score (%)
-  - name: latest_qrisk_date
-    description: Date of most recent QRisk2 cardiovascular risk score
-  - name: latest_qrisk_value
-    description: Most recent QRisk2 cardiovascular risk score (%)
-  - name: has_gestational_diabetes
-    description: Boolean flag indicating history of gestational diabetes
-
-    tests:
-    - not_null
-    - accepted_values:
-
-        values:
-        - true
-        - false
-  - name: all_hba1c_codes
-    description: Array of all HbA1c concept codes for the patient
-  - name: all_hba1c_displays
-    description: Array of all HbA1c concept display terms for the patient
+      • Integration with diabetes prevention pathways'
