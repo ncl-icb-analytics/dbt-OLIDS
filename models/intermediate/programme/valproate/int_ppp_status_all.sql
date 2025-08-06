@@ -19,4 +19,4 @@ INNER JOIN {{ ref('stg_codesets_valproate_prog_codes') }} AS vpc
     ON mc.concept_code = vpc.code
 INNER JOIN {{ ref('int_patient_person_unique') }} AS pp
     ON o.patient_id = pp.patient_id
-WHERE vpc.code_category LIKE 'PPP%'
+WHERE vpc.code_category IN ('PPP_ENROLLED', 'PPP_DISCONTINUED', 'PPP_NOT_NEEDED', 'PPP_DECLINED')
