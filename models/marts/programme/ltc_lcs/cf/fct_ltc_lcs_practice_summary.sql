@@ -14,7 +14,7 @@ WITH practice_demographics AS (
         prac.practice_postcode,
         demo.pcn_code,
         demo.pcn_name,
-        demo.local_authority,
+        demo.practice_borough,
         demo.practice_neighbourhood,
         
         -- Count total registered population by demographics
@@ -57,7 +57,7 @@ WITH practice_demographics AS (
         prac.practice_postcode,
         demo.pcn_code,
         demo.pcn_name,
-        demo.local_authority,
+        demo.practice_borough,
         demo.practice_neighbourhood
 ),
 
@@ -121,7 +121,7 @@ SELECT
     demo.practice_postcode,
     demo.pcn_code,
     demo.pcn_name,
-    demo.local_authority,
+    demo.practice_borough,
     demo.practice_neighbourhood,
     
     -- Population denominators

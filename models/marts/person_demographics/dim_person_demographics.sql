@@ -80,6 +80,9 @@ SELECT
     eth.ethnicity_category,
     eth.ethnicity_subcategory,
     eth.ethnicity_granular,
+    -- Ethnicity sorting helpers
+    eth.category_sort AS ethnicity_category_sort,
+    eth.display_sort_key AS ethnicity_display_sort_key,
 
     -- Language and Communication
     lang.language AS main_language,
@@ -104,7 +107,6 @@ SELECT
     dp.practice_msoa,
     dp.practice_latitude,
     dp.practice_longitude,
-    nbhd.local_authority,
     nbhd.practice_neighbourhood,
     
     -- Address and Household Information

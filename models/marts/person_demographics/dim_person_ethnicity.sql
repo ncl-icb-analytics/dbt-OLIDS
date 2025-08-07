@@ -12,7 +12,8 @@
 
 WITH latest_ethnicity_per_person AS (
     -- Identifies the single most recent ethnicity record for each person from the intermediate table
-    -- Uses ROW_NUMBER() partitioned by person_id, ordered by clinical_effective_date (desc) and observation_lds_id (desc as tie-breaker)
+    -- Uses ROW_NUMBER() partitioned by person_id, ordered by deprioritise_flag (asc), preference_rank (asc),
+    -- then clinical_effective_date (desc) and observation_lds_id (desc as tie-breaker)
     SELECT
         pea.person_id,
         pea.sk_patient_id,
@@ -23,12 +24,17 @@ WITH latest_ethnicity_per_person AS (
         pea.ethnicity_category,
         pea.ethnicity_subcategory,
         pea.ethnicity_granular,
+        pea.deprioritise_flag,
+        pea.preference_rank,
+        pea.category_sort,
+        pea.display_sort_key,
         pea.observation_lds_id -- Include for potential tie-breaking
     FROM {{ ref('int_ethnicity_all') }} AS pea
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY pea.person_id
-        -- Order by date first, then by observation ID as a tie-breaker
-        ORDER BY pea.clinical_effective_date DESC, pea.observation_lds_id DESC
+        -- Prefer non-deprioritised and more specific first, then latest
+        ORDER BY pea.deprioritise_flag ASC, pea.preference_rank ASC,
+                 pea.clinical_effective_date DESC, pea.observation_lds_id DESC
     ) = 1 -- Get only the latest record per person
 ),
 
@@ -47,7 +53,11 @@ persons_with_ethnicity AS (
         lepp.term,
         lepp.ethnicity_category,
         lepp.ethnicity_subcategory,
-        lepp.ethnicity_granular
+        lepp.ethnicity_granular,
+        lepp.deprioritise_flag,
+        lepp.preference_rank,
+        lepp.category_sort,
+        lepp.display_sort_key
     FROM latest_ethnicity_per_person AS lepp
 ),
 
@@ -66,7 +76,12 @@ SELECT
     COALESCE(pwe.term, 'Not Recorded') AS term,
     COALESCE(pwe.ethnicity_category, 'Not Recorded') AS ethnicity_category,
     COALESCE(pwe.ethnicity_subcategory, 'Not Recorded') AS ethnicity_subcategory,
-    COALESCE(pwe.ethnicity_granular, 'Not Recorded') AS ethnicity_granular
+    COALESCE(pwe.ethnicity_granular, 'Not Recorded') AS ethnicity_granular,
+    /* expose sorting helpers for downstream charts */
+    pwe.deprioritise_flag,
+    pwe.preference_rank,
+    pwe.category_sort,
+    pwe.display_sort_key
 FROM all_persons AS ap
 LEFT JOIN persons_with_ethnicity AS pwe
     ON ap.person_id = pwe.person_id

@@ -43,7 +43,7 @@ select
   -- Practice organisational context
   dem.pcn_code,
   dem.pcn_name,
-  dem.local_authority,
+  dem.practice_borough,
   dem.practice_neighbourhood,
 
   -- Temporal context
