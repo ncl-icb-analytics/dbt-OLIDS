@@ -33,7 +33,6 @@ WITH practice_uptake AS (
         pcn_name,
         practice_borough,
         practice_neighbourhood,
-        local_authority,
         
         -- Population counts
         COUNT(DISTINCT person_id) AS total_population,
@@ -83,8 +82,7 @@ WITH practice_uptake AS (
         pcn_code,
         pcn_name,
         practice_borough,
-        practice_neighbourhood,
-        local_authority
+        practice_neighbourhood
 ),
 
 practice_metrics AS (

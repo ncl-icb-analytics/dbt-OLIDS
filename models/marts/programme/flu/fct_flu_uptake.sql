@@ -147,7 +147,7 @@ final_uptake AS (
         demo.pcn_name,
         demo.practice_borough,
         demo.practice_neighbourhood,
-        demo.local_authority,
+        -- removed local_authority; practice_borough is available
         
         -- Eligibility information
         cd.is_eligible,

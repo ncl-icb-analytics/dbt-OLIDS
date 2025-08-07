@@ -12,7 +12,7 @@ WITH demographic_population AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0) AS imd_quintile,  -- 0 = Unknown
-        demo.local_authority,
+        demo.practice_borough,
         demo.practice_neighbourhood,
         
         -- Population counts
@@ -32,7 +32,7 @@ WITH demographic_population AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0),
-        demo.local_authority,
+        demo.practice_borough,
         demo.practice_neighbourhood
 ),
 
@@ -42,7 +42,7 @@ case_finding_demographics AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0) AS imd_quintile,
-        demo.local_authority,
+        demo.practice_borough,
         demo.practice_neighbourhood,
         
         -- Total case finding counts
@@ -101,7 +101,7 @@ case_finding_demographics AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0),
-        demo.local_authority,
+        demo.practice_borough,
         demo.practice_neighbourhood
 )
 
@@ -119,7 +119,7 @@ SELECT
         WHEN demo.imd_quintile = 4 THEN 'Quintile 4'
         WHEN demo.imd_quintile = 5 THEN 'Quintile 5 (Least Deprived)'
     END AS imd_quintile_label,
-    demo.local_authority,
+    demo.practice_borough,
     demo.practice_neighbourhood,
     
     -- Population denominators
@@ -196,12 +196,12 @@ LEFT JOIN case_finding_demographics AS cf
     ON demo.age_band_10y = cf.age_band_10y
     AND demo.ethnicity_category = cf.ethnicity_category
     AND demo.imd_quintile = cf.imd_quintile
-    AND demo.local_authority = cf.local_authority
+    AND demo.practice_borough = cf.practice_borough
     AND demo.practice_neighbourhood = cf.practice_neighbourhood
 
 ORDER BY 
     demo.age_band_10y,
     demo.ethnicity_category,
     demo.imd_quintile,
-    demo.local_authority,
+    demo.practice_borough,
     demo.practice_neighbourhood
