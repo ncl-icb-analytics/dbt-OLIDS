@@ -52,6 +52,22 @@ current_addresses AS (
     WHERE pa.end_date IS NULL OR pa.end_date >= CURRENT_DATE()
 )
 
+,
+
+-- Choose current practice if present; otherwise latest historical from dim_person_historical_practice
+chosen_practice AS (
+    SELECT
+        person_id,
+        practice_code,
+        practice_name,
+        registration_start_date
+    FROM {{ ref('dim_person_historical_practice') }}
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY person_id
+        ORDER BY is_current_registration DESC, registration_start_date DESC, effective_end_date DESC
+    ) = 1
+)
+
 SELECT
     -- Core Identifiers
     age.person_id,
@@ -134,8 +150,8 @@ LEFT JOIN {{ ref('dim_person_ethnicity') }} AS eth
 LEFT JOIN {{ ref('dim_person_main_language') }} AS lang
     ON age.person_id = lang.person_id
 
--- Join practice information
-LEFT JOIN {{ ref('dim_person_current_practice') }} AS prac
+-- Join chosen practice (current if available, otherwise latest historical)
+LEFT JOIN chosen_practice AS prac
     ON age.person_id = prac.person_id
 
 -- Join enhanced practice dimension (includes PCN and borough information)

@@ -7,10 +7,10 @@
 
 -- Person Sex Dimension Table
 -- Derives sex from gender concepts using dynamic concept lookups
--- Ensures one row per person by using the patient record from current GP registration
+-- Ensures one row per person by preferring a mapped patient with gender; falls back to current registration
 
 WITH current_patient_per_person AS (
-    -- Get the patient_id for current GP registration for each person
+    -- Current registration per person (for fallback context)
     SELECT
         ipr.person_id,
         ipr.patient_id,
@@ -23,10 +23,24 @@ WITH current_patient_per_person AS (
     ) = 1
 ),
 
--- Get all persons to ensure complete coverage
+best_patient_with_gender AS (
+    -- Choose a single best patient per person: prefer one with a gender_concept_id
+    SELECT
+        pp.person_id,
+        p.id AS patient_id,
+        p.gender_concept_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY pp.person_id
+            ORDER BY CASE WHEN p.gender_concept_id IS NOT NULL THEN 1 ELSE 2 END,
+                     p.id DESC
+        ) AS rn
+    FROM {{ ref('int_patient_person_unique') }} AS pp
+    INNER JOIN {{ ref('stg_olids_patient') }} AS p
+        ON pp.patient_id = p.id
+),
+
 all_persons AS (
-    SELECT person_id
-    FROM {{ ref('dim_person') }}
+    SELECT person_id FROM {{ ref('dim_person') }}
 )
 
 SELECT
@@ -44,10 +58,15 @@ FROM (
                 source_concept.display
         ) AS rn
     FROM all_persons AS ap
+    LEFT JOIN best_patient_with_gender AS bpg
+        ON ap.person_id = bpg.person_id AND bpg.rn = 1
     LEFT JOIN current_patient_per_person AS cpp
         ON ap.person_id = cpp.person_id
-    LEFT JOIN {{ ref('stg_olids_patient') }} AS p
-        ON cpp.patient_id = p.id
-    {{ join_concept_display('p.gender_concept_id') }}
+    -- Prefer gender from best mapped patient; fall back to current registration's patient
+    LEFT JOIN {{ ref('stg_olids_patient') }} AS p_best
+        ON bpg.patient_id = p_best.id
+    LEFT JOIN {{ ref('stg_olids_patient') }} AS p_curr
+        ON cpp.patient_id = p_curr.id
+    {{ join_concept_display('COALESCE(p_best.gender_concept_id, p_curr.gender_concept_id)') }}
 ) ranked
 WHERE rn = 1
