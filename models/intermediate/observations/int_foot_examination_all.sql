@@ -23,31 +23,31 @@ WITH foot_observations AS (
         obs.cluster_id AS source_cluster_id,
 
         -- Check if code term contains 'left' or 'right' (case insensitive)
-        REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*left.*') AS has_left,
-        REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*right.*') AS has_right,
+        REGEXP_LIKE(LOWER(obs.code_description), '.*left.*') AS has_left,
+        REGEXP_LIKE(LOWER(obs.code_description), '.*right.*') AS has_right,
 
         -- Check if code is a Townson scale and extract level
-        REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level.*') AS is_townson,
+        REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level.*') AS is_townson,
         CASE
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 1.*') THEN 'Level 1'
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 2.*') THEN 'Level 2'
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 3.*') THEN 'Level 3'
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 4.*') THEN 'Level 4'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 1.*') THEN 'Level 1'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 2.*') THEN 'Level 2'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 3.*') THEN 'Level 3'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 4.*') THEN 'Level 4'
             ELSE NULL
         END AS townson_level,
 
         -- Extract risk level from description
         CASE
-            WHEN LOWER(obs.mapped_concept_display) LIKE '%low risk%' THEN 'Low'
-            WHEN LOWER(obs.mapped_concept_display) LIKE '%moderate risk%' THEN 'Moderate'
-            WHEN LOWER(obs.mapped_concept_display) LIKE '%increased risk%' THEN 'Moderate'
-            WHEN LOWER(obs.mapped_concept_display) LIKE '%high risk%' THEN 'High'
-            WHEN LOWER(obs.mapped_concept_display) LIKE '%ulcerated%' THEN 'Ulcerated'
+            WHEN LOWER(obs.code_description) LIKE '%low risk%' THEN 'Low'
+            WHEN LOWER(obs.code_description) LIKE '%moderate risk%' THEN 'Moderate'
+            WHEN LOWER(obs.code_description) LIKE '%increased risk%' THEN 'Moderate'
+            WHEN LOWER(obs.code_description) LIKE '%high risk%' THEN 'High'
+            WHEN LOWER(obs.code_description) LIKE '%ulcerated%' THEN 'Ulcerated'
             -- Map Townson scale levels to risk levels
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 1.*') THEN 'Low'
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 2.*') THEN 'Moderate'
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 3.*') THEN 'High'
-            WHEN REGEXP_LIKE(LOWER(obs.mapped_concept_display), '.*townson.*scale.*level 4.*') THEN 'High'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 1.*') THEN 'Low'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 2.*') THEN 'Moderate'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 3.*') THEN 'High'
+            WHEN REGEXP_LIKE(LOWER(obs.code_description), '.*townson.*scale.*level 4.*') THEN 'High'
             ELSE NULL
         END AS risk_level
 
