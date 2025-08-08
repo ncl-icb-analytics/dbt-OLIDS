@@ -234,6 +234,21 @@ WITH condition_union AS (
 
     UNION ALL
 
+    -- Learning Disability (All Ages)
+    SELECT
+        person_id,
+        'LD_ALL' AS condition_code,
+        'Learning Disability (All Ages)' AS condition_name,
+        'Neurodevelopmental' AS clinical_domain,
+        is_on_register,
+        earliest_diagnosis_date,
+        latest_diagnosis_date,
+        FALSE AS is_qof
+    FROM {{ ref('fct_person_learning_disability_register_all_ages') }}
+    WHERE is_on_register = TRUE
+
+    UNION ALL
+
     -- NAFLD
     SELECT
         person_id,
