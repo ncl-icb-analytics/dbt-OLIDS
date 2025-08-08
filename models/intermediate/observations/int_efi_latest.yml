@@ -1,0 +1,30 @@
+version: 2
+models:
+  - name: int_efi_latest
+    description: |
+      Intermediate: Latest eFI per person across EFI and EFI2 algorithms.
+      One row per person. The preferred latest row is the most recent observation (regardless of algorithm), and the model also exposes the latest available score for each algorithm separately.
+
+      Preferred latest fields:
+      - `latest_efi_score_preferred`, `latest_efi_type_preferred`, `latest_efi_category_preferred`, `latest_efi_date`.
+
+      Algorithm-specific latest (if present):
+      - `latest_efi_score` for EFI, `latest_efi2_score` for EFI2.
+    columns:
+      - name: person_id
+        description: Person identifier
+        tests:
+          - not_null
+          - unique
+      - name: latest_efi_date
+        description: Observation date of the preferred latest eFI
+      - name: latest_efi_score_preferred
+        description: Preferred latest eFI score (value) from the most recent observation
+      - name: latest_efi_type_preferred
+        description: Algorithm type (EFI or EFI2) for the preferred latest score
+      - name: latest_efi_category_preferred
+        description: Frailty category corresponding to the preferred latest score
+      - name: latest_efi_score
+        description: Latest eFI score using the original EFI algorithm, if available
+      - name: latest_efi2_score
+        description: Latest eFI2 score using the EFI2 algorithm, if available

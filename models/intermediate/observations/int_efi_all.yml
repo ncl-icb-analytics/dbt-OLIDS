@@ -1,0 +1,41 @@
+version: 2
+models:
+  - name: int_efi_all
+    description: |
+      Intermediate: All electronic Frailty Index (eFI) observations from `EFI_SCORE` and `EFI2_SCORE`.
+      One row per observation with algorithm-specific categorisation and the original numeric score.
+
+      Categorisation thresholds:
+      - EFI (cluster `EFI_SCORE`):
+        - Fit: score < 0.12
+        - Mildly Frail: 0.12 ≤ score < 0.24
+        - Moderately Frail: 0.24 ≤ score < 0.36
+        - Severely Frail: score ≥ 0.36
+      - EFI2 (cluster `EFI2_SCORE`):
+        - Fit: score < 0.09
+        - Mildly Frail: 0.09 ≤ score < 0.16
+        - Moderately Frail: 0.16 ≤ score < 0.24
+        - Severely Frail: score ≥ 0.24
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: EFI_SCORE, EFI2_SCORE
+    columns:
+      - name: person_id
+        description: Person identifier
+        tests:
+          - not_null
+      - name: observation_id
+        description: Source observation identifier (LDS)
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: Observation date
+        tests:
+          - not_null
+      - name: efi_value
+        description: Numeric eFI value as recorded
+      - name: efi_type
+        description: Algorithm type derived from cluster (EFI or EFI2)
+      - name: efi_category
+        description: Frailty category per algorithm-specific thresholds
