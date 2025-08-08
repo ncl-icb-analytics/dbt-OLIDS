@@ -14,6 +14,8 @@ SELECT
     observation_id,
     clinical_effective_date,
     hba1c_value,
+    hba1c_value_ifcc_standardised,
+    hba1c_dcct_value,
     concept_code,
     concept_display,
     source_cluster_id,
