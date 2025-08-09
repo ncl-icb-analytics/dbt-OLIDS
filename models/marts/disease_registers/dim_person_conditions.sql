@@ -28,6 +28,7 @@ SELECT
     MAX(CASE WHEN condition_code = 'HF' THEN TRUE ELSE FALSE END) AS has_heart_failure,
     MAX(CASE WHEN condition_code = 'HTN' THEN TRUE ELSE FALSE END) AS has_hypertension,
     MAX(CASE WHEN condition_code = 'LD' THEN TRUE ELSE FALSE END) AS has_learning_disability,
+    MAX(CASE WHEN condition_code = 'LD_ALL' THEN TRUE ELSE FALSE END) AS has_learning_disability_all_ages,
     MAX(CASE WHEN condition_code = 'NAFLD' THEN TRUE ELSE FALSE END) AS has_nafld,
     MAX(CASE WHEN condition_code = 'NDH' THEN TRUE ELSE FALSE END) AS has_non_diabetic_hyperglycaemia,
     MAX(CASE WHEN condition_code = 'OB' THEN TRUE ELSE FALSE END) AS has_obesity,
