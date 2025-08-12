@@ -54,11 +54,37 @@ SELECT
     ac.birth_year,
     ac.birth_month,
     ac.birth_date_approx,
+    -- Approximate date of birth using the last day of the recorded birth month
+    CASE
+        WHEN ac.birth_year IS NOT NULL AND ac.birth_month IS NOT NULL
+            THEN LAST_DAY(DATE_FROM_PARTS(ac.birth_year, ac.birth_month, 1))
+        ELSE NULL
+    END AS birth_date_approx_end_of_month,
     ac.death_year,
     ac.death_month,
     ac.death_date_approx,
     ac.is_deceased,
     ac.age,
+    -- Minimum possible age in full years using day-accurate logic with DOB assumed as last day of birth month
+    CASE
+        WHEN ac.birth_year IS NOT NULL AND ac.birth_month IS NOT NULL THEN
+            CASE
+                WHEN ac.calculation_date >= DATEADD(
+                        year,
+                        DATEDIFF(year,
+                                 LAST_DAY(DATE_FROM_PARTS(ac.birth_year, ac.birth_month, 1)),
+                                 ac.calculation_date),
+                        LAST_DAY(DATE_FROM_PARTS(ac.birth_year, ac.birth_month, 1))
+                     )
+                THEN DATEDIFF(year,
+                              LAST_DAY(DATE_FROM_PARTS(ac.birth_year, ac.birth_month, 1)),
+                              ac.calculation_date)
+                ELSE DATEDIFF(year,
+                              LAST_DAY(DATE_FROM_PARTS(ac.birth_year, ac.birth_month, 1)),
+                              ac.calculation_date) - 1
+            END
+        ELSE NULL
+    END AS age_at_least,
     ac.age_months,
     ac.age_weeks_approx,
     ac.age_days_approx,

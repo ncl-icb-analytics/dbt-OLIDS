@@ -81,9 +81,11 @@ SELECT
     -- Basic Demographics
     age.birth_year,
     age.birth_date_approx,
+    age.birth_date_approx_end_of_month,
     age.death_year,
     age.death_date_approx,
     age.age,
+    age.age_at_least,
     age.age_life_stage,
 
     -- Age Bands
