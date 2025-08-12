@@ -20,3 +20,8 @@ models:
       • UK school stages and education levels
 
       • Life stage categories for demographic analysis'
+    columns:
+      - name: birth_date_approx_end_of_month
+        description: 'Approximate date of birth using the last day of the recorded birth month. Complements birth_date_approx (mid-month) for scenarios that require end-of-month alignment.'
+      - name: age_at_least
+        description: 'Minimum possible age in full years, calculated using the last day of the recorded birth month as the date of birth. For deceased persons, this is age at death.'

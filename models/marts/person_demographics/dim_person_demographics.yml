@@ -22,3 +22,8 @@ models:
       • Current practice registration and organisational hierarchy
 
       • Address and household linkage capability'
+    columns:
+      - name: birth_date_approx_end_of_month
+        description: 'Approximate date of birth using the last day of the recorded birth month, passed through from dim_person_age. Complements birth_date_approx (mid-month).'
+      - name: age_at_least
+        description: 'Minimum possible age in full years, derived from dim_person_age using DOB as the last day of the birth month.'
