@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: fct_person_frailty_register
+    description: 'Frailty Register - Patients with frailty diagnosis.
+
+
+      Key Inclusion Criteria:
+
+      • Frailty diagnosis (FRAILTY_DX) present
+
+      • No age restrictions (though frailty more common in elderly)
+
+      • No resolution codes (frailty status can fluctuate but does not resolve)
+
+      • Tracks latest severity (mild, moderate, severe)
+
+
+      Purpose: Register for frailty care pathway monitoring, comprehensive geriatric assessment planning, falls prevention, medication review, and targeted healthcare interventions.'

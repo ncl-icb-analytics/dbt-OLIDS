@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: int_frailty_diagnoses_all
+    description: 'Intermediate: Frailty Diagnoses - All recorded frailty diagnosis observations for frailty register management.
+
+
+      Clinical Purpose:
+
+      • Supports frailty register maintenance and reporting
+
+      • Tracks frailty severity progression (mild, moderate, severe)
+
+      • Enables comprehensive geriatric assessment planning
+
+      • Supports risk stratification and targeted interventions for frail populations
+
+
+      Data Granularity:
+
+      • One row per frailty diagnosis observation
+
+      • Includes all patients with frailty-related codes regardless of current status
+
+      • Uses cluster ID: FRAILTY_DX (diagnosis)
+
+
+      Key Features:
+
+      • Tracks frailty severity levels (mild, moderate, severe, unknown)
+
+      • No resolution codes as frailty status can fluctuate but does not resolve
+
+      • Provides earliest/latest dates for diagnosis events
+
+      • Includes comprehensive arrays of all related concept codes per person'
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: FRAILTY_DX
