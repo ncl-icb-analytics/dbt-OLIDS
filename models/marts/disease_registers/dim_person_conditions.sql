@@ -25,6 +25,7 @@ SELECT
     MAX(CASE WHEN condition_code = 'EP' THEN TRUE ELSE FALSE END) AS has_epilepsy,
     MAX(CASE WHEN condition_code = 'FH' THEN TRUE ELSE FALSE END) AS has_familial_hypercholesterolaemia,
     MAX(CASE WHEN condition_code = 'GESTDIAB' THEN TRUE ELSE FALSE END) AS has_gestational_diabetes,
+    MAX(CASE WHEN condition_code = 'FRAIL' THEN TRUE ELSE FALSE END) AS has_frailty,
     MAX(CASE WHEN condition_code = 'HF' THEN TRUE ELSE FALSE END) AS has_heart_failure,
     MAX(CASE WHEN condition_code = 'HTN' THEN TRUE ELSE FALSE END) AS has_hypertension,
     MAX(CASE WHEN condition_code = 'LD' THEN TRUE ELSE FALSE END) AS has_learning_disability,
@@ -51,6 +52,7 @@ SELECT
     COUNT(DISTINCT CASE WHEN clinical_domain = 'Metabolic' THEN condition_code END) AS metabolic_conditions,
     COUNT(DISTINCT CASE WHEN clinical_domain = 'Musculoskeletal' THEN condition_code END) AS musculoskeletal_conditions,
     COUNT(DISTINCT CASE WHEN clinical_domain = 'Neurology' THEN condition_code END) AS neurology_conditions,
+    COUNT(DISTINCT CASE WHEN clinical_domain = 'Geriatric' THEN condition_code END) AS geriatric_conditions,
     
     -- Earliest and latest diagnosis dates across all conditions
     MIN(earliest_diagnosis_date) AS earliest_condition_diagnosis,

@@ -396,6 +396,21 @@ WITH condition_union AS (
         FALSE AS is_qof
     FROM {{ ref('fct_person_gestational_diabetes_register') }}
     WHERE is_on_register = TRUE
+
+    UNION ALL
+
+    -- Frailty
+    SELECT
+        person_id,
+        'FRAIL' AS condition_code,
+        'Frailty' AS condition_name,
+        'Geriatric' AS clinical_domain,
+        is_on_register,
+        earliest_diagnosis_date,
+        latest_diagnosis_date,
+        FALSE AS is_qof
+    FROM {{ ref('fct_person_frailty_register') }}
+    WHERE is_on_register = TRUE
 )
 
 SELECT
