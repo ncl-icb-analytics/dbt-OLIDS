@@ -8,12 +8,12 @@ Complete population health foundation combining demographics, behavioural risk f
 Provides comprehensive analytical dataset for population health dashboards and reporting.
 
 Business Logic:
-- All three tables have identical grain (one row per person from dim_person)
-- Perfect 1:1:1 INNER JOINs - every person appears in all three tables
-- Demographics: Complete population with full demographic profiles
+- All three tables designed with identical grain (one row per person from dim_person)
+- LEFT JOINs from demographics ensure complete population coverage (defensive approach)
+- Demographics: Complete population with full demographic profiles (base table)
 - Behavioural risk factors: All persons with explicit data availability flags (NULL where no assessments)
 - Conditions: All persons with explicit TRUE/FALSE flags (FALSE where no conditions)
-- No persons excluded - complete population coverage for accurate prevalence calculations
+- Maintains full demographic population while safely handling any data loading edge cases
 */
 
 SELECT
@@ -135,7 +135,7 @@ SELECT
     c.latest_condition_diagnosis
 
 FROM {{ ref('dim_person_demographics') }} d
-INNER JOIN {{ ref('fct_person_behavioural_risk_factors') }} b
+LEFT JOIN {{ ref('fct_person_behavioural_risk_factors') }} b
     ON d.person_id = b.person_id
-INNER JOIN {{ ref('dim_person_conditions') }} c
+LEFT JOIN {{ ref('dim_person_conditions') }} c
     ON d.person_id = c.person_id
