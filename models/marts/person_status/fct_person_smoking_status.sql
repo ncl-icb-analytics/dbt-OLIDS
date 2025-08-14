@@ -47,6 +47,16 @@ SELECT
     person_id,
     age,
     smoking_status,
+    
+    -- Smoking risk sort key (higher number = higher risk)
+    CASE smoking_status
+        WHEN 'Never Smoked' THEN 1  -- Lowest risk
+        WHEN 'Ex-Smoker' THEN 2  -- Past risk
+        WHEN 'Current Smoker' THEN 3  -- Active risk
+        WHEN 'Unknown' THEN 0
+        ELSE 0  -- Unknown/missing
+    END AS smoking_risk_sort_key,
+    
     latest_smoking_date,
     earliest_smoking_date,
     latest_concept_code,

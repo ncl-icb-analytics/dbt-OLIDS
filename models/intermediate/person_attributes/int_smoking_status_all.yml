@@ -17,7 +17,7 @@ models:
 
       • One row per smoking status observation with analytics-ready categorisation
 
-      • Uses SMOK_COD, LSMOK_COD, EXSMOK_COD, and NSMOK_COD QOF clusters
+      • Uses LSMOK_COD, EXSMOK_COD, and NSMOK_COD QOF-specific clusters
 
       • Includes all patients regardless of status for comprehensive QOF reporting
 
@@ -30,4 +30,4 @@ models:
     tests:
       - cluster_ids_exist:
           arguments:
-            cluster_ids: EXSMOK_COD, LSMOK_COD, NSMOK_COD, SMOK_COD
+            cluster_ids: EXSMOK_COD, LSMOK_COD, NSMOK_COD

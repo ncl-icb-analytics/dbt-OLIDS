@@ -157,8 +157,23 @@ LEFT JOIN chosen_practice AS prac
     ON age.person_id = prac.person_id
 
 -- Join enhanced practice dimension (includes PCN and borough information)
-LEFT JOIN {{ ref('dim_practice') }} AS dp
-    ON prac.practice_code = dp.practice_code
+-- Deduplicate dim_practice which has 2 rows per practice_code
+LEFT JOIN (
+    SELECT 
+        practice_code,
+        practice_name,
+        pcn_code,
+        pcn_name,
+        pcn_name_with_borough,
+        practice_borough,
+        practice_postcode_dict,
+        practice_lsoa,
+        practice_msoa,
+        practice_latitude,
+        practice_longitude
+    FROM {{ ref('dim_practice') }}
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY practice_code ORDER BY practice_type_desc NULLS LAST) = 1
+) AS dp ON prac.practice_code = dp.practice_code
 
 -- Join practice neighbourhood information
 LEFT JOIN {{ ref('dim_practice_neighbourhood') }} AS nbhd

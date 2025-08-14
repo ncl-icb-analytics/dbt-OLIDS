@@ -1,20 +1,27 @@
 version: 2
 models:
   - name: dim_person_conditions
-    description: 'Person Conditions Dimension - Wide format pivot of LTC summary providing boolean flags for each condition per person.
+    description: 'Person Conditions Dimension - Complete population view with explicit boolean flags for each condition.
+
+
+      Data Granularity:
+
+      • One row per person in the population (includes ALL persons from dim_person)
+
+      • Persons with no conditions have all flags set to FALSE and counts to 0
+
+      • Complete population coverage for accurate prevalence calculations
 
 
       Key Features:
 
-      • One row per person with condition presence flags
+      • Explicit TRUE/FALSE boolean columns for each condition (no nulls)
 
-      • Boolean columns for each condition (has_diabetes, has_hypertension, etc.)
-
-      • Summary counts for total conditions and QOF conditions
+      • Summary counts for total conditions and QOF conditions (0 for no conditions)
 
       • Clinical domain counts (cardiovascular, respiratory, etc.)
 
-      • Earliest and latest diagnosis dates across all conditions
+      • Earliest and latest diagnosis dates (NULL only for persons with no conditions)
 
 
-      Purpose: Simplified analytical table for condition profiling, multi-morbidity analysis, and dashboard consumption. Provides easy boolean lookup for condition presence.'
+      Purpose: Complete analytical table for condition profiling, multi-morbidity analysis, and population health dashboards. Eliminates null-handling complexity by providing explicit boolean values for every person in the population.'

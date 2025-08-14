@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: fct_person_behavioural_risk_factors
+    description: 'Complete population view of person-level behavioural risk factors combining BMI, smoking, and alcohol status.
+
+
+      Clinical Purpose:
+
+      • Comprehensive view of modifiable lifestyle risk factors for entire population
+
+      • Population health management and risk stratification
+
+      • Intervention targeting for lifestyle modification programmes
+
+
+      Data Granularity:
+
+      • One row per person in the population (includes ALL persons from dim_person)
+
+      • Combines latest assessments from BMI, smoking, and alcohol sources where available
+
+      • NULL values for persons without assessments, with explicit data availability flags
+
+
+      Key Features:
+
+      • Complete population coverage for accurate prevalence calculations
+
+      • Unified view of three key behavioural risk factors
+
+      • Individual and combined risk scoring where data exists
+
+      • Explicit data availability flags (has_bmi_data, has_smoking_data, has_alcohol_data)
+
+      • Perfect 1:1 join compatibility with dim_person_demographics and dim_person_conditions'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: bmi_category
+        description: BMI classification (Underweight, Normal, Overweight, Obese Class I/II/III)
+      
+      - name: bmi_value
+        description: Latest valid BMI value
+      
+      - name: bmi_risk_sort_key
+        description: BMI risk level (1=Normal, 2=Underweight, 3=Overweight, 4-6=Obese classes)
+      
+      - name: smoking_status
+        description: Current smoking status (Never Smoked, Ex-Smoker, Current Smoker)
+      
+      - name: smoking_risk_sort_key
+        description: Smoking risk level (1=Never, 2=Ex-smoker, 3=Current smoker)
+      
+      - name: alcohol_status
+        description: Current alcohol risk status
+      
+      - name: alcohol_risk_sort_key
+        description: Alcohol risk level (1=Non-drinker, 2=Lower risk, 3+=Increasing/higher risk)
+      
+      - name: risk_factor_count
+        description: Count of active risk factors (overweight/obese, current smoker, alcohol risk)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 3
+      
+      - name: has_bmi_data
+        description: Flag indicating BMI data is available
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_smoking_data
+        description: Flag indicating smoking data is available
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_alcohol_data
+        description: Flag indicating alcohol data is available
+        tests:
+          - accepted_values:
+              values: [true, false]

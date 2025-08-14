@@ -27,3 +27,10 @@ models:
       • Latest smoking status with specific code prioritisation logic
 
       • SNOMED concept code mapping to smoking status categories • Boolean flags for current smoker, ex-smoker, and never smoked classifications'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique

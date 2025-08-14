@@ -31,3 +31,10 @@ models:
       • Data quality assurance with validation flags
 
       • Complete observation metadata for clinical context'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique

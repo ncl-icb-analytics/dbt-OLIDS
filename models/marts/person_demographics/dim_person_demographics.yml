@@ -23,6 +23,17 @@ models:
 
       • Address and household linkage capability'
     columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: birth_date_approx
+        description: Approximate date of birth (mid-month)
+        tests:
+          - not_null
+      
       - name: birth_date_approx_end_of_month
         description: 'Approximate date of birth using the last day of the recorded birth month, passed through from dim_person_age. Complements birth_date_approx (mid-month).'
       - name: age_at_least
