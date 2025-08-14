@@ -21,7 +21,7 @@ WITH base_observations_raw AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id
-    FROM ({{ get_observations("'BP_COD', 'SYSBP_COD', 'DIABP_COD', 'HOMEAMBBP_COD', 'ABPM_COD', 'HOMEBP_COD'") }}) obs
+    FROM ({{ get_observations("'BP_COD', 'SYSBP_COD', 'DIASBP_COD', 'HOMEAMBBP_COD', 'ABPM_COD', 'HOMEBP_COD'") }}) obs
     WHERE obs.result_value IS NOT NULL -- Still need a value to assess
     -- DO NOT filter dates or values here - we want to catch issues
 ),
@@ -35,7 +35,7 @@ row_flags_raw AS (
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%systolic%')) AS is_systolic_row,
 
         -- Flag for Diastolic readings
-        (source_cluster_id = 'DIABP_COD' OR
+        (source_cluster_id = 'DIASBP_COD' OR
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%diastolic%')) AS is_diastolic_row
     FROM base_observations_raw
 ),
@@ -59,7 +59,7 @@ aggregated_raw_events AS (
 
         -- Flags for specific code presence (for ambiguity checking)
         BOOLOR_AGG(source_cluster_id = 'SYSBP_COD') AS had_sysbp_cod,
-        BOOLOR_AGG(source_cluster_id = 'DIABP_COD') AS had_diabp_cod
+        BOOLOR_AGG(source_cluster_id = 'DIASBP_COD') AS had_diabp_cod
 
     FROM row_flags_raw
     GROUP BY person_id, clinical_effective_date

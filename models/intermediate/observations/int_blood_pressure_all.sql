@@ -19,7 +19,7 @@ WITH base_observations_and_clusters AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id
-    FROM ({{ get_observations("'BP_COD', 'SYSBP_COD', 'DIABP_COD', 'HOMEAMBBP_COD', 'ABPM_COD', 'HOMEBP_COD'") }}) obs
+    FROM ({{ get_observations("'BP_COD', 'SYSBP_COD', 'DIASBP_COD', 'HOMEAMBBP_COD', 'ABPM_COD', 'HOMEBP_COD'") }}) obs
     WHERE obs.result_value IS NOT NULL
       AND obs.clinical_effective_date IS NOT NULL
       AND obs.clinical_effective_date <= CURRENT_DATE() -- No future dates
@@ -37,7 +37,7 @@ row_flags AS (
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%systolic%')) AS is_systolic_row,
 
         -- Flag for Diastolic readings: specific cluster or display text contains 'diastolic'
-        (source_cluster_id = 'DIABP_COD' OR
+        (source_cluster_id = 'DIASBP_COD' OR
          (source_cluster_id = 'BP_COD' AND concept_display ILIKE '%diastolic%')) AS is_diastolic_row,
 
         -- Flag for Home BP context
