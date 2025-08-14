@@ -13,3 +13,10 @@ models:
       • Integrated with person demographics for population health analysis
 
       • One row per person with smoking observation data (limited to people with recorded smoking observations)'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique

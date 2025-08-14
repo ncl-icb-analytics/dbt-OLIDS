@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: int_alcohol_misuse_disorders
+    description: 'Intermediate: Alcohol Misuse Disorders - All alcohol disorder diagnoses and conditions.
+
+
+      Clinical Purpose:
+
+      • Identifies patients with alcohol misuse, abuse, or dependence diagnoses
+
+      • Supports addiction services planning and resource allocation
+
+      • Enables monitoring of alcohol-related health burden
+
+
+      Data Granularity:
+
+      • One row per alcohol disorder observation
+
+      • Includes all patients regardless of status (active/inactive/deceased)
+
+      • Uses ALCOHOL_MISUSE_DISORDERS cluster for diagnosis identification
+
+
+      Key Features:
+
+      • Comprehensive disorder categorisation (dependence, harmful use, abuse, etc.)
+
+      • Severity assessment based on clinical terminology
+
+      • Active problem tracking using problem status and end dates
+
+      • Remission and recovery status identification
+
+      • Historical vs current disorder differentiation'
+
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: ALCOHOL_MISUSE_DISORDERS
+
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+
+      - name: observation_id
+        description: Identifier for the observation (may not be unique due to multiple concept mappings)
+        tests:
+          - not_null
+
+      - name: clinical_effective_date
+        description: Date when the diagnosis was recorded
+        tests:
+          - not_null
+
+      - name: concept_code
+        description: SNOMED concept code for the alcohol disorder
+
+      - name: concept_display
+        description: Display text for the alcohol disorder concept
+
+      - name: source_cluster_id
+        description: Source cluster identifier (ALCOHOL_MISUSE_DISORDERS)
+
+      - name: result_value
+        description: Numeric result value if applicable
+
+      - name: result_text
+        description: Text result or additional notes
+
+      - name: is_problem
+        description: Flag indicating if recorded as a problem
+
+      - name: problem_end_date
+        description: End date for the problem if resolved

@@ -1,0 +1,114 @@
+version: 2
+
+models:
+  - name: population_health_needs_base
+    description: 'Foundational dataset for population health needs dashboards combining demographics, behavioural risk factors, and conditions.
+
+
+      Clinical Purpose:
+
+      • Foundational dataset for population health needs dashboards and reporting
+
+      • Enables health needs assessment across demographic, lifestyle, and clinical domains
+
+      • Supports population health needs analysis and direct care insights
+
+
+      Data Granularity:
+
+      • One row per person from demographics dimension (maintains full population)
+
+      • LEFT JOINs ensure all persons included regardless of risk factor or condition data
+
+      • Person-level base for population health needs assessment and reporting
+
+
+      Key Features:
+
+      • Full demographic profile including geographic and organisational context
+
+      • Behavioural risk factors with individual and combined risk metrics
+
+      • Complete condition profile with boolean flags and summary counts
+
+      • Clinical domain aggregations for targeted analysis
+
+      • Optimised for population health needs dashboard consumption and reporting'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+      
+      # Demographics section
+      - name: is_active
+        description: Flag indicating if person has active GP registration
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
+      - name: age
+        description: Current age in years
+      
+      - name: sex
+        description: Person's sex
+        tests:
+          - accepted_values:
+              values: ['Male', 'Female', 'Unknown']
+      
+      - name: ethnicity_category
+        description: Main ethnicity category classification
+      
+      - name: practice_code
+        description: GP practice code
+      
+      - name: pcn_code
+        description: Primary Care Network code
+      
+      - name: imd_decile_19
+        description: Index of Multiple Deprivation 2019 decile (1=most deprived, 10=least deprived)
+      
+      # Behavioural Risk Factors section
+      - name: bmi_category
+        description: BMI classification (may be null if no BMI data)
+        tests:
+          - accepted_values:
+              values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
+              config:
+                where: "bmi_category is not null"
+      
+      - name: smoking_status
+        description: Current smoking status (may be null if no smoking data)
+        tests:
+          - accepted_values:
+              values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
+              config:
+                where: "smoking_status is not null"
+      
+      - name: risk_factor_count
+        description: Count of active behavioural risk factors (0-3, null if no risk factor data)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 3
+              config:
+                where: "risk_factor_count is not null"
+      
+      # Conditions section  
+      - name: has_diabetes
+        description: Flag indicating diabetes diagnosis (null if no condition data)
+        tests:
+          - accepted_values:
+              values: [true, false]
+              config:
+                where: "has_diabetes is not null"
+      
+      - name: total_conditions
+        description: Total number of recorded conditions (null if no condition data)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 50
+              config:
+                where: "total_conditions is not null"

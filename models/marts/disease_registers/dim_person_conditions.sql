@@ -5,58 +5,70 @@
 }}
 
 -- Person Conditions Dimension
--- Wide format pivot of fct_person_ltc_summary providing boolean flags for each condition
--- One row per person with condition presence flags for easier analytical consumption
+-- Wide format with explicit boolean flags for ALL persons
+-- Includes persons with no conditions (all flags = FALSE) for complete population view
+-- One row per person in the population for easier analytical consumption
 
-SELECT
-    person_id,
-    
-    -- Boolean condition flags (pivoted from condition_code)
-    MAX(CASE WHEN condition_code = 'AF' THEN TRUE ELSE FALSE END) AS has_atrial_fibrillation,
-    MAX(CASE WHEN condition_code = 'AST' THEN TRUE ELSE FALSE END) AS has_asthma,
-    MAX(CASE WHEN condition_code = 'CAN' THEN TRUE ELSE FALSE END) AS has_cancer,
-    MAX(CASE WHEN condition_code = 'CHD' THEN TRUE ELSE FALSE END) AS has_coronary_heart_disease,
-    MAX(CASE WHEN condition_code = 'CKD' THEN TRUE ELSE FALSE END) AS has_chronic_kidney_disease,
-    MAX(CASE WHEN condition_code = 'COPD' THEN TRUE ELSE FALSE END) AS has_copd,
-    MAX(CASE WHEN condition_code = 'CYP_AST' THEN TRUE ELSE FALSE END) AS has_cyp_asthma,
-    MAX(CASE WHEN condition_code = 'DEM' THEN TRUE ELSE FALSE END) AS has_dementia,
-    MAX(CASE WHEN condition_code = 'DEP' THEN TRUE ELSE FALSE END) AS has_depression,
-    MAX(CASE WHEN condition_code = 'DM' THEN TRUE ELSE FALSE END) AS has_diabetes,
-    MAX(CASE WHEN condition_code = 'EP' THEN TRUE ELSE FALSE END) AS has_epilepsy,
-    MAX(CASE WHEN condition_code = 'FH' THEN TRUE ELSE FALSE END) AS has_familial_hypercholesterolaemia,
-    MAX(CASE WHEN condition_code = 'GESTDIAB' THEN TRUE ELSE FALSE END) AS has_gestational_diabetes,
-    MAX(CASE WHEN condition_code = 'FRAIL' THEN TRUE ELSE FALSE END) AS has_frailty,
-    MAX(CASE WHEN condition_code = 'HF' THEN TRUE ELSE FALSE END) AS has_heart_failure,
-    MAX(CASE WHEN condition_code = 'HTN' THEN TRUE ELSE FALSE END) AS has_hypertension,
-    MAX(CASE WHEN condition_code = 'LD' THEN TRUE ELSE FALSE END) AS has_learning_disability,
-    MAX(CASE WHEN condition_code = 'LD_ALL' THEN TRUE ELSE FALSE END) AS has_learning_disability_all_ages,
-    MAX(CASE WHEN condition_code = 'NAFLD' THEN TRUE ELSE FALSE END) AS has_nafld,
-    MAX(CASE WHEN condition_code = 'NDH' THEN TRUE ELSE FALSE END) AS has_non_diabetic_hyperglycaemia,
-    MAX(CASE WHEN condition_code = 'OB' THEN TRUE ELSE FALSE END) AS has_obesity,
-    MAX(CASE WHEN condition_code = 'OST' THEN TRUE ELSE FALSE END) AS has_osteoporosis,
-    MAX(CASE WHEN condition_code = 'PAD' THEN TRUE ELSE FALSE END) AS has_peripheral_arterial_disease,
-    MAX(CASE WHEN condition_code = 'PC' THEN TRUE ELSE FALSE END) AS has_palliative_care,
-    MAX(CASE WHEN condition_code = 'RA' THEN TRUE ELSE FALSE END) AS has_rheumatoid_arthritis,
-    MAX(CASE WHEN condition_code = 'SMI' THEN TRUE ELSE FALSE END) AS has_severe_mental_illness,
-    MAX(CASE WHEN condition_code = 'STIA' THEN TRUE ELSE FALSE END) AS has_stroke_tia,
-    
-    -- Summary counts
-    COUNT(DISTINCT condition_code) AS total_conditions,
-    COUNT(DISTINCT CASE WHEN is_qof = TRUE THEN condition_code END) AS total_qof_conditions,
-    COUNT(DISTINCT CASE WHEN is_qof = FALSE THEN condition_code END) AS total_non_qof_conditions,
-    
-    -- Clinical domain counts
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Cardiovascular' THEN condition_code END) AS cardiovascular_conditions,
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Respiratory' THEN condition_code END) AS respiratory_conditions,
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Mental Health' THEN condition_code END) AS mental_health_conditions,
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Metabolic' THEN condition_code END) AS metabolic_conditions,
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Musculoskeletal' THEN condition_code END) AS musculoskeletal_conditions,
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Neurology' THEN condition_code END) AS neurology_conditions,
-    COUNT(DISTINCT CASE WHEN clinical_domain = 'Geriatric' THEN condition_code END) AS geriatric_conditions,
-    
-    -- Earliest and latest diagnosis dates across all conditions
-    MIN(earliest_diagnosis_date) AS earliest_condition_diagnosis,
-    MAX(latest_diagnosis_date) AS latest_condition_diagnosis
+WITH all_persons AS (
+    SELECT person_id 
+    FROM {{ ref('dim_person') }}
+),
 
-FROM {{ ref('fct_person_ltc_summary') }}
-GROUP BY person_id
+person_conditions AS (
+    SELECT
+        p.person_id,
+        
+        -- Boolean condition flags (pivoted from condition_code) - explicit TRUE/FALSE for all
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'AF' THEN TRUE END), FALSE) AS has_atrial_fibrillation,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'AST' THEN TRUE END), FALSE) AS has_asthma,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'CAN' THEN TRUE END), FALSE) AS has_cancer,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'CHD' THEN TRUE END), FALSE) AS has_coronary_heart_disease,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'CKD' THEN TRUE END), FALSE) AS has_chronic_kidney_disease,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'COPD' THEN TRUE END), FALSE) AS has_copd,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'CYP_AST' THEN TRUE END), FALSE) AS has_cyp_asthma,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'DEM' THEN TRUE END), FALSE) AS has_dementia,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'DEP' THEN TRUE END), FALSE) AS has_depression,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'DM' THEN TRUE END), FALSE) AS has_diabetes,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'EP' THEN TRUE END), FALSE) AS has_epilepsy,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'FH' THEN TRUE END), FALSE) AS has_familial_hypercholesterolaemia,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'GESTDIAB' THEN TRUE END), FALSE) AS has_gestational_diabetes,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'FRAIL' THEN TRUE END), FALSE) AS has_frailty,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'HF' THEN TRUE END), FALSE) AS has_heart_failure,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'HTN' THEN TRUE END), FALSE) AS has_hypertension,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'LD' THEN TRUE END), FALSE) AS has_learning_disability,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'LD_ALL' THEN TRUE END), FALSE) AS has_learning_disability_all_ages,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'NAFLD' THEN TRUE END), FALSE) AS has_nafld,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'NDH' THEN TRUE END), FALSE) AS has_non_diabetic_hyperglycaemia,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'OB' THEN TRUE END), FALSE) AS has_obesity,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'OST' THEN TRUE END), FALSE) AS has_osteoporosis,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'PAD' THEN TRUE END), FALSE) AS has_peripheral_arterial_disease,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'PC' THEN TRUE END), FALSE) AS has_palliative_care,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'RA' THEN TRUE END), FALSE) AS has_rheumatoid_arthritis,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'SMI' THEN TRUE END), FALSE) AS has_severe_mental_illness,
+        COALESCE(MAX(CASE WHEN ltc.condition_code = 'STIA' THEN TRUE END), FALSE) AS has_stroke_tia,
+        
+        -- Summary counts (0 for persons with no conditions)
+        COALESCE(COUNT(DISTINCT ltc.condition_code), 0) AS total_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.is_qof = TRUE THEN ltc.condition_code END), 0) AS total_qof_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.is_qof = FALSE THEN ltc.condition_code END), 0) AS total_non_qof_conditions,
+        
+        -- Clinical domain counts (0 for persons with no conditions)
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Cardiovascular' THEN ltc.condition_code END), 0) AS cardiovascular_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Respiratory' THEN ltc.condition_code END), 0) AS respiratory_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Mental Health' THEN ltc.condition_code END), 0) AS mental_health_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Metabolic' THEN ltc.condition_code END), 0) AS metabolic_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Musculoskeletal' THEN ltc.condition_code END), 0) AS musculoskeletal_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Neurology' THEN ltc.condition_code END), 0) AS neurology_conditions,
+        COALESCE(COUNT(DISTINCT CASE WHEN ltc.clinical_domain = 'Geriatric' THEN ltc.condition_code END), 0) AS geriatric_conditions,
+        
+        -- Earliest and latest diagnosis dates across all conditions (NULL for no conditions)
+        MIN(ltc.earliest_diagnosis_date) AS earliest_condition_diagnosis,
+        MAX(ltc.latest_diagnosis_date) AS latest_condition_diagnosis
+
+    FROM all_persons p
+    LEFT JOIN {{ ref('fct_person_ltc_summary') }} ltc
+        ON p.person_id = ltc.person_id
+    GROUP BY p.person_id
+)
+
+SELECT * FROM person_conditions

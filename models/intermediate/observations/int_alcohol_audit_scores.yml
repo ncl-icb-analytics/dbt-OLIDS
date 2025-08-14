@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: int_alcohol_audit_scores
+    description: 'Intermediate: Alcohol AUDIT Scores - All AUDIT and AUDIT-C screening assessments.
+
+
+      Clinical Purpose:
+
+      • Alcohol use screening and risk assessment using validated tools
+
+      • Supports brief interventions and specialist referral decisions
+
+      • Enables population health monitoring for alcohol-related harm
+
+
+      Data Granularity:
+
+      • One row per AUDIT/AUDIT-C observation
+
+      • Includes all patients regardless of status (active/inactive/deceased)
+
+      • Uses AUDITC_COD and AUDIT_COD clusters for score identification
+
+
+      Key Features:
+
+      • UK-specific risk thresholds for both AUDIT-C (0-12) and full AUDIT (0-40)
+
+      • Detailed categorisation from non-drinker through to possible dependence
+
+      • Gender considerations for risk stratification where applicable
+
+      • Intervention flags for clinical action planning
+
+      • Positive screen indicators for AUDIT-C scores ≥5'
+
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: AUDITC_COD, AUDIT_COD
+
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+
+      - name: observation_id
+        description: Identifier for the observation (may not be unique due to multiple concept mappings)
+        tests:
+          - not_null
+
+      - name: clinical_effective_date
+        description: Date when the AUDIT assessment was performed
+        tests:
+          - not_null
+
+      - name: audit_score
+        description: Numeric AUDIT or AUDIT-C score value
+
+      - name: audit_type
+        description: Type of AUDIT assessment (AUDIT-C or Full AUDIT)
+
+      - name: is_valid_score
+        description: Flag indicating if score is within valid range for the instrument
+
+      - name: risk_category
+        description: Clinical risk category based on score thresholds
+
+      - name: auditc_positive_screen
+        description: Flag for AUDIT-C scores ≥5 indicating positive screen for potential harm
+
+      - name: requires_specialist_intervention
+        description: Flag for scores indicating need for specialist clinical intervention
+
+      - name: brief_intervention_indicated
+        description: Flag for scores meeting threshold for brief intervention
+
+      - name: simplified_risk_level
+        description: Simplified risk categorisation (Low/Moderate/High) for aggregation
+
+      - name: sex
+        description: Person's sex used for risk stratification (where applicable)

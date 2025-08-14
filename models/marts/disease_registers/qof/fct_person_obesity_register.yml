@@ -14,3 +14,10 @@ models:
 
 
       Purpose: QOF register for obesity management, weight reduction interventions, and ethnicity-appropriate health monitoring.'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique

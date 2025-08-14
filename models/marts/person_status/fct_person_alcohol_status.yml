@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: fct_person_alcohol_status
+    description: 'Fact: Person Alcohol Status - Combined alcohol risk assessment from screening and diagnoses.
+
+
+      Clinical Purpose:
+
+      • Comprehensive alcohol status for population health management
+
+      • Identifies patients requiring brief interventions or specialist referral
+
+      • Supports alcohol harm reduction programmes and resource planning
+
+
+      Data Granularity:
+
+      • One row per person with any alcohol-related data
+
+      • Person-level aggregation of AUDIT scores and disorder diagnoses
+
+      • Most recent assessment prioritised with intelligent conflict resolution
+
+
+      Key Features:
+
+      • Integrates AUDIT/AUDIT-C scores with alcohol disorder diagnoses
+
+      • 12-month recency window for conflicting assessment resolution
+
+      • Detailed categorisation from non-drinker to possible dependence
+
+      • Intervention and review flags for clinical action
+
+      • Data quality indicators for assessment recency and reliability'
+
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+
+      - name: latest_assessment_date
+        description: Most recent date of any alcohol assessment (AUDIT or disorder diagnosis)
+
+      - name: alcohol_status
+        description: Combined alcohol status considering both AUDIT scores and disorder diagnoses
+
+      - name: alcohol_risk_sort_key
+        description: Numeric sort key for ordering from lowest (1) to highest (6) risk, with historical disorders as (7)
+
+      - name: audit_score
+        description: Most recent AUDIT or AUDIT-C score
+
+      - name: audit_type
+        description: Type of most recent AUDIT assessment (AUDIT-C or Full AUDIT)
+
+      - name: audit_risk_category
+        description: Risk category from most recent AUDIT assessment
+
+      - name: has_dependence_diagnosis
+        description: Flag indicating any alcohol dependence diagnosis in history
+
+      - name: has_harmful_use_diagnosis
+        description: Flag indicating harmful or hazardous use diagnosis
+
+      - name: has_active_disorder
+        description: Flag for currently active alcohol disorder
+
+      - name: has_remission_record
+        description: Flag indicating remission status recorded
+
+      - name: requires_intervention
+        description: Flag for persons requiring clinical intervention
+
+      - name: conflicting_assessment_flag
+        description: Flag for conflicting AUDIT and disorder assessments requiring review
+
+      - name: brief_intervention_indicated
+        description: Flag indicating brief intervention threshold met
+
+      - name: audit_data_recency
+        description: Recency classification of AUDIT data (Current, Recent, Historical, No AUDIT)
+
+      - name: disorder_data_recency
+        description: Recency classification of disorder data (Current, Recent, Historical, No Disorder Record)
