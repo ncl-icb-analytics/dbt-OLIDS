@@ -53,6 +53,7 @@ SELECT
     d.ward_name,
     d.imd_decile_19,
     d.imd_quintile_19,
+    d.patient_neighbourhood,
     d.post_code_hash,
     d.uprn_hash,
     d.registration_start_date,

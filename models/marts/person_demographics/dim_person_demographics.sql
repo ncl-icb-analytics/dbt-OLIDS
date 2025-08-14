@@ -138,7 +138,10 @@ SELECT
     NULL AS ward_code,
     NULL AS ward_name,
     NULL::NUMBER AS imd_decile_19,
-    NULL::VARCHAR AS imd_quintile_19
+    NULL::VARCHAR AS imd_quintile_19,
+    
+    -- Patient neighbourhood placeholder
+    NULL::VARCHAR AS patient_neighbourhood
 
 FROM {{ ref('dim_person_age') }} AS age
 
