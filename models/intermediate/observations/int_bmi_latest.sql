@@ -18,7 +18,7 @@ SELECT
     concept_display,
     source_cluster_id,
     bmi_category,
-    original_result_value,
+    result_value,
     is_valid_bmi,
     bmi_source,
     bmi_risk_sort_key
