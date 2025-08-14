@@ -140,7 +140,18 @@ SELECT
         WHEN bmi_value < 35 THEN 'Obese Class I'
         WHEN bmi_value < 40 THEN 'Obese Class II'
         ELSE 'Obese Class III'
-    END AS bmi_category
+    END AS bmi_category,
+
+    -- BMI risk sort key (higher number = higher risk)
+    CASE
+        WHEN bmi_value NOT BETWEEN 5 AND 400 THEN 0  -- Invalid
+        WHEN bmi_value < 18.5 THEN 2  -- Underweight - Health risk
+        WHEN bmi_value < 25 THEN 1  -- Normal - Baseline/lowest risk
+        WHEN bmi_value < 30 THEN 3  -- Overweight - Moderate risk
+        WHEN bmi_value < 35 THEN 4  -- Obese Class I - High risk
+        WHEN bmi_value < 40 THEN 5  -- Obese Class II - Higher risk
+        ELSE 6  -- Obese Class III - Highest risk
+    END AS bmi_risk_sort_key
 
 FROM all_bmi
 
