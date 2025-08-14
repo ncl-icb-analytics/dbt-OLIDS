@@ -21,7 +21,7 @@ WITH recorded_bmi AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
-        obs.result_value AS original_result_value,
+        obs.result_value,
         'recorded' AS bmi_source
 
     FROM ({{ get_observations("'BMIVAL_COD'") }}) obs
@@ -99,7 +99,7 @@ calculated_bmi AS (
         'CALCULATED_BMI' AS concept_code,
         'Calculated BMI from Height/Weight' AS concept_display,
         'CALCULATED' AS source_cluster_id,
-        CAST(hw.calculated_bmi AS VARCHAR(20)) AS original_result_value,
+        CAST(hw.calculated_bmi AS VARCHAR(20)) AS result_value,
         'calculated' AS bmi_source
     FROM height_weight_pairs hw
     WHERE hw.calculated_bmi IS NOT NULL
@@ -122,7 +122,7 @@ SELECT
     concept_code,
     concept_display,
     source_cluster_id,
-    original_result_value,
+    result_value,
     bmi_source,
 
     -- Data quality validation

@@ -19,7 +19,7 @@ WITH base_observations AS (
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
         obs.cluster_id AS source_cluster_id,
-        obs.result_value AS original_result_value,
+        obs.result_value,
 
         -- Extract BMI value from result_value, handling both numeric and coded values
         CASE
@@ -115,7 +115,7 @@ SELECT
     lo.is_bmi_27_5_plus,
     lo.is_bmi_25_plus,
     lo.is_valid_bmi,
-    lo.original_result_value,
+    lo.result_value,
 
     -- Person-level aggregated data
     pla.latest_bmi_date,

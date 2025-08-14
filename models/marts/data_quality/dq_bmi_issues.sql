@@ -25,7 +25,7 @@ SELECT
     concept_code,
     concept_display,
     source_cluster_id,
-    original_result_value,
+    result_value,
     bmi_category,
     
     -- DQ Flags based on our updated ranges
