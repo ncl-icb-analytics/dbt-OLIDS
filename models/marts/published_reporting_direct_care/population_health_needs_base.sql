@@ -4,14 +4,16 @@
 }}
 
 /*
-Comprehensive person profile view combining demographics, behavioural risk factors, and conditions.
-Provides a single analytical view for population health analysis and clinical decision support.
+Complete population health foundation combining demographics, behavioural risk factors, and conditions.
+Provides comprehensive analytical dataset for population health dashboards and reporting.
 
 Business Logic:
-- Demographics as base table (all persons with birth dates)
-- LEFT JOIN behavioural risk factors (only persons with assessments)
-- LEFT JOIN conditions (only persons with recorded conditions)
-- Maintains full demographic population in results
+- All three tables have identical grain (one row per person from dim_person)
+- Perfect 1:1:1 INNER JOINs - every person appears in all three tables
+- Demographics: Complete population with full demographic profiles
+- Behavioural risk factors: All persons with explicit data availability flags (NULL where no assessments)
+- Conditions: All persons with explicit TRUE/FALSE flags (FALSE where no conditions)
+- No persons excluded - complete population coverage for accurate prevalence calculations
 */
 
 SELECT
@@ -133,7 +135,7 @@ SELECT
     c.latest_condition_diagnosis
 
 FROM {{ ref('dim_person_demographics') }} d
-LEFT JOIN {{ ref('fct_person_behavioural_risk_factors') }} b
+INNER JOIN {{ ref('fct_person_behavioural_risk_factors') }} b
     ON d.person_id = b.person_id
-LEFT JOIN {{ ref('dim_person_conditions') }} c
+INNER JOIN {{ ref('dim_person_conditions') }} c
     ON d.person_id = c.person_id
