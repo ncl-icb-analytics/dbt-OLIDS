@@ -6,7 +6,7 @@
 
 /*
 Latest valid BMI measurement per person.
-Uses the comprehensive int_bmi_all model and filters to most recent valid BMI.
+Uses the int_bmi_all model and filters to most recent valid BMI and adds a sort key for BMI risk.
 */
 
 SELECT
