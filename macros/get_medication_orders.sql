@@ -1,4 +1,6 @@
 {% macro get_medication_orders(bnf_code=none, cluster_id=none, source=none) %}
+    {% do config(static_analysis='unsafe') %}
+    
     -- Simpler: emit a single SELECT, no CTEs, cluster_id IN (...), always includes cluster_id in output
     -- Optional source parameter to filter to specific refset (e.g., 'LTC_LCS')
     {% if bnf_code is none and cluster_id is none %}
