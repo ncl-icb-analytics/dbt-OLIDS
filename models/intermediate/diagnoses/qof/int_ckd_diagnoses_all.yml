@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_ckd_diagnoses_all
-    description: 'Intermediate: CKD Diagnoses - All recorded chronic kidney disease diagnosis and resolution observations for QOF register management.
+    description: 'Chronic kidney disease diagnosis and resolution observations for QOF register management.
 
-
-      Clinical Purpose:
-
-      • Supports QOF chronic kidney disease register maintenance and reporting
-
-      • Tracks kidney function deterioration tracking and staging
-
-      • Enables CKD progression monitoring and clinical decision support
-
-      • Supports resolution status tracking for improved clinical outcomes
-
-
-      Data Granularity:
-
-      • One row per chronic kidney disease diagnosis or resolution observation
-
-      • Includes all patients with CKD-related codes regardless of current status
-
-      • Uses cluster IDs: CKD_COD (diagnosis), CKDRES_COD (resolved)
-
-
-      Key Features:
-
-      • Diagnosis and resolution code classification for register eligibility
-
-      • Age restrictions typically ≥18 years applied in downstream processing
-
-      • Provides earliest/latest dates for diagnosis and resolution events
-
-      • Includes comprehensive arrays of all related concept codes per person'
+      One row per observation using CKD_COD (diagnosis) and CKDRES_COD (resolved) clusters. Age restrictions ≥18 years typically applied downstream.'
     tests:
       - cluster_ids_exist:
           arguments:

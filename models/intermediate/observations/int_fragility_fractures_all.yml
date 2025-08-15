@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_fragility_fractures_all
-    description: 'Intermediate: Fragility Fracture Observations - All recorded fragility fractures for osteoporosis monitoring.
+    description: 'Fragility fracture observations for QOF osteoporosis register data collection and bone health monitoring.
 
-
-      Clinical Purpose:
-
-      • Tracks fragility fractures for QOF osteoporosis register data collection
-
-      • Supports bone health monitoring and fracture pattern analysis
-
-      • Enables osteoporosis risk assessment and clinical decision support
-
-
-      Data Granularity:
-
-      • One row per fracture observation
-
-      • Includes fractures after April 2012 as per QOF requirements
-
-      • Uses FF_COD cluster for fragility fracture identification
-
-
-      Key Features:
-
-      • Fracture site classification (hip, wrist, spine, humerus, pelvis, femur)
-
-      • QOF-compliant date filtering for osteoporosis register eligibility
-
-      • Clinical fracture coding validation and categorisation
-
-      • Essential input for osteoporosis register and bone health analytics'
+      One row per fracture observation using FF_COD cluster with fracture site classification and QOF-compliant date filtering (after April 2012).'
     tests:
       - cluster_ids_exist:
           arguments:

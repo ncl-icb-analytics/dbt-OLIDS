@@ -1,17 +1,5 @@
 models:
   - name: fct_person_epilepsy_register
-    description: 'QOF Epilepsy Register - Patients aged 18+ with active epilepsy requiring ongoing management.
+    description: 'QOF epilepsy register for patients aged 18+ with active epilepsy diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • Age: 18 years or older
-
-      • Active epilepsy diagnosis: Latest EPIL_COD > latest EPILRES_COD
-
-      • Recent medication: Epilepsy medication prescribed within last 6 months
-
-      • External validation: Medication requirement ensures active management
-
-
-      Purpose: QOF register for epilepsy management, seizure monitoring, and medication optimisation in adults.'
+      One row per person with latest EPIL_COD > latest EPILRES_COD and epilepsy medication prescribed within last 6 months.'

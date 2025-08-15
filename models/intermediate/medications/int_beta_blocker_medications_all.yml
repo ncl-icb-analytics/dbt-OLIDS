@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_beta_blocker_medications_all
-    description: 'Intermediate: Beta Blocker Medications - All recorded beta-adrenoceptor blocking drug prescriptions.
+    description: 'Beta-adrenoceptor blocking drug medication orders for cardiovascular protection and heart rate control.
 
-
-      Clinical Purpose:
-
-      • Supports cardiovascular protection and heart rate control monitoring
-
-      • Enables heart failure management and post-MI medication pathway tracking
-
-      • Facilitates evidence-based beta blocker therapy analysis
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients with beta blocker prescriptions
-
-      • Historical data spanning entire medication history
-
-
-      Key Features:
-
-      • Beta blocker selectivity classification (cardioselective vs non-selective)
-
-      • Specific medication type identification (bisoprolol, carvedilol, metoprolol, etc.)
-
-      • Evidence-based heart failure therapy flags • Clinical trial evidence mapping for guideline adherence'
+      One row per medication order with beta blocker selectivity classification (cardioselective vs non-selective) and heart failure therapy flags.'

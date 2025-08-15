@@ -2,38 +2,9 @@ version: 2
 
 models:
   - name: fct_person_alcohol_status
-    description: 'Fact: Person Alcohol Status - Combined alcohol risk assessment from screening and diagnoses.
+    description: 'Combined alcohol risk assessment from screening and diagnoses.
 
-
-      Clinical Purpose:
-
-      • Comprehensive alcohol status for population health management
-
-      • Identifies patients requiring brief interventions or specialist referral
-
-      • Supports alcohol harm reduction programmes and resource planning
-
-
-      Data Granularity:
-
-      • One row per person with any alcohol-related data
-
-      • Person-level aggregation of AUDIT scores and disorder diagnoses
-
-      • Most recent assessment prioritised with intelligent conflict resolution
-
-
-      Key Features:
-
-      • Integrates AUDIT/AUDIT-C scores with alcohol disorder diagnoses
-
-      • 12-month recency window for conflicting assessment resolution
-
-      • Detailed categorisation from non-drinker to possible dependence
-
-      • Intervention and review flags for clinical action
-
-      • Data quality indicators for assessment recency and reliability'
+      One row per person with any alcohol-related data, integrating AUDIT/AUDIT-C scores with alcohol disorder diagnoses using 12-month recency window for conflict resolution.'
 
     columns:
       - name: person_id

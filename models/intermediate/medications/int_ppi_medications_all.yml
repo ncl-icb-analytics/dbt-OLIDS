@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_ppi_medications_all
-    description: 'Intermediate: PPI Medication Orders - All recorded proton pump inhibitor prescriptions.
+    description: 'Proton pump inhibitor medication orders for gastric acid suppression and ulcer prevention.
 
-
-      Clinical Purpose:
-
-      • Tracks PPI therapy for gastric acid suppression and ulcer prevention
-
-      • Supports gastrointestinal medication management and safety monitoring
-
-      • Enables analysis of long-term PPI usage and dosing patterns
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Historical data maintained for longitudinal analysis
-
-
-      Key Features:
-
-      • Specific PPI identification (omeprazole, lansoprazole, esomeprazole, etc.)
-
-      • Dose categorisation for therapeutic indication assessment
-
-      • H. pylori eradication therapy identification
-
-      • Long-term therapy flags for medication review and deprescribing'
+      One row per medication order with specific PPI identification and long-term therapy flags for medication review.'

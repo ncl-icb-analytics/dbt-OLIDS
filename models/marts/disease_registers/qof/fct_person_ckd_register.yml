@@ -1,16 +1,6 @@
 version: 2
 models:
   - name: fct_person_ckd_register
-    description: 'QOF Chronic Kidney Disease (CKD) Register - Patients aged 18+ with active CKD diagnosis.
+    description: 'QOF chronic kidney disease register for patients aged 18+ with active CKD diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • Age: 18 years or older
-
-      • Active CKD diagnosis: Latest CKD_COD > latest CKDRES_COD OR no resolution recorded
-
-      • Excludes resolved CKD cases
-
-
-      Purpose: QOF register for CKD management, monitoring progression, and cardiovascular risk reduction. Lab data available separately for clinical monitoring.'
+      One row per person with latest CKD_COD > latest CKDRES_COD or no resolution recorded.'

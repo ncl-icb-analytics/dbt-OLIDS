@@ -1,20 +1,8 @@
 models:
   - name: dq_hba1c_issues
-    description: 'Business data quality monitoring tool for HbA1c measurements.
+    description: 'Data quality monitoring for HbA1c measurements handling dual scales (IFCC and DCCT) with validation.
 
-      Business Logic:
-
-      • Identifies HbA1c measurements with data quality issues: out-of-range values, measurement type ambiguity, extreme outliers, and missing/future dates
-
-      • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve HbA1c recording issues
-
-      • Handles dual measurement scales: IFCC (20-200 mmol/mol) and DCCT (3-20%) with appropriate validation for each
-
-      • Flags measurement type ambiguity where scale detection fails or conflicts
-
-      • Additional flagging for extreme outliers (IFCC >150, DCCT >15) for investigation
-
-      • One row per HbA1c observation with data quality issues for quality assurance reporting'
+      One row per HbA1c observation with issues including out-of-range values, measurement type ambiguity and extreme outliers.'
     tests:
       - cluster_ids_exist:
           arguments:

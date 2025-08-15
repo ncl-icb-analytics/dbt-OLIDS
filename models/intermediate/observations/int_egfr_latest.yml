@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_egfr_latest
-    description: 'Intermediate: Latest eGFR Observations - Most recent valid eGFR measurement per person with CKD staging.
+    description: 'Most recent valid eGFR measurement per person with CKD staging for kidney function assessment.
 
-
-      Clinical Purpose:
-
-      • Provides current kidney function status based on estimated glomerular filtration rate
-
-      • Supports CKD monitoring and clinical decision-making
-
-      • Enables current CKD stage assessment and progression tracking
-
-
-      Data Granularity:
-
-      • One row per person with their most recent valid eGFR
-
-      • Includes only patients with valid eGFR measurements
-
-      • Filtered to exclude implausible values for clinical accuracy
-
-
-      Key Features:
-
-      • Latest valid eGFR identification using comprehensive filtering
-
-      • CKD stage classification (stages 1-5) for clinical management
-
-      • CKD indicator flags for immediate clinical attention
-
-      • Complete observation metadata for clinical context'
+      One row per person with their latest eGFR including CKD stage classification (stages 1-5) and CKD indicator flags.'

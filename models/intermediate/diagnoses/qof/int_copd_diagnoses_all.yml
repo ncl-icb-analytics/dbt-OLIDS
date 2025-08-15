@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_copd_diagnoses_all
-    description: 'Intermediate: COPD Diagnoses - All recorded COPD diagnosis and resolution observations for QOF register management.
+    description: 'COPD diagnosis and resolution observations for QOF register management.
 
-
-      Clinical Purpose:
-
-      • Supports QOF COPD register maintenance and reporting
-
-      • Tracks respiratory function assessment and spirometry confirmation requirements
-
-      • Enables COPD management pathway coordination and clinical decision support
-
-      • Supports resolution status tracking for improved respiratory outcomes
-
-
-      Data Granularity:
-
-      • One row per COPD diagnosis or resolution observation
-
-      • Includes all patients with COPD-related codes regardless of current status
-
-      • Uses cluster IDs: COPD_COD (diagnosis), COPDRES_COD (resolved)
-
-
-      Key Features:
-
-      • Post-April 2023 spirometry confirmation requirements (FEV1/FVC <0.7)
-
-      • Integration with unable-to-have-spirometry status tracking
-
-      • Provides earliest/latest dates for diagnosis and resolution events
-
-      • Includes comprehensive arrays of all related concept codes per person'
+      One row per observation using COPD_COD (diagnosis) and COPDRES_COD (resolved) clusters. Post-April 2023 requires spirometry confirmation (FEV1/FVC <0.7).'
     tests:
       - cluster_ids_exist:
           arguments:

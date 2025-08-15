@@ -1,16 +1,6 @@
 version: 2
 models:
   - name: fct_person_dementia_register
-    description: 'QOF Dementia Register - Patients with dementia diagnosis.
+    description: 'QOF dementia register for patients with dementia diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • Dementia diagnosis (DEM_COD) present
-
-      • No age restrictions
-
-      • No resolution codes (dementia is permanent condition)
-
-
-      Purpose: QOF register for dementia care pathway monitoring, cognitive health assessment, memory service referrals, and early detection support.'
+      One row per person with DEM_COD present (dementia is permanent condition).'

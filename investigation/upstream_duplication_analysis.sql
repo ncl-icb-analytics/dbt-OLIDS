@@ -94,7 +94,7 @@ SELECT
 FROM sample_registrations
 ORDER BY patient_id, organisation_id, start_date, id;
 
--- 7. Check if int_patient_registrations has proper deduplication
+-- 7. Check if int_patient_registrations has deduplication
 SELECT 
     person_id,
     patient_id,

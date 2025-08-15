@@ -1,41 +1,6 @@
 version: 2
 models:
   - name: fct_ltc_lcs_person_dashboard
-    description: 'Fact: LTC LCS Person Dashboard - Enhanced person-level case finding data with demographics for PowerBI analytics.
+    description: 'Person-level LTC case finding data with demographics for PowerBI analytics.
 
-
-      Population Scope:
-
-      • One row per person meeting any LTC case finding criteria
-
-      • Filters to eligible population only (excludes those already in programmes)
-
-      • Comprehensive demographic and practice context for each person
-
-      • Supports both population analytics and person-level drill-through
-
-
-      Key Features:
-
-      • Enhanced person-level data combining case finding indicators with full demographics
-
-      • Practice registration and geographic context for each person
-
-      • All 25+ case finding indicator flags maintained from summary table
-
-      • Demographic enrichment (age, ethnicity, deprivation, practice details)
-
-      • Optimised dataset size by filtering to case finding eligible population only
-
-
-      Dashboard Use Cases:
-
-      • Person-level drill-through from aggregate dashboards
-
-      • Patient lists for direct care and case finding workflows
-
-      • Re-identification support for clinical teams
-
-      • Individual patient journey analysis
-
-      • Detailed case finding indicator review per person'
+      One row per person meeting any LTC case finding criteria with demographic enrichment and practice context.'

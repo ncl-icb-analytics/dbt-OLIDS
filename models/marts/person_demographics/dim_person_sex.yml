@@ -1,22 +1,7 @@
 version: 2
 models:
   - name: dim_person_sex
-    description: 'Mart: Person Sex Dimension - Sex demographics for population analysis.
+    description: 'Sex demographics for all persons with standardised categories (Male, Female, Unknown).
 
+      One row per person derived from gender_concept_id mappings (defaults to "Unknown" for unmapped values).'
 
-      Population Scope:
-
-      • All persons with patient records
-
-      • Derived from gender_concept_id mappings
-
-      • Defaults to \"Unknown\" for unmapped or null values
-
-
-      Key Features:
-
-      • Standardised sex categories (Male, Female, Unknown)
-
-      • Hardcoded concept ID mappings for data consistency
-
-      • One row per person with sex classification'

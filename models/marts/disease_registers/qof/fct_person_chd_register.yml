@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: fct_person_chd_register
-    description: 'QOF Coronary Heart Disease (CHD) Register - Patients with coronary heart disease diagnosis.
+    description: 'QOF coronary heart disease register for patients with CHD diagnosis.
 
-
-      Population Scope:
-
-      • Active CHD diagnosis: CHD_COD present (includes MI, angina, coronary atherosclerosis)
-
-      • No age restriction
-
-      • Includes historical MI events
-
-      • One row per person with current register status'
+      One row per person with CHD_COD present (includes MI, angina, coronary atherosclerosis).'

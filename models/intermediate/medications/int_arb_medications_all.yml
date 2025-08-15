@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_arb_medications_all
-    description: 'Intermediate: ARB Medications - All recorded angiotensin receptor blocker prescriptions.
+    description: 'Angiotensin receptor blocker medication orders for cardiovascular and renal protection.
 
-
-      Clinical Purpose:
-
-      • Supports cardiovascular and renal protection monitoring
-
-      • Enables blood pressure management pathway tracking
-
-      • Facilitates ARB therapy analysis as ACE inhibitor alternative
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients with ARB prescriptions
-
-      • Historical data spanning entire medication history
-
-
-      Key Features:
-
-      • Specific ARB type classification (losartan, valsartan, candesartan, etc.)
-
-      • Evidence-based cardiovascular disease therapy flags
-
-      • Clinical trial evidence mapping for guideline adherence • Therapy monitoring indicators across multiple timeframes'
+      One row per medication order with specific ARB type classification and clinical trial evidence mapping.'

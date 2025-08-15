@@ -1,22 +1,6 @@
 version: 2
 models:
   - name: dim_person_birth_death
-    description: 'Mart: Person Birth Death Dimension - Core vital statistics for demographic analysis.
+    description: 'Person birth and death vital statistics using statistical midpoint methodology for date approximation.
 
-
-      Population Scope:
-
-      • All persons with recorded birth year and month
-
-      • Both living and deceased persons
-
-      • One row per person with vital statistics
-
-
-      Key Features:
-
-      • Statistical midpoint methodology for date approximation
-
-      • Foundation data for age calculations and mortality analysis
-
-      • Deceased status flag for population segmentation'
+      One row per person with recorded birth year and month (both living and deceased persons).'

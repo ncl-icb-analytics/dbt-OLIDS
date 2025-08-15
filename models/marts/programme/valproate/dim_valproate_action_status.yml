@@ -1,28 +1,6 @@
 version: 2
 models:
   - name: dim_valproate_action_status
-    description: 'Dimension table implementing Valproate safety monitoring clinical decision logic.
+    description: 'Valproate safety monitoring with clinical decision logic and priority actions (1-9).
 
-
-      Calculates recommended actions and priority order (1-9) based on:
-
-      • Pregnancy status
-
-      • PPP enrollment
-
-      • ARAF completion
-
-      • Age and risk factors
-
-
-      Action priorities:
-
-      • 1 = Pregnancy (urgent)
-
-      • 2-4 = Missing safety measures by age/vulnerability
-
-      • 5 = PPP non-enrolled (monitor)
-
-      • 6-8 = Safety measures present (check ARAF expiry)
-
-      • 9 = Low risk (no action)'
+      One row per person calculating recommended actions based on pregnancy status, PPP enrollment, ARAF completion, age and risk factors.'

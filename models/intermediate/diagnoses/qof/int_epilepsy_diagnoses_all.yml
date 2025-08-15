@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_epilepsy_diagnoses_all
-    description: 'Intermediate: Epilepsy Diagnoses - All recorded epilepsy diagnosis and resolution observations for QOF register management.
+    description: 'Epilepsy diagnosis and resolution observations for QOF register management.
 
-
-      Clinical Purpose:
-
-      • Supports QOF epilepsy register maintenance and reporting
-
-      • Tracks epilepsy diagnoses and resolution/remission status
-
-      • Enables comprehensive epilepsy patient identification and management
-
-
-      Data Granularity:
-
-      • One row per epilepsy diagnosis or resolution observation
-
-      • Includes all patients with epilepsy-related codes regardless of current status
-
-      • Uses cluster IDs: EPIL_COD (diagnosis), EPILRES_COD (resolution)
-
-
-      Key Features:
-
-      • Captures both diagnosis and resolution codes in single dataset
-
-      • Provides earliest/latest dates for diagnosis and resolution events
-
-      • Includes comprehensive arrays of all related concept codes per person
-
-      • Supports QOF register calculation and clinical pathway tracking'
+      One row per observation using EPIL_COD (diagnosis) and EPILRES_COD (resolution) clusters.'
     tests:
       - cluster_ids_exist:
           arguments:

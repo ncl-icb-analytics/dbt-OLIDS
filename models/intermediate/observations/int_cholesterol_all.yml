@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_cholesterol_all
-    description: 'Intermediate: Cholesterol Observations - All recorded total cholesterol measurements with clinical categorisation.
+    description: 'Total cholesterol measurements for cardiovascular risk assessment with clinical categorisation.
 
-
-      Clinical Purpose:
-
-      • Tracks cholesterol measurements for cardiovascular risk assessment and management
-
-      • Supports lipid management programmes and statin therapy monitoring
-
-      • Enables cardiovascular disease prevention and QOF reporting
-
-
-      Data Granularity:
-
-      • One row per cholesterol observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses CHOL2_COD cluster for total cholesterol identification
-
-
-      Key Features:
-
-      • Data quality validation with plausible range filtering (0.5-20 mmol/L)
-
-      • Clinical cholesterol categorisation (desirable, borderline high, high)
-
-      • Original value preservation for audit and unit conversion
-
-      • Comprehensive observation metadata for traceability'
+      One row per cholesterol observation using CHOL2_COD cluster with plausible range filtering (0.5-20 mmol/L) and clinical categorisation.'
     tests:
       - cluster_ids_exist:
           arguments:

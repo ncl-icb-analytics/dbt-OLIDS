@@ -1,22 +1,7 @@
 version: 2
 models:
   - name: dim_person_ethnicity
-    description: 'Mart: Person Ethnicity Dimension - Latest recorded ethnicity for population analysis.
+    description: 'Latest recorded ethnicity for all persons with category, subcategory and granular classifications.
 
+      One row per person with latest ethnicity record (defaults to "Not Recorded" where no ethnicity data available).'
 
-      Population Scope:
-
-      • All persons regardless of ethnicity record availability
-
-      • Latest ethnicity record per person where available
-
-      • Defaults to \"Not Recorded\" for persons without ethnicity data
-
-
-      Key Features:
-
-      • Ethnicity category, subcategory, and granular classifications
-
-      • SNOMED coding for clinical interoperability
-
-      • Clinical effective date for data quality assessment'

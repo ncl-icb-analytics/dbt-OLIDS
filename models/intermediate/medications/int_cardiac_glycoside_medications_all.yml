@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_cardiac_glycoside_medications_all
-    description: 'Intermediate: Cardiac Glycoside Medications - All recorded cardiac glycoside prescriptions with dosing classifications.
+    description: 'Cardiac glycoside medication orders (digoxin, digitoxin) for heart failure and arrhythmia management.
 
-
-      Clinical Purpose:
-
-      • Supports heart failure medication monitoring and therapeutic drug monitoring
-
-      • Enables arrhythmia management pathway tracking
-
-      • Facilitates elderly and renal impairment dosing analysis
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients with cardiac glycoside prescriptions (digoxin, digitoxin)
-
-      • Historical data spanning entire medication history
-
-
-      Key Features:
-
-      • Cardiac glycoside type identification and classification
-
-      • Digoxin dose categorisation with therapeutic ranges
-
-      • Clinical indication mapping (heart failure vs arrhythmia) • Special population dosing flags for safety monitoring'
+      One row per medication order with dose categorisation, therapeutic ranges, and special population dosing flags.'

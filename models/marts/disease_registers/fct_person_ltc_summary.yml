@@ -1,18 +1,6 @@
 version: 2
 models:
   - name: fct_person_ltc_summary
-    description: 'Long-Term Conditions (LTC) Summary - Unified view of all disease registers per person.
+    description: 'Long-term conditions summary combining all QOF and clinical disease registers.
 
-
-      Key Features:
-
-      • One row per person per condition
-
-      • Combines all QOF and clinical disease registers
-
-      • Standardised condition codes and clinical domains
-
-      • Includes diagnosis dates and QOF status
-
-
-      Purpose: Analytical table for multi-morbidity analysis, population health management, and comprehensive patient condition profiling.'
+      One row per person per condition with standardised condition codes, clinical domains, diagnosis dates and QOF status.'

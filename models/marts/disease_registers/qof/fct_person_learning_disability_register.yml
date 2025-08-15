@@ -1,16 +1,6 @@
 version: 2
 models:
   - name: fct_person_learning_disability_register
-    description: 'QOF Learning Disability Register - Patients aged 14+ with learning disability diagnosis.
+    description: 'QOF learning disability register for patients aged 14+ with learning disability diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • Age: 14 years or older
-
-      • Learning disability diagnosis (LD_COD) present
-
-      • No resolution codes (learning disability is permanent condition)
-
-
-      Purpose: QOF register for learning disability care pathway monitoring, health equity assessment, and ensuring appropriate support services.'
+      One row per person with LD_COD present (learning disability is permanent condition).'

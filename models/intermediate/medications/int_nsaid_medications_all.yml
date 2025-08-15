@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_nsaid_medications_all
-    description: 'Intermediate: NSAID Medication Orders - All recorded non-steroidal anti-inflammatory drug prescriptions.
+    description: 'Non-steroidal anti-inflammatory drug medication orders for pain and inflammation management with cardiovascular risk assessment.
 
-
-      Clinical Purpose:
-
-      • Tracks NSAID therapy for pain and inflammation management
-
-      • Supports cardiovascular risk assessment and medication safety monitoring
-
-      • Enables analysis of COX-2 selective vs non-selective NSAID usage
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Historical data maintained for longitudinal analysis
-
-
-      Key Features:
-
-      • Classification by NSAID type (COX-2 selective, non-selective, topical)
-
-      • Specific NSAID identification with cardiovascular risk stratification
-
-      • High-dose therapy flags for safety monitoring
-
-      • Cardiovascular risk assessment based on drug type and dosing'
+      One row per medication order with classification by NSAID type (COX-2 selective, non-selective, topical) and cardiovascular risk stratification.'

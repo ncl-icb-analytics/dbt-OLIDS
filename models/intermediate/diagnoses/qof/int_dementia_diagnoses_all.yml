@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_dementia_diagnoses_all
-    description: 'Intermediate: Dementia Diagnoses - All recorded dementia diagnosis observations for QOF register management.
+    description: 'Dementia diagnosis observations for QOF register management and dementia care pathway coordination.
 
-
-      Clinical Purpose:
-
-      • Supports QOF dementia register maintenance and reporting
-
-      • Tracks dementia care pathway coordination and cognitive assessment
-
-      • Enables mental health service utilisation and quality improvement
-
-      • Supports long-term care planning and support service coordination
-
-
-      Data Granularity:
-
-      • One row per dementia diagnosis observation
-
-      • Includes all patients with dementia-related codes regardless of current status
-
-      • Uses cluster ID: DEM_COD (diagnosis)
-
-
-      Key Features:
-
-      • Permanent condition tracking with no resolution codes
-
-      • No specific age restrictions for dementia register inclusion
-
-      • Provides earliest/latest dates for diagnosis events
-
-      • Includes comprehensive arrays of all related concept codes per person'
+      One row per dementia diagnosis observation using DEM_COD cluster with permanent condition tracking and no age restrictions.'
     tests:
       - cluster_ids_exist:
           arguments:

@@ -2,38 +2,9 @@ version: 2
 
 models:
   - name: fct_person_behavioural_risk_factors
-    description: 'Complete population view of person-level behavioural risk factors combining BMI, smoking, and alcohol status.
+    description: 'Population view of person-level behavioural risk factors combining BMI, smoking, and alcohol status.
 
-
-      Clinical Purpose:
-
-      • Comprehensive view of modifiable lifestyle risk factors for entire population
-
-      • Population health management and risk stratification
-
-      • Intervention targeting for lifestyle modification programmes
-
-
-      Data Granularity:
-
-      • One row per person in the population (includes ALL persons from dim_person)
-
-      • Combines latest assessments from BMI, smoking, and alcohol sources where available
-
-      • NULL values for persons without assessments, with explicit data availability flags
-
-
-      Key Features:
-
-      • Complete population coverage for accurate prevalence calculations
-
-      • Unified view of three key behavioural risk factors
-
-      • Individual and combined risk scoring where data exists
-
-      • Explicit data availability flags (has_bmi_data, has_smoking_data, has_alcohol_data)
-
-      • Perfect 1:1 join compatibility with dim_person_demographics and dim_person_conditions'
+      One row per person in the population (includes ALL persons from dim_person) with data availability flags for each risk factor.'
     
     columns:
       - name: person_id

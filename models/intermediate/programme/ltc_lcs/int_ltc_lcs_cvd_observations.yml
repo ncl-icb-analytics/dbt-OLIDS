@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_ltc_lcs_cvd_observations
-    description: 'Intermediate: LTC LCS CVD Observations - All cardiovascular disease-relevant observations for Long Term Conditions case finding measures.
+    description: 'Cardiovascular disease-relevant observations for Long Term Conditions case finding measures.
 
-
-      Clinical Purpose:
-
-      • Tracks comprehensive CVD-related clinical observation data for case finding algorithms
-
-      • Supports identification of patients requiring CVD risk assessment through clinical observations
-
-      • Enables observation-based risk stratification using QRISK2 scores and cholesterol measurements
-
-      • Provides foundation data for CVD case finding indicators including statin decision tracking
-
-
-      Data Granularity:
-
-      • One row per clinical observation for CVD-relevant observations
-
-      • Includes QRISK2 10-year scores, non-HDL cholesterol measurements
-
-      • Covers statin allergy/adverse reactions, contraindications, and clinical decisions
-
-      • Sourced from LTC_LCS programme observation clusters
-
-
-      Key Features:
-
-      • Cluster IDs: QRISK2_10YEAR, NON_HDL_CHOLESTEROL, STATIN_ALLERGY_ADVERSE_REACTION, STATIN_NOT_INDICATED, STATINDEC_COD
-
-      • Supports cardiovascular risk assessment and primary prevention case finding
-
-      • Comprehensive clinical decision tracking for statin prescribing • Integration with LTC_LCS programme clinical observation tracking systems'
+      One row per clinical observation including QRISK2 10-year scores, non-HDL cholesterol measurements, statin allergy/adverse reactions, contraindications, and clinical decisions using cluster IDs: QRISK2_10YEAR, NON_HDL_CHOLESTEROL, STATIN_ALLERGY_ADVERSE_REACTION, STATIN_NOT_INDICATED, STATINDEC_COD.'
     tests:
       - cluster_ids_exist:
           arguments:

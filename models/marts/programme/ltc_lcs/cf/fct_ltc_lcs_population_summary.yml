@@ -1,41 +1,6 @@
 version: 2
 models:
   - name: fct_ltc_lcs_population_summary
-    description: 'Fact: LTC LCS Population Summary - Demographic cross-tabulation of case finding indicators for population health analytics.
+    description: 'Demographic cross-tabulation of LTC case finding indicators for population health analytics.
 
-
-      Population Scope:
-
-      • Cross-tabulated data by age bands, ethnicity, and deprivation quintiles
-
-      • Aggregates all LTC case finding indicators by demographic dimensions
-
-      • Includes population denominators for accurate rate calculations
-
-      • Optimised for population health inequality analysis
-
-
-      Key Features:
-
-      • Demographic stratification of all 25+ case finding indicators
-
-      • Population denominators by age, ethnicity, and deprivation
-
-      • Pre-calculated rates and counts for dashboard performance
-
-      • PowerBI-optimised structure for demographic analytics
-
-      • Support for health inequality monitoring and trend analysis
-
-
-      Dashboard Use Cases:
-
-      • Population health inequality analysis
-
-      • Demographic breakdown charts and visualisations
-
-      • Age-stratified case finding rates
-
-      • Ethnicity and deprivation gap analysis
-
-      • Population pyramid visualisations with case finding overlay'
+      Cross-tabulated data by age bands, ethnicity, and deprivation quintiles with population denominators for rate calculations.'

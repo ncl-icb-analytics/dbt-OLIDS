@@ -85,4 +85,10 @@ LEFT JOIN {{ ref('stg_dictionary_postcode') }} AS dict_pc
 LEFT JOIN {{ ref('int_organisation_borough_mapping') }} AS borough_map
     ON dict.practice_code = borough_map.practice_code
 WHERE dict.practice_code IS NOT NULL
-    AND dict.stp_code = 'QMJ'
+    AND dict.stp_code IN (
+        'QMJ',  -- NHS NORTH CENTRAL LONDON INTEGRATED CARE BOARD
+        'QMF',  -- NHS NORTH EAST LONDON INTEGRATED CARE BOARD
+        'QRV',  -- NHS NORTH WEST LONDON INTEGRATED CARE BOARD
+        'QWE',  -- NHS SOUTH WEST LONDON INTEGRATED CARE BOARD
+        'QKK'   -- NHS SOUTH EAST LONDON INTEGRATED CARE BOARD
+    )

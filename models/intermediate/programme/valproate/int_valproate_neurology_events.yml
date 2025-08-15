@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: int_valproate_neurology_events
-    description: 'Extracts all neurology-related events from observations using valproate programme codes.
+    description: 'Neurology-related events from observations using valproate programme codes.
 
-
-      Business Logic:
-
-      • Joins observations with mapped concepts and valproate programme codes
-
-      • Filters to NEUROLOGY code category only
-
-      • One row per neurology observation with person, date, concept details
-
-      • Foundation data for neurology dimension aggregation'
+      One row per neurology observation with person, date, concept details filtered to NEUROLOGY code category only.'

@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_depression_diagnoses_all
-    description: 'Intermediate: Depression Diagnoses - All recorded depression diagnosis and resolution observations for QOF register management.
+    description: 'Depression diagnosis and resolution observations for QOF register management.
 
-
-      Clinical Purpose:
-
-      • Supports QOF depression register maintenance and reporting
-
-      • Tracks depression diagnoses and resolution/remission status
-
-      • Enables comprehensive depression patient identification and management
-
-      • Supports PCA (patient care adjustments) and review tracking
-
-
-      Data Granularity:
-
-      • One row per depression diagnosis or resolution observation
-
-      • Includes all patients with depression-related codes regardless of current status
-
-      • Uses cluster IDs: DEPR_COD (diagnosis), DEPRES_COD (resolution)
-
-
-      Key Features:
-
-      • Captures both diagnosis and resolution codes in single dataset
-
-      • Provides earliest/latest dates for diagnosis and resolution events
-
-      • Includes comprehensive arrays of all related concept codes per person
-
-      • Supports QOF register calculation and clinical pathway tracking'
+      One row per observation using DEPR_COD (diagnosis) and DEPRES_COD (resolution) clusters.'
     tests:
       - cluster_ids_exist:
           arguments:

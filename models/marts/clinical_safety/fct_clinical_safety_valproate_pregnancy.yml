@@ -1,16 +1,6 @@
 version: 2
 models:
   - name: fct_clinical_safety_valproate_pregnancy
-    description: 'CRITICAL Clinical Safety Alert - Pregnant patients with recent valproate prescriptions.
+    description: 'CRITICAL clinical safety alert for pregnant patients with recent valproate prescriptions.
 
-
-      High Risk Criteria:
-
-      • Recent valproate medication (last 6 months)
-
-      • Current pregnancy status OR child-bearing age (0-55 years)
-
-      • TERATOGENIC RISK: Valproate causes significant birth defects
-
-
-      Purpose: Critical safety monitoring for immediate clinical review and urgent medication switching to prevent foetal harm.'
+      One row per person with recent valproate (last 6 months) and pregnancy status or child-bearing age (0-55 years) due to teratogenic risk.'

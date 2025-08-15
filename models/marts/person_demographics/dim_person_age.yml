@@ -1,25 +1,9 @@
 version: 2
 models:
   - name: dim_person_age
-    description: 'Mart: Person Age Dimension - Age-related attributes for population health analytics.
+    description: 'Person age attributes with age bands, school stages, and life stage categories.
 
-
-      Population Scope:
-
-      • All persons with recorded birth dates
-
-      • Current age for living persons, age at death for deceased persons
-
-      • One row per person with comprehensive age-related attributes
-
-
-      Key Features:
-
-      • Multiple standard age bands (5-year, 10-year, NHS, ONS)
-
-      • UK school stages and education levels
-
-      • Life stage categories for demographic analysis'
+      One row per person with recorded birth dates. Current age for living persons, age at death for deceased persons.'
     columns:
       - name: birth_date_approx_end_of_month
         description: 'Approximate date of birth using the last day of the recorded birth month. Complements birth_date_approx (mid-month) for scenarios that require end-of-month alignment.'

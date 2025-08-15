@@ -1,22 +1,8 @@
 version: 2
 models:
   - name: dim_person_historical_practice
-    description: 'Mart: Person Historical Practice Dimension - Complete practice registration history for each person.
+    description: 'Complete practice registration history for each person tracking patient mobility.
+
+      One row per person per practice registration period with start and end dates and registration sequence.'
 
 
-      Population Scope:
-
-      • All persons with current and historical practice registrations
-
-      • One row per person per practice registration period
-
-      • Complete timeline of practice registration history and patient mobility
-
-
-      Key Features:
-
-      • Tracks all practice registrations with accurate start and end dates
-
-      • Includes practice transition information and registration sequence analysis
-
-      • Supports longitudinal care continuity and patient journey analytics'

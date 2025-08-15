@@ -1,22 +1,6 @@
 version: 2
 models:
   - name: fct_person_diabetes_8_care_processes
-    description: 'Mart: Diabetes 8 Care Processes Achievement - QOF quality measure for comprehensive diabetes care assessment.
+    description: 'Diabetes 8 care processes achievement for QOF reporting.
 
-
-      Population Scope:
-
-      • All persons on diabetes register requiring 8 care processes assessment
-
-      • One row per person with completion status for all processes within 12 months
-
-      • Current assessment of comprehensive diabetes care delivery
-
-
-      Key Features:
-
-      • Tracks HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status
-
-      • Calculates overall completion metrics for QOF reporting
-
-      • Supports clinical decision-making and quality improvement initiatives'
+      One row per person on diabetes register with completion status for HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status within 12 months.'

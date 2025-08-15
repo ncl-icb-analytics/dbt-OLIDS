@@ -1,32 +1,9 @@
 version: 2
 models:
   - name: int_smoking_status_all
-    description: 'Intermediate: Smoking Status All - Complete history of all smoking status observations.
+    description: 'Smoking status observations for QOF tracking and cardiovascular risk stratification.
 
-
-      Clinical Purpose:
-
-      • QOF smoking status tracking and cardiovascular risk stratification
-
-      • Smoking cessation programme eligibility and clinical decision support
-
-      • Lifestyle intervention monitoring and health improvement tracking
-
-
-      Data Granularity:
-
-      • One row per smoking status observation with analytics-ready categorisation
-
-      • Uses LSMOK_COD, EXSMOK_COD, and NSMOK_COD QOF-specific clusters
-
-      • Includes all patients regardless of status for comprehensive QOF reporting
-
-
-      Key Features:
-
-      • Current, ex-smoker, and never-smoked classification with risk categories
-
-      • Analytics-ready flags for cardiovascular risk assessment • QOF-compliant smoking status determination and risk categorisation'
+      One row per smoking status observation using LSMOK_COD, EXSMOK_COD, and NSMOK_COD clusters with current, ex-smoker, and never-smoked classification.'
     tests:
       - cluster_ids_exist:
           arguments:

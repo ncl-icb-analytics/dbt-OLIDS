@@ -1,32 +1,9 @@
 version: 2
 models:
   - name: int_pregnancy_observations_all
-    description: 'Intermediate: Pregnancy Observations All - Complete history of all pregnancy-related observations.
+    description: 'Pregnancy-related observations for maternity care pathway coordination and medication safety monitoring.
 
-
-      Clinical Purpose:
-
-      • Pregnancy status tracking and maternity care pathway coordination
-
-      • Medication safety monitoring during pregnancy and post-pregnancy periods
-
-      • Clinical decision support for pregnancy-contraindicated treatments
-
-
-      Data Granularity:
-
-      • One row per pregnancy-related observation with enhanced timeframe analysis
-
-      • Uses PREG_COD (pregnancy status) and PREGDEL_COD (delivery events) QOF clusters
-
-      • Includes all patients regardless of status for comprehensive maternity care
-
-
-      Key Features:
-
-      • Enhanced pregnancy status categorisation and clinical safety context
-
-      • Maternity care timeframe analysis for clinical decision support • Pregnancy outcome tracking including live births and terminations'
+      One row per pregnancy-related observation using PREG_COD and PREGDEL_COD clusters with pregnancy status categorisation and outcome tracking.'
     tests:
       - cluster_ids_exist:
           arguments:

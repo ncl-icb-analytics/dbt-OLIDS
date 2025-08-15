@@ -1,22 +1,6 @@
 version: 2
 models:
   - name: dim_person
-    description: 'Mart: Person Dimension - Core person identity and practice relationships.
+    description: 'Core person identity dimension aggregating multiple patient IDs per person.
 
-
-      Population Scope:
-
-      • One row per person in the HEI population
-
-      • Aggregates multiple patient IDs per person for unified identity
-
-      • Includes current and historical practice associations
-
-
-      Key Features:
-
-      • Person-level identity consolidation across multiple patient records
-
-      • Current and historical practice relationship tracking
-
-      • Core dimension for person-centered analytics'
+      One row per person in the HEI population with current and historical practice associations.'

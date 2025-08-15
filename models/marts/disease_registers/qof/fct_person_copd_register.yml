@@ -1,19 +1,6 @@
 version: 2
 models:
   - name: fct_person_copd_register
-    description: 'QOF COPD Register - Complex rules-based register for chronic obstructive pulmonary disease.
+    description: 'QOF COPD register with date-based inclusion rules and spirometry confirmation.
 
-
-      Population Scope:
-
-      • RULE 1: Automatic inclusion if earliest unresolved COPD diagnosis < 01/04/2023
-
-      • RULE 2: For diagnoses ≥ 01/04/2023, requires spirometry confirmation:
-
-      - FEV1/FVC < 0.7 within 93 days before to 186 days after diagnosis
-
-      • RULE 3: Additional spirometry pathway for post-April 2023 patients
-
-      • Excludes resolved COPD cases where resolution date > diagnosis date
-
-      • One row per person with current register status'
+      One row per person with unresolved COPD diagnosis, requiring spirometry confirmation (FEV1/FVC < 0.7) for diagnoses after 01/04/2023.'

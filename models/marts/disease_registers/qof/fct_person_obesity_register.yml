@@ -1,19 +1,9 @@
 version: 2
 models:
   - name: fct_person_obesity_register
-    description: 'QOF Obesity Register - Patients aged 18+ with obesity using ethnicity-specific BMI thresholds.
+    description: 'QOF obesity register for patients aged 18+ using ethnicity-specific BMI thresholds.
 
-
-      Key Inclusion Criteria:
-
-      • Age: 18 years or older
-
-      • BMI ≥30 (all ethnicities) OR BMI ≥27.5 (BAME populations)
-
-      • Ethnicity-specific thresholds for register inclusion
-
-
-      Purpose: QOF register for obesity management, weight reduction interventions, and ethnicity-appropriate health monitoring.'
+      One row per person with BMI ≥30 (all ethnicities) or BMI ≥27.5 (BAME populations).'
     
     columns:
       - name: person_id

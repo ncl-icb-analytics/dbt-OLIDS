@@ -1,35 +1,6 @@
 version: 2
 models:
   - name: fct_person_diabetes_foot_check
-    description: 'Mart: Diabetes Foot Check Status - Foot examination assessment for diabetes patients to support QOF reporting.
+    description: 'Diabetes foot examination status for QOF reporting with Townson scale risk assessment.
 
-
-      Business Purpose:
-
-      • Support QOF reporting for diabetes foot examination indicators
-
-      • Enable clinical teams to identify patients requiring foot examination review
-
-      • Provide population health analytics for diabetes complication prevention programmes
-
-      • Support business intelligence reporting on diabetes care quality and risk management
-
-
-      Data Granularity:
-
-      • One row per person on diabetes register
-
-      • Includes foot examination completion status and risk assessment results
-
-      • Current assessment of foot examination delivery and risk levels
-
-
-      Key Features:
-
-      • Tracks foot examination completion with complex business rules for exempt patients
-
-      • Includes Townson scale risk level assessment and individual foot status
-
-      • Supports clinical decision-making for diabetes foot care management
-
-      • Enables population health management and diabetes complication prevention'
+      One row per person on diabetes register with foot examination completion status and risk level assessment.'

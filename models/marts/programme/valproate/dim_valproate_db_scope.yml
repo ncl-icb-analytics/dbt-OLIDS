@@ -1,13 +1,6 @@
 version: 2
 models:
   - name: dim_valproate_db_scope
-    description: 'Dashboard scope table - every row should be included in the valproate monitoring dashboard.
+    description: 'Valproate monitoring dashboard scope for child-bearing age cohort with recent prescriptions.
 
-
-      Business Logic:
-
-      • Joins child-bearing age cohort (non-male, 0-55 years) with recent valproate prescriptions (last 6 months)
-
-      • One row per person with their most recent valproate prescription details
-
-      • Only includes patients meeting both criteria: correct age/gender AND recent valproate therapy'
+      One row per non-male person aged 0-55 years with valproate prescriptions in last 6 months.'

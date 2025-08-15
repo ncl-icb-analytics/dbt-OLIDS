@@ -1,17 +1,8 @@
 models:
   - name: dq_blood_pressure_issues
-    description: 'Business data quality monitoring tool for blood pressure measurements.
+    description: 'Data quality monitoring for blood pressure measurements identifying out-of-range values and recording issues.
 
-
-      Business Logic:
-
-      • Identifies blood pressure readings with data quality issues: out-of-range values, orphaned readings, coding ambiguity, and missing dates
-
-      • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve BP recording issues
-
-      • Flags systolic values <40 or >350 mmHg and diastolic values <20 or >200 mmHg as out-of-range
-
-      • One row per person per date with blood pressure data quality issues for quality assurance reporting'
+      One row per person per date with BP issues including systolic <40 or >350 mmHg and diastolic <20 or >200 mmHg.'
     tests:
       - cluster_ids_exist:
           arguments:

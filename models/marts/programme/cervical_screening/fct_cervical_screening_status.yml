@@ -1,24 +1,6 @@
 version: 2
 models:
   - name: fct_cervical_screening_status
-    description: 'Mart: Cervical Screening Programme Status - Comprehensive screening programme tracking with age-specific compliance and risk stratification.
+    description: 'Cervical screening programme status for eligible females aged 25-64 years.
 
-
-      Population Scope:
-
-      • Eligible females aged 25-64 years for cervical screening programme
-
-      • Age-specific screening intervals: 3-year for 25-49, 5-year for 50-64
-
-      • Includes all women with screening history and current programme status
-
-
-      Key Features:
-
-      • Age-appropriate screening interval tracking and compliance monitoring
-
-      • Programme compliance status with overdue and never-screened identification
-
-      • Clinical risk stratification based on cytology results and abnormality grades
-
-      • Next screening due dates and follow-up requirement flags'
+      One row per eligible woman with age-specific intervals (3-year for 25-49, 5-year for 50-64), compliance status and risk stratification based on cytology results.'
