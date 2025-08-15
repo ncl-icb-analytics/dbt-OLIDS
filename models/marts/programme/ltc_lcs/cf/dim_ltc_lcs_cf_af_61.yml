@@ -1,20 +1,6 @@
 version: 2
 models:
   - name: dim_ltc_lcs_cf_af_61
-    description: 'Mart: LTC LCS Case Finding AF_61 - Identifies patients on cardiac medications who may have undiagnosed atrial fibrillation.
+    description: 'Atrial fibrillation case finding for patients on cardiac medications who may have undiagnosed AF.
 
-
-      Population Scope:
-
-      • Patients from LTC case finding base population on anticoagulants, digoxin, or cardiac glycosides
-
-      • Excludes patients with DVT, existing AF/flutter diagnoses
-
-
-      Key Features:
-
-      • Medication history tracking with latest prescription dates
-
-      • Clinical exclusion criteria assessment
-
-      • Evidence-based case finding for AF screening'
+      One row per person on anticoagulants, digoxin, or cardiac glycosides (excludes DVT and existing AF/flutter diagnoses).'

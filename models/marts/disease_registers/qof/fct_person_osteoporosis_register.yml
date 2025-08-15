@@ -1,18 +1,6 @@
 version: 2
 models:
   - name: fct_person_osteoporosis_register
-    description: 'QOF Osteoporosis Register - Complex criteria for fracture prevention in at-risk patients.
+    description: 'QOF osteoporosis register for fracture prevention in at-risk patients aged 50-74.
 
-
-      Key Inclusion Criteria (ALL must be met):
-
-      • Age: 50-74 years
-
-      • Fragility fracture after April 2012
-
-      • Osteoporosis diagnosis (OSTEO_COD) present
-
-      • DXA confirmation: DXA scan OR T-score ≤ -2.5
-
-
-      Purpose: QOF register for fracture prevention, bone health monitoring, and DXA scanning compliance.'
+      One row per person with fragility fracture after April 2012, OSTEO_COD present, and DXA confirmation (DXA scan or T-score ≤ -2.5).'

@@ -1,16 +1,6 @@
 version: 2
 models:
   - name: fct_person_pad_register
-    description: 'QOF Peripheral Arterial Disease (PAD) Register - Patients with peripheral vascular disease.
+    description: 'QOF peripheral arterial disease register for patients with peripheral vascular disease.
 
-
-      Key Inclusion Criteria:
-
-      • PAD diagnosis (PAD_COD) present
-
-      • No age restrictions
-
-      • No resolution codes (PAD is permanent condition)
-
-
-      Purpose: QOF register for cardiovascular disease management, risk stratification, and secondary prevention monitoring.'
+      One row per person with PAD_COD present (PAD is permanent condition).'

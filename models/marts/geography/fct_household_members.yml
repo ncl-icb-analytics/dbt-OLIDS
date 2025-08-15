@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: fct_household_members
-    description: 'Bridge table linking patients to households for geographic and social analysis.
+    description: 'Bridge table linking patients to households through UPRN hash mapping.
 
-
-      Business Logic:
-
-      • Links people to households through UPRN hash mapping with demographic and registration details
-
-      • Includes practice registration and organisational context for spatial analysis
-
-      • Supports household-level population analytics and neighbourhood health intelligence
-
-      • One row per person with valid UPRN hash, enabling household composition analysis and geographic health reporting'
+      One row per person with valid UPRN hash including demographic and practice registration details for household composition analysis.'

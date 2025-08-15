@@ -5,8 +5,7 @@
         cluster_by=['person_id'])
 }}
 
--- Person Age Dimension Table
--- Comprehensive age-related attributes for each person
+-- Person age attributes and life stage categorisation
 
 WITH age_calculations AS (
     -- Uses the birth/death dimension table and calculates age based on appropriate date

@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_ndh_diagnoses_all
-    description: 'Intermediate: NDH Diagnoses All - Complete history of all non-diabetic hyperglycaemia diagnosis observations for QOF register management.
+    description: 'Non-diabetic hyperglycaemia diagnosis observations for QOF register data collection and diabetes prevention pathway coordination.
 
-
-      Clinical Purpose:
-
-      • QOF non-diabetic hyperglycaemia register data collection and monitoring
-
-      • Pre-diabetes identification and diabetes prevention pathway coordination
-
-      • Glucose metabolism disorder tracking and intervention support
-
-      • Early intervention and lifestyle modification programme eligibility
-
-
-      Data Granularity:
-
-      • One row per NDH, IGT, or pre-diabetes diagnosis observation
-
-      • Uses NDH_COD, IGT_COD, and PRD_COD clusters
-
-      • Includes all patients regardless of status for comprehensive QOF reporting
-
-
-      Key Features:
-
-      • Pre-diabetes and impaired glucose tolerance identification
-
-      • Age restrictions (typically ≥18 years) applied in downstream processing
-
-      • Diabetes prevention programme eligibility determination
-
-      • Critical for early intervention and diabetes prevention strategies'
+      One row per NDH, IGT, or pre-diabetes diagnosis observation using NDH_COD, IGT_COD, and PRD_COD clusters with age restrictions (≥18 years).'
     tests:
       - cluster_ids_exist:
           arguments:

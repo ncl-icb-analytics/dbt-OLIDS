@@ -1,18 +1,6 @@
 version: 2
 models:
   - name: fct_person_atrial_fibrillation_register
-    description: 'QOF Atrial Fibrillation Register - Patients with active atrial fibrillation diagnosis.
+    description: 'QOF atrial fibrillation register for patients with active AF diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • Active AF diagnosis: Latest AFIB_COD > latest AFIBRES_COD OR no resolution recorded
-
-      • No age restrictions
-
-      • No medication validation requirements
-
-      • Excludes resolved AF cases
-
-
-      Purpose: QOF register for AF management, stroke prevention, and anticoagulation monitoring.'
+      One row per person with latest AFIB_COD > latest AFIBRES_COD or no resolution recorded.'

@@ -2,38 +2,9 @@ version: 2
 
 models:
   - name: population_health_needs_base
-    description: 'Foundational dataset for population health needs dashboards combining demographics, behavioural risk factors, and conditions.
+    description: 'Population health dataset combining demographics, behavioural risk factors, and conditions for dashboard reporting.
 
-
-      Clinical Purpose:
-
-      • Foundational dataset for population health needs dashboards and reporting
-
-      • Enables health needs assessment across demographic, lifestyle, and clinical domains
-
-      • Supports population health needs analysis and direct care insights
-
-
-      Data Granularity:
-
-      • One row per person from demographics dimension (maintains full population)
-
-      • LEFT JOINs ensure all persons included regardless of risk factor or condition data
-
-      • Person-level base for population health needs assessment and reporting
-
-
-      Key Features:
-
-      • Full demographic profile including geographic and organisational context
-
-      • Behavioural risk factors with individual and combined risk metrics
-
-      • Complete condition profile with boolean flags and summary counts
-
-      • Clinical domain aggregations for targeted analysis
-
-      • Optimised for population health needs dashboard consumption and reporting'
+      One row per person with demographic profile, BMI/smoking status, and condition flags. LEFT JOINs maintain population coverage regardless of data availability.'
     
     columns:
       - name: person_id

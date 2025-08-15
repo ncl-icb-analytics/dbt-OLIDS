@@ -1,39 +1,6 @@
 version: 2
 models:
   - name: fct_ltc_lcs_practice_summary
-    description: 'Fact: LTC LCS Practice Summary - Practice-level aggregation of case finding indicators optimised for PowerBI dashboards.
+    description: 'Practice-level LTC case finding indicators aggregation optimised for PowerBI dashboards.
 
-
-      Population Scope:
-
-      • One row per practice with case finding activity
-
-      • Aggregates all LTC case finding indicators by practice
-
-      • Includes demographic breakdowns and population denominators
-
-      • Pre-calculated rates and percentages for dashboard performance
-
-
-      Key Features:
-
-      • Practice-level counts and rates for all 25+ case finding indicators
-
-      • Demographic stratification (age bands, ethnicity, deprivation quintiles)
-
-      • Population denominators for accurate rate calculations
-
-      • PowerBI-optimised structure for fast dashboard loading
-
-      • Practice comparison and league table support
-
-
-      Dashboard Use Cases:
-
-      • Practice performance league tables
-
-      • Geographic heat maps and practice comparisons
-
-      • Indicator-specific practice benchmarking
-
-      • Population health monitoring by practice catchment'
+      One row per practice with case finding activity including demographic breakdowns and pre-calculated rates.'

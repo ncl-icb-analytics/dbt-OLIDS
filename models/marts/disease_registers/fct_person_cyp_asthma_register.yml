@@ -1,15 +1,5 @@
 models:
   - name: fct_person_cyp_asthma_register
-    description: 'Children and Young People (CYP) Asthma Register - Clinical register for paediatric asthma management.
+    description: 'Children and young people asthma register for paediatric asthma management.
 
-
-      Key Inclusion Criteria:
-
-      • Age: Under 18 years
-
-      • Active asthma diagnosis: Latest AST_COD > latest ASTRES_COD
-
-      • Recent medication: Asthma medication prescribed within last 12 months
-
-
-      Purpose: Identifies children and young people with asthma requiring regular monitoring and age-appropriate care.'
+      One row per person under 18 years with latest AST_COD > latest ASTRES_COD and asthma medication prescribed within last 12 months.'

@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: fct_organisation_active_patients
-    description: 'Current active patient list size per organisation for capacity planning and performance monitoring.
+    description: 'Current active patient count per non-obsolete organisation for capacity planning.
 
-
-      Business Logic:
-
-      • Calculates current active patient count per organisation using active patient dimension
-
-      • Supports operational analytics for practice list management and capacity planning
-
-      • Limited to non-obsolete organisations for operational relevance
-
-      • One row per organisation with standardised service usage metric for commissioning and resource allocation'
+      One row per organisation with active patient list size calculated from active patient dimension.'

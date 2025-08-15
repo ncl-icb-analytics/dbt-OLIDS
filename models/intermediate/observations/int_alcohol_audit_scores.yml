@@ -2,38 +2,9 @@ version: 2
 
 models:
   - name: int_alcohol_audit_scores
-    description: 'Intermediate: Alcohol AUDIT Scores - All AUDIT and AUDIT-C screening assessments.
+    description: 'AUDIT and AUDIT-C alcohol screening assessments with UK-specific risk thresholds.
 
-
-      Clinical Purpose:
-
-      • Alcohol use screening and risk assessment using validated tools
-
-      • Supports brief interventions and specialist referral decisions
-
-      • Enables population health monitoring for alcohol-related harm
-
-
-      Data Granularity:
-
-      • One row per AUDIT/AUDIT-C observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses AUDITC_COD and AUDIT_COD clusters for score identification
-
-
-      Key Features:
-
-      • UK-specific risk thresholds for both AUDIT-C (0-12) and full AUDIT (0-40)
-
-      • Detailed categorisation from non-drinker through to possible dependence
-
-      • Gender considerations for risk stratification where applicable
-
-      • Intervention flags for clinical action planning
-
-      • Positive screen indicators for AUDIT-C scores ≥5'
+      One row per AUDIT/AUDIT-C observation using AUDITC_COD and AUDIT_COD clusters with detailed categorisation and intervention flags.'
 
     tests:
       - cluster_ids_exist:

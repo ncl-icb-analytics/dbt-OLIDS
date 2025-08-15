@@ -1,21 +1,6 @@
 version: 2
 models:
   - name: fct_person_nafld_register
-    description: 'Non-Alcoholic Fatty Liver Disease (NAFLD) Register - Patients with NAFLD diagnosis.
+    description: 'Non-alcoholic fatty liver disease register for patients with NAFLD diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • NAFLD diagnosis code present (hardcoded SNOMED concepts)
-
-      • Active patient status required
-
-      • No age restrictions
-
-      • No resolution codes
-
-
-      Purpose: Clinical register for liver health monitoring, metabolic risk assessment, and NAFLD progression tracking.
-
-
-      Note: Currently using hardcoded SNOMED codes - awaiting NAFLD_COD cluster in reference data.'
+      One row per active patient with NAFLD diagnosis (currently using hardcoded SNOMED codes - awaiting NAFLD_COD cluster).'

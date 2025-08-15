@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_nhs_health_check_latest
-    description: 'Intermediate: NHS Health Check Latest - Most recent NHS Health Check completion per person.
+    description: 'Most recent NHS Health Check completion per person for programme management.
 
-
-      Clinical Purpose:
-
-      • Tracks latest NHS Health Check completion status for each person
-
-      • Supports health check programme analysis and eligibility assessment
-
-      • Enables identification of patients requiring health check invitations or follow-up
-
-
-      Data Granularity:
-
-      • One row per person representing their most recent NHS Health Check completion
-
-      • Includes patients with completed NHS Health Checks recorded in clinical systems
-
-      • Contains health check currency flags for 12m, 24m, and 5y intervals
-
-
-      Key Features:
-
-      • Latest event selection per person using clinical_effective_date ordering
-
-      • Health check currency flags for programme eligibility assessment
-
-      • Time-based calculations for programme planning and invitation scheduling • Integration with comprehensive NHS Health Check events for complete programme analysis'
+      One row per person representing their latest NHS Health Check completion with currency flags for 12m, 24m, and 5y intervals for programme eligibility assessment.'

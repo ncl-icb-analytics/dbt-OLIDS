@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_urine_acr_latest
-    description: 'Intermediate: Latest Urine ACR Observations - Most recent valid ACR measurement per person for kidney function assessment.
+    description: 'Most recent valid albumin-to-creatinine ratio measurement per person for kidney function assessment and CKD staging.
 
-
-      Clinical Purpose:
-
-      • Provides current kidney function status based on albumin-to-creatinine ratio
-
-      • Supports CKD staging and diabetic nephropathy assessment
-
-      • Enables current proteinuria status evaluation and clinical decision-making
-
-
-      Data Granularity:
-
-      • One row per person with their most recent valid ACR
-
-      • Includes only patients with valid ACR measurements
-
-      • Filtered to exclude implausible values for clinical accuracy
-
-
-      Key Features:
-
-      • Latest valid ACR identification using comprehensive filtering
-
-      • Clinical ACR categorisation for kidney damage assessment
-
-      • Microalbuminuria and macroalbuminuria flags for staging
-
-      • Complete observation metadata for clinical context'
+      One row per person with their latest ACR including clinical ACR categorisation and microalbuminuria/macroalbuminuria flags.'

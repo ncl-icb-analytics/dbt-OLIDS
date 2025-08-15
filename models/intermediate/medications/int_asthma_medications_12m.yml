@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_asthma_medications_12m
-    description: 'Intermediate: Asthma Medication Orders (12 months) - Recent asthma treatment prescriptions for QOF monitoring.
+    description: 'Asthma medication orders from the last 12 months for QOF monitoring.
 
-
-      Clinical Purpose:
-
-      • Tracks asthma medication orders for QOF asthma care monitoring
-
-      • Supports asthma register maintenance and quality indicator reporting
-
-      • Enables analysis of controller vs reliever medication patterns
-
-
-      Data Granularity:
-
-      • One row per medication order from last 12 months
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses ASTTRT_COD cluster for asthma treatment identification (per QOF specification)
-
-
-      Key Features:
-
-      • Classification by asthma medication type (SABA, LABA, ICS, combinations)
-
-      • Controller vs reliever medication categorisation
-
-      • Inhaler device type identification for technique assessment
-
-      • QOF-specific indicators including repeat prescription tracking'
+      One row per medication order using ASTTRT_COD cluster with classification by asthma medication type (SABA, LABA, ICS, combinations) and controller vs reliever categorisation.'
     tests:
       - cluster_ids_exist:
           arguments:

@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_anticoagulant_medications_all
-    description: 'Intermediate: Anticoagulant Medications - All recorded oral anticoagulant prescriptions.
+    description: 'Oral anticoagulant medication orders for thrombosis prevention and atrial fibrillation management.
 
-
-      Clinical Purpose:
-
-      • Supports thrombosis prevention and atrial fibrillation management monitoring
-
-      • Enables anticoagulation pathway tracking and medication review processes
-
-      • Facilitates DOAC vs VKA prescribing pattern analysis
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients with anticoagulant prescriptions
-
-      • Historical data spanning entire medication history
-
-
-      Key Features:
-
-      • Anticoagulant type classification (DOAC vs VKA)
-
-      • Specific medication mapping (warfarin, apixaban, rivaroxaban, etc.)
-
-      • Evidence-based therapy flags with clinical trial references
-
-      • Therapy monitoring indicators across multiple timeframes'
+      One row per medication order with DOAC vs VKA classification and clinical trial evidence flags.'

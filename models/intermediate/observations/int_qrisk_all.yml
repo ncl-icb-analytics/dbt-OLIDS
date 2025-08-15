@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_qrisk_all
-    description: 'Intermediate: QRISK Observations - All recorded cardiovascular risk scores with clinical categorisation.
+    description: 'QRISK cardiovascular risk scores for cardiovascular disease risk assessment and statin therapy decision-making.
 
-
-      Clinical Purpose:
-
-      • Tracks QRISK scores for cardiovascular disease risk assessment and management
-
-      • Supports primary prevention strategies and statin therapy decision-making
-
-      • Enables cardiovascular risk stratification and population health monitoring
-
-
-      Data Granularity:
-
-      • One row per QRISK observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses QRISKSCORE_COD cluster for cardiovascular risk score identification
-
-
-      Key Features:
-
-      • QRISK type identification (QRISK2, QRISK3) with score validation
-
-      • Clinical risk categorisation (low, moderate, high CVD risk)
-
-      • Statin consideration thresholds and treatment decision support
-
-      • Cardiovascular prevention guideline compliance indicators'
+      One row per QRISK observation using QRISKSCORE_COD cluster with QRISK type identification (QRISK2, QRISK3) and clinical risk categorisation.'
     tests:
       - cluster_ids_exist:
           arguments:

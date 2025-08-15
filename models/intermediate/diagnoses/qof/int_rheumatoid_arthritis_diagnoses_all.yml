@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_rheumatoid_arthritis_diagnoses_all
-    description: 'Intermediate: Rheumatoid Arthritis Diagnoses All - Complete history of all rheumatoid arthritis diagnosis observations for QOF register management.
+    description: 'Rheumatoid arthritis diagnosis observations for QOF register data collection and inflammatory arthritis care pathway management.
 
-
-      Clinical Purpose:
-
-      • QOF rheumatoid arthritis register data collection and monitoring
-
-      • Musculoskeletal disease management and inflammatory arthritis care pathway
-
-      • Disease activity monitoring and treatment response assessment
-
-      • Long-term joint health and mobility outcome tracking
-
-
-      Data Granularity:
-
-      • One row per rheumatoid arthritis diagnosis observation
-
-      • Uses RA_COD cluster for QOF-compliant RA diagnosis identification
-
-      • Includes all patients regardless of status for comprehensive QOF reporting
-
-
-      Key Features:
-
-      • Lifelong condition register for ongoing disease management
-
-      • Simple diagnosis-only pattern with no resolution codes
-
-      • Critical for inflammatory arthritis treatment optimisation
-
-      • Essential input for rheumatoid arthritis care quality improvement initiatives'
+      One row per rheumatoid arthritis diagnosis observation using RARTH_COD cluster with lifelong condition tracking and no resolution codes.'
     tests:
       - cluster_ids_exist:
           arguments:

@@ -1,18 +1,8 @@
 models:
   - name: dq_bmi_issues
-    description: 'Business data quality monitoring tool for BMI measurements.
+    description: 'Data quality monitoring for BMI measurements identifying out-of-range values and extreme outliers.
 
-      Business Logic:
-
-      • Identifies BMI measurements with data quality issues: out-of-range values, extreme outliers, and missing dates
-
-      • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve BMI recording issues
-
-      • Flags BMI values <10 or >150 as out-of-range
-
-      • Additional flagging for extreme outliers (<8 or >100) for investigation
-
-      • One row per BMI observation with data quality issues for quality assurance reporting'
+      One row per BMI observation with issues including values <10 or >150 (out-of-range) and <8 or >100 (extreme outliers).'
     tests:
       - cluster_ids_exist:
           arguments:

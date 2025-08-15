@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_allergy_medications_all
-    description: 'Intermediate: Allergy Medications - All recorded antihistamine and allergy treatment prescriptions.
+    description: 'Antihistamine and allergy treatment medication orders for allergic condition monitoring.
 
-
-      Clinical Purpose:
-
-      • Supports allergic condition monitoring (rhinitis, urticaria, eczema)
-
-      • Enables allergy management pathway tracking and medication review processes
-
-      • Facilitates prescribing pattern analysis by sedation profile and administration route
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients with allergy medication prescriptions
-
-      • Historical data spanning entire medication history
-
-
-      Key Features:
-
-      • Antihistamine type classification with sedation profile (sedating vs non-sedating)
-
-      • Route of administration categorisation (oral, topical, injection)
-
-      • Clinical indication mapping for specific allergic conditions • Over-the-counter availability and safety warning flags'
+      One row per medication order with antihistamine type classification by sedation profile and administration route.'

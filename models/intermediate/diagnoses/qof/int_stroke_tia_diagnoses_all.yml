@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_stroke_tia_diagnoses_all
-    description: 'Intermediate: Stroke TIA Diagnoses All - Complete history of all stroke and TIA diagnosis observations for QOF register management.
+    description: 'Stroke and TIA diagnosis observations for QOF register data collection and cerebrovascular secondary prevention.
 
-
-      Clinical Purpose:
-
-      • QOF stroke register data collection and monitoring
-
-      • Cerebrovascular event tracking and secondary prevention pathway coordination
-
-      • Stroke care pathway management and rehabilitation support
-
-      • Long-term cardiovascular outcome tracking and intervention assessment
-
-
-      Data Granularity:
-
-      • One row per stroke or TIA diagnosis observation
-
-      • Uses STRK_COD (stroke) and TIA_COD (TIA) QOF clusters
-
-      • Includes all patients regardless of status for comprehensive QOF reporting
-
-
-      Key Features:
-
-      • Permanent cardiovascular event tracking with no resolution codes
-
-      • No specific age restrictions for stroke register inclusion
-
-      • Critical for cerebrovascular secondary prevention protocols
-
-      • Essential input for stroke care quality improvement initiatives'
+      One row per stroke or TIA diagnosis observation using STRK_COD and TIA_COD clusters with permanent cardiovascular event tracking and no age restrictions.'
     tests:
       - cluster_ids_exist:
           arguments:

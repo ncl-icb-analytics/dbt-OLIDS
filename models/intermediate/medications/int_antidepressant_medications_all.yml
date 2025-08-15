@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_antidepressant_medications_all
-    description: 'Intermediate: Antidepressant Medications - All recorded antidepressant prescriptions.
+    description: 'Antidepressant medication orders for depression management with NICE guidance compliance.
 
-
-      Clinical Purpose:
-
-      • Supports mental health condition monitoring and depression management
-
-      • Enables medication review pathway tracking for antidepressant therapy
-
-      • Facilitates NICE guidance compliance analysis for treatment recommendations
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients with antidepressant prescriptions
-
-      • Historical data spanning entire medication history
-
-
-      Key Features:
-
-      • Antidepressant class classification (SSRI, SNRI, tricyclic, MAOI)
-
-      • Specific medication mapping with first-line therapy indicators
-
-      • NICE guidance compliance flags for treatment adherence • Therapy monitoring indicators across multiple timeframes'
+      One row per medication order with antidepressant class classification (SSRI, SNRI, tricyclic, MAOI) and first-line therapy indicators.'

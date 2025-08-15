@@ -1,17 +1,5 @@
 models:
   - name: fct_person_heart_failure_register
-    description: 'QOF Heart Failure Register - Patients with active heart failure and subtype classification.
+    description: 'QOF heart failure register for patients with active heart failure diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • Active heart failure diagnosis: Latest HF_COD > latest HFRES_COD OR no resolution
-
-      • Subtype classification: General HF vs HF with LVSD/Reduced EF
-
-      • No age restrictions
-
-      • Excludes resolved heart failure cases
-
-
-      Purpose: QOF register for heart failure management with subtype-specific monitoring and treatment optimisation.'
+      One row per person with latest HF_COD > latest HFRES_COD or no resolution, including subtype classification (General HF vs HF with LVSD/Reduced EF).'

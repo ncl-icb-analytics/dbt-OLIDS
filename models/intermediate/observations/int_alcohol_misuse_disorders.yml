@@ -2,38 +2,9 @@ version: 2
 
 models:
   - name: int_alcohol_misuse_disorders
-    description: 'Intermediate: Alcohol Misuse Disorders - All alcohol disorder diagnoses and conditions.
+    description: 'Alcohol misuse, abuse, and dependence diagnoses for addiction services planning.
 
-
-      Clinical Purpose:
-
-      • Identifies patients with alcohol misuse, abuse, or dependence diagnoses
-
-      • Supports addiction services planning and resource allocation
-
-      • Enables monitoring of alcohol-related health burden
-
-
-      Data Granularity:
-
-      • One row per alcohol disorder observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses ALCOHOL_MISUSE_DISORDERS cluster for diagnosis identification
-
-
-      Key Features:
-
-      • Comprehensive disorder categorisation (dependence, harmful use, abuse, etc.)
-
-      • Severity assessment based on clinical terminology
-
-      • Active problem tracking using problem status and end dates
-
-      • Remission and recovery status identification
-
-      • Historical vs current disorder differentiation'
+      One row per alcohol disorder observation using ALCOHOL_MISUSE_DISORDERS cluster with disorder categorisation and severity assessment.'
 
     tests:
       - cluster_ids_exist:

@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_hba1c_all
-    description: 'Intermediate: HbA1c Observations - All recorded HbA1c measurements with diabetes assessment.
+    description: 'HbA1c measurements for diabetes diagnosis, monitoring and management with dual unit support.
 
-
-      Clinical Purpose:
-
-      • Tracks HbA1c levels for diabetes diagnosis, monitoring and management
-
-      • Supports diabetes care pathways and QOF target achievement monitoring
-
-      • Enables glycaemic control assessment and treatment optimisation
-
-
-      Data Granularity:
-
-      • One row per HbA1c observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Handles both IFCC (mmol/mol) and DCCT (%) measurement types
-
-
-      Key Features:
-
-      • Dual measurement type support with proper unit validation
-
-      • Clinical HbA1c categorisation (normal, prediabetes, diabetes control levels)
-
-      • QOF target achievement flags for diabetes quality indicators
-
-      • Diabetes diagnostic thresholds and clinical decision support'
+      One row per HbA1c observation handling both IFCC (mmol/mol) and DCCT (%) measurement types with clinical categorisation and QOF target achievement flags.'
     tests:
       - cluster_ids_exist:
           arguments:

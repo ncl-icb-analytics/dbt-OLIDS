@@ -1,16 +1,6 @@
 version: 2
 models:
   - name: fct_person_palliative_care_register
-    description: 'QOF Palliative Care Register - Patients receiving end-of-life care.
+    description: 'QOF palliative care register for patients receiving end-of-life care.
 
-
-      Key Inclusion Criteria:
-
-      • Palliative care diagnosis (PALLCARE_COD) present
-
-      • No age restrictions
-
-      • No resolution codes (palliative care status maintained)
-
-
-      Purpose: QOF register for end-of-life care quality measures, care coordination, and ensuring appropriate palliative support.'
+      One row per person with PALLCARE_COD present (palliative care status maintained).'

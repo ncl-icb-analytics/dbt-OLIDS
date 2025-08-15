@@ -1,35 +1,6 @@
 version: 2
 models:
   - name: fct_person_diabetes_9_care_processes
-    description: 'Mart: Diabetes 9 Care Processes Achievement - Enhanced QOF quality measure for comprehensive diabetes care assessment.
+    description: 'Diabetes 9 care processes achievement for QOF reporting.
 
-
-      Business Purpose:
-
-      • Support QOF reporting for diabetes care processes achievement indicators including retinal screening
-
-      • Enable clinical teams to identify patients requiring diabetes care review and eye screening
-
-      • Provide population health analytics for diabetes management programmes
-
-      • Support business intelligence reporting on practice performance and clinical quality
-
-
-      Data Granularity:
-
-      • One row per person on diabetes register
-
-      • Includes completion status for all 9 care processes within 12 months
-
-      • Current assessment of comprehensive diabetes care delivery including sight-threatening complication prevention
-
-
-      Key Features:
-
-      • Tracks all 8 standard diabetes care processes plus retinal screening
-
-      • Calculates overall completion metrics for QOF reporting
-
-      • Supports clinical decision-making and quality improvement initiatives
-
-      • Enables population health management and diabetes care optimisation'
+      One row per person on diabetes register with completion status for all 9 care processes (8 standard plus retinal screening) within 12 months.'

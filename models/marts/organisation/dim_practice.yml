@@ -1,17 +1,6 @@
 version: 2
 models:
   - name: dim_practice
-    description: 'Practice dimension containing comprehensive practice details and organisational hierarchy.
+    description: 'Practice details and organisational hierarchy for North Central London (STPCode = QMJ).
 
-
-      Data Sources:
-
-      • Dictionary.dbo.OrganisationMatrixPracticeView - Practice codes, names, and organisational hierarchy (Commissioner, STP)
-
-      • stg_olids_organisation - Practice operational details (type, postcode, dates, parent org)
-
-      • INNER JOIN on Dictionary.PracticeCode = OLIDS.organisation_code
-
-      • Filtered to STPCode = QMJ (North Central London)
-
-      • One row per practice with current state information'
+      One row per practice combining Dictionary practice data with OLIDS operational details via INNER JOIN on practice codes.'

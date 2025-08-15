@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_epilepsy_medications_6m
-    description: 'Intermediate: Epilepsy Medication Orders (6 months) - Recent anti-epileptic drug prescriptions for seizure management.
+    description: 'Anti-epileptic drug medication orders from the last 6 months for seizure management.
 
-
-      Clinical Purpose:
-
-      • Tracks anti-epileptic drug (AED) therapy for seizure management monitoring
-
-      • Supports epilepsy register maintenance and therapeutic drug monitoring
-
-      • Enables analysis of polytherapy patterns and teratogenicity risk
-
-
-      Data Granularity:
-
-      • One row per medication order from last 6 months
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses EPILDRUG_COD cluster for anti-epileptic drug identification
-
-
-      Key Features:
-
-      • Classification by AED generation and seizure type indication
-
-      • Therapeutic drug monitoring (TDM) requirement flags
-
-      • Teratogenicity risk assessment and brand consistency indicators
-
-      • Polytherapy identification for complex epilepsy management'
+      One row per medication order using EPILDRUG_COD cluster with AED generation classification, therapeutic drug monitoring flags, and teratogenicity risk assessment.'

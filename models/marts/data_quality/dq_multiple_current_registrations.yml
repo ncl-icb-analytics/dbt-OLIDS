@@ -1,25 +1,5 @@
 models:
   - name: dq_multiple_current_registrations
-    description: 'Business data quality monitoring tool for patient registration data.
+    description: 'Patient registration data quality monitoring identifying multiple simultaneous current registrations.
 
-      Business Logic:
-
-      • Identifies persons with multiple simultaneous current registrations
-
-      • Supports clinical governance teams in monitoring registration data quality
-
-      • Flags registration end date issues: NULL dates, future dates, and illogical date sequences
-
-      • Detects overlapping registration periods across different practices
-
-      • Provides severity scoring to prioritise data quality remediation efforts
-
-      • One row per current registration for persons with multiple current registrations
-
-      Data Quality Impact:
-
-      • Multiple current registrations cause duplicates in dim_person and downstream models
-
-      • Affects accurate patient counting and practice list sizes
-
-      • May impact funding calculations based on registered patient numbers'
+      One row per current registration for persons with multiple registrations including overlapping periods and severity scoring.'

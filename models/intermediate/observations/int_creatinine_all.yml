@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_creatinine_all
-    description: 'Intermediate: Creatinine Observations - All recorded serum creatinine measurements with clinical categorisation.
+    description: 'Serum creatinine measurements for kidney function assessment and CKD monitoring.
 
-
-      Clinical Purpose:
-
-      • Tracks creatinine levels for kidney function assessment and CKD monitoring
-
-      • Supports renal disease management and medication dosing adjustments
-
-      • Enables chronic kidney disease case finding and progression monitoring
-
-
-      Data Granularity:
-
-      • One row per creatinine observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses CRE_COD cluster for serum creatinine identification
-
-
-      Key Features:
-
-      • Data quality validation with plausible range filtering (20-1000 µmol/L)
-
-      • Clinical creatinine categorisation (normal, mildly/moderately/severely elevated)
-
-      • Elevated creatinine flags for kidney function screening
-
-      • Original value preservation for clinical interpretation'
+      One row per creatinine observation using CRE_COD cluster with plausible range filtering (20-1000 µmol/L) and clinical creatinine categorisation.'
     tests:
       - cluster_ids_exist:
           arguments:

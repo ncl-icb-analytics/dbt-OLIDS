@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: dim_households
-    description: 'Geographic and dwelling information for patient household analysis.
+    description: 'Geographic and dwelling information for household-level health analytics.
 
-
-      Business Logic:
-
-      • Provides geographic location data including LSOA codes and deprivation indices for household-level health analytics
-
-      • Includes dwelling activity status and occupancy timeline with first/last known occupation dates
-
-      • Supports social determinants of health reporting and spatial analysis requirements
-
-      • One row per unique household (UPRN-based dwelling) covering both currently active and historically active households'
+      One row per unique household (UPRN-based dwelling) with LSOA codes, deprivation indices and occupancy timeline.'

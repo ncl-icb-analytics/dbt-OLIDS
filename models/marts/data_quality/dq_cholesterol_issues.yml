@@ -1,18 +1,8 @@
 models:
   - name: dq_cholesterol_issues
-    description: 'Business data quality monitoring tool for cholesterol measurements.
+    description: 'Data quality monitoring for cholesterol measurements identifying out-of-range values and extreme outliers.
 
-      Business Logic:
-
-      • Identifies cholesterol measurements with data quality issues: out-of-range values, extreme outliers, and missing dates
-
-      • Supports clinical governance teams in monitoring data quality and enabling data stewards to resolve cholesterol recording issues
-
-      • Flags cholesterol values <0.5 or >20 mmol/L as out-of-range (maintains current clinically validated range)
-
-      • Additional flagging for extreme outliers (>15 mmol/L) for investigation
-
-      • One row per cholesterol observation with data quality issues for quality assurance reporting'
+      One row per cholesterol observation with issues including values <0.5 or >20 mmol/L (out-of-range) and >15 mmol/L (extreme outliers).'
     tests:
       - cluster_ids_exist:
           arguments:

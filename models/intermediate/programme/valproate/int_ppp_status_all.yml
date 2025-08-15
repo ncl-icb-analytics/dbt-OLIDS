@@ -1,31 +1,6 @@
 version: 2
 models:
   - name: int_ppp_status_all
-    description: 'Intermediate: PPP Status All - All Pregnancy Prevention Programme status events for valproate patient safety monitoring.
+    description: 'Pregnancy Prevention Programme status events for valproate patient safety monitoring.
 
-
-      Clinical Purpose:
-
-      • Tracks PPP status events for women of childbearing potential on valproate therapy
-
-      • Supports pregnancy prevention programme monitoring for valproate clinical safety
-
-      • Enables comprehensive tracking of PPP enrollment, discontinuation, and clinical decisions
-
-
-      Data Granularity:
-
-      • One row per PPP status observation for patients on valproate therapy
-
-      • Includes PPP enrolled, discontinued, not needed, and declined status events
-
-      • Contains clinical effective dates for temporal analysis and programme tracking
-
-
-      Key Features:
-
-      • PPP status categorisation: enrolled, discontinued, not needed, declined
-
-      • Integration with valproate programme codes for comprehensive status tracking
-
-      • Raw data collection layer feeding downstream PPP dimension table • Support for valproate patient safety monitoring and regulatory compliance'
+      One row per PPP status observation including enrolled, discontinued, not needed, and declined status events for women of childbearing potential on valproate therapy.'

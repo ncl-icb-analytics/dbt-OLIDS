@@ -1,15 +1,5 @@
 models:
   - name: fct_person_ndh_register
-    description: 'QOF Non-Diabetic Hyperglycaemia (NDH) Register - Patients with pre-diabetes for prevention interventions.
+    description: 'QOF non-diabetic hyperglycaemia register for patients with pre-diabetes diagnosis.
 
-
-      Key Inclusion Criteria:
-
-      • NDH diagnosis (NDH_COD) present - elevated glucose but not diabetic
-
-      • No age restrictions
-
-      • Excludes those with diabetes diagnosis
-
-
-      Purpose: QOF register for diabetes prevention, lifestyle interventions, and pre-diabetes monitoring to prevent progression to Type 2 diabetes.'
+      One row per person with NDH_COD present (elevated glucose but not diabetic), excluding those with diabetes diagnosis.'

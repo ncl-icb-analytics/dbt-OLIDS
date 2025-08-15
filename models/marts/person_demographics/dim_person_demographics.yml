@@ -1,27 +1,9 @@
 version: 2
 models:
   - name: dim_person_demographics
-    description: 'Mart: Person Demographics - Comprehensive demographic profiles for population health analytics.
+    description: 'Person demographics with age, sex, ethnicity, language, practice registration and geographic data.
 
-
-      Population Scope:
-
-      • All persons with recorded birth dates
-
-      • Includes both active and inactive patients
-
-      • One row per person with comprehensive demographic information
-
-
-      Key Features:
-
-      • Consolidated demographics from multiple dimension tables
-
-      • Age, sex, ethnicity, language, and geographic information
-
-      • Current practice registration and organisational hierarchy
-
-      • Address and household linkage capability'
+      One row per person with recorded birth dates (active and inactive patients).'
     columns:
       - name: person_id
         description: Unique identifier for the person

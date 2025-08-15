@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: fct_person_gp_appointments_12m
-    description: 'Service usage analytics for primary care appointment activity over 12-month period.
+    description: 'GP appointment activity tracking over 12-month period for capacity planning.
 
-
-      Business Logic:
-
-      • Calculates total GP appointment count per person per organisation in last 12 months
-
-      • Includes earliest and latest appointment dates for utilisation pattern analysis
-
-      • Supports GP practice capacity planning and resource allocation analytics
-
-      • One row per person per organisation with appointments in last 12 months (minimum 1 appointment)'
+      One row per person per organisation with appointment count, earliest and latest appointment dates (minimum 1 appointment).'

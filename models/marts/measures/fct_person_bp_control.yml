@@ -1,22 +1,6 @@
 version: 2
 models:
   - name: fct_person_bp_control
-    description: 'Mart: Blood Pressure Control Status - Patient-level blood pressure control assessment for QOF reporting and clinical management.
+    description: 'Blood pressure control assessment for QOF reporting using NICE NG136 guidelines.
 
-
-      Population Scope:
-
-      • All patients with blood pressure readings requiring control assessment
-
-      • Patient-specific BP thresholds based on age, Type 2 diabetes, CKD, and ACR levels
-
-      • One row per patient with current BP control status and monitoring timeliness
-
-
-      Key Features:
-
-      • Applies priority-ranked thresholds based on NICE NG136 guidelines
-
-      • Calculates overall BP control status (both systolic and diastolic)
-
-      • Includes risk-based timeliness assessment for monitoring frequency'
+      One row per patient with BP readings, applying patient-specific thresholds based on age, Type 2 diabetes, CKD, and ACR levels.'

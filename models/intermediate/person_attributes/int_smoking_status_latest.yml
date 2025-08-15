@@ -1,32 +1,9 @@
 version: 2
 models:
   - name: int_smoking_status_latest
-    description: 'Intermediate: Smoking Status Latest - Most recent smoking status per person.
+    description: 'Most recent smoking status per person for clinical decision support and QOF reporting.
 
-
-      Clinical Purpose:
-
-      • Current smoking status determination for clinical decision support
-
-      • QOF smoking indicator extraction and cardiovascular risk assessment
-
-      • Smoking cessation programme targeting and health improvement tracking
-
-
-      Data Granularity:
-
-      • One row per person representing most recent smoking status observation
-
-      • Uses QOF cluster prioritisation for specific status codes over general codes
-
-      • Includes all persons regardless of status for comprehensive QOF reporting
-
-
-      Key Features:
-
-      • Latest smoking status with specific code prioritisation logic
-
-      • SNOMED concept code mapping to smoking status categories • Boolean flags for current smoker, ex-smoker, and never smoked classifications'
+      One row per person with their latest smoking status using QOF cluster prioritisation and SNOMED concept code mapping to smoking status categories.'
     
     columns:
       - name: person_id

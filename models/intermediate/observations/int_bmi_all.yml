@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_bmi_all
-    description: 'Intermediate: BMI Observations - All recorded BMI measurements with clinical categorisation.
+    description: 'BMI measurements with clinical categorisation and data quality validation.
 
-
-      Clinical Purpose:
-
-      • Tracks BMI measurements for obesity management and health monitoring
-
-      • Supports weight management programmes and QOF reporting
-
-      • Enables longitudinal analysis of BMI trends and clinical outcomes
-
-
-      Data Granularity:
-
-      • One row per BMI observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses BMIVAL_COD cluster for BMI value identification
-
-
-      Key Features:
-
-      • Data quality validation with plausible range filtering (5-400)
-
-      • Clinical BMI categorisation (underweight, normal, overweight, obese classes)
-
-      • Original value preservation for audit and quality assurance
-
-      • Comprehensive observation metadata for traceability'
+      One row per BMI observation using BMIVAL_COD cluster with plausible range filtering (5-400) and clinical BMI categorisation.'
     tests:
       - cluster_ids_exist:
           arguments:

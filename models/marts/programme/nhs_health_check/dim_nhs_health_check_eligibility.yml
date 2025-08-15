@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: dim_nhs_health_check_eligibility
-    description: 'Eligibility assessment and due status for NHS Health Check programme.
+    description: 'NHS Health Check programme eligibility for patients aged 40-74 without excluding chronic conditions.
 
-
-      Business Logic:
-
-      • Determines eligibility based on age 40-74 and absence of excluding chronic conditions
-
-      • Checks for excluding conditions: CHD, diabetes, stroke, CKD, AF, heart failure, familial hypercholesterolaemia
-
-      • Calculates due status: eligible patients who never had a check or last check >5 years ago (1825 days)
-
-      • One row per person with eligibility flags and latest health check date'
+      One row per person with eligibility flags, due status (>5 years or never checked) and latest health check date.'

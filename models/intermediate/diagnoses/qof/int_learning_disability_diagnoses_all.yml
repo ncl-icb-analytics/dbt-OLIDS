@@ -1,38 +1,9 @@
 version: 2
 models:
   - name: int_learning_disability_diagnoses_all
-    description: 'Intermediate: Learning Disability Diagnoses All - Complete history of all learning disability diagnosis observations for QOF register management.
+    description: 'Learning disability diagnosis observations for QOF register management.
 
-
-      Clinical Purpose:
-
-      • QOF learning disability register data collection and monitoring
-
-      • Learning disability support service coordination and annual health checks
-
-      • Disability support pathway management and clinical decision support
-
-      • Learning disability care quality improvement and outcome tracking
-
-
-      Data Granularity:
-
-      • One row per learning disability diagnosis observation
-
-      • Uses LD_COD cluster for QOF-compliant learning disability identification
-
-      • Includes all patients regardless of status for comprehensive QOF reporting
-
-
-      Key Features:
-
-      • Annual health check eligibility determination (typically ≥14 years)
-
-      • Learning disability support service coordination
-
-      • Critical for disability care pathway optimisation
-
-      • Essential input for learning disability quality improvement initiatives'
+      One row per diagnosis observation using LD_COD cluster. Annual health check eligibility typically ≥14 years.'
     tests:
       - cluster_ids_exist:
           arguments:

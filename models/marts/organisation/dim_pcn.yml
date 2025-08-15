@@ -1,15 +1,6 @@
 version: 2
 models:
   - name: dim_pcn
-    description: 'PCN (Primary Care Network) dimension containing PCN details and member practice information.
+    description: 'Primary Care Network dimension with PCN details and member practice information.
 
-
-      Data Sources:
-
-      • Dictionary.dbo.OrganisationMatrixPracticeView - PCN codes, names, and organisational hierarchy (Commissioner, STP)
-
-      • Aggregated practice membership data from same source
-
-      • Filtered to STPCode = QMJ (North Central London)
-
-      • One row per PCN with current state information and member practice arrays'
+      One row per PCN filtered to STPCode = QMJ (North Central London) with organisational hierarchy and member practice arrays.'

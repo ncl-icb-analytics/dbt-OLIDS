@@ -1,17 +1,6 @@
 version: 2
 models:
   - name: fct_person_hypertension_register
-    description: 'QOF Hypertension Register - Patients aged 18+ with active hypertension diagnosis and clinical staging.
+    description: 'QOF hypertension register for patients aged 18+ with active hypertension diagnosis.
 
-
-      Population Scope:
-
-      • Age 18+ years
-
-      • Active hypertension diagnosis: latest HTN_COD > latest HTNRES_COD
-
-      • Clinical staging based on latest BP with NICE-aligned thresholds
-
-      • Context-aware thresholds: Home/ABPM vs Clinic readings
-
-      • One row per person with current register status'
+      One row per person with latest HTN_COD > latest HTNRES_COD, including clinical staging based on NICE-aligned BP thresholds.'

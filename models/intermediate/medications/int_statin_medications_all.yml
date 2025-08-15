@@ -1,33 +1,6 @@
 version: 2
 models:
   - name: int_statin_medications_all
-    description: 'Intermediate: Statin Medication Orders - All recorded statin prescriptions for cholesterol management.
+    description: 'Statin medication orders for cholesterol management and cardiovascular risk reduction.
 
-
-      Clinical Purpose:
-
-      • Tracks statin therapy for cholesterol management and cardiovascular risk reduction
-
-      • Supports lipid management monitoring and medication review processes
-
-      • Enables analysis of high-intensity vs standard statin usage patterns
-
-
-      Data Granularity:
-
-      • One row per medication order
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Historical data maintained for longitudinal analysis
-
-
-      Key Features:
-
-      • Specific statin identification (atorvastatin, simvastatin, rosuvastatin, etc.)
-
-      • High-intensity statin classification for cardiovascular risk management
-
-      • Combination therapy identification (statin with ezetimibe)
-
-      • Long-term therapy monitoring indicators for compliance assessment'
+      One row per medication order with specific statin identification and high-intensity statin classification for cardiovascular risk management.'

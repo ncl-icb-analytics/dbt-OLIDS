@@ -1,16 +1,5 @@
 models:
   - name: fct_person_asthma_register
-    description: 'QOF Asthma Register - Patients aged 6+ with active asthma requiring ongoing management.
+    description: 'QOF asthma register for patients aged 6+ with active asthma diagnosis.
 
-
-      Population Scope:
-
-      • Age 6+ years
-
-      • Active asthma diagnosis: latest AST_COD > latest ASTRES_COD
-
-      • Recent medication: asthma medication prescribed within last 12 months
-
-      • External validation: medication requirement ensures active management
-
-      • One row per person with current register status'
+      One row per person with latest AST_COD > latest ASTRES_COD and asthma medication prescribed within last 12 months.'

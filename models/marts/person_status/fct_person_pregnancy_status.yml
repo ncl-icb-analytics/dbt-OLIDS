@@ -1,18 +1,6 @@
 version: 2
 models:
   - name: fct_person_pregnancy_status
-    description: 'Current Pregnancy Status - Determines current pregnancy status based on recent codes.
+    description: 'Current pregnancy status determination for non-male individuals based on recent clinical codes.
 
-
-      Business Logic:
-
-      • Population: Non-male individuals only
-
-      • Current pregnancy: Latest pregnancy code > latest delivery code
-
-      • Risk assessment: Child-bearing age (0-55 years) for medication safety
-
-      • Clinical codes: Uses pregnancy codes vs delivery/termination codes
-
-
-      Purpose: Clinical decision support for medication safety, care planning, and pregnancy-related interventions.'
+      One row per person with latest pregnancy code > latest delivery code, limited to child-bearing age (0-55 years) for medication safety.'

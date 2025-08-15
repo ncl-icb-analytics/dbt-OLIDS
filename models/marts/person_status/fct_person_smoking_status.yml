@@ -1,18 +1,9 @@
 version: 2
 models:
   - name: fct_person_smoking_status
-    description: 'Current and historical smoking status for clinical decision support and population health monitoring.
+    description: 'Current and historical smoking status based on most recent clinical observations.
 
-
-      Business Logic:
-
-      • Provides current smoking status based on most recent clinical observation
-
-      • Includes complete smoking history with earliest and all recorded observations
-
-      • Integrated with person demographics for population health analysis
-
-      • One row per person with smoking observation data (limited to people with recorded smoking observations)'
+      One row per person with recorded smoking observations including earliest and all recorded smoking history.'
     
     columns:
       - name: person_id

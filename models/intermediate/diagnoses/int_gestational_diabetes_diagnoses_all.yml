@@ -1,35 +1,6 @@
 version: 2
 models:
   - name: int_gestational_diabetes_diagnoses_all
-    description: 'Intermediate: Gestational Diabetes Diagnoses - All gestational diabetes diagnosis observations from clinical records.
+    description: 'Gestational diabetes diagnosis observations for QOF register data collection and pregnancy-related diabetes monitoring.
 
-
-      Clinical Purpose:
-
-      • QOF gestational diabetes register data collection
-
-      • Pregnancy-related diabetes monitoring and risk assessment
-
-      • Postpartum diabetes screening pathway identification
-
-      • Future diabetes prevention planning and early intervention
-
-
-      Data Granularity:
-
-      • One row per gestational diabetes diagnosis observation
-
-      • Includes all patients with recorded gestational diabetes diagnoses
-
-      • Complete history across all pregnancy episodes
-
-      • Uses GESTDIAB_COD cluster for QOF-compliant diagnosis identification
-
-
-      Key Features:
-
-      • Pregnancy-specific diabetes condition tracking
-
-      • No resolution codes (condition-specific to pregnancy episodes)
-
-      • Applies primarily to women of childbearing age • Critical for postpartum diabetes risk stratification'
+      One row per gestational diabetes diagnosis observation using GESTDIAB_COD cluster with pregnancy-specific tracking and postpartum diabetes risk stratification.'

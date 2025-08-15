@@ -1,36 +1,9 @@
 version: 2
 models:
   - name: int_egfr_all
-    description: 'Intermediate: eGFR Observations - All recorded estimated glomerular filtration rate measurements with CKD staging.
+    description: 'Estimated glomerular filtration rate measurements for kidney function assessment with CKD staging.
 
-
-      Clinical Purpose:
-
-      • Tracks eGFR measurements for kidney function assessment and CKD staging
-
-      • Supports chronic kidney disease monitoring and progression tracking
-
-      • Enables CKD case finding and clinical decision support
-
-
-      Data Granularity:
-
-      • One row per eGFR observation
-
-      • Includes all patients regardless of status (active/inactive/deceased)
-
-      • Uses EGFR_COD cluster for eGFR value identification
-
-
-      Key Features:
-
-      • Data quality validation with plausible range filtering (1-200 mL/min/1.73m²)
-
-      • CKD stage classification (stages 1-5) based on eGFR thresholds
-
-      • CKD indicator flags for values <60 suggesting kidney disease
-
-      • Comprehensive kidney function assessment for clinical management'
+      One row per eGFR observation using EGFR_COD cluster with CKD stage classification (stages 1-5) and plausible range filtering (1-200 mL/min/1.73m²).'
     tests:
       - cluster_ids_exist:
           arguments:
