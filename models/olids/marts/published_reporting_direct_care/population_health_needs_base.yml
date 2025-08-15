@@ -1,0 +1,118 @@
+version: 2
+
+models:
+  - name: population_health_needs_base
+    description: 'Population health dataset combining demographics, behavioural risk factors, and conditions for dashboard reporting.
+
+      One row per person with demographic profile, BMI/smoking status, and condition flags. LEFT JOINs maintain population coverage regardless of data availability.'
+    
+    tests:
+      # Ensure no duplicate rows after joins
+      - dbt_utils.unique_combination_of_columns:
+          config:
+            combination_of_columns:
+              - person_id
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      # Demographics section (from dim_person_demographics - should never be null)
+      - name: is_active
+        description: Flag indicating if person has active GP registration
+        tests:
+          - not_null  # Verifies demographics join worked
+          - accepted_values:
+              values: [true, false]
+      
+      - name: age
+        description: Current age in years
+        tests:
+          - not_null  # Demographics always has age for persons with birth dates
+      
+      - name: sex
+        description: Person's sex
+        tests:
+          - not_null  # Demographics always has sex (even if 'Unknown')
+          - accepted_values:
+              values: ['Male', 'Female', 'Unknown']
+      
+      - name: ethnicity_category
+        description: Main ethnicity category classification
+      
+      - name: practice_code
+        description: GP practice code
+      
+      - name: pcn_code
+        description: Primary Care Network code
+      
+      - name: imd_decile_19
+        description: Index of Multiple Deprivation 2019 decile (1=most deprived, 10=least deprived)
+      
+      # Behavioural Risk Factors section
+      - name: bmi_category
+        description: BMI classification (may be null if no BMI data)
+        tests:
+          - accepted_values:
+              values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
+              config:
+                where: "bmi_category is not null"
+      
+      - name: smoking_status
+        description: Current smoking status (may be null if no smoking data)
+        tests:
+          - accepted_values:
+              values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
+              config:
+                where: "smoking_status is not null"
+      
+      - name: risk_factor_count
+        description: Count of active behavioural risk factors (0-3, null if no risk factor data)
+        tests:
+          - dbt_utils.accepted_range:
+              config:
+                min_value: 0
+                max_value: 3
+                where: "risk_factor_count is not null"
+      
+      # Behavioural Risk Factors data availability flags (from fct_person_behavioural_risk_factors - should never be null)
+      - name: has_bmi_data
+        description: Flag indicating if BMI data is available for this person
+        tests:
+          - not_null  # Verifies behavioural risk factors join worked
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_smoking_data
+        description: Flag indicating if smoking data is available for this person
+        tests:
+          - not_null  # Always TRUE/FALSE from behavioural risk factors
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_alcohol_data
+        description: Flag indicating if alcohol data is available for this person
+        tests:
+          - not_null  # Always TRUE/FALSE from behavioural risk factors
+          - accepted_values:
+              values: [true, false]
+      
+      # Conditions section (from dim_person_conditions - should never be null)
+      - name: has_diabetes
+        description: Flag indicating diabetes diagnosis
+        tests:
+          - not_null  # Verifies conditions join worked - always TRUE/FALSE
+          - accepted_values:
+              values: [true, false]
+      
+      - name: total_conditions
+        description: Total number of recorded conditions
+        tests:
+          - not_null  # Always has a value (0 or more) from dim_person_conditions
+          - dbt_utils.accepted_range:
+              config:
+                min_value: 0
+                max_value: 50

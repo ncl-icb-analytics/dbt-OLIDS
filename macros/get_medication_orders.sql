@@ -59,9 +59,9 @@
     -- Early filter by mapped concepts
     JOIN mapped_med mm
         ON ms.medication_statement_core_concept_id = mm.source_code_id
-    JOIN {{ ref('stg_olids_term_concept') }} c
+    JOIN {{ ref('stg_olids_terminology_concept') }} c
         ON mm.mapped_concept_id = c.id
-    LEFT JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
+    LEFT JOIN {{ ref('stg_reference_bnf_latest') }} bnf
         ON c.code = bnf.snomed_code
     JOIN {{ ref('int_patient_person_unique') }} pp
         ON mo.patient_id = pp.patient_id
@@ -102,11 +102,11 @@
     JOIN {{ ref('stg_olids_medication_statement') }} ms
         ON mo.medication_statement_id = ms.id
     -- Native path without cluster filtering
-    JOIN {{ ref('stg_olids_term_concept_map') }} cm
+    JOIN {{ ref('stg_olids_terminology_concept_map') }} cm
         ON ms.medication_statement_core_concept_id = cm.source_code_id
-    JOIN {{ ref('stg_olids_term_concept') }} c
+    JOIN {{ ref('stg_olids_terminology_concept') }} c
         ON cm.target_code_id = c.id
-    LEFT JOIN {{ ref('stg_codesets_bnf_latest') }} bnf
+    LEFT JOIN {{ ref('stg_reference_bnf_latest') }} bnf
         ON c.code = bnf.snomed_code
     JOIN {{ ref('int_patient_person_unique') }} pp
         ON mo.patient_id = pp.patient_id

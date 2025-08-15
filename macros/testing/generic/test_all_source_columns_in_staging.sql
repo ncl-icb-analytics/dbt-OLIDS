@@ -3,9 +3,9 @@
 
 {%- set schema_prefixes = {
     'OLIDS_MASKED': 'stg_olids',
-    'OLIDS_TERMINOLOGY': 'stg_olids_term',
-    'CODESETS': 'stg_codesets',
-    'RULESETS': 'stg_rulesets'
+    'OLIDS_TERMINOLOGY': 'stg_olids_terminology',
+    'CODESETS': 'stg_reference',
+    'RULESETS': 'stg_reference'
 } -%}
 
     {%- set ns = namespace(first=true) -%}
