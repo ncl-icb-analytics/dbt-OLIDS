@@ -162,7 +162,9 @@ dbt debug                     # Test your connection to Snowflake
 
 ## Source Generation Automation
 
-Automated workflow for generating sources and staging models from Snowflake metadata:
+We use an automated workflow for generating sources and staging models from Snowflake metadata. This workflow is not scheduled and must be executed manually.
+
+**IMPORTANT:** Note that running the sources workflow will destructively re-create sources.yml and all staging models. This includes any tests or descriptions assigned to those models.
 
 ```bash
 cd scripts/sources
@@ -172,23 +174,8 @@ python run_full_sources_workflow.py    # Complete workflow
 ### **Key Configuration Files**
 
 **`source_mappings.yml`**: Controls which tables go into `olids/` vs `shared/` domains:
-```yaml
-olids_tables:
-  - patient
-  - observation
-  - medication_order
-shared_tables:
-  - dictionary_*
-  - reference_*
-```
 
-**`default_model_tests.yml`**: Template for adding tests to staging models:
-```yaml
-models:
-  - name: "{{ model_name }}"
-    tests:
-      - all_source_columns_in_staging
-```
+**`default_model_tests.yml`**: Update this file to persist tests on staging models.
 
 ## Development Patterns
 
@@ -297,4 +284,5 @@ Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
 ## License
 
 This repository is dual licensed under the Open Government v3 & MIT. All code outputs are subject to Crown Copyright.
+
 
