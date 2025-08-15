@@ -1,4 +1,6 @@
 {% macro get_observations(cluster_ids, source=none) %}
+    {% do config(static_analysis='unsafe') %}
+    
     {%- if cluster_ids is none or cluster_ids|trim == '' -%}
         {{ exceptions.raise_compiler_error("Must provide a non-empty cluster_ids parameter to get_observations macro") }}
     {%- endif -%}
