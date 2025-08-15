@@ -9,16 +9,16 @@ Person-level behavioural risk factors for complete population.
 Provides comprehensive view of modifiable lifestyle factors for population health management.
 
 Business Logic:
-- Includes ALL persons from dim_person (complete population coverage)
+- Includes ALL persons from dim_person_demographics (persons with recorded birth dates)
 - Combines latest BMI category, smoking status, and alcohol status where available
 - NULL values for persons without assessments, with explicit data availability flags
 - Includes risk sort keys for each factor to enable risk stratification
-- One row per person in the population
+- One row per person in the population (matching dim_person_demographics grain)
 */
 
 WITH all_persons AS (
     SELECT person_id 
-    FROM {{ ref('dim_person') }}
+    FROM {{ ref('dim_person_demographics') }}
 ),
 
 bmi_status AS (

@@ -2,3 +2,17 @@ version: 2
 models:
   - name: dim_person_active_patients
     description: Dimension table providing active patient status at person level. Uses proper registration data from episode_of_care to determine current practice. Excludes deceased patients and dummy patients.
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: is_active
+        description: Flag indicating if person is an active patient
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]  # This table only contains active patients

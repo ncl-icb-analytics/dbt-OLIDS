@@ -4,3 +4,32 @@ models:
     description: 'Person birth and death vital statistics using statistical midpoint methodology for date approximation.
 
       One row per person with recorded birth year and month (both living and deceased persons).'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: birth_year
+        description: Year of birth
+        tests:
+          - not_null
+      
+      - name: birth_month
+        description: Month of birth
+        tests:
+          - not_null
+      
+      - name: birth_date_approx
+        description: Approximate date of birth (mid-month)
+        tests:
+          - not_null
+      
+      - name: is_deceased
+        description: Flag indicating if person is deceased
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]

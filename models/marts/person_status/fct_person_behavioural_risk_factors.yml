@@ -4,7 +4,7 @@ models:
   - name: fct_person_behavioural_risk_factors
     description: 'Population view of person-level behavioural risk factors combining BMI, smoking, and alcohol status.
 
-      One row per person in the population (includes ALL persons from dim_person) with data availability flags for each risk factor.'
+      One row per person from dim_person_demographics (persons with recorded birth dates) with data availability flags for each risk factor.'
     
     columns:
       - name: person_id

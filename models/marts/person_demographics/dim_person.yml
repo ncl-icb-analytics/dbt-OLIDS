@@ -4,3 +4,10 @@ models:
     description: 'Core person identity dimension aggregating multiple patient IDs per person.
 
       One row per person in the HEI population with current and historical practice associations.'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique

@@ -4,4 +4,16 @@ models:
     description: 'Latest recorded ethnicity for all persons with category, subcategory and granular classifications.
 
       One row per person with latest ethnicity record (defaults to "Not Recorded" where no ethnicity data available).'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: ethnicity_category
+        description: Main ethnicity category
+        tests:
+          - not_null  # Always populated, defaults to "Not Recorded"
 

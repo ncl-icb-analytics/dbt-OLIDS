@@ -3,7 +3,7 @@ models:
   - name: dim_person_demographics
     description: 'Person demographics with age, sex, ethnicity, language, practice registration and geographic data.
 
-      One row per person with recorded birth dates (active and inactive patients).'
+      One row per person with recorded birth dates and practice registration (active and inactive patients).'
     columns:
       - name: person_id
         description: Unique identifier for the person
@@ -18,5 +18,23 @@ models:
       
       - name: birth_date_approx_end_of_month
         description: 'Approximate date of birth using the last day of the recorded birth month, passed through from dim_person_age. Complements birth_date_approx (mid-month).'
+      
+      - name: age
+        description: Current age in years calculated from birth date
+        tests:
+          - not_null  # Always present since based on birth_date_approx
+      
       - name: age_at_least
         description: 'Minimum possible age in full years, derived from dim_person_age using DOB as the last day of the birth month.'
+      
+      - name: sex
+        description: Person's sex (Male, Female, or Unknown)
+        tests:
+          - not_null  # Always populated even if Unknown
+          - accepted_values:
+              values: ['Male', 'Female', 'Unknown']
+      
+      - name: practice_code
+        description: GP practice code from registration (current or most recent historical)
+        tests:
+          - not_null  # Required - persons without practice info are excluded
