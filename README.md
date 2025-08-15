@@ -134,16 +134,6 @@ scripts/                     # Python utilities and automation
 └── sources/                 # Source generation workflow scripts
 ```
 
-### **Domain-Based Benefits**
-
-✅ **Scalable Organisation**: Clear separation between OLIDS healthcare models and shared reference data  
-✅ **Automated Workflow**: End-to-end automation reduces manual maintenance overhead  
-✅ **Cross-project Alignment**: Configuration-driven approach matches dbt-ncl-analytics patterns  
-✅ **Improved Testing**: Comprehensive test coverage with proper YAML formatting  
-✅ **Performance Ready**: Materialised view support through existing macro infrastructure
-
-```
-
 ## Essential dbt Commands
 
 **For daily use:**
@@ -268,14 +258,9 @@ When you run `dbt run`, it creates tables/views in the dev Snowflake environment
 
 **Remember:** Running dbt creates tables in Snowflake, but only committing to git saves your SQL code for others to see.
 
-## Deploying to QA and Production
+## Deploying to Production
 
-By default, `dbt run` builds in the dev environment. To deploy to other environments:
-
-**QA Environment:**
-```bash
-dbt build --target qa    # Builds models AND runs tests in QA
-```
+By default, `dbt run` builds in the dev environment. To deploy to prod:
 
 **Production Environment:**
 ```bash
@@ -284,8 +269,7 @@ dbt build --target prod  # Builds models AND runs tests in Production
 
 **Important:** 
 - Always test in dev first: `dbt build`
-- Deploy to QA for integration testing: `dbt build --target qa`
-- Only deploy to production after QA approval: `dbt build --target prod`
+- Only deploy to production after approval: `dbt build --target prod`
 - Using `dbt build` ensures upstream tests pass before creating downstream tables, in DAG order.
 
 ## Learning dbt
@@ -313,3 +297,4 @@ Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
 ## License
 
 This repository is dual licensed under the Open Government v3 & MIT. All code outputs are subject to Crown Copyright.
+
