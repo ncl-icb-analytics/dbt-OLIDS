@@ -3,8 +3,30 @@ models:
   - name: int_bmi_all
     description: 'BMI measurements with clinical categorisation and data quality validation.
 
-      One row per BMI observation using BMIVAL_COD cluster with plausible range filtering (5-400) and clinical BMI categorisation.'
+      One row per BMI observation using BMIVAL_COD cluster with plausible range filtering (10-150) and clinical BMI categorisation.'
     tests:
       - cluster_ids_exist:
           arguments:
             cluster_ids: BMIVAL_COD
+    columns:
+      - name: observation_id
+        description: Unique identifier for each BMI observation (recorded or calculated)
+        tests:
+          - unique
+          - not_null
+      - name: person_id
+        description: Person identifier
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_patient_person_unique')
+              field: person_id
+      - name: bmi_value
+        description: BMI value in kg/m²
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 10
+              max_value: 150
+              inclusive: true
+              where: "is_valid_bmi = TRUE"
