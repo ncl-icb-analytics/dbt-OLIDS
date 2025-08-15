@@ -8,3 +8,9 @@ models:
       - cluster_ids_exist:
           arguments:
             cluster_ids: CHOL2_COD
+    columns:
+      - name: observation_id
+        description: Unique identifier for each cholesterol observation
+        tests:
+          - unique
+          - not_null

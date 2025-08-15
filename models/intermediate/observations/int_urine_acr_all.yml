@@ -8,3 +8,9 @@ models:
       - cluster_ids_exist:
           arguments:
             cluster_ids: UACR_TESTING
+    columns:
+      - name: observation_id
+        description: Unique identifier for each ACR observation
+        tests:
+          - unique
+          - not_null

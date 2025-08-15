@@ -8,3 +8,7 @@ models:
       - cluster_ids_exist:
           arguments:
             cluster_ids: EXSMOK_COD, LSMOK_COD, NSMOK_COD
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - observation_id
+            - source_cluster_id

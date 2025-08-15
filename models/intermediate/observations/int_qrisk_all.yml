@@ -8,3 +8,9 @@ models:
       - cluster_ids_exist:
           arguments:
             cluster_ids: QRISKSCORE_COD
+    columns:
+      - name: observation_id
+        description: Unique identifier for each QRISK observation
+        tests:
+          - unique
+          - not_null

@@ -8,3 +8,31 @@ models:
       - cluster_ids_exist:
           arguments:
             cluster_ids: DCCTHBA1C_COD, IFCCHBAM_COD
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - observation_id
+            - source_cluster_id
+    columns:
+      - name: observation_id
+        description: Identifier for each HbA1c observation (may not be unique if observation maps to multiple clusters)
+        tests:
+          - not_null
+      - name: person_id
+        description: Person identifier
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_patient_person_unique')
+              field: person_id
+      - name: measurement_type
+        description: Type of HbA1c measurement (IFCC, DCCT, or UNKNOWN)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['IFCC', 'DCCT', 'UNKNOWN']
+      - name: is_valid_hba1c
+        description: Flag indicating if HbA1c value is within valid range for its measurement type
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]

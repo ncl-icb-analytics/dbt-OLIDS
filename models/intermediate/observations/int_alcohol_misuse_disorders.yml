@@ -18,8 +18,9 @@ models:
           - not_null
 
       - name: observation_id
-        description: Identifier for the observation (may not be unique due to multiple concept mappings)
+        description: Unique identifier for each alcohol disorder observation
         tests:
+          - unique
           - not_null
 
       - name: clinical_effective_date
