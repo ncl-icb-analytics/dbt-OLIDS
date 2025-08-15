@@ -98,33 +98,50 @@ This project automatically fixes common issues when you save files (trailing spa
 
 ```
 models/
-├── staging/                 # 1:1 source mappings (views)
-├── intermediate/            # Business logic & consolidation (tables)
-│   ├── diagnoses/           # Clinical observations (observation-level)
-│   │   └── qof/             # QOF-specific diagnosis models
-│   ├── medications/         # Medication orders & prescriptions
-│   ├── observations/        # Clinical measurements & lab results
-│   ├── person_attributes/   # Demographics & characteristics
-│   └── programme/           # specific programme intermediate models
-└── marts/                   # Analytics-ready models (tables)
-    ├── clinical_safety/     # Safety monitoring & alerts
-    ├── data_quality/        # Data quality reports
-    ├── disease_registers/   # Person-level clinical registers
-    │   └── qof/             # QOF disease registers
-    ├── geography/           # Households & geographic analytics
-    ├── measures/            # Healthcare quality indicators
-    ├── organisation/        # Practice & organisational data
-    ├── person_demographics/ # Demographics with households
-    ├── person_status/       # Patient activity & status
-    └── programme/           # specific programmes (valproate, ltc_lcs, etc.)
+├── olids/                   # OLIDS-specific models (tagged: staging/intermediate/marts)
+│   ├── staging/             # 1:1 source mappings (views)
+│   ├── intermediate/        # Business logic & consolidation (tables)
+│   │   ├── diagnoses/       # Clinical observations (observation-level)
+│   │   │   └── qof/         # QOF-specific diagnosis models
+│   │   ├── medications/     # Medication orders & prescriptions
+│   │   ├── observations/    # Clinical measurements & lab results
+│   │   ├── person_attributes/ # Demographics & characteristics
+│   │   └── programme/       # Programme intermediate models
+│   └── marts/               # Analytics-ready models (tables)
+│       ├── clinical_safety/ # Safety monitoring & alerts
+│       ├── data_quality/    # Data quality reports
+│       ├── disease_registers/ # Person-level clinical registers
+│       │   └── qof/         # QOF disease registers
+│       ├── geography/       # Households & geographic analytics
+│       ├── measures/        # Healthcare quality indicators
+│       ├── organisation/    # Practice & organisational data
+│       ├── person_demographics/ # Demographics with households
+│       ├── person_status/   # Patient activity & status
+│       └── programme/       # Programmes (valproate, ltc_lcs, etc.)
+├── shared/                  # Shared reference/dictionary models (tagged: staging/intermediate/marts)
+│   ├── staging/             # Reference data mappings (views)
+│   ├── intermediate/        # (empty, .gitkeep)
+│   └── marts/               # (empty, .gitkeep)
+└── sources.yml             # Consolidated source definitions
 
 macros/                      # Reusable SQL macros
 ├── get_observations.sql     # Extract clinical observations
 ├── get_medication_orders.sql # Extract medication data
-└── testing/                 # custom macros for generic tests
+└── testing/                 # Custom macros for generic tests
 
 legacy/                      # Original SQL scripts for reference
 scripts/                     # Python utilities and automation
+└── sources/                 # Source generation workflow scripts
+```
+
+### **Domain-Based Benefits**
+
+✅ **Scalable Organisation**: Clear separation between OLIDS healthcare models and shared reference data  
+✅ **Automated Workflow**: End-to-end automation reduces manual maintenance overhead  
+✅ **Cross-project Alignment**: Configuration-driven approach matches dbt-ncl-analytics patterns  
+✅ **Improved Testing**: Comprehensive test coverage with proper YAML formatting  
+✅ **Performance Ready**: Materialised view support through existing macro infrastructure
+
 ```
 
 ## Essential dbt Commands
@@ -139,7 +156,9 @@ dbt docs serve  # Open documentation in browser
 **For development:**
 ```bash
 dbt run -s model_name              # Build just one model
-dbt run -s staging                 # Build all staging models [staging is a directory]
+dbt run -s tag:staging             # Build all staging models (tagged)
+dbt run -s olids                   # Build all OLIDS domain models
+dbt run -s shared                  # Build all shared reference models
 dbt run -s +model_name             # Build model + everything it depends on
 dbt run -s model_name+             # Build model + everything that depends on it
 ```
@@ -149,6 +168,36 @@ dbt run -s model_name+             # Build model + everything that depends on it
 dbt --help                    # See all commands
 dbt run --help                # Help for specific command
 dbt debug                     # Test your connection to Snowflake
+```
+
+## Source Generation Automation
+
+Automated workflow for generating sources and staging models from Snowflake metadata:
+
+```bash
+cd scripts/sources
+python run_full_sources_workflow.py    # Complete workflow
+```
+
+### **Key Configuration Files**
+
+**`source_mappings.yml`**: Controls which tables go into `olids/` vs `shared/` domains:
+```yaml
+olids_tables:
+  - patient
+  - observation
+  - medication_order
+shared_tables:
+  - dictionary_*
+  - reference_*
+```
+
+**`default_model_tests.yml`**: Template for adding tests to staging models:
+```yaml
+models:
+  - name: "{{ model_name }}"
+    tests:
+      - all_source_columns_in_staging
 ```
 
 ## Development Patterns

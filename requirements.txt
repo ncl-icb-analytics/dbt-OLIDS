@@ -6,3 +6,4 @@ dbt-snowflake
 pre-commit
 python-dotenv
 snowflake-connector-python[pandas]
+snowflake-snowpark-python[pandas]

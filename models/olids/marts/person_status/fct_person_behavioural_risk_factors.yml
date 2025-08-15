@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: fct_person_behavioural_risk_factors
+    description: 'Population view of person-level behavioural risk factors combining BMI, smoking, and alcohol status.
+
+      One row per person from dim_person_demographics (persons with recorded birth dates) with data availability flags for each risk factor.'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: bmi_category
+        description: BMI classification (Underweight, Normal, Overweight, Obese Class I/II/III)
+      
+      - name: bmi_value
+        description: Latest valid BMI value
+      
+      - name: bmi_risk_sort_key
+        description: BMI risk level (1=Normal, 2=Underweight, 3=Overweight, 4-6=Obese classes)
+      
+      - name: smoking_status
+        description: Current smoking status (Never Smoked, Ex-Smoker, Current Smoker)
+      
+      - name: smoking_risk_sort_key
+        description: Smoking risk level (1=Never, 2=Ex-smoker, 3=Current smoker)
+      
+      - name: alcohol_status
+        description: Current alcohol risk status
+      
+      - name: alcohol_risk_sort_key
+        description: Alcohol risk level (1=Non-drinker, 2=Lower risk, 3+=Increasing/higher risk)
+      
+      - name: risk_factor_count
+        description: Count of active risk factors (overweight/obese, current smoker, alcohol risk)
+        tests:
+          - dbt_utils.accepted_range:
+              config:
+                min_value: 0
+                max_value: 3
+      
+      - name: has_bmi_data
+        description: Flag indicating BMI data is available
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_smoking_data
+        description: Flag indicating smoking data is available
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
+      - name: has_alcohol_data
+        description: Flag indicating alcohol data is available
+        tests:
+          - accepted_values:
+              values: [true, false]

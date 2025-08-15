@@ -1,0 +1,54 @@
+# Source Database and Schema Mappings for OLIDS Analytics
+# This file defines how source databases/schemas map to dbt sources
+# Supports OLIDS terminology, dictionary, and reference data sources
+# 
+# Structure:
+#   - source_name: Name used in dbt source() references
+#     database: Source database name
+#     schema: Source schema name
+#     description: What this data source contains
+#     staging_prefix: Prefix for staging models (optional, defaults to stg_{source_name})
+#     domain: Which domain folder to create staging models in (olids, shared)
+
+version: 1
+
+sources:
+  # ========================================
+  # REFERENCE/DICTIONARY DATA SOURCES
+  # ========================================
+  
+  # Reference Data - consolidated from REFERENCE, RULESETS, POPULATION_HEALTH schemas
+  - source_name: reference
+    database: DATA_LAB_OLIDS_UAT
+    schema: REFERENCE
+    description: Reference data including terminologies, rulesets, and population health lookups
+    staging_prefix: stg_reference
+    domain: shared
+    
+  # Dictionary Data
+  - source_name: dictionary
+    database: Dictionary
+    schema: dbo
+    description: Reference data including lookups and terminology mappings
+    staging_prefix: stg_dictionary
+    domain: shared
+
+  # ========================================
+  # OLIDS DATA SOURCES
+  # ========================================
+  
+  # OLIDS Core Data
+  - source_name: olids_core
+    database: Data_Store_OLIDS_UAT
+    schema: OLIDS_MASKED
+    description: Core OLIDS patient and clinical data
+    staging_prefix: stg_olids
+    domain: olids
+    
+  # OLIDS Terminology
+  - source_name: olids_terminology
+    database: Data_Store_OLIDS_UAT
+    schema: OLIDS_TERMINOLOGY
+    description: OLIDS-specific terminology and code mappings
+    staging_prefix: stg_olids_terminology
+    domain: olids

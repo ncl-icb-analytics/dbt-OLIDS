@@ -17,6 +17,6 @@
     FROM required_clusters rc
     WHERE rc.cluster_id NOT IN (
         SELECT DISTINCT UPPER(cluster_id)
-        FROM {{ ref('stg_codesets_combined_codesets') }}
+        FROM {{ ref('stg_reference_combined_codesets') }}
     )
 {% endtest %}

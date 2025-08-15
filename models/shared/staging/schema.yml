@@ -1,0 +1,478 @@
+version: 2
+models:
+- name: stg_dictionary_activitylocationtype
+  description: Staging model for dictionary activitylocationtype
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_admincategories
+  description: Staging model for dictionary admincategories
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_age
+  description: Staging model for dictionary age
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ageband
+  description: Staging model for dictionary ageband
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ageband_agebandgp_lookup
+  description: Staging model for dictionary ageband agebandgp lookup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ageband_gp
+  description: Staging model for dictionary ageband gp
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_allspgs
+  description: Staging model for dictionary allspgs
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_bnf_chapter
+  description: Staging model for dictionary bnf chapter
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_bnf_hierarchy
+  description: Staging model for dictionary bnf hierarchy
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_bnf_substance_product_presentation
+  description: Staging model for dictionary bnf substance product presentation
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_carersupportindicator
+  description: Staging model for dictionary carersupportindicator
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ccgbypractice
+  description: Staging model for dictionary ccgbypractice
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ccgbypracticenational
+  description: Staging model for dictionary ccgbypracticenational
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_commissioner
+  description: Staging model for dictionary commissioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_commissionermatrix
+  description: Staging model for dictionary commissionermatrix
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_commissionermatrixnational
+  description: Staging model for dictionary commissionermatrixnational
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_commissionerpctccg
+  description: Staging model for dictionary commissionerpctccg
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_commissioninglocation
+  description: Staging model for dictionary commissioninglocation
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_consultant
+  description: Staging model for dictionary consultant
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_consultantprovider
+  description: Staging model for dictionary consultantprovider
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_costband
+  description: Staging model for dictionary costband
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_datebankholiday
+  description: Staging model for dictionary datebankholiday
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_dates
+  description: Staging model for dictionary dates
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_dates_month_year
+  description: Staging model for dictionary dates month year
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_datetimes
+  description: Staging model for dictionary datetimes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_diagnosis
+  description: Staging model for dictionary diagnosis
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_electoralward
+  description: Staging model for dictionary electoralward
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ethnicity
+  description: Staging model for dictionary ethnicity
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ethnicity2
+  description: Staging model for dictionary ethnicity2
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_ethnicitycode
+  description: Staging model for dictionary ethnicitycode
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_f_alevel
+  description: Staging model for dictionary f alevel
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_f_amapping
+  description: Staging model for dictionary f amapping
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_f_aparentchild
+  description: Staging model for dictionary f aparentchild
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_gender
+  description: Staging model for dictionary gender
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_gp
+  description: Staging model for dictionary gp
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_hrg
+  description: Staging model for dictionary hrg
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_hrgtrimpoint
+  description: Staging model for dictionary hrgtrimpoint
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_hrgtrimpoint_pivoted
+  description: Staging model for dictionary hrgtrimpoint pivoted
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_language
+  description: Staging model for dictionary language
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_maincommissionerprovider
+  description: Staging model for dictionary maincommissionerprovider
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_onsareacollections
+  description: Staging model for dictionary onsareacollections
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_onscodeequivalent
+  description: Staging model for dictionary onscodeequivalent
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_operationstatus
+  description: Staging model for dictionary operationstatus
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisation
+  description: Staging model for dictionary organisation
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationdescendent
+  description: Staging model for dictionary organisationdescendent
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationformername
+  description: Staging model for dictionary organisationformername
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationhierarchypractice
+  description: Staging model for dictionary organisationhierarchypractice
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationlookup
+  description: Staging model for dictionary organisationlookup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationmatrixcommissioner
+  description: Staging model for dictionary organisationmatrixcommissioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationmatrixcommissionerview
+  description: Staging model for dictionary organisationmatrixcommissionerview
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationmatrixpractice
+  description: Staging model for dictionary organisationmatrixpractice
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationmatrixpracticeview
+  description: Staging model for dictionary organisationmatrixpracticeview
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationonscode
+  description: Staging model for dictionary organisationonscode
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationrelationship
+  description: Staging model for dictionary organisationrelationship
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationrelationshiptype
+  description: Staging model for dictionary organisationrelationshiptype
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationrole
+  description: Staging model for dictionary organisationrole
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationroletype
+  description: Staging model for dictionary organisationroletype
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationstatus
+  description: Staging model for dictionary organisationstatus
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationsuccessor
+  description: Staging model for dictionary organisationsuccessor
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_organisationtype
+  description: Staging model for dictionary organisationtype
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_outputarea
+  description: Staging model for dictionary outputarea
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_overseasvisitorstatusclassification
+  description: Staging model for dictionary overseasvisitorstatusclassification
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_partialpostcode
+  description: Staging model for dictionary partialpostcode
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_patientclassification
+  description: Staging model for dictionary patientclassification
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_podcommissioners
+  description: Staging model for dictionary podcommissioners
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_podgroups
+  description: Staging model for dictionary podgroups
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_podteams
+  description: Staging model for dictionary podteams
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_postcode
+  description: Staging model for dictionary postcode
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_postcoderegions
+  description: Staging model for dictionary postcoderegions
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_practicematrix
+  description: Staging model for dictionary practicematrix
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_practicematrixnational
+  description: Staging model for dictionary practicematrixnational
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_prescribingsetting
+  description: Staging model for dictionary prescribingsetting
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_procedure
+  description: Staging model for dictionary procedure
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_readcodes
+  description: Staging model for dictionary readcodes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_residentialinstitute
+  description: Staging model for dictionary residentialinstitute
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_rttperiodstatus
+  description: Staging model for dictionary rttperiodstatus
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_serviceprovider
+  description: Staging model for dictionary serviceprovider
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_serviceprovidergroup
+  description: Staging model for dictionary serviceprovidergroup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_serviceprovidergroupnational
+  description: Staging model for dictionary serviceprovidergroupnational
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_serviceproviderhierarchy
+  description: Staging model for dictionary serviceproviderhierarchy
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_serviceprovidertypes
+  description: Staging model for dictionary serviceprovidertypes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_slam_podgroup
+  description: Staging model for dictionary slam podgroup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_specialties
+  description: Staging model for dictionary specialties
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_staff
+  description: Staging model for dictionary staff
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_stp
+  description: Staging model for dictionary stp
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_stpbycommissioner
+  description: Staging model for dictionary stpbycommissioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_stpcommissioner
+  description: Staging model for dictionary stpcommissioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_sustarifftypes
+  description: Staging model for dictionary sustarifftypes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_times
+  description: Staging model for dictionary times
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_unit
+  description: Staging model for dictionary unit
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_unitconversion
+  description: Staging model for dictionary unitconversion
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_unitmapping
+  description: Staging model for dictionary unitmapping
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_urgent_emergency_care_activity_type
+  description: Staging model for dictionary urgent emergency care activity type
+  tests:
+  - all_source_columns_in_staging
+- name: stg_dictionary_wards
+  description: Staging model for dictionary wards
+  tests:
+  - all_source_columns_in_staging
+- name: stg_organisation
+  description: Staging model for organisation
+  tests:
+  - all_source_columns_in_staging
+- name: stg_organisationdescendent
+  description: Staging model for organisationdescendent
+  tests:
+  - all_source_columns_in_staging
+- name: stg_organisationmatrixpracticeview
+  description: Staging model for organisationmatrixpracticeview
+  tests:
+  - all_source_columns_in_staging
+- name: stg_postcode
+  description: Staging model for postcode
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_bnf_latest
+  description: Staging model for reference bnf latest
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_bp_thresholds
+  description: Staging model for reference bp thresholds
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_childhood_imms_codes
+  description: Staging model for reference childhood imms codes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_combined_codesets
+  description: Staging model for reference combined codesets
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ecl_cache
+  description: Staging model for reference ecl cache
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ecl_cache_metadata
+  description: Staging model for reference ecl cache metadata
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ecl_cluster_changes
+  description: Staging model for reference ecl cluster changes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ecl_clusters
+  description: Staging model for reference ecl clusters
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_efi2_coefficients
+  description: Staging model for reference efi2 coefficients
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_efi2_rules
+  description: Staging model for reference efi2 rules
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_efi2_snomed
+  description: Staging model for reference efi2 snomed
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ethnicity_codes
+  description: Staging model for reference ethnicity codes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_imms_schedule_latest
+  description: Staging model for reference imms schedule latest
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ltc_lcs_codes
+  description: Staging model for reference ltc lcs codes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_mapped_concepts
+  description: Staging model for reference mapped concepts
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_pcd_refset_latest
+  description: Staging model for reference pcd refset latest
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_practice_neighbourhood_lookup
+  description: Staging model for reference practice neighbourhood lookup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_source_concept_origins
+  description: Staging model for reference source concept origins
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ukhsa_covid_latest
+  description: Staging model for reference ukhsa covid latest
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_ukhsa_flu_latest
+  description: Staging model for reference ukhsa flu latest
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_valproate_prog_codes
+  description: Staging model for reference valproate prog codes
+  tests:
+  - all_source_columns_in_staging

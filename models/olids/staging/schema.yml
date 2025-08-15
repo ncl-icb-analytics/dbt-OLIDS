@@ -1,0 +1,142 @@
+version: 2
+models:
+- name: stg_olids_allergy_intolerance
+  description: Staging model for olids allergy intolerance
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_allergy_intolerance_backup
+  description: Staging model for olids allergy intolerance backup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_appointment
+  description: Staging model for olids appointment
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_appointment_practitioner
+  description: Staging model for olids appointment practitioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_diagnostic_order
+  description: Staging model for olids diagnostic order
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_diagnostic_order_backup
+  description: Staging model for olids diagnostic order backup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_encounter
+  description: Staging model for olids encounter
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_episode_of_care
+  description: Staging model for olids episode of care
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_flag
+  description: Staging model for olids flag
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_location
+  description: Staging model for olids location
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_location_contact
+  description: Staging model for olids location contact
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_medication_order
+  description: Staging model for olids medication order
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_medication_statement
+  description: Staging model for olids medication statement
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_observation
+  description: Staging model for olids observation
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_observation_backup
+  description: Staging model for olids observation backup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_organisation
+  description: Staging model for olids organisation
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient
+  description: Staging model for olids patient
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_address
+  description: Staging model for olids patient address
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_contact
+  description: Staging model for olids patient contact
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_person
+  description: Staging model for olids patient person
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_registered_practitioner_in_role
+  description: Staging model for olids patient registered practitioner in role
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_uprn
+  description: Staging model for olids patient uprn
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_uprn_backup
+  description: Staging model for olids patient uprn backup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_patient_uprn_old
+  description: Staging model for olids patient uprn old
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_person
+  description: Staging model for olids person
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_person_backup
+  description: Staging model for olids person backup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_practitioner
+  description: Staging model for olids practitioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_practitioner_in_role
+  description: Staging model for olids practitioner in role
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_procedure_request
+  description: Staging model for olids procedure request
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_referral_request
+  description: Staging model for olids referral request
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_referral_request_backup
+  description: Staging model for olids referral request backup
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_schedule
+  description: Staging model for olids schedule
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_schedule_practitioner
+  description: Staging model for olids schedule practitioner
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_terminology_concept
+  description: Staging model for olids terminology concept
+  tests:
+  - all_source_columns_in_staging
+- name: stg_olids_terminology_concept_map
+  description: Staging model for olids terminology concept map
+  tests:
+  - all_source_columns_in_staging

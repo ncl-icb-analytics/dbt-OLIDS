@@ -31,16 +31,29 @@ models:
   snowflake_hei_migration:
     +materialized: table
     +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-    staging:
-      +materialized: view
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-      +post-hook: "{{ add_model_comment() }}"
-    intermediate:
+    
+    # Domain-specific configurations
+    olids:
       +materialized: table
       +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-      +post-hook: "{{ add_model_comment() }}"
-    marts:
+      staging:
+        +materialized: view
+        +post-hook: ["{{ add_model_comment() }}"]
+        +tags: ["staging"]
+      intermediate:
+        +materialized: table
+        +post-hook: ["{{ add_model_comment() }}"]
+        +tags: ["intermediate"]
+      marts:
+        +materialized: table
+        +post-hook: ["{{ add_model_comment() }}"]
+        +tags: ["marts"]
+    
+    shared:
       +materialized: table
       +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-      +post-hook: "{{ add_model_comment() }}"
+      staging:
+        +materialized: view
+        +post-hook: ["{{ add_model_comment() }}"]
+        +tags: ["staging"]
 

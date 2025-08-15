@@ -47,7 +47,7 @@
           ON o.observation_source_concept_id = sc.source_code_id
         JOIN {{ ref('int_patient_person_unique') }} pp
             ON o.patient_id = pp.patient_id
-        LEFT JOIN {{ ref('stg_olids_term_concept') }} unit_con
+        LEFT JOIN {{ ref('stg_olids_terminology_concept') }} unit_con
             ON o.result_value_unit_concept_id = unit_con.id
     )
     -- Deduplicate: preserve legitimate cross-cluster duplicates but remove within-cluster duplicates
