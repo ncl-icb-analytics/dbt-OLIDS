@@ -4,4 +4,18 @@ models:
     description: 'Sex demographics for all persons with standardised categories (Male, Female, Unknown).
 
       One row per person derived from gender_concept_id mappings (defaults to "Unknown" for unmapped values).'
+    
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: sex
+        description: Person's sex (Male, Female, or Unknown)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Male', 'Female', 'Unknown']
 

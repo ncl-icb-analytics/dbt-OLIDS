@@ -5,13 +5,13 @@
 }}
 
 -- Person Conditions Dimension
--- Wide format with explicit boolean flags for ALL persons
+-- Wide format with explicit boolean flags for ALL persons from dim_person_demographics
 -- Includes persons with no conditions (all flags = FALSE) for complete population view
--- One row per person in the population for easier analytical consumption
+-- One row per person matching dim_person_demographics grain for 1:1:1 joins
 
 WITH all_persons AS (
     SELECT person_id 
-    FROM {{ ref('dim_person') }}
+    FROM {{ ref('dim_person_demographics') }}
 ),
 
 person_conditions AS (

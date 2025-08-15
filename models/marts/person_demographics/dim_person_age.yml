@@ -5,6 +5,22 @@ models:
 
       One row per person with recorded birth dates. Current age for living persons, age at death for deceased persons.'
     columns:
+      - name: person_id
+        description: Unique identifier for the person
+        tests:
+          - not_null
+          - unique
+      
+      - name: birth_date_approx
+        description: Approximate date of birth (mid-month)
+        tests:
+          - not_null
+      
+      - name: age
+        description: Current age or age at death in years
+        tests:
+          - not_null
+      
       - name: birth_date_approx_end_of_month
         description: 'Approximate date of birth using the last day of the recorded birth month. Complements birth_date_approx (mid-month) for scenarios that require end-of-month alignment.'
       - name: age_at_least

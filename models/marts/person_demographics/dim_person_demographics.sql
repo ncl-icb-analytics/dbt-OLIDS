@@ -12,11 +12,12 @@ Provides a single source of truth for person demographics by consolidating infor
 - Sex demographics
 - Ethnicity details
 - Language and communication needs
-- Current practice registration
+- Practice registration (current or most recent historical - required)
 - Enhanced practice and PCN information including borough context
 - Practice neighbourhood and organisational hierarchy
 - Geographic data from Dictionary sources and placeholders for future data
 
+Note: Persons without practice registration information are excluded to ensure data completeness.
 Includes both standard PCN names and borough-prefixed variants for North Central London context.
 Geographic fields include version numbers (LSOA_21, IMD_19) to support historical comparisons when new versions become available.
 */
@@ -156,7 +157,8 @@ LEFT JOIN {{ ref('dim_person_main_language') }} AS lang
     ON age.person_id = lang.person_id
 
 -- Join chosen practice (current if available, otherwise latest historical)
-LEFT JOIN chosen_practice AS prac
+-- INNER JOIN to ensure all persons have practice information
+INNER JOIN chosen_practice AS prac
     ON age.person_id = prac.person_id
 
 -- Join enhanced practice dimension (includes PCN and borough information)
