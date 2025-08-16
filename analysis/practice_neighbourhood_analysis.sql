@@ -70,20 +70,19 @@ GROUP BY ALL
 ORDER BY practice_borough, population DESC;
 
 -- =============================================================================
--- PATTERN 5: PCN Analysis by Geography
+-- PATTERN 5: Financial Year Comparison by Neighbourhood
 -- =============================================================================
--- PCN performance across neighbourhoods
+-- Compare neighbourhood performance across financial years
 SELECT 
-    pcn_name,
     practice_neighbourhood,
-    COUNT(DISTINCT practice_code) as practices_in_pcn,
-    COUNT(DISTINCT person_id) as pcn_population,
-    ROUND(AVG(age), 1) as mean_age,
-    ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct
+    financial_year,
+    COUNT(DISTINCT person_id) as population,
+    COUNT(DISTINCT practice_code) as practices_count,
+    ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct,
+    LAG(ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1)) 
+        OVER (PARTITION BY practice_neighbourhood ORDER BY financial_year) as previous_fy_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
-WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND pcn_name IS NOT NULL
-    AND practice_neighbourhood IS NOT NULL
+WHERE practice_neighbourhood IS NOT NULL
 GROUP BY ALL
-HAVING COUNT(DISTINCT person_id) >= 2000  -- Substantial PCN population
-ORDER BY pcn_population DESC;
+HAVING COUNT(DISTINCT person_id) >= 1000  -- Adequate sample size
+ORDER BY practice_neighbourhood, financial_year;
