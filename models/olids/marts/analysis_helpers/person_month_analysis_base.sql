@@ -3,22 +3,23 @@
         materialized='incremental',
         unique_key=['person_id', 'analysis_month'],
         on_schema_change='fail',
-        cluster_by=['analysis_month', 'practice_borough', 'person_id']
+        cluster_by=['analysis_month', 'practice_borough', 'person_id'],
+        tags=['daily', 'monthly-full']
     )
 }}
 
 -- Person Month Analysis Base
--- Pre-joined incremental table combining active person-months with demographics and conditions
--- Eliminates repetitive temporal join logic and provides a fast table for analysis
+-- Incremental table combining active person-months with demographics and conditions
+-- Pre-applies temporal joins for fast analysis queries
 -- 
 -- Incremental Strategy:
--- - Only processes new months since last run (truly incremental)
--- - Use `dbt run --full-refresh` to rebuild entire table when needed
--- - For late-arriving data updates, use full refresh periodically (weekly/monthly)
+-- - Processes only new months since last run
+-- - Use `dbt run --full-refresh` to rebuild entire table
+-- - Schedule periodic full refresh for late-arriving clinical data
 
 WITH active_person_months AS (
-    -- Generate person-months only where patients were actually registered
-    -- This prevents empty months from appearing in the data
+    -- Generate person-months for registered patients
+    -- Excludes periods with no active registration
     SELECT DISTINCT
         ds.month_start_date as analysis_month,
         hr.person_id,
@@ -28,7 +29,7 @@ WITH active_person_months AS (
     INNER JOIN {{ ref('int_date_spine') }} ds
         ON hr.registration_start_date <= ds.month_end_date
         AND (hr.registration_end_date IS NULL OR hr.registration_end_date >= ds.month_start_date)
-        AND ds.month_start_date >= DATEADD('month', -60, CURRENT_DATE)  -- Limit to last 5 years for performance
+        AND ds.month_start_date >= DATEADD('month', -60, CURRENT_DATE)  -- 5 year limit: complete left/died history available
         AND ds.month_start_date <= DATE_TRUNC('month', CURRENT_DATE)    -- Don't create future months
     WHERE hr.registration_status = 'Active'
     QUALIFY ROW_NUMBER() OVER (
@@ -44,7 +45,7 @@ SELECT
     apm.practice_id,
     apm.practice_name,
     
-    -- Core date components for filtering
+    -- Date components for filtering
     ds.year_number,
     ds.month_number,
     ds.quarter_number,
@@ -52,13 +53,13 @@ SELECT
     -- Display labels
     ds.month_year_label,
     
-    -- Financial year (essential for NHS reporting)
+    -- Financial year (NHS reporting)
     ds.financial_year_label as financial_year,
     ds.financial_year_start,
     ds.financial_quarter_label as financial_quarter,
     ds.financial_quarter_number,
     
-    -- Complete demographics (temporal join applied)
+    -- Demographics (temporal join applied)
     d.birth_year,
     d.birth_date_approx,
     d.birth_date_approx_end_of_month,
@@ -85,7 +86,7 @@ SELECT
     d.death_date_approx,
     d.is_deceased,
     
-    -- Practice and geography (complete)
+    -- Practice and geography
     d.practice_code,
     d.practice_borough,
     d.practice_postcode,
@@ -117,7 +118,7 @@ SELECT
     d.is_current_period,
     d.age_changes_in_period,
     
-    -- Condition flags (all major conditions)
+    -- Condition flags (has_*)
     COALESCE(c.has_ast, FALSE) as has_ast,
     COALESCE(c.has_copd, FALSE) as has_copd,
     COALESCE(c.has_htn, FALSE) as has_htn,
@@ -181,13 +182,13 @@ FROM active_person_months apm
 INNER JOIN {{ ref('int_date_spine') }} ds
     ON apm.analysis_month = ds.month_start_date
 
--- Join demographics with proper temporal logic
+-- Join demographics with temporal logic
 INNER JOIN {{ ref('dim_person_demographics_historical') }} d
     ON apm.person_id = d.person_id
     AND apm.analysis_month >= d.effective_start_date
     AND (d.effective_end_date IS NULL OR apm.analysis_month < d.effective_end_date)
 
--- Calculate condition flags directly from episodes table
+-- Condition flags from episodes table
 LEFT JOIN (
     SELECT 
         person_id,
@@ -219,7 +220,7 @@ LEFT JOIN (
         MAX(CASE WHEN condition_code = 'NAFLD' AND has_active_episode THEN 1 ELSE 0 END)::BOOLEAN as has_nafld,
         MAX(CASE WHEN condition_code = 'FH' AND has_active_episode THEN 1 ELSE 0 END)::BOOLEAN as has_fh,
         
-        -- New episode flags (episode started during this month) 
+        -- New episode flags (new_*)
         MAX(CASE WHEN condition_code = 'AST' AND has_new_episode THEN 1 ELSE 0 END)::BOOLEAN as new_ast,
         MAX(CASE WHEN condition_code = 'COPD' AND has_new_episode THEN 1 ELSE 0 END)::BOOLEAN as new_copd,
         MAX(CASE WHEN condition_code = 'HTN' AND has_new_episode THEN 1 ELSE 0 END)::BOOLEAN as new_htn,
@@ -256,15 +257,15 @@ LEFT JOIN (
             person_id,
             condition_code,
             ds.month_start_date as analysis_month,
-            -- Active episode: episode is ongoing during this month
+            -- Active episode: ongoing during this month
             (episode_start_date <= ds.month_end_date 
                 AND (episode_end_date IS NULL OR episode_end_date >= ds.month_start_date))::BOOLEAN as has_active_episode,
-            -- New episode: episode started during this month  
+            -- New episode: started this month  
             (episode_start_date >= ds.month_start_date 
                 AND episode_start_date <= ds.month_end_date)::BOOLEAN as has_new_episode
         FROM {{ ref('fct_person_condition_episodes') }} ep
         CROSS JOIN {{ ref('int_date_spine') }} ds
-        WHERE ds.month_start_date >= DATEADD('month', -60, CURRENT_DATE)  -- Last 5 years
+        WHERE ds.month_start_date >= DATEADD('month', -60, CURRENT_DATE)  -- 5 years: limit based on complete left/died history
             AND ds.month_start_date <= DATE_TRUNC('month', CURRENT_DATE)
     ) episode_flags
     GROUP BY person_id, analysis_month
