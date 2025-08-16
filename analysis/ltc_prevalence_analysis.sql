@@ -35,37 +35,42 @@ HAVING COUNT(DISTINCT person_id) >= 100  -- Adequate sample size
 ORDER BY MIN(age), sex;
 
 -- =============================================================================
--- PATTERN 3: LTC Prevalence Trends Over Years
+-- PATTERN 3: LTC Prevalence by Financial Year
 -- =============================================================================
--- Track diabetes prevalence changes across all available years
+-- Track diabetes prevalence across UK financial years (April-March)
 SELECT 
-    year_number,
+    financial_year,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) as diabetes_cases,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct,
-    LAG(ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1)) OVER (ORDER BY year_number) as previous_year_pct,
+    LAG(ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1)) 
+        OVER (ORDER BY financial_year) as previous_fy_pct,
     ROUND(
         ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) - 
-        LAG(ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1)) OVER (ORDER BY year_number), 1
-    ) as yoy_change_pct_points
+        LAG(ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1)) 
+            OVER (ORDER BY financial_year), 1
+    ) as fy_change_pct_points
 FROM {{ ref('person_month_analysis_base') }}
 GROUP BY ALL
-ORDER BY year_number;
+ORDER BY financial_year;
 
 -- =============================================================================
--- PATTERN 4: LTC Prevalence Trends Over Months
+-- PATTERN 4: LTC Prevalence by Financial Quarter
 -- =============================================================================
--- Monthly diabetes prevalence over last 12 months
+-- Quarterly diabetes prevalence within current financial year
 SELECT 
-    analysis_month,
-    month_year_label,
+    financial_year,
+    financial_quarter,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) as diabetes_cases,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
-WHERE analysis_month >= DATEADD('month', -12, (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }}))
+WHERE financial_year = (
+    SELECT MAX(financial_year) 
+    FROM {{ ref('person_month_analysis_base') }}
+)
 GROUP BY ALL
-ORDER BY analysis_month;
+ORDER BY financial_year, financial_quarter;
 
 -- =============================================================================
 -- PATTERN 5: Condition Overlap Analysis
@@ -73,18 +78,17 @@ ORDER BY analysis_month;
 -- Analyse overlap between diabetes, hypertension, and SMI
 SELECT 
     CASE 
-        WHEN has_dm = 1 AND has_htn = 1 AND has_smi = 1 THEN 'DM + HTN + SMI'
-        WHEN has_dm = 1 AND has_htn = 1 AND has_smi = 0 THEN 'DM + HTN only'
-        WHEN has_dm = 1 AND has_smi = 1 AND has_htn = 0 THEN 'DM + SMI only'
-        WHEN has_htn = 1 AND has_smi = 1 AND has_dm = 0 THEN 'HTN + SMI only'
-        WHEN has_dm = 1 AND has_htn = 0 AND has_smi = 0 THEN 'DM only'
-        WHEN has_htn = 1 AND has_dm = 0 AND has_smi = 0 THEN 'HTN only'
-        WHEN has_smi = 1 AND has_dm = 0 AND has_htn = 0 THEN 'SMI only'
+        WHEN has_dm AND has_htn AND has_smi THEN 'DM + HTN + SMI'
+        WHEN has_dm AND has_htn AND NOT has_smi THEN 'DM + HTN only'
+        WHEN has_dm AND has_smi AND NOT has_htn THEN 'DM + SMI only'
+        WHEN has_htn AND has_smi AND NOT has_dm THEN 'HTN + SMI only'
+        WHEN has_dm AND NOT has_htn AND NOT has_smi THEN 'DM only'
+        WHEN has_htn AND NOT has_dm AND NOT has_smi THEN 'HTN only'
+        WHEN has_smi AND NOT has_dm AND NOT has_htn THEN 'SMI only'
         ELSE 'None of these conditions'
     END as condition_combination,
     COUNT(DISTINCT person_id) as patients,
-    ROUND(100 * COUNT(DISTINCT person_id) / SUM(COUNT(DISTINCT person_id)) OVER (), 1) as percentage,
-    ROUND(AVG(age), 1) as mean_age
+    ROUND(100 * COUNT(DISTINCT person_id) / SUM(COUNT(DISTINCT person_id)) OVER (), 1) as percentage
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
 GROUP BY ALL

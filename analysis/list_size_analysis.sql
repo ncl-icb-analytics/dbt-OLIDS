@@ -47,7 +47,7 @@ GROUP BY ALL
 ORDER BY MIN(ethnicity_category_sort);
 
 -- =============================================================================
--- PATTERN 4: List Size Trends Over Time
+-- PATTERN 4: List Size Trends (Last 12 Months)
 -- =============================================================================
 -- Track total population changes over last 12 months
 SELECT 
@@ -61,18 +61,34 @@ GROUP BY ALL
 ORDER BY analysis_month;
 
 -- =============================================================================
--- PATTERN 5: Borough Population Summary
+-- PATTERN 5: Practice Size Distribution
 -- =============================================================================
--- Compare population size and demographics across boroughs
+-- Distribution of practices by list size bands
 SELECT 
-    practice_borough,
-    COUNT(DISTINCT person_id) as population,
-    COUNT(DISTINCT practice_code) as practices_count,
-    ROUND(AVG(age), 1) as mean_age,
-    ROUND(100 * COUNT(DISTINCT CASE WHEN sex = 'Female' THEN person_id END) / COUNT(DISTINCT person_id), 1) as female_pct,
-    ROUND(100 * COUNT(DISTINCT CASE WHEN age >= 65 THEN person_id END) / COUNT(DISTINCT person_id), 1) as elderly_pct
-FROM {{ ref('person_month_analysis_base') }}
-WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND practice_borough IS NOT NULL
+    CASE 
+        WHEN list_size < 5000 THEN 'Small'
+        WHEN list_size < 10000 THEN 'Medium'
+        WHEN list_size < 20000 THEN 'Large'
+        WHEN list_size < 50000 THEN 'Very Large'
+        ELSE 'Super Large'
+    END as practice_size_band,
+    COUNT(*) as practices_count,
+    ROUND(AVG(list_size)) as avg_list_size,
+    SUM(list_size) as total_population
+FROM (
+    SELECT 
+        practice_code,
+        practice_name,
+        COUNT(DISTINCT person_id) as list_size
+    FROM {{ ref('person_month_analysis_base') }}
+    WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
+    GROUP BY practice_code, practice_name
+) practice_sizes
 GROUP BY ALL
-ORDER BY population DESC;
+ORDER BY MIN(CASE 
+    WHEN practice_size_band = 'Small' THEN 1
+    WHEN practice_size_band = 'Medium' THEN 2
+    WHEN practice_size_band = 'Large' THEN 3
+    WHEN practice_size_band = 'Very Large' THEN 4
+    ELSE 5
+END);
