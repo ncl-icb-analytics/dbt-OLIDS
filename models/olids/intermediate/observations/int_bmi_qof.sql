@@ -7,7 +7,7 @@
 /*
 BMI measurements with QOF-specific rules for obesity register eligibility.
 Includes both numeric BMI values (BMIVAL_COD) and BMI30+ codes (BMI30_COD).
-Implements specific obesity register logic and ethnicity-adjusted thresholds.
+Implements specific obesity register logic with ethnicity-adjusted thresholds and BAME classification.
 */
 
 WITH base_observations AS (
@@ -100,22 +100,52 @@ latest_observations AS (
         vo.*,
         ROW_NUMBER() OVER (PARTITION BY vo.person_id ORDER BY vo.clinical_effective_date DESC) AS rn
     FROM validated_observations vo
+),
+
+bmi_with_ethnicity AS (
+    -- Join BMI data with ethnicity cardiometabolic risk information for BAME classification
+    SELECT
+        lo.*,
+        ecr.requires_lower_bmi_thresholds,
+        ecr.cardiometabolic_risk_ethnicity_group,
+        
+        -- BAME classification for QOF (True if requires lower BMI thresholds)
+        COALESCE(ecr.requires_lower_bmi_thresholds, FALSE) AS is_bame,
+        
+        -- Ethnicity-adjusted BMI 27.5+ flag
+        CASE
+            WHEN ecr.requires_lower_bmi_thresholds = TRUE THEN
+                CASE WHEN lo.bmi_value >= 27.5 THEN TRUE ELSE FALSE END
+            ELSE 
+                CASE WHEN lo.bmi_value >= 30 THEN TRUE ELSE FALSE END  -- Standard threshold for non-BAME
+        END AS is_bmi_27_5_plus_ethnicity_adjusted
+        
+    FROM latest_observations lo
+    LEFT JOIN {{ ref('int_ethnicity_cardiometabolic_risk') }} ecr
+        ON lo.person_id = ecr.person_id
+    WHERE lo.rn = 1
 )
 
--- Final selection with person-level QOF flags
+-- Final selection with person-level QOF flags and ethnicity data
 SELECT
-    lo.person_id,
-    lo.observation_id,
-    lo.clinical_effective_date,
-    lo.concept_code,
-    lo.concept_display,
-    lo.source_cluster_id,
-    lo.bmi_value,
-    lo.is_bmi_30_plus,
-    lo.is_bmi_27_5_plus,
-    lo.is_bmi_25_plus,
-    lo.is_valid_bmi,
-    lo.result_value,
+    bwe.person_id,
+    bwe.observation_id,
+    bwe.clinical_effective_date,
+    bwe.concept_code,
+    bwe.concept_display,
+    bwe.source_cluster_id,
+    bwe.bmi_value,
+    bwe.is_bmi_30_plus,
+    bwe.is_bmi_27_5_plus,
+    bwe.is_bmi_25_plus,
+    bwe.is_valid_bmi,
+    bwe.result_value,
+
+    -- Ethnicity information
+    bwe.requires_lower_bmi_thresholds,
+    bwe.cardiometabolic_risk_ethnicity_group,
+    bwe.is_bame,
+    bwe.is_bmi_27_5_plus_ethnicity_adjusted,
 
     -- Person-level aggregated data
     pla.latest_bmi_date,
@@ -126,7 +156,6 @@ SELECT
     pla.all_bmi_concept_codes,
     pla.all_bmi_concept_displays
 
-FROM latest_observations lo
-LEFT JOIN person_level_aggregation pla ON lo.person_id = pla.person_id
-LEFT JOIN latest_valid_bmi lvb ON lo.person_id = lvb.person_id AND lvb.rn = 1
-WHERE lo.rn = 1
+FROM bmi_with_ethnicity bwe
+LEFT JOIN person_level_aggregation pla ON bwe.person_id = pla.person_id
+LEFT JOIN latest_valid_bmi lvb ON bwe.person_id = lvb.person_id AND lvb.rn = 1

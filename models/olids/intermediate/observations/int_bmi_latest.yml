@@ -1,9 +1,19 @@
 version: 2
 models:
   - name: int_bmi_latest
-    description: 'Most recent valid BMI measurement per person for obesity management and clinical decision-making.
+    description: 'Most recent valid BMI measurement per person with ethnicity-adjusted categorisation.
 
-      One row per person with their latest BMI including clinical BMI categorisation and data quality validation.'
+      One row per person with their latest BMI including ethnicity-adjusted clinical categorisation per NICE guidance. Uses lower BMI thresholds for cardiometabolic risk populations.
+
+      Key Features:
+
+      • Latest valid BMI per person with ethnicity-adjusted thresholds
+
+      • Includes both standard and ethnicity-adjusted categorisations
+
+      • Provides ethnicity context for clinical decision-making
+
+      Purpose: Supports clinical assessment and population health monitoring with appropriate ethnic considerations.'
     
     columns:
       - name: person_id
@@ -11,3 +21,46 @@ models:
         tests:
           - not_null
           - unique
+      - name: observation_id
+        description: Latest BMI observation identifier
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: Date of latest BMI observation
+        tests:
+          - not_null
+      - name: bmi_value
+        description: BMI value in kg/m²
+        tests:
+          - not_null
+      - name: bmi_source
+        description: 'Source of BMI value (recorded or calculated)'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['recorded', 'calculated']
+      - name: requires_lower_bmi_thresholds
+        description: 'Flag indicating if person requires lower BMI thresholds per NICE guidance'
+      - name: cardiometabolic_risk_ethnicity_group
+        description: 'Ethnicity group classification for cardiometabolic risk assessment'
+      - name: is_valid_bmi
+        description: 'Flag indicating BMI value is within valid range (10-150)'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+      - name: bmi_category
+        description: 'BMI categorisation using ethnicity-adjusted thresholds per NICE guidance'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
+      - name: bmi_risk_sort_key
+        description: 'BMI risk sort key using ethnicity-adjusted thresholds (higher = higher risk)'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              config:
+                min_value: 1
+                max_value: 6
+                inclusive: true

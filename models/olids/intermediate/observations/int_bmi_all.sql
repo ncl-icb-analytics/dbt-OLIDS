@@ -6,8 +6,9 @@
 
 /*
 All BMI measurements including both recorded BMI values and calculated BMI from HEIGHT/WEIGHT.
-Includes ALL persons (active, inactive, deceased) with basic validation (5-400 range).
-Calculates fresh BMI when height/weight measurements are on different dates than recorded BMI.
+Includes ALL persons (active, inactive, deceased) with basic validation (10-150 range).
+Uses ethnicity-adjusted BMI categories per NICE guidance for cardiometabolic risk populations.
+Avoids calculating BMI on dates where recorded BMI already exists for the same person.
 */
 
 WITH recorded_bmi AS (
@@ -118,6 +119,7 @@ all_calculated_pairs AS (
 
 calculated_bmi AS (
     -- Create calculated BMI records using the primary observation_id (height or weight)
+    -- Only calculate BMI for dates without existing recorded BMI for the same person
     SELECT
         CASE 
             WHEN acp.calculation_source = 'weight_primary' THEN acp.weight_obs_id
@@ -142,6 +144,12 @@ calculated_bmi AS (
               ELSE acp.height_obs_id
           END
       )
+      -- Only calculate BMI for dates without existing recorded BMI for same person
+      AND NOT EXISTS (
+          SELECT 1 FROM recorded_bmi rb 
+          WHERE rb.person_id = acp.person_id
+            AND rb.clinical_effective_date = acp.clinical_effective_date
+      )
 ),
 
 all_bmi AS (
@@ -149,6 +157,17 @@ all_bmi AS (
     SELECT * FROM recorded_bmi
     UNION ALL
     SELECT * FROM calculated_bmi
+),
+
+bmi_with_ethnicity AS (
+    -- Join BMI data with ethnicity cardiometabolic risk information
+    SELECT
+        ab.*,
+        ecr.requires_lower_bmi_thresholds,
+        ecr.cardiometabolic_risk_ethnicity_group
+    FROM all_bmi ab
+    LEFT JOIN {{ ref('int_ethnicity_cardiometabolic_risk') }} ecr
+        ON ab.person_id = ecr.person_id
 )
 
 SELECT
@@ -163,35 +182,61 @@ SELECT
     result_value,
     bmi_source,
 
+    -- Ethnicity information
+    requires_lower_bmi_thresholds,
+    cardiometabolic_risk_ethnicity_group,
+
     -- Data quality validation
     CASE
         WHEN bmi_value BETWEEN 10 AND 150 THEN TRUE
         ELSE FALSE
     END AS is_valid_bmi,
 
-    -- Clinical categorisation (only for valid BMI)
+    -- BMI categorisation (ethnicity-adjusted per NICE guidance)
     CASE
         WHEN bmi_value NOT BETWEEN 10 AND 150 THEN 'Invalid'
         WHEN bmi_value < 18.5 THEN 'Underweight'
-        WHEN bmi_value < 25 THEN 'Normal'
-        WHEN bmi_value < 30 THEN 'Overweight'
-        WHEN bmi_value < 35 THEN 'Obese Class I'
-        WHEN bmi_value < 40 THEN 'Obese Class II'
-        ELSE 'Obese Class III'
+        WHEN requires_lower_bmi_thresholds = TRUE THEN
+            CASE
+                WHEN bmi_value < 23 THEN 'Normal'
+                WHEN bmi_value < 27.5 THEN 'Overweight'
+                WHEN bmi_value < 32.5 THEN 'Obese Class I'
+                WHEN bmi_value < 37.5 THEN 'Obese Class II'
+                ELSE 'Obese Class III'
+            END
+        ELSE  -- Standard thresholds for other populations
+            CASE
+                WHEN bmi_value < 25 THEN 'Normal'
+                WHEN bmi_value < 30 THEN 'Overweight'
+                WHEN bmi_value < 35 THEN 'Obese Class I'
+                WHEN bmi_value < 40 THEN 'Obese Class II'
+                ELSE 'Obese Class III'
+            END
     END AS bmi_category,
 
-    -- BMI risk sort key (higher number = higher risk)
+    -- BMI risk sort key (ethnicity-adjusted, higher number = higher risk)
     CASE
         WHEN bmi_value NOT BETWEEN 10 AND 150 THEN 0  -- Invalid
         WHEN bmi_value < 18.5 THEN 2  -- Underweight - Health risk
-        WHEN bmi_value < 25 THEN 1  -- Normal - Baseline/lowest risk
-        WHEN bmi_value < 30 THEN 3  -- Overweight - Moderate risk
-        WHEN bmi_value < 35 THEN 4  -- Obese Class I - High risk
-        WHEN bmi_value < 40 THEN 5  -- Obese Class II - Higher risk
-        ELSE 6  -- Obese Class III - Highest risk
+        WHEN requires_lower_bmi_thresholds = TRUE THEN
+            CASE
+                WHEN bmi_value < 23 THEN 1  -- Normal - Baseline/lowest risk
+                WHEN bmi_value < 27.5 THEN 3  -- Overweight - Moderate risk
+                WHEN bmi_value < 32.5 THEN 4  -- Obese Class I - High risk
+                WHEN bmi_value < 37.5 THEN 5  -- Obese Class II - Higher risk
+                ELSE 6  -- Obese Class III - Highest risk
+            END
+        ELSE  -- Standard thresholds for other populations
+            CASE
+                WHEN bmi_value < 25 THEN 1  -- Normal - Baseline/lowest risk
+                WHEN bmi_value < 30 THEN 3  -- Overweight - Moderate risk
+                WHEN bmi_value < 35 THEN 4  -- Obese Class I - High risk
+                WHEN bmi_value < 40 THEN 5  -- Obese Class II - Higher risk
+                ELSE 6  -- Obese Class III - Highest risk
+            END
     END AS bmi_risk_sort_key
 
-FROM all_bmi
+FROM bmi_with_ethnicity
 
 -- Sort for consistent output
 ORDER BY person_id, clinical_effective_date DESC
