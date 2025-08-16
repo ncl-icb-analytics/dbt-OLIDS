@@ -36,7 +36,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Osteoporosis-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'OSTEO_COD' THEN TRUE ELSE FALSE END AS is_osteoporosis_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'OSTEO_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
 
     -- Observation type determination
     CASE

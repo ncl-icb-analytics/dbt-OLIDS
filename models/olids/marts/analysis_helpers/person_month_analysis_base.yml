@@ -1,0 +1,81 @@
+version: 2
+
+models:
+  - name: person_month_analysis_base
+    description: 'Primary analysis table for population health analytics, combining person-months with demographics and conditions in one fast, queryable table.
+
+
+      Built from date spine (5-year monthly grain) with temporal joins to SCD2 demographics and condition episodes. Incremental materialization processes only new months for performance.
+
+
+      Core Components:
+
+      • Person-month grain with active registrations only
+
+      • Point-in-time demographics (age, sex, ethnicity, practice)
+
+      • Condition flags calculated from clinical episodes
+
+      • UK financial year dimensions and date helpers
+
+      • Geographic and practice information
+
+
+      Refresh Strategy: Incremental (new months only). Periodic full refresh captures late-arriving clinical data.'
+    
+    tags: ['daily', 'monthly-full']
+    
+    columns:
+      - name: analysis_month
+        description: First day of analysis month
+      
+      - name: person_id
+        description: Unique person identifier
+      
+      - name: year_number
+        description: Year as integer for filtering (e.g., 2024)
+      
+      - name: month_number
+        description: Month as integer for filtering (1-12)
+      
+      - name: quarter_number
+        description: Calendar quarter as integer (1-4)
+      
+      - name: month_year_label
+        description: Readable month-year label (e.g., 'MAR 2024')
+      
+      - name: financial_year
+        description: UK financial year label (e.g., '2023/24')
+      
+      - name: financial_year_start
+        description: Starting year of financial year as integer (e.g., 2023)
+      
+      - name: financial_quarter
+        description: UK financial quarter label (Q1-Q4, where Q1 is Apr-Jun)
+      
+      - name: financial_quarter_number
+        description: UK financial quarter as integer (1-4, where 1 is Apr-Jun)
+      
+      - name: practice_name
+        description: Practice where person was registered this month
+      
+      - name: age
+        description: Person's age at this time point
+      
+      - name: sex
+        description: Person's sex
+      
+      - name: ethnicity_category
+        description: Ethnicity category at this time point
+      
+      - name: practice_borough
+        description: Borough where practice is located
+      
+      - name: has_htn
+        description: Had active hypertension this month (1/0)
+      
+      - name: has_dm
+        description: Had active diabetes this month (1/0)
+      
+      - name: total_active_conditions
+        description: Total number of active conditions this month

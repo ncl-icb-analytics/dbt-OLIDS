@@ -16,20 +16,20 @@ WITH heart_failure_diagnoses AS (
         MIN(
             CASE
                 WHEN
-                    is_heart_failure_diagnosis_code
+                    is_diagnosis_code
                     THEN clinical_effective_date
             END
         ) AS earliest_diagnosis_date,
         MAX(
             CASE
                 WHEN
-                    is_heart_failure_diagnosis_code
+                    is_diagnosis_code
                     THEN clinical_effective_date
             END
         ) AS latest_diagnosis_date,
         MAX(
             CASE
-                WHEN is_heart_failure_resolved_code THEN clinical_effective_date
+                WHEN is_resolved_code THEN clinical_effective_date
             END
         ) AS latest_resolved_date,
 
@@ -49,7 +49,7 @@ WITH heart_failure_diagnoses AS (
         COALESCE(MAX(
             CASE
                 WHEN
-                    is_heart_failure_diagnosis_code
+                    is_diagnosis_code
                     THEN clinical_effective_date
             END
         ) IS NOT NULL
@@ -57,21 +57,21 @@ WITH heart_failure_diagnoses AS (
             MAX(
                 CASE
                     WHEN
-                        is_heart_failure_resolved_code
+                        is_resolved_code
                         THEN clinical_effective_date
                 END
             ) IS NULL
             OR MAX(
                 CASE
                     WHEN
-                        is_heart_failure_diagnosis_code
+                        is_diagnosis_code
                         THEN clinical_effective_date
                 END
             )
             > MAX(
                 CASE
                     WHEN
-                        is_heart_failure_resolved_code
+                        is_resolved_code
                         THEN clinical_effective_date
                 END
             )
@@ -93,17 +93,17 @@ WITH heart_failure_diagnoses AS (
         -- Traceability arrays
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_heart_failure_diagnosis_code THEN concept_code
+                WHEN is_diagnosis_code THEN concept_code
             END
         ) AS all_hf_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_heart_failure_diagnosis_code THEN concept_display
+                WHEN is_diagnosis_code THEN concept_display
             END
         ) AS all_hf_concept_displays,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_heart_failure_resolved_code THEN concept_code
+                WHEN is_resolved_code THEN concept_code
             END
         ) AS all_resolved_concept_codes
 

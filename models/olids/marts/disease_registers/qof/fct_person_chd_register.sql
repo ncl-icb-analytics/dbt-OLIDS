@@ -37,7 +37,7 @@ WITH base_diagnoses AS (
         ARRAY_AGG(DISTINCT concept_display) AS all_chd_concept_displays
 
     FROM {{ ref('int_chd_diagnoses_all') }}
-    WHERE is_chd_diagnosis = TRUE
+    WHERE is_diagnosis_code = TRUE
     GROUP BY person_id
 ),
 

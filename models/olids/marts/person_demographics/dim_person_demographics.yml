@@ -1,9 +1,26 @@
 version: 2
 models:
   - name: dim_person_demographics
-    description: 'Person demographics with age, sex, ethnicity, language, practice registration and geographic data.
+    description: 'Current Person Demographics Dimension Table (Current State View)
 
-      One row per person with recorded birth dates and practice registration (active and inactive patients).'
+      Provides current-state demographics derived from dim_person_demographics_historical.
+      Contains only the most recent demographic information for each person.
+
+      Key Features:
+
+      • Current-state snapshot (is_current_period = TRUE)
+
+      • Derived from historical SCD2 table for consistency
+
+      • One row per person with complete demographic information
+
+      Data Quality Filtering:
+
+      • EXCLUDES persons without practice registration (inherited from historical table)
+
+      • Ensures all records have valid GP practice information
+
+      • Contains only persons with recorded birth dates and practice registration'
     columns:
       - name: person_id
         description: Unique identifier for the person
@@ -32,7 +49,8 @@ models:
         tests:
           - not_null  # Always populated even if Unknown
           - accepted_values:
-              values: ['Male', 'Female', 'Unknown']
+              arguments:
+                values: ['Male', 'Female', 'Unknown']
       
       - name: practice_code
         description: GP practice code from registration (current or most recent historical)

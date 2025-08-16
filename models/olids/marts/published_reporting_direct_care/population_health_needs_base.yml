@@ -67,9 +67,10 @@ models:
         description: Count of active behavioural risk factors (0-3, null if no risk factor data)
         tests:
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 0
                 max_value: 3
+              config:
                 where: "risk_factor_count is not null"
       
       # Behavioural Risk Factors data availability flags (from fct_person_behavioural_risk_factors - should never be null)
@@ -107,6 +108,6 @@ models:
         tests:
           - not_null  # Always has a value (0 or more) from dim_person_conditions
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 0
                 max_value: 50

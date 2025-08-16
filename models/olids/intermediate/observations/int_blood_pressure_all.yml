@@ -7,7 +7,7 @@ models:
           arguments:
             cluster_ids: ABPM_COD, BP_COD, DIASBP_COD, HOMEAMBBP_COD, HOMEBP_COD, SYSBP_COD
       - dbt_utils.unique_combination_of_columns:
-          config:
+          arguments:
             combination_of_columns:
               - person_id
               - clinical_effective_date
@@ -27,7 +27,7 @@ models:
         description: Systolic blood pressure value in mmHg
         tests:
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 40
                 max_value: 350
                 inclusive: true
@@ -36,7 +36,7 @@ models:
         description: Diastolic blood pressure value in mmHg
         tests:
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 20
                 max_value: 200
                 inclusive: true

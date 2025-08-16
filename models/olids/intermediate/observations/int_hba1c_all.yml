@@ -9,7 +9,7 @@ models:
           arguments:
             cluster_ids: DCCTHBA1C_COD, IFCCHBAM_COD
       - dbt_utils.unique_combination_of_columns:
-          config:
+          arguments:
             combination_of_columns:
               - observation_id
               - source_cluster_id

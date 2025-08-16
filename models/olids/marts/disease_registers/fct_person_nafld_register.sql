@@ -30,23 +30,23 @@ WITH nafld_diagnoses AS (
 
         -- Register inclusion dates
         MIN(
-            CASE WHEN is_nafld_diagnosis_code THEN clinical_effective_date END
+            CASE WHEN is_diagnosis_code THEN clinical_effective_date END
         ) AS earliest_diagnosis_date,
         MAX(
-            CASE WHEN is_nafld_diagnosis_code THEN clinical_effective_date END
+            CASE WHEN is_diagnosis_code THEN clinical_effective_date END
         ) AS latest_diagnosis_date,
 
         -- Episode counts
-        COUNT(CASE WHEN is_nafld_diagnosis_code THEN 1 END)
+        COUNT(CASE WHEN is_diagnosis_code THEN 1 END)
             AS total_nafld_episodes,
 
         -- Concept code arrays for traceability
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_nafld_diagnosis_code THEN concept_code END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_code END
         )
             AS nafld_diagnosis_codes,
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_nafld_diagnosis_code THEN concept_display END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_display END
         )
             AS nafld_diagnosis_displays
 

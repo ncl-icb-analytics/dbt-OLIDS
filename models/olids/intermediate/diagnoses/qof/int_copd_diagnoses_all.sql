@@ -34,8 +34,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- COPD-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'COPD_COD' THEN TRUE ELSE FALSE END AS is_copd_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'COPDRES_COD' THEN TRUE ELSE FALSE END AS is_copd_resolved_code,
+    CASE WHEN obs.cluster_id = 'COPD_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'COPDRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- COPD observation type determination
     CASE

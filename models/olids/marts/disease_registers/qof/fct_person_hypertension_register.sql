@@ -15,46 +15,46 @@ WITH hypertension_person_aggregates AS (
         -- Hypertension diagnosis dates
         MIN(
             CASE
-                WHEN is_hypertension_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS earliest_diagnosis_date,
         MAX(
             CASE
-                WHEN is_hypertension_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS latest_diagnosis_date,
 
         -- Resolution dates
         MIN(
             CASE
-                WHEN is_hypertension_resolved_code THEN clinical_effective_date
+                WHEN is_resolved_code THEN clinical_effective_date
             END
         ) AS earliest_resolved_date,
         MAX(
             CASE
-                WHEN is_hypertension_resolved_code THEN clinical_effective_date
+                WHEN is_resolved_code THEN clinical_effective_date
             END
         ) AS latest_resolved_date,
 
         -- Traceability arrays
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_hypertension_diagnosis_code THEN concept_code
+                WHEN is_diagnosis_code THEN concept_code
             END
         ) AS all_hypertension_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_hypertension_diagnosis_code THEN concept_display
+                WHEN is_diagnosis_code THEN concept_display
             END
         ) AS all_hypertension_concept_displays,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_hypertension_resolved_code THEN concept_code
+                WHEN is_resolved_code THEN concept_code
             END
         ) AS all_resolved_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_hypertension_resolved_code THEN concept_display
+                WHEN is_resolved_code THEN concept_display
             END
         ) AS all_resolved_concept_displays
 

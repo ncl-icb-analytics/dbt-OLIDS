@@ -52,6 +52,10 @@ diabetes_observations_categorised AS (
         MAX(CASE WHEN source_cluster_id = 'DMTYPE2_COD' THEN TRUE ELSE FALSE END) AS is_type2_diabetes_code,
         MAX(CASE WHEN source_cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END) AS is_diabetes_resolved_code,
         
+        -- Composite flags for unified clinical tracking
+        MAX(CASE WHEN source_cluster_id IN ('DM_COD', 'DMTYPE1_COD', 'DMTYPE2_COD') THEN TRUE ELSE FALSE END) AS is_diagnosis_code,
+        MAX(CASE WHEN source_cluster_id = 'DMRES_COD' THEN TRUE ELSE FALSE END) AS is_resolved_code,
+        
         -- For traceability, keep the most specific cluster as source_cluster_id
         CASE 
             WHEN MAX(CASE WHEN source_cluster_id = 'DMTYPE1_COD' THEN 1 ELSE 0 END) = 1 THEN 'DMTYPE1_COD'
@@ -78,6 +82,8 @@ SELECT
     is_type1_diabetes_code,
     is_type2_diabetes_code,
     is_diabetes_resolved_code,
+    is_diagnosis_code,
+    is_resolved_code,
 
     -- Diabetes type determination (for individual observation context)
     CASE

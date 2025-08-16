@@ -33,34 +33,34 @@ WITH dementia_diagnoses AS (
         NULL AS latest_resolved_date,
         MIN(
             CASE
-                WHEN is_dementia_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS earliest_diagnosis_date,
         MAX(
             CASE
-                WHEN is_dementia_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS latest_diagnosis_date,  -- Dementia has no resolved codes (permanent condition)
 
         -- QOF register logic: active diagnosis required (dementia is permanent, no resolved codes)
         COALESCE(MAX(
             CASE
-                WHEN is_dementia_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) IS NOT NULL,
         FALSE) AS has_active_dementia_diagnosis,
 
         -- Count of dementia diagnoses (may indicate progression or confirmation)
-        COUNT(CASE WHEN is_dementia_diagnosis_code THEN 1 END)
+        COUNT(CASE WHEN is_diagnosis_code THEN 1 END)
             AS total_dementia_diagnoses,
 
         -- Traceability arrays
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_dementia_diagnosis_code THEN concept_code END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_code END
         ) AS all_dementia_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_dementia_diagnosis_code THEN concept_display
+                WHEN is_diagnosis_code THEN concept_display
             END
         ) AS all_dementia_concept_displays,
         ARRAY_CONSTRUCT() AS all_resolved_concept_codes  -- No resolved codes for dementia

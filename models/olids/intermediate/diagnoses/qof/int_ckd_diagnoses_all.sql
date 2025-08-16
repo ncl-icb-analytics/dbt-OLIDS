@@ -35,8 +35,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- CKD-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'CKD_COD' THEN TRUE ELSE FALSE END AS is_ckd_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'CKDRES_COD' THEN TRUE ELSE FALSE END AS is_ckd_resolved_code,
+    CASE WHEN obs.cluster_id = 'CKD_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'CKDRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- CKD observation type determination
     CASE

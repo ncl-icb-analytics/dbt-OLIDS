@@ -34,7 +34,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Learning disability-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'LD_COD' THEN TRUE ELSE FALSE END AS is_learning_disability_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'LD_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
 
     -- Learning disability observation type determination
     CASE

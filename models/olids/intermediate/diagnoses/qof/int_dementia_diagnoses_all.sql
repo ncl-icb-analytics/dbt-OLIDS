@@ -34,7 +34,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Dementia-specific flags (observation-level only)
-    TRUE AS is_dementia_diagnosis_code,
+    TRUE AS is_diagnosis_code,
 
     -- Dementia observation type determination
     'Dementia Diagnosis' AS dementia_observation_type

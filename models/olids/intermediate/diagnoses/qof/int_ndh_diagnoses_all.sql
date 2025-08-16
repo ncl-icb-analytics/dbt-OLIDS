@@ -46,7 +46,13 @@ SELECT
     CASE
         WHEN obs.cluster_id IN ('NDH_COD', 'IGT_COD', 'PRD_COD') THEN TRUE
         ELSE FALSE
-    END AS is_any_ndh_type_code
+    END AS is_any_ndh_type_code,
+
+    -- Composite flag for unified clinical tracking
+    CASE
+        WHEN obs.cluster_id IN ('NDH_COD', 'IGT_COD', 'PRD_COD') THEN TRUE
+        ELSE FALSE
+    END AS is_diagnosis_code
 
 FROM ({{ get_observations("'NDH_COD', 'IGT_COD', 'PRD_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL

@@ -35,8 +35,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- SMI-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'MH_COD' THEN TRUE ELSE FALSE END AS is_smi_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'MHREM_COD' THEN TRUE ELSE FALSE END AS is_smi_resolved_code,
+    CASE WHEN obs.cluster_id = 'MH_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'MHREM_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- SMI observation type determination
     CASE

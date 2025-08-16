@@ -40,7 +40,11 @@ WITH base_observations AS (
 
         -- Flag different types of palliative care codes following QOF definitions
         CASE WHEN obs.cluster_id = 'PALCARE_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_code,
-        CASE WHEN obs.cluster_id = 'PALCARENI_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_not_indicated_code
+        CASE WHEN obs.cluster_id = 'PALCARENI_COD' THEN TRUE ELSE FALSE END AS is_palliative_care_not_indicated_code,
+
+        -- Composite flag for unified clinical tracking
+        CASE WHEN obs.cluster_id = 'PALCARE_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+        CASE WHEN obs.cluster_id = 'PALCARENI_COD' THEN TRUE ELSE FALSE END AS is_resolved_code
 
     FROM ({{ get_observations("'PALCARE_COD', 'PALCARENI_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
@@ -54,7 +58,9 @@ SELECT
     concept_display,
     source_cluster_id,
     is_palliative_care_code,
-    is_palliative_care_not_indicated_code
+    is_palliative_care_not_indicated_code,
+    is_diagnosis_code,
+    is_resolved_code
 
 FROM base_observations
 

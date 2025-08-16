@@ -37,7 +37,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Flag FH diagnosis codes following QOF definitions
-    CASE WHEN obs.cluster_id = 'FHYP_COD' THEN TRUE ELSE FALSE END AS is_fh_diagnosis_code
+    CASE WHEN obs.cluster_id = 'FHYP_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code
 
 FROM ({{ get_observations("'FHYP_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL

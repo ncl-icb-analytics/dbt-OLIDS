@@ -35,8 +35,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- AF-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'AFIB_COD' THEN TRUE ELSE FALSE END AS is_af_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'AFIBRES_COD' THEN TRUE ELSE FALSE END AS is_af_resolved_code,
+    CASE WHEN obs.cluster_id = 'AFIB_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'AFIBRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- AF observation type determination
     CASE

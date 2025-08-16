@@ -1,0 +1,109 @@
+version: 2
+
+models:
+  - name: dim_person_demographics_historical
+    description: 'Historical Person Demographics Dimension Table (Type 2 SCD)
+
+      Provides person demographics with temporal context using modern Type 2 slowly changing dimensions approach.
+      Much more efficient than person-month grain - only creates new rows when demographics actually change.
+
+      
+      Key Features:
+
+      • Type 2 SCD with effective_start_date and effective_end_date (NULL = current period)
+
+      • 5-year rolling history window for performance optimisation
+
+      • Modern SCD2 implementation without sentinel dates (no 9999-12-31 values)
+
+      • Temporal tracking for: age progression, practice registration, address changes, ethnicity updates
+
+      • Static tracking for: sex, language, interpreter needs (assumed stable)
+
+      • Efficient storage - periods created only when demographics change, not monthly
+
+      
+      Data Quality Filtering:
+
+      • EXCLUDES persons without practice registration (practice_code IS NULL)
+
+      • Ensures all records have valid GP practice information for complete demographics
+
+      • Maintains data consistency with downstream analytics requirements
+
+      
+      Implementation Notes:
+
+      • Uses NULL effective_end_date for current periods (not sentinel dates)
+
+      • Limited to last 5 years of data to balance completeness with performance
+
+      • Change points triggered by: practice moves, address changes, age milestones, ethnicity recordings
+
+      For analysis queries, join using:
+      WHERE analysis_date >= effective_start_date AND (effective_end_date IS NULL OR analysis_date < effective_end_date)'
+
+    columns:
+      - name: person_id
+        description: 'Unique person identifier'
+        tests:
+          - not_null
+
+      - name: effective_start_date
+        description: 'SCD2: Period start date for temporal tracking'
+        tests:
+          - not_null
+
+      - name: effective_end_date
+        description: 'SCD2: Period end date for temporal tracking (NULL = current period)'
+
+      - name: period_sequence
+        description: 'SCD2: Sequential number for each temporal period per person'
+        tests:
+          - not_null
+
+      - name: age
+        description: 'SCD2: Age calculated as of effective_start_date (temporal)'
+
+      - name: age_band_10y
+        description: 'SCD2: 10-year age band as of effective_start_date (temporal)'
+
+      - name: practice_code
+        description: 'SCD2: Practice registration valid during this period (temporal)'
+
+      - name: sex
+        description: 'Static: Sex assumed stable over time (not temporally tracked)'
+
+      - name: ethnicity_category
+        description: 'SCD2: Ethnicity category valid during this period (temporal)'
+
+      - name: post_code_hash
+        description: 'SCD2: Address hash valid during this period (temporal)'
+
+      - name: is_current_period
+        description: 'SCD2: Flag indicating if this is the current active period'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+    tests:
+      # SCD2 integrity tests
+      - dbt_utils.unique_combination_of_columns:
+          name: dim_person_demographics_historical_unique_person_period
+          arguments:
+            combination_of_columns:
+              - person_id
+              - effective_start_date
+
+      # Basic data quality tests - custom SCD2 tests moved to separate test files
+      - dbt_utils.expression_is_true:
+          name: dim_person_demographics_historical_valid_date_ranges
+          arguments:
+            expression: "effective_end_date IS NULL OR effective_start_date <= effective_end_date"
+
+      - dbt_utils.expression_is_true:
+          name: dim_person_demographics_historical_current_period_consistency
+          arguments:
+            expression: "(effective_end_date IS NULL AND is_current_period = true) OR (effective_end_date IS NOT NULL)"

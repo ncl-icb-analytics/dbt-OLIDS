@@ -35,8 +35,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Depression-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'DEPR_COD' THEN TRUE ELSE FALSE END AS is_depression_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'DEPRES_COD' THEN TRUE ELSE FALSE END AS is_depression_resolved_code,
+    CASE WHEN obs.cluster_id = 'DEPR_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'DEPRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- Depression observation type determination
     CASE
