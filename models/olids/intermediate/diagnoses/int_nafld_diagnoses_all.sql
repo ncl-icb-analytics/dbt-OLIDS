@@ -34,7 +34,7 @@ SELECT
     p.id AS patient_id,
 
     -- NAFLD-specific flags (observation-level only)
-    TRUE AS is_nafld_diagnosis_code,
+    TRUE AS is_diagnosis_code,
 
     -- Observation type determination
     'NAFLD Diagnosis' AS nafld_observation_type,

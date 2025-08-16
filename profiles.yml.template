@@ -8,7 +8,7 @@
 # The profiles.yml file is git-ignored for security reasons as it may contain
 # sensitive connection information.
 
-snowflake_hei_migration:
+dbt-olids:
   target: dev  # Default target - use --target prod for production environment
   outputs:
     dev:

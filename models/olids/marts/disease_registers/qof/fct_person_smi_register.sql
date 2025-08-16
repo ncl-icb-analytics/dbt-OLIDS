@@ -27,38 +27,38 @@ WITH smi_diagnoses AS (
         person_id,
 
         -- Person-level aggregation from observation-level data
-        MIN(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END)
+        MIN(CASE WHEN is_diagnosis_code THEN clinical_effective_date END)
             AS earliest_diagnosis_date,
-        MAX(CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END)
+        MAX(CASE WHEN is_diagnosis_code THEN clinical_effective_date END)
             AS latest_diagnosis_date,
-        MAX(CASE WHEN is_smi_resolved_code THEN clinical_effective_date END)
+        MAX(CASE WHEN is_resolved_code THEN clinical_effective_date END)
             AS latest_resolved_date,
 
         -- QOF register logic: active diagnosis required
         COALESCE(MAX(
-            CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END
+            CASE WHEN is_diagnosis_code THEN clinical_effective_date END
         ) IS NOT NULL
         AND (
             MAX(
-                CASE WHEN is_smi_resolved_code THEN clinical_effective_date END
+                CASE WHEN is_resolved_code THEN clinical_effective_date END
             ) IS NULL
             OR MAX(
-                CASE WHEN is_smi_diagnosis_code THEN clinical_effective_date END
+                CASE WHEN is_diagnosis_code THEN clinical_effective_date END
             )
             > MAX(
-                CASE WHEN is_smi_resolved_code THEN clinical_effective_date END
+                CASE WHEN is_resolved_code THEN clinical_effective_date END
             )
         ), FALSE) AS has_active_smi_diagnosis,
 
         -- Traceability arrays
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_smi_diagnosis_code THEN concept_code END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_code END
         ) AS all_smi_concept_codes,
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_smi_diagnosis_code THEN concept_display END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_display END
         ) AS all_smi_concept_displays,
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_smi_resolved_code THEN concept_code END
+            DISTINCT CASE WHEN is_resolved_code THEN concept_code END
         ) AS all_resolved_concept_codes
 
     FROM {{ ref('int_smi_diagnoses_all') }}

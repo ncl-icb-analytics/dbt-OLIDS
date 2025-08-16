@@ -77,16 +77,19 @@ models:
     tests:
       # SCD2 integrity tests
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - effective_start_date
           name: dim_person_age_historical_unique_person_period
+          arguments:
+            combination_of_columns:
+              - person_id
+              - effective_start_date
 
       # Basic data quality tests
       - dbt_utils.expression_is_true:
-          expression: "effective_end_date IS NULL OR effective_start_date <= effective_end_date"
           name: dim_person_age_historical_valid_date_ranges
+          arguments:
+            expression: "effective_end_date IS NULL OR effective_start_date <= effective_end_date"
 
       - dbt_utils.expression_is_true:
-          expression: "(effective_end_date IS NULL AND is_current_period = true) OR (effective_end_date IS NOT NULL)"
           name: dim_person_age_historical_current_period_consistency
+          arguments:
+            expression: "(effective_end_date IS NULL AND is_current_period = true) OR (effective_end_date IS NOT NULL)"

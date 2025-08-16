@@ -27,29 +27,29 @@ WITH depression_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS earliest_diagnosis_date,
         MAX(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS latest_diagnosis_date,
         MAX(
             CASE
-                WHEN is_depression_resolved_code THEN clinical_effective_date
+                WHEN is_resolved_code THEN clinical_effective_date
             END
         ) AS latest_resolved_date,
 
         -- QOF register logic: active diagnosis required since April 2006
         COALESCE(MAX(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) IS NOT NULL
         AND MAX(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         )
         >= '2006-04-01'
@@ -57,21 +57,21 @@ WITH depression_diagnoses AS (
             MAX(
                 CASE
                     WHEN
-                        is_depression_resolved_code
+                        is_resolved_code
                         THEN clinical_effective_date
                 END
             ) IS NULL
             OR MAX(
                 CASE
                     WHEN
-                        is_depression_diagnosis_code
+                        is_diagnosis_code
                         THEN clinical_effective_date
                 END
             )
             > MAX(
                 CASE
                     WHEN
-                        is_depression_resolved_code
+                        is_resolved_code
                         THEN clinical_effective_date
                 END
             )
@@ -80,7 +80,7 @@ WITH depression_diagnoses AS (
         -- QOF temporal flags for recent episodes
         COALESCE(MAX(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         )
         >= CURRENT_DATE - INTERVAL '12 months',
@@ -88,7 +88,7 @@ WITH depression_diagnoses AS (
 
         COALESCE(MAX(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         )
         >= CURRENT_DATE - INTERVAL '15 months',
@@ -96,7 +96,7 @@ WITH depression_diagnoses AS (
 
         COALESCE(MAX(
             CASE
-                WHEN is_depression_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         )
         >= CURRENT_DATE - INTERVAL '24 months',
@@ -105,16 +105,16 @@ WITH depression_diagnoses AS (
         -- Traceability arrays
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_depression_diagnosis_code THEN concept_code
+                WHEN is_diagnosis_code THEN concept_code
             END
         ) AS all_depression_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_depression_diagnosis_code THEN concept_display
+                WHEN is_diagnosis_code THEN concept_display
             END
         ) AS all_depression_concept_displays,
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_depression_resolved_code THEN concept_code END
+            DISTINCT CASE WHEN is_resolved_code THEN concept_code END
         ) AS all_resolved_concept_codes
 
     FROM {{ ref('int_depression_diagnoses_all') }}

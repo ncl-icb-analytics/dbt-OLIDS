@@ -30,8 +30,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Flag different types of hypertension codes following QOF definitions
-    CASE WHEN obs.cluster_id = 'HYP_COD' THEN TRUE ELSE FALSE END AS is_hypertension_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'HYPRES_COD' THEN TRUE ELSE FALSE END AS is_hypertension_resolved_code,
+    CASE WHEN obs.cluster_id = 'HYP_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'HYPRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- Hypertension observation type determination
     CASE

@@ -102,6 +102,7 @@ SELECT
         ELSE TO_VARCHAR(FLOOR(ac.age / 10) * 10) || '-' || TO_VARCHAR(FLOOR(ac.age / 10) * 10 + 9)
     END AS age_band_10y,
 
+
     -- NHS Digital age bands (used in Health Survey for England)
     CASE
         WHEN ac.age < 0 THEN 'Unknown'

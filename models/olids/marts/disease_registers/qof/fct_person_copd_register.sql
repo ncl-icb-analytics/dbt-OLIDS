@@ -40,7 +40,7 @@ WITH base_copd_diagnoses AS (
     FROM {{ ref('int_copd_diagnoses_all') }} AS d
     INNER JOIN {{ ref('dim_person_age') }} AS age
         ON d.person_id = age.person_id
-    WHERE d.is_copd_diagnosis_code = TRUE  -- Only COPD_COD
+    WHERE d.is_diagnosis_code = TRUE  -- Only COPD_COD
 ),
 
 copd_resolved_codes AS (
@@ -52,7 +52,7 @@ copd_resolved_codes AS (
         d.concept_code,
         d.concept_display
     FROM {{ ref('int_copd_diagnoses_all') }} AS d
-    WHERE d.is_copd_resolved_code = TRUE  -- Only COPDRES_COD
+    WHERE d.is_resolved_code = TRUE  -- Only COPDRES_COD
 ),
 
 person_copd_aggregates AS (

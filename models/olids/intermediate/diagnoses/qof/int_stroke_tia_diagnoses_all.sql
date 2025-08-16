@@ -38,6 +38,12 @@ SELECT
     CASE WHEN obs.cluster_id = 'STRK_COD' THEN TRUE ELSE FALSE END AS is_stroke_diagnosis_code,
     CASE WHEN obs.cluster_id = 'TIA_COD' THEN TRUE ELSE FALSE END AS is_tia_diagnosis_code,
 
+    -- Composite flag for unified clinical tracking
+    CASE
+        WHEN obs.cluster_id IN ('STRK_COD', 'TIA_COD') THEN TRUE
+        ELSE FALSE
+    END AS is_diagnosis_code,
+
     -- Stroke/TIA observation type determination
     CASE
         WHEN obs.cluster_id = 'STRK_COD' THEN 'Stroke Diagnosis'

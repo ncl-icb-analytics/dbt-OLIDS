@@ -1,15 +1,16 @@
-name: 'snowflake_hei_migration'
+name: 'dbt_olids'
 version: '1.0'
 config-version: 2
 
-profile: 'snowflake_hei_migration'
+profile: 'dbt_olids'
 
 target-path: "target"
 clean-targets:
   - "target"
-  - "dbt_modules"
+  - "dbt_packages"
 
 model-paths: ["models"]
+analysis-paths: ["analysis"]
 
 # Configure dbt audit schema naming
 vars:
@@ -28,7 +29,7 @@ tests:
   +schema: "test_audit"
 
 models:
-  snowflake_hei_migration:
+  'dbt_olids':
     +materialized: table
     +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
     

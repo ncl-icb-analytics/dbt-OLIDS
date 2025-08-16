@@ -30,14 +30,14 @@ WITH learning_disability_diagnoses AS (
         MIN(
             CASE
                 WHEN
-                    is_learning_disability_diagnosis_code
+                    is_diagnosis_code
                     THEN clinical_effective_date
             END
         ) AS earliest_diagnosis_date,
         MAX(
             CASE
                 WHEN
-                    is_learning_disability_diagnosis_code
+                    is_diagnosis_code
                     THEN clinical_effective_date
             END
         ) AS latest_diagnosis_date,
@@ -46,7 +46,7 @@ WITH learning_disability_diagnoses AS (
         COALESCE(MAX(
             CASE
                 WHEN
-                    is_learning_disability_diagnosis_code
+                    is_diagnosis_code
                     THEN clinical_effective_date
             END
         ) IS NOT NULL,
@@ -55,12 +55,12 @@ WITH learning_disability_diagnoses AS (
         -- Traceability arrays
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_learning_disability_diagnosis_code THEN concept_code
+                WHEN is_diagnosis_code THEN concept_code
             END
         ) AS all_ld_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_learning_disability_diagnosis_code THEN concept_display
+                WHEN is_diagnosis_code THEN concept_display
             END
         ) AS all_ld_concept_displays
 

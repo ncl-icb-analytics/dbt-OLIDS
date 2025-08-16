@@ -35,8 +35,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Epilepsy-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'EPI_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'EPIRES_COD' THEN TRUE ELSE FALSE END AS is_epilepsy_resolved_code,
+    CASE WHEN obs.cluster_id = 'EPI_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'EPIRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
 
     -- Epilepsy observation type determination
     CASE

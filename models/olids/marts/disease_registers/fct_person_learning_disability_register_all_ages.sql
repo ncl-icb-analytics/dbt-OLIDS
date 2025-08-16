@@ -21,26 +21,26 @@ WITH learning_disability_diagnoses AS (
         person_id,
 
         MIN(
-            CASE WHEN is_learning_disability_diagnosis_code
+            CASE WHEN is_diagnosis_code
                  THEN clinical_effective_date END
         ) AS earliest_diagnosis_date,
 
         MAX(
-            CASE WHEN is_learning_disability_diagnosis_code
+            CASE WHEN is_diagnosis_code
                  THEN clinical_effective_date END
         ) AS latest_diagnosis_date,
 
         COALESCE(MAX(
-            CASE WHEN is_learning_disability_diagnosis_code
+            CASE WHEN is_diagnosis_code
                  THEN clinical_effective_date END
         ) IS NOT NULL, FALSE) AS has_active_ld_diagnosis,
 
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_learning_disability_diagnosis_code THEN concept_code END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_code END
         ) AS all_ld_concept_codes,
 
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_learning_disability_diagnosis_code THEN concept_display END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_display END
         ) AS all_ld_concept_displays
 
     FROM {{ ref('int_learning_disability_diagnoses_all') }}

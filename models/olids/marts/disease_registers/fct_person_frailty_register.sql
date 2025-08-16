@@ -41,7 +41,7 @@ WITH latest_severity AS (
                 ORDER BY clinical_effective_date DESC, observation_id DESC
             ) AS rn
         FROM {{ ref('int_frailty_diagnoses_all') }}
-        WHERE is_frailty_diagnosis_code = TRUE
+        WHERE is_diagnosis_code = TRUE
     )
     WHERE rn = 1
 ),
@@ -53,25 +53,25 @@ frailty_diagnoses AS (
         -- Person-level aggregation from observation-level data
         MIN(
             CASE
-                WHEN is_frailty_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS earliest_diagnosis_date,
         MAX(
             CASE
-                WHEN is_frailty_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) AS latest_diagnosis_date,
 
         -- Register logic: active diagnosis required
         COALESCE(MAX(
             CASE
-                WHEN is_frailty_diagnosis_code THEN clinical_effective_date
+                WHEN is_diagnosis_code THEN clinical_effective_date
             END
         ) IS NOT NULL,
         FALSE) AS has_active_frailty_diagnosis,
 
         -- Count of frailty diagnoses (may indicate progression or reassessment)
-        COUNT(CASE WHEN is_frailty_diagnosis_code THEN 1 END)
+        COUNT(CASE WHEN is_diagnosis_code THEN 1 END)
             AS total_frailty_diagnoses,
 
         -- Severity-specific counts
@@ -81,11 +81,11 @@ frailty_diagnoses AS (
 
         -- Traceability arrays
         ARRAY_AGG(
-            DISTINCT CASE WHEN is_frailty_diagnosis_code THEN concept_code END
+            DISTINCT CASE WHEN is_diagnosis_code THEN concept_code END
         ) AS all_frailty_concept_codes,
         ARRAY_AGG(
             DISTINCT CASE
-                WHEN is_frailty_diagnosis_code THEN concept_display
+                WHEN is_diagnosis_code THEN concept_display
             END
         ) AS all_frailty_concept_displays
 

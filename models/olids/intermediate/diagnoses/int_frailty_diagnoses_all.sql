@@ -41,7 +41,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Frailty-specific flags (observation-level only)
-    TRUE AS is_frailty_diagnosis_code,
+    TRUE AS is_diagnosis_code,
 
     -- Frailty severity determination based on concept codes
     CASE

@@ -52,14 +52,16 @@ models:
         tests:
           - accepted_values:
               values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
-              where: "bmi_category is not null"
+              config:
+                where: "bmi_category is not null"
       
       - name: smoking_status
         description: Current smoking status (may be null if no smoking data)
         tests:
           - accepted_values:
               values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
-              where: "smoking_status is not null"
+              config:
+                where: "smoking_status is not null"
       
       - name: risk_factor_count
         description: Count of active behavioural risk factors (0-3, null if no risk factor data)
@@ -68,6 +70,7 @@ models:
               arguments:
                 min_value: 0
                 max_value: 3
+              config:
                 where: "risk_factor_count is not null"
       
       # Behavioural Risk Factors data availability flags (from fct_person_behavioural_risk_factors - should never be null)

@@ -32,7 +32,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- RA-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'RA_COD' THEN TRUE ELSE FALSE END AS is_ra_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'RA_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
 
     -- Observation type determination
     CASE

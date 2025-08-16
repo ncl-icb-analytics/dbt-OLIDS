@@ -34,7 +34,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Cancer-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'CAN_COD' THEN TRUE ELSE FALSE END AS is_cancer_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'CAN_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
 
     -- Cancer observation type determination
     CASE

@@ -1,0 +1,168 @@
+version: 2
+
+models:
+  - name: int_date_spine
+    description: 'Comprehensive date dimension table for temporal analysis.
+
+      Pre-calculates all date attributes and relative flags for a 10-year monthly spine. Centralises date logic to eliminate repetitive date calculations across models.
+
+      Key Features:
+
+      • 10-year monthly spine (120 months) up to current month
+
+      • Pre-calculated calendar and financial year dimensions
+
+      • Relative date flags (is_last_X_months) updated on each build
+
+      • UK financial year support (April to March)
+
+      • Display labels and sorting helpers
+
+      • Clustered by month_start_date for optimal join performance
+
+      Purpose: Single source of truth for all date-related calculations in temporal analyses.'
+    
+    columns:
+      - name: month_start_date
+        description: First day of the month
+        tests:
+          - not_null
+          - unique
+      
+      - name: month_end_date
+        description: Last day of the month
+        tests:
+          - not_null
+      
+      - name: year_number
+        description: Year as integer (e.g., 2024)
+        tests:
+          - not_null
+      
+      - name: quarter_number
+        description: Calendar quarter (1-4)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4]
+      
+      - name: month_number
+        description: Month number (1-12)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      
+      - name: month_name
+        description: Full month name (e.g., 'January')
+      
+      - name: month_abbr
+        description: Month abbreviation (e.g., 'JAN')
+      
+      - name: quarter_start_date
+        description: First day of the calendar quarter
+      
+      - name: quarter_end_date
+        description: Last day of the calendar quarter
+      
+      - name: year_start_date
+        description: First day of the calendar year
+      
+      - name: year_end_date
+        description: Last day of the calendar year
+      
+      - name: year_month
+        description: Year-month string (e.g., '2024-03')
+      
+      - name: month_year_label
+        description: Readable month-year (e.g., 'MAR 2024')
+      
+      - name: month_year_full
+        description: Full month-year (e.g., 'March 2024')
+      
+      - name: calendar_quarter_label
+        description: Calendar quarter label (e.g., '2024-Q1')
+      
+      - name: financial_year_start
+        description: UK financial year start year
+      
+      - name: financial_year_end
+        description: UK financial year end year
+      
+      - name: financial_year_label
+        description: UK financial year label (e.g., '2023/24')
+      
+      - name: financial_quarter_number
+        description: UK financial quarter number (1-4, where 1 is Apr-Jun)
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4]
+      
+      - name: financial_quarter_label
+        description: UK financial quarter label (Q1-Q4)
+      
+      - name: financial_quarter_full_label
+        description: Full financial quarter label (e.g., '2023/24-Q1')
+      
+      - name: financial_year_start_date
+        description: First day of UK financial year (1st April)
+      
+      - name: financial_year_end_date
+        description: Last day of UK financial year (31st March)
+      
+      - name: is_current_month
+        description: Boolean flag for current month
+      
+      - name: is_previous_month
+        description: Boolean flag for previous month
+      
+      - name: is_last_1_month
+        description: Boolean flag for within last 1 month
+      
+      - name: is_last_3_months
+        description: Boolean flag for within last 3 months
+      
+      - name: is_last_6_months
+        description: Boolean flag for within last 6 months
+      
+      - name: is_last_12_months
+        description: Boolean flag for within last 12 months
+      
+      - name: is_last_24_months
+        description: Boolean flag for within last 24 months
+      
+      - name: is_last_36_months
+        description: Boolean flag for within last 36 months
+      
+      - name: is_last_60_months
+        description: Boolean flag for within last 60 months
+      
+      - name: months_ago
+        description: Number of months before current month
+      
+      - name: is_current_quarter
+        description: Boolean flag for current calendar quarter
+      
+      - name: is_previous_quarter
+        description: Boolean flag for previous calendar quarter
+      
+      - name: is_current_year
+        description: Boolean flag for current calendar year
+      
+      - name: is_previous_year
+        description: Boolean flag for previous calendar year
+      
+      - name: is_current_financial_year
+        description: Boolean flag for current UK financial year
+      
+      - name: sort_date
+        description: Date for sorting (same as month_start_date)
+      
+      - name: year_month_int
+        description: Integer for year-month sorting (e.g., 202403)
+      
+      - name: date_spine_created_date
+        description: Date when this spine was created
+      
+      - name: date_spine_created_timestamp
+        description: Timestamp when this spine was created

@@ -32,7 +32,7 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- PAD-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'PAD_COD' THEN TRUE ELSE FALSE END AS is_pad_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'PAD_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
 
     -- Observation type determination
     CASE

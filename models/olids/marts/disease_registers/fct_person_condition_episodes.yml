@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: fct_person_clinical_condition_episodes
+  - name: fct_person_condition_episodes
     description: 'Clinical condition episodes fact table tracking historical condition episodes without QOF restrictions.
 
       Captures multiple on/off cycles per person per condition for comprehensive clinical tracking.
@@ -87,6 +87,7 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: '>= 0'
+              config:
                 where: 'episode_duration_days IS NOT NULL'
 
       - name: total_episodes_for_condition
@@ -102,7 +103,8 @@ models:
         tests:
           - accepted_values:
               values: ['active', 'resolved']
-              where: 'current_condition_status IS NOT NULL'
+              config:
+                where: 'current_condition_status IS NOT NULL'
 
     # Additional relationship and business logic tests
     tests:
@@ -121,6 +123,7 @@ models:
           name: episode_end_after_start
           arguments:
             expression: 'episode_end_date >= episode_start_date'
+          config:
             where: 'episode_end_date IS NOT NULL'
       
       # Ensure resolved episodes have end dates
@@ -128,6 +131,7 @@ models:
           name: resolved_episodes_have_end_dates
           arguments:
             expression: 'episode_end_date IS NOT NULL'
+          config:
             where: "episode_status = 'resolved'"
       
       # Ensure active episodes don't have end dates or duration
@@ -135,5 +139,6 @@ models:
           name: active_episodes_no_end_data
           arguments:
             expression: 'episode_end_date IS NULL AND episode_duration_days IS NULL'
+          config:
             where: "episode_status = 'active'"
       

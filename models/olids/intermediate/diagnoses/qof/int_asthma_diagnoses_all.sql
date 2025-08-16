@@ -31,8 +31,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Asthma-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'AST_COD' THEN TRUE ELSE FALSE END AS is_asthma_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'ASTRES_COD' THEN TRUE ELSE FALSE END AS is_asthma_resolved_code
+    CASE WHEN obs.cluster_id = 'AST_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'ASTRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code
 
 FROM ({{ get_observations("'AST_COD', 'ASTRES_COD'") }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL

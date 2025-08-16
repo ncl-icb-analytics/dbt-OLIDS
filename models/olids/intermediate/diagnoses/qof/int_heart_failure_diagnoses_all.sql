@@ -32,8 +32,8 @@ SELECT
     obs.cluster_id AS source_cluster_id,
 
     -- Heart failure-specific flags (observation-level only)
-    CASE WHEN obs.cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_diagnosis_code,
-    CASE WHEN obs.cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_heart_failure_resolved_code,
+    CASE WHEN obs.cluster_id = 'HF_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
+    CASE WHEN obs.cluster_id = 'HFRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code,
     CASE WHEN obs.cluster_id = 'HFLVSD_COD' THEN TRUE ELSE FALSE END AS is_hf_lvsd_code,
     CASE WHEN obs.cluster_id = 'REDEJCFRAC_COD' THEN TRUE ELSE FALSE END AS is_reduced_ef_code,
 
