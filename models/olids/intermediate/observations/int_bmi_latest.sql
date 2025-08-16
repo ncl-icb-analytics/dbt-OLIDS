@@ -5,7 +5,7 @@
 }}
 
 /*
-Latest valid BMI measurement per person.
+Latest valid BMI measurement per person with ethnicity-adjusted categorisation.
 Uses the int_bmi_all model and filters to most recent valid BMI.
 */
 
@@ -14,13 +14,24 @@ SELECT
     observation_id,
     clinical_effective_date,
     bmi_value,
+    result_unit_display,
     concept_code,
     concept_display,
     source_cluster_id,
-    bmi_category,
     result_value,
-    is_valid_bmi,
     bmi_source,
+
+    -- Ethnicity information
+    requires_lower_bmi_thresholds,
+    cardiometabolic_risk_ethnicity_group,
+
+    -- Validation
+    is_valid_bmi,
+
+    -- BMI categorisation (ethnicity-adjusted)
+    bmi_category,
+
+    -- BMI risk sort key (ethnicity-adjusted)
     bmi_risk_sort_key
 
 FROM {{ ref('int_bmi_all') }}

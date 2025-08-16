@@ -1,0 +1,89 @@
+version: 2
+models:
+  - name: int_ethnicity_cardiometabolic_risk
+    description: 'Ethnicity classifications for populations requiring lower BMI thresholds per NICE guidance.
+
+      Identifies South Asian, Chinese, other Asian, Middle Eastern, Black African, or African-Caribbean populations who have increased cardiometabolic risk at lower BMI levels.
+
+      Key Features:
+
+      • Maps ETH2016*_COD cluster IDs to NICE-defined risk populations
+
+      • Provides individual ethnicity flags and composite risk indicators
+
+      • One row per person with latest ethnicity observation
+
+      Purpose: Supports ethnicity-adjusted BMI categorisation and clinical risk assessment.'
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: ETH2016AI_COD, ETH2016AP_COD, ETH2016AB_COD, ETH2016AC_COD, ETH2016AO_COD, ETH2016MWA_COD, ETH2016OA_COD, ETH2016BA_COD, ETH2016MWBA_COD, ETH2016BC_COD, ETH2016MWBC_COD, ETH2016BO_COD
+    columns:
+      - name: person_id
+        description: Person identifier
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('int_patient_person_unique')
+              field: person_id
+      - name: observation_id
+        description: Latest ethnicity observation identifier
+        tests:
+          - not_null
+      - name: clinical_effective_date
+        description: Date of latest ethnicity observation
+        tests:
+          - not_null
+      - name: concept_code
+        description: SNOMED concept code for ethnicity
+        tests:
+          - not_null
+      - name: concept_display
+        description: Display term for ethnicity concept
+      - name: source_cluster_id
+        description: Source cluster ID (ETH2016*_COD pattern)
+        tests:
+          - not_null
+      - name: is_south_asian
+        description: 'Flag indicating South Asian ethnicity (Indian, Pakistani, Bangladeshi)'
+        tests:
+          - not_null
+      - name: is_chinese
+        description: Flag indicating Chinese ethnicity
+        tests:
+          - not_null
+      - name: is_other_asian
+        description: 'Flag indicating other Asian ethnicity (including mixed Asian backgrounds)'
+        tests:
+          - not_null
+      - name: is_middle_eastern
+        description: Flag indicating Middle Eastern or Arab ethnicity
+        tests:
+          - not_null
+      - name: is_black_african
+        description: 'Flag indicating Black African ethnicity (including mixed Black African backgrounds)'
+        tests:
+          - not_null
+      - name: is_african_caribbean
+        description: 'Flag indicating African-Caribbean ethnicity (including mixed Caribbean backgrounds)'
+        tests:
+          - not_null
+      - name: requires_lower_bmi_thresholds
+        description: 'Composite flag indicating if person requires lower BMI thresholds per NICE guidance'
+        tests:
+          - not_null
+      - name: cardiometabolic_risk_ethnicity_group
+        description: 'Ethnicity group classification for cardiometabolic risk assessment'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['South Asian', 'Chinese', 'Other Asian', 'Middle Eastern', 'Black African', 'African-Caribbean', 'Other/White']
+      - name: latest_ethnicity_date
+        description: Date of most recent ethnicity observation for this person
+      - name: all_ethnicity_groups
+        description: Array of all ethnicity groups recorded for this person
+      - name: all_ethnicity_concept_codes
+        description: Array of all ethnicity concept codes recorded for this person
+      - name: all_ethnicity_concept_displays
+        description: Array of all ethnicity concept displays recorded for this person

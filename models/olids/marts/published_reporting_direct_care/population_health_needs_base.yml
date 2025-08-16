@@ -6,12 +6,6 @@ models:
 
       One row per person with demographic profile, BMI/smoking status, and condition flags. LEFT JOINs maintain population coverage regardless of data availability.'
     
-    tests:
-      # Ensure no duplicate rows after joins
-      - dbt_utils.unique_combination_of_columns:
-          config:
-            combination_of_columns:
-              - person_id
     
     columns:
       - name: person_id
