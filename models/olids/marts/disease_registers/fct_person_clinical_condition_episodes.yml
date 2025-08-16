@@ -1,0 +1,137 @@
+version: 2
+
+models:
+  - name: fct_person_clinical_condition_episodes
+    description: 'Clinical condition episodes fact table tracking historical condition episodes without QOF restrictions.
+
+      Captures multiple on/off cycles per person per condition for comprehensive clinical tracking.
+
+      Key Features:
+
+      • Episode-level granularity with start/end dates
+
+      • Historical tracking of condition cycles (onset/resolved)
+
+      • No age, date, or medication restrictions (unlike QOF registers)
+
+      • Unified schema across all diagnosis-based conditions
+
+      Purpose: Enables analysis of condition patterns, episode durations, and patient journeys across the complete clinical history.'
+
+
+    columns:
+      - name: person_id
+        description: 'Unique person identifier'
+        tests:
+          - not_null
+
+      - name: condition_name
+        description: 'Human-readable condition name (e.g., "Depression", "Gestational Diabetes")'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Asthma', 'Atrial Fibrillation', 'Cancer', 'Coronary Heart Disease',
+                'Chronic Kidney Disease', 'COPD', 'Dementia', 'Depression', 'Diabetes',
+                'Epilepsy', 'Familial Hypercholesterolaemia', 'Frailty', 'Gestational Diabetes',
+                'Heart Failure', 'Hypertension', 'Learning Disability', 'NAFLD',
+                'Non-Diabetic Hyperglycaemia', 'Osteoporosis', 'Peripheral Arterial Disease',
+                'Palliative Care', 'Rheumatoid Arthritis', 'Severe Mental Illness', 'Stroke and TIA'
+              ]
+
+      - name: condition_code
+        description: 'Short condition code used in QOF registers'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'AST', 'AF', 'CAN', 'CHD', 'CKD', 'COPD', 'DEM', 'DEP', 'DM', 'EP',
+                'FH', 'FRAIL', 'GESTDIAB', 'HF', 'HTN', 'LD', 'NAFLD', 'NDH', 'OST',
+                'PAD', 'PC', 'RA', 'SMI', 'STIA'
+              ]
+
+      - name: clinical_domain
+        description: 'Clinical specialty domain for the condition'
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Respiratory', 'Cardiovascular', 'Oncology', 'Renal', 'Mental Health',
+                'Metabolic', 'Neurology', 'Genetics', 'Geriatric', 'Maternity',
+                'Neurodevelopmental', 'Hepatology', 'Musculoskeletal', 'Palliative Care'
+              ]
+
+      - name: episode_number
+        description: 'Sequential episode number for each condition per person'
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: '>= 1'
+
+      - name: episode_start_date
+        description: 'Date the episode started (first diagnosis/onset event)'
+        tests:
+          - not_null
+
+      - name: episode_status
+        description: 'Current status of the episode'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['active', 'resolved']
+
+      - name: episode_duration_days
+        description: 'Duration of resolved episodes in days (NULL for active episodes)'
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: '>= 0'
+              config:
+                where: 'episode_duration_days IS NOT NULL'
+
+      - name: total_episodes_for_condition
+        description: 'Total number of episodes for this person-condition combination'
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: '>= episode_number'
+
+      - name: current_condition_status
+        description: 'Current status for the most recent episode of this condition'
+        tests:
+          - accepted_values:
+              values: ['active', 'resolved']
+              config:
+                where: 'current_condition_status IS NOT NULL'
+
+    # Additional relationship and business logic tests
+    tests:
+      # Ensure each person-condition-episode combination is unique
+      - unique:
+          column_name: "person_id || '-' || condition_name || '-' || episode_number"
+      
+      # Ensure episode start dates are not in the future
+      - dbt_utils.expression_is_true:
+          expression: 'episode_start_date <= CURRENT_DATE'
+          name: episode_start_date_not_future
+      
+      # Ensure episode end dates are after start dates when present
+      - dbt_utils.expression_is_true:
+          expression: 'episode_end_date >= episode_start_date'
+          config:
+            where: 'episode_end_date IS NOT NULL'
+          name: episode_end_after_start
+      
+      # Ensure resolved episodes have end dates
+      - dbt_utils.expression_is_true:
+          expression: 'episode_end_date IS NOT NULL'
+          config:
+            where: "episode_status = 'resolved'"
+          name: resolved_episodes_have_end_dates
+      
+      # Ensure active episodes don't have end dates or duration
+      - dbt_utils.expression_is_true:
+          expression: 'episode_end_date IS NULL AND episode_duration_days IS NULL'
+          config:
+            where: "episode_status = 'active'"
+          name: active_episodes_no_end_data
+      
