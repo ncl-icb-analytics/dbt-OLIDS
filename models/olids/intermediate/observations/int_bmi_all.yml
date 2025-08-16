@@ -36,7 +36,7 @@ models:
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 10
                 max_value: 150
                 inclusive: true
@@ -70,7 +70,7 @@ models:
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 0
                 max_value: 6
                 inclusive: true

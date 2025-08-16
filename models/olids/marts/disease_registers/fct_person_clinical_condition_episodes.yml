@@ -66,7 +66,8 @@ models:
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: '>= 1'
+              arguments:
+                expression: '>= 1'
 
       - name: episode_start_date
         description: 'Date the episode started (first diagnosis/onset event)'
@@ -84,8 +85,8 @@ models:
         description: 'Duration of resolved episodes in days (NULL for active episodes)'
         tests:
           - dbt_utils.expression_is_true:
-              expression: '>= 0'
-              config:
+              arguments:
+                expression: '>= 0'
                 where: 'episode_duration_days IS NOT NULL'
 
       - name: total_episodes_for_condition
@@ -93,15 +94,15 @@ models:
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: '>= episode_number'
+              arguments:
+                expression: '>= episode_number'
 
       - name: current_condition_status
         description: 'Current status for the most recent episode of this condition'
         tests:
           - accepted_values:
               values: ['active', 'resolved']
-              config:
-                where: 'current_condition_status IS NOT NULL'
+              where: 'current_condition_status IS NOT NULL'
 
     # Additional relationship and business logic tests
     tests:
@@ -111,27 +112,28 @@ models:
       
       # Ensure episode start dates are not in the future
       - dbt_utils.expression_is_true:
-          expression: 'episode_start_date <= CURRENT_DATE'
           name: episode_start_date_not_future
+          arguments:
+            expression: 'episode_start_date <= CURRENT_DATE'
       
       # Ensure episode end dates are after start dates when present
       - dbt_utils.expression_is_true:
-          expression: 'episode_end_date >= episode_start_date'
-          config:
-            where: 'episode_end_date IS NOT NULL'
           name: episode_end_after_start
+          arguments:
+            expression: 'episode_end_date >= episode_start_date'
+            where: 'episode_end_date IS NOT NULL'
       
       # Ensure resolved episodes have end dates
       - dbt_utils.expression_is_true:
-          expression: 'episode_end_date IS NOT NULL'
-          config:
-            where: "episode_status = 'resolved'"
           name: resolved_episodes_have_end_dates
+          arguments:
+            expression: 'episode_end_date IS NOT NULL'
+            where: "episode_status = 'resolved'"
       
       # Ensure active episodes don't have end dates or duration
       - dbt_utils.expression_is_true:
-          expression: 'episode_end_date IS NULL AND episode_duration_days IS NULL'
-          config:
-            where: "episode_status = 'active'"
           name: active_episodes_no_end_data
+          arguments:
+            expression: 'episode_end_date IS NULL AND episode_duration_days IS NULL'
+            where: "episode_status = 'active'"
       

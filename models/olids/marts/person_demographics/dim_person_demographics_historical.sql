@@ -90,6 +90,12 @@ Implementation Notes:
 
 • Ethnicity reflects clinical observations over time, not assumed static
 
+Data Quality Filters:
+
+• Excludes persons without practice registration (orphaned patients)
+
+• Excludes persons without valid birth dates (required for age calculations)
+
 For analysis queries, join using:
 WHERE analysis_date >= effective_start_date 
   AND (effective_end_date IS NULL OR analysis_date < effective_end_date)
@@ -163,6 +169,17 @@ ethnicity_changes AS (
     WHERE ea.clinical_effective_date >= DATE_TRUNC('month', DATEADD('year', -5, CURRENT_DATE)) -- Last 5 years only
 ),
 
+active_status_changes AS (
+    -- Get all active status changes as temporal boundaries
+    SELECT DISTINCT
+        pas.person_id,
+        COALESCE(pas.current_registration_start, CURRENT_DATE) as status_change_date,
+        pas.is_active,
+        pas.inactive_reason
+    FROM {{ ref('dim_person_active_status') }} pas
+    WHERE COALESCE(pas.current_registration_start, CURRENT_DATE) >= DATE_TRUNC('month', DATEADD('year', -5, CURRENT_DATE)) -- Last 5 years only
+),
+
 all_change_points AS (
     -- Combine all potential change points (practice + age + address + ethnicity changes)
     SELECT person_id, registration_start_date as change_date, 'practice_start' as change_type
@@ -197,6 +214,12 @@ all_change_points AS (
     SELECT person_id, ethnicity_date as change_date, 'ethnicity_change' as change_type
     FROM ethnicity_changes
     WHERE ethnicity_date IS NOT NULL
+    
+    UNION ALL
+    
+    SELECT person_id, status_change_date as change_date, 'active_status_change' as change_type
+    FROM active_status_changes
+    WHERE status_change_date IS NOT NULL
 ),
 
 temporal_periods AS (
@@ -236,6 +259,7 @@ demographics_by_period AS (
         -- Basic person attributes
         bd.sk_patient_id,
         bd.birth_year,
+        bd.birth_month,
         bd.birth_date_approx,
         bd.death_year,  
         bd.death_date_approx,
@@ -256,7 +280,11 @@ demographics_by_period AS (
         ec.ethnicity_subcategory,
         ec.ethnicity_granular,
         ec.category_sort,
-        ec.display_sort_key
+        ec.display_sort_key,
+        
+        -- Get active status valid during this period
+        asc.is_active,
+        asc.inactive_reason
         
     FROM temporal_periods tp
     INNER JOIN {{ ref('dim_person_birth_death') }} bd
@@ -272,11 +300,15 @@ demographics_by_period AS (
     LEFT JOIN ethnicity_changes ec
         ON tp.person_id = ec.person_id
         AND ec.ethnicity_date <= tp.effective_start_date
+    LEFT JOIN active_status_changes asc
+        ON tp.person_id = asc.person_id
+        AND asc.status_change_date <= tp.effective_start_date
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY tp.person_id, tp.effective_start_date
         ORDER BY pc.is_current_registration DESC, pc.registration_start_date DESC,
                  ac.address_start_date DESC NULLS LAST,
-                 ec.ethnicity_date DESC NULLS LAST, ec.ethnicity_sequence ASC
+                 ec.ethnicity_date DESC NULLS LAST, ec.ethnicity_sequence ASC,
+                 asc.status_change_date DESC NULLS LAST
     ) = 1
 )
 
@@ -286,12 +318,41 @@ SELECT
     dbp.sk_patient_id,
     dbp.effective_start_date,
     dbp.effective_end_date,
-    dbp.period_sequence,
+    ROW_NUMBER() OVER (
+        PARTITION BY dbp.person_id 
+        ORDER BY dbp.effective_start_date
+    ) AS period_sequence,
     
     -- Age and temporal attributes
     dbp.age_at_period_start as age,
     dbp.birth_year,
     dbp.birth_date_approx,
+    -- Additional birth date format for legacy compatibility
+    CASE
+        WHEN dbp.birth_year IS NOT NULL AND dbp.birth_month IS NOT NULL
+            THEN LAST_DAY(DATE_FROM_PARTS(dbp.birth_year, dbp.birth_month, 1))
+        ELSE NULL
+    END AS birth_date_approx_end_of_month,
+    -- Conservative age calculation using last day of birth month
+    CASE
+        WHEN dbp.birth_year IS NOT NULL AND dbp.birth_month IS NOT NULL THEN
+            CASE
+                WHEN dbp.effective_start_date >= DATEADD(
+                        year,
+                        DATEDIFF(year,
+                                 LAST_DAY(DATE_FROM_PARTS(dbp.birth_year, dbp.birth_month, 1)),
+                                 dbp.effective_start_date),
+                        LAST_DAY(DATE_FROM_PARTS(dbp.birth_year, dbp.birth_month, 1))
+                     )
+                THEN DATEDIFF(year,
+                              LAST_DAY(DATE_FROM_PARTS(dbp.birth_year, dbp.birth_month, 1)),
+                              dbp.effective_start_date)
+                ELSE DATEDIFF(year,
+                              LAST_DAY(DATE_FROM_PARTS(dbp.birth_year, dbp.birth_month, 1)),
+                              dbp.effective_start_date) - 1
+            END
+        ELSE NULL
+    END AS age_at_least,
     dbp.death_year,
     dbp.death_date_approx,
     dbp.is_deceased,
@@ -365,6 +426,10 @@ SELECT
     
     -- Static demographics (joined from existing tables)
     COALESCE(sex.sex, 'Unknown') AS sex,
+    
+    -- Temporal active status (from temporal periods)
+    COALESCE(dbp.is_active, FALSE) AS is_active,
+    dbp.inactive_reason,
     
     -- Temporal ethnicity (from temporal periods)
     COALESCE(dbp.ethnicity_category, 'Unknown') AS ethnicity_category,
@@ -443,5 +508,9 @@ LEFT JOIN {{ ref('dim_practice_neighbourhood') }} nbhd
     ON dbp.practice_code = nbhd.practice_code
 
 -- Address is now included in the main demographics_by_period CTE with temporal tracking
+
+-- Filter out persons without practice registration and valid birth dates (data quality requirements)
+WHERE dbp.practice_code IS NOT NULL
+  AND dbp.birth_date_approx IS NOT NULL
 
 ORDER BY dbp.person_id, dbp.effective_start_date

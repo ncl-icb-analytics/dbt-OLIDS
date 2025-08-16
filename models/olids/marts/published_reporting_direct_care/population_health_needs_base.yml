@@ -52,22 +52,20 @@ models:
         tests:
           - accepted_values:
               values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
-              config:
-                where: "bmi_category is not null"
+              where: "bmi_category is not null"
       
       - name: smoking_status
         description: Current smoking status (may be null if no smoking data)
         tests:
           - accepted_values:
               values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
-              config:
-                where: "smoking_status is not null"
+              where: "smoking_status is not null"
       
       - name: risk_factor_count
         description: Count of active behavioural risk factors (0-3, null if no risk factor data)
         tests:
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 0
                 max_value: 3
                 where: "risk_factor_count is not null"
@@ -107,6 +105,6 @@ models:
         tests:
           - not_null  # Always has a value (0 or more) from dim_person_conditions
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 0
                 max_value: 50

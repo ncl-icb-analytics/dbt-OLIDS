@@ -60,7 +60,7 @@ models:
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              config:
+              arguments:
                 min_value: 1
                 max_value: 6
                 inclusive: true
