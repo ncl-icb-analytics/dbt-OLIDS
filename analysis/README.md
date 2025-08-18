@@ -51,7 +51,7 @@ SELECT
 FROM {{ ref('person_month_analysis_base') }}
 WHERE financial_year = '2025/26' -- date spine                                   
 GROUP BY ALL
-HAVING COUNT(DISTINCT person_id) >= 100  -- statistical validity
+HAVING COUNT(DISTINCT CASE WHEN has_ckd THEN person_id END) > 5  -- Small number suppression
 ORDER BY practice_neighbourhood, ckd_prevalence_pct DESC
 ```
 

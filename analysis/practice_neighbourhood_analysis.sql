@@ -30,7 +30,7 @@ FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
     AND practice_neighbourhood IS NOT NULL
 GROUP BY ALL
-HAVING COUNT(DISTINCT person_id) >= 1000  -- Adequate sample size
+HAVING COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) > 5  -- Small number suppression
 ORDER BY diabetes_prevalence_pct DESC;
 
 -- =============================================================================
@@ -48,7 +48,7 @@ FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
     AND practice_neighbourhood IS NOT NULL
 GROUP BY ALL
-HAVING COUNT(DISTINCT person_id) >= 500  -- Meaningful practice size
+HAVING COUNT(DISTINCT person_id) > 5  -- Small number suppression
 ORDER BY practice_neighbourhood, list_size DESC;
 
 -- =============================================================================
@@ -84,5 +84,5 @@ SELECT
 FROM {{ ref('person_month_analysis_base') }}
 WHERE practice_neighbourhood IS NOT NULL
 GROUP BY ALL
-HAVING COUNT(DISTINCT person_id) >= 1000  -- Adequate sample size
+HAVING COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) > 5  -- Small number suppression
 ORDER BY practice_neighbourhood, financial_year;
