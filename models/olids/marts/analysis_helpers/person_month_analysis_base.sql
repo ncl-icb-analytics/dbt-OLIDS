@@ -21,7 +21,7 @@ WITH active_person_months AS (
     -- Generate person-months for registered patients
     -- Excludes periods with no active registration
     SELECT DISTINCT
-        ds.month_start_date as analysis_month,
+        ds.month_end_date as analysis_month,
         hr.person_id,
         hr.practice_id,
         hr.practice_name
@@ -29,11 +29,11 @@ WITH active_person_months AS (
     INNER JOIN {{ ref('int_date_spine') }} ds
         ON hr.registration_start_date <= ds.month_end_date
         AND (hr.registration_end_date IS NULL OR hr.registration_end_date >= ds.month_start_date)
-        AND ds.month_start_date >= DATEADD('month', -60, CURRENT_DATE)  -- 5 year limit: complete left/died history available
-        AND ds.month_start_date <= DATE_TRUNC('month', CURRENT_DATE)    -- Don't create future months
+        AND ds.month_end_date >= DATEADD('month', -60, CURRENT_DATE)  -- 5 year limit: complete left/died history available
+        AND ds.month_end_date <= LAST_DAY(CURRENT_DATE)    -- Don't create future months
     WHERE hr.registration_status = 'Active'
     QUALIFY ROW_NUMBER() OVER (
-        PARTITION BY ds.month_start_date, hr.person_id 
+        PARTITION BY ds.month_end_date, hr.person_id 
         ORDER BY hr.registration_start_date DESC, hr.is_current_registration DESC
     ) = 1
 )
@@ -180,7 +180,7 @@ FROM active_person_months apm
 
 -- Join date spine for all date dimensions
 INNER JOIN {{ ref('int_date_spine') }} ds
-    ON apm.analysis_month = ds.month_start_date
+    ON apm.analysis_month = ds.month_end_date
 
 -- Join demographics with temporal logic
 INNER JOIN {{ ref('dim_person_demographics_historical') }} d
@@ -256,7 +256,7 @@ LEFT JOIN (
         SELECT 
             person_id,
             condition_code,
-            ds.month_start_date as analysis_month,
+            ds.month_end_date as analysis_month,
             -- Active episode: ongoing during this month
             (episode_start_date <= ds.month_end_date 
                 AND (episode_end_date IS NULL OR episode_end_date >= ds.month_start_date))::BOOLEAN as has_active_episode,
@@ -265,8 +265,8 @@ LEFT JOIN (
                 AND episode_start_date <= ds.month_end_date)::BOOLEAN as has_new_episode
         FROM {{ ref('fct_person_condition_episodes') }} ep
         CROSS JOIN {{ ref('int_date_spine') }} ds
-        WHERE ds.month_start_date >= DATEADD('month', -60, CURRENT_DATE)  -- 5 years: limit based on complete left/died history
-            AND ds.month_start_date <= DATE_TRUNC('month', CURRENT_DATE)
+        WHERE ds.month_end_date >= DATEADD('month', -60, CURRENT_DATE)  -- 5 years: limit based on complete left/died history
+            AND ds.month_end_date <= LAST_DAY(CURRENT_DATE)
     ) episode_flags
     GROUP BY person_id, analysis_month
 ) c ON apm.person_id = c.person_id AND apm.analysis_month = c.analysis_month
