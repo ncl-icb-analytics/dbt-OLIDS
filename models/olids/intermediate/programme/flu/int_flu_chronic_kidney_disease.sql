@@ -5,7 +5,7 @@ Business Rule: Person is eligible if they have:
 1. A direct CKD diagnosis (CKD_COD) - earliest occurrence, OR
 2. Latest CKD stage 3-5 code (CKD35_COD) is more recent than or equal to 
    latest any-stage CKD code (CKD15_COD)
-3. AND aged 6 months to under 65 years
+3. AND aged 6 months or older (minimum age for flu vaccination)
 
 The hierarchical logic ensures people with more recent severe CKD stages are included,
 even if they have older general CKD codes. This replaces the complex macro logic
@@ -126,8 +126,8 @@ best_ckd_eligibility AS (
 final_eligibility AS (
     SELECT 
         bce.campaign_id,
-        'CKD_GROUP' AS rule_group_id,
-        'Chronic Kidney Disease (Stage 3-5)' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Chronic Kidney Disease (Stage 3-5)' AS risk_group,
         bce.person_id,
         bce.qualifying_event_date,
         cc.campaign_reference_date AS reference_date,
@@ -142,9 +142,8 @@ final_eligibility AS (
     JOIN {{ ref('dim_person_demographics') }} demo
         ON bce.person_id = demo.person_id
     WHERE bce.rn = 1  -- Only the best eligibility per person
-        -- Apply age restrictions: 6 months to under 65 years
+        -- Apply minimum age restriction: 6 months (minimum age for flu vaccination)
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 6
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility

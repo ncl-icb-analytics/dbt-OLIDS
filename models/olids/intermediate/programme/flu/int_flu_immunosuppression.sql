@@ -7,7 +7,7 @@ Business Rule: Person is eligible if they have:
    - Immunosuppression medication (IMMRX_COD) since lookback date
    - Immunosuppression administration (IMMADM_COD) since lookback date  
    - Chemotherapy/radiotherapy (DXT_CHEMO_COD) since lookback date
-2. AND aged 6 months to under 65 years
+2. AND aged 6 months or older (minimum age for flu vaccination)
 
 Combination rule - multiple evidence sources with OR logic.
 */
@@ -116,8 +116,8 @@ best_immuno_evidence AS (
 final_eligibility AS (
     SELECT 
         bie.campaign_id,
-        'IMMUNO_GROUP' AS rule_group_id,
-        'Immunosuppression' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Immunosuppression' AS risk_group,
         bie.person_id,
         bie.evidence_date AS qualifying_event_date,
         bie.evidence_type,
@@ -134,7 +134,6 @@ final_eligibility AS (
     WHERE bie.rn = 1  -- Only the most recent evidence per person per campaign
         -- Apply age restrictions: 6 months to under 65 years
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 6
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility

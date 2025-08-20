@@ -75,8 +75,8 @@ best_laiv_vaccination_evidence AS (
 final_eligibility AS (
     SELECT 
         blve.campaign_id,
-        'LAIV_GROUP' AS rule_group_id,
-        'LAIV Vaccination' AS rule_group_name,
+        'Vaccination Tracking' AS campaign_category,
+        'LAIV Vaccination' AS risk_group,
         blve.person_id,
         blve.vaccination_date AS qualifying_event_date,
         blve.vaccination_type,

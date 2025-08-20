@@ -38,8 +38,8 @@ children_preschool AS (
 final_eligibility AS (
     SELECT 
         cp.campaign_id,
-        'CHILD_PRESCHOOL' AS rule_group_id,
-        'Children Preschool' AS rule_group_name,
+        'Age-Based' AS campaign_category,
+        'Children Preschool' AS risk_group,
         cp.person_id,
         NULL AS qualifying_event_date,  -- No specific event for age-based rules
         cp.campaign_reference_date AS reference_date,

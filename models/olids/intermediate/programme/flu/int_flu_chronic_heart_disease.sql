@@ -3,7 +3,7 @@ Simplified Chronic Heart Disease Eligibility Rule
 
 Business Rule: Person is eligible if they have:
 1. A chronic heart disease diagnosis (CHD_COD) - earliest occurrence in history
-2. AND aged 6 months to under 65 years
+2. AND aged 6 months or older (minimum age for flu vaccination)
 
 This is a straightforward "simple" rule - single diagnosis code with age restrictions.
 Much clearer than the previous macro-based approach.
@@ -37,8 +37,8 @@ people_with_chd_diagnosis AS (
 final_eligibility AS (
     SELECT 
         chd.campaign_id,
-        'CHD_GROUP' AS rule_group_id,
-        'Chronic Heart Disease' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Chronic Heart Disease' AS risk_group,
         chd.person_id,
         chd.first_chd_date AS qualifying_event_date,
         chd.campaign_reference_date AS reference_date,
@@ -51,9 +51,8 @@ final_eligibility AS (
     JOIN {{ ref('dim_person_demographics') }} demo
         ON chd.person_id = demo.person_id
     WHERE 1=1
-        -- Apply age restrictions: 6 months to under 65 years
+        -- Apply age restrictions: 6 months or older (minimum age for flu vaccination)
         AND DATEDIFF('month', demo.birth_date_approx, chd.campaign_reference_date) >= 6
-        AND DATEDIFF('year', demo.birth_date_approx, chd.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility

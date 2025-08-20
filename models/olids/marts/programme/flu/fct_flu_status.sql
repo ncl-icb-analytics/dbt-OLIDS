@@ -39,7 +39,7 @@ all_eligible_people AS (
 vaccination_administration AS (
     -- Flu Vaccination Administration (includes LAIV)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'VACCINATION_ADMINISTERED' AS status_type, 1 AS status_priority, created_at
     FROM {{ ref('int_flu_vaccination_given') }}
@@ -48,7 +48,7 @@ vaccination_administration AS (
     
     -- LAIV Administration (separate tracking for LAIV-specific analysis)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'LAIV_ADMINISTERED' AS status_type, 1 AS status_priority, created_at
     FROM {{ ref('int_flu_laiv_vaccination') }}
@@ -57,7 +57,7 @@ vaccination_administration AS (
 -- Vaccination declination records
 vaccination_declined AS (
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'VACCINATION_DECLINED' AS status_type, 2 AS status_priority, created_at
     FROM {{ ref('int_flu_vaccination_declined') }}
@@ -74,8 +74,8 @@ all_vaccination_activity AS (
 eligible_no_vaccination AS (
     SELECT 
         ep.campaign_id,
-        'NO_VAX_RECORD' AS rule_group_id,
-        'No Vaccination Record' AS rule_group_name,
+        'NO_VAX_RECORD' AS campaign_category,
+        'No Vaccination Record' AS risk_group,
         ep.person_id,
         NULL AS qualifying_event_date,
         ep.reference_date,
@@ -106,8 +106,8 @@ all_vaccination_status AS (
 final_status AS (
     SELECT 
         avs.campaign_id,
-        avs.rule_group_id,
-        avs.rule_group_name,
+        avs.campaign_category,
+        avs.risk_group,
         avs.person_id,
         avs.qualifying_event_date AS status_date,
         avs.reference_date,
@@ -139,4 +139,4 @@ final_status AS (
 )
 
 SELECT * FROM final_status
-ORDER BY person_id, status_priority, rule_group_id
+ORDER BY person_id, status_priority, campaign_category

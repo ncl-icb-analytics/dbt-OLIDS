@@ -7,116 +7,128 @@ Business Rule: Person is eligible if they have:
    - Asthma medication prescription (ASTRX_COD) since lookback date, OR
    - Asthma medication administration (ASTMED_COD) since lookback date, OR  
    - Asthma hospital admission (ASTADM_COD) - any time in history
-3. AND aged 6 months to under 65 years
+3. AND aged 6 months or older (minimum age for flu vaccination)
 
 This replaces the complex macro-based approach with clear, readable SQL.
 */
 
 {{ config(materialized='table') }}
 
-{%- set campaign_id = var('flu_current_campaign', 'flu_2024_25') -%}
-
-WITH campaign_config AS (
-    {{ flu_campaign_config(campaign_id) }}
+WITH all_campaigns AS (
+    -- Generate data for both current and previous campaigns automatically
+    SELECT * FROM ({{ flu_campaign_config(var('flu_current_campaign', 'flu_2024_25')) }})
+    UNION ALL
+    SELECT * FROM ({{ flu_campaign_config(var('flu_previous_campaign', 'flu_2023_24')) }})
 ),
 
--- Step 1: Find people with asthma diagnosis
+-- Step 1: Find people with asthma diagnosis (for all campaigns)
 people_with_asthma_diagnosis AS (
     SELECT 
-        person_id,
-        MIN(clinical_effective_date) AS first_asthma_date
-    FROM ({{ get_observations("'AST_COD'", 'UKHSA_FLU') }})
-    WHERE clinical_effective_date IS NOT NULL
-        AND clinical_effective_date <= CURRENT_DATE
-    GROUP BY person_id
+        cc.campaign_id,
+        obs.person_id,
+        MIN(obs.clinical_effective_date) AS first_asthma_date,
+        cc.audit_end_date
+    FROM ({{ get_observations("'AST_COD'", 'UKHSA_FLU') }}) obs
+    CROSS JOIN all_campaigns cc
+    WHERE obs.clinical_effective_date IS NOT NULL
+        AND obs.clinical_effective_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, obs.person_id, cc.audit_end_date
 ),
 
--- Step 2: Find people with recent asthma medications (prescriptions)
+-- Step 2: Find people with recent asthma medications (prescriptions, for all campaigns)
 people_with_recent_asthma_prescriptions AS (
     SELECT 
-        person_id,
-        MAX(order_date) AS latest_prescription_date
-    FROM ({{ get_medication_orders(cluster_id='ASTRX_COD', source='UKHSA_FLU') }})
-    CROSS JOIN campaign_config cc
-    WHERE order_date IS NOT NULL
-        AND order_date >= cc.asthma_medication_lookback_date
-        AND order_date <= cc.audit_end_date
-    GROUP BY person_id
+        cc.campaign_id,
+        med.person_id,
+        MAX(med.order_date) AS latest_prescription_date,
+        cc.audit_end_date
+    FROM ({{ get_medication_orders(cluster_id='ASTRX_COD', source='UKHSA_FLU') }}) med
+    CROSS JOIN all_campaigns cc
+    WHERE med.order_date IS NOT NULL
+        AND med.order_date >= cc.asthma_medication_lookback_date
+        AND med.order_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, med.person_id, cc.audit_end_date
 ),
 
--- Step 3: Find people with recent asthma medication administration
+-- Step 3: Find people with recent asthma medication administration (for all campaigns)
 people_with_recent_asthma_medications AS (
     SELECT 
-        person_id,
-        MAX(clinical_effective_date) AS latest_medication_date
-    FROM ({{ get_observations("'ASTMED_COD'", 'UKHSA_FLU') }})
-    CROSS JOIN campaign_config cc
-    WHERE clinical_effective_date IS NOT NULL
-        AND clinical_effective_date >= cc.asthma_medication_lookback_date
-        AND clinical_effective_date <= cc.audit_end_date
-    GROUP BY person_id
+        cc.campaign_id,
+        obs.person_id,
+        MAX(obs.clinical_effective_date) AS latest_medication_date,
+        cc.audit_end_date
+    FROM ({{ get_observations("'ASTMED_COD'", 'UKHSA_FLU') }}) obs
+    CROSS JOIN all_campaigns cc
+    WHERE obs.clinical_effective_date IS NOT NULL
+        AND obs.clinical_effective_date >= cc.asthma_medication_lookback_date
+        AND obs.clinical_effective_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, obs.person_id, cc.audit_end_date
 ),
 
--- Step 4: Find people with asthma hospital admissions (any time)
+-- Step 4: Find people with asthma hospital admissions (any time, for all campaigns)
 people_with_asthma_admissions AS (
     SELECT 
-        person_id,
-        MAX(clinical_effective_date) AS latest_admission_date
-    FROM ({{ get_observations("'ASTADM_COD'", 'UKHSA_FLU') }})
-    WHERE clinical_effective_date IS NOT NULL
-        AND clinical_effective_date <= CURRENT_DATE
-    GROUP BY person_id
+        cc.campaign_id,
+        obs.person_id,
+        MAX(obs.clinical_effective_date) AS latest_admission_date,
+        cc.audit_end_date
+    FROM ({{ get_observations("'ASTADM_COD'", 'UKHSA_FLU') }}) obs
+    CROSS JOIN all_campaigns cc
+    WHERE obs.clinical_effective_date IS NOT NULL
+        AND obs.clinical_effective_date <= cc.audit_end_date
+    GROUP BY cc.campaign_id, obs.person_id, cc.audit_end_date
 ),
 
--- Step 5: Combine all evidence of active asthma management
+-- Step 5: Combine all evidence of active asthma management (for all campaigns)
 people_with_active_asthma_evidence AS (
-    SELECT DISTINCT person_id, 'Recent prescription' AS evidence_type, latest_prescription_date AS evidence_date
+    SELECT DISTINCT campaign_id, person_id, 'Recent prescription' AS evidence_type, latest_prescription_date AS evidence_date
     FROM people_with_recent_asthma_prescriptions
     
     UNION ALL
     
-    SELECT DISTINCT person_id, 'Recent medication', latest_medication_date
+    SELECT DISTINCT campaign_id, person_id, 'Recent medication', latest_medication_date
     FROM people_with_recent_asthma_medications
     
     UNION ALL
     
-    SELECT DISTINCT person_id, 'Hospital admission', latest_admission_date
+    SELECT DISTINCT campaign_id, person_id, 'Hospital admission', latest_admission_date
     FROM people_with_asthma_admissions
 ),
 
--- Step 6: Get the most recent evidence per person
+-- Step 6: Get the most recent evidence per person (for all campaigns)
 best_asthma_evidence AS (
     SELECT 
+        campaign_id,
         person_id,
         evidence_type,
         evidence_date,
-        ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY evidence_date DESC) AS rn
+        ROW_NUMBER() OVER (PARTITION BY campaign_id, person_id ORDER BY evidence_date DESC) AS rn
     FROM people_with_active_asthma_evidence
 ),
 
--- Step 7: Combine diagnosis with evidence requirement
+-- Step 7: Combine diagnosis with evidence requirement (for all campaigns)
 asthma_eligible_people AS (
     SELECT 
+        diag.campaign_id,
         diag.person_id,
         diag.first_asthma_date,
         evid.evidence_type,
         evid.evidence_date
     FROM people_with_asthma_diagnosis diag
     INNER JOIN best_asthma_evidence evid
-        ON diag.person_id = evid.person_id
+        ON diag.campaign_id = evid.campaign_id
+        AND diag.person_id = evid.person_id
         AND evid.rn = 1  -- Most recent evidence only
 ),
 
--- Step 8: Add demographics and apply age restrictions
+-- Step 8: Add demographics and apply age restrictions (for all campaigns)
 final_eligibility AS (
     SELECT 
-        '{{ campaign_id }}' AS campaign_id,
-        'AST_GROUP' AS rule_group_id,
-        'Active Asthma Management' AS rule_group_name,
+        ae.campaign_id,
+        'Clinical Condition' AS campaign_category,
+        'Active Asthma Management' AS risk_group,
         ae.person_id,
         ae.first_asthma_date AS qualifying_event_date,
-        ae.evidence_date,
-        ae.evidence_type,
         cc.campaign_reference_date AS reference_date,
         'People with asthma diagnosis and recent medication or admission' AS description,
         demo.birth_date_approx,
@@ -124,14 +136,14 @@ final_eligibility AS (
         DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) AS age_years_at_ref_date,
         cc.audit_end_date AS created_at
     FROM asthma_eligible_people ae
-    CROSS JOIN campaign_config cc
+    JOIN all_campaigns cc
+        ON ae.campaign_id = cc.campaign_id
     JOIN {{ ref('dim_person_demographics') }} demo
         ON ae.person_id = demo.person_id
     WHERE 1=1
-        -- Apply age restrictions: 6 months to under 65 years
+        -- Apply age restrictions: 6 months or older (minimum age for flu vaccination)
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 6
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility
-ORDER BY person_id
+ORDER BY campaign_id, person_id

@@ -39,8 +39,8 @@ children_school_age AS (
 final_eligibility AS (
     SELECT 
         csa.campaign_id,
-        'CHILD_SCHOOL_AGE' AS rule_group_id,
-        'Children School Age' AS rule_group_name,
+        'Age-Based' AS campaign_category,
+        'Children School Age' AS risk_group,
         csa.person_id,
         NULL AS qualifying_event_date,  -- No specific event for age-based rules
         csa.campaign_reference_date AS reference_date,
