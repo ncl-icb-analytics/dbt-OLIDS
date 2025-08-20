@@ -60,12 +60,9 @@ WITH practice_uptake AS (
         COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated AND age BETWEEN 18 AND 64 THEN person_id END) AS vaccinated_18_to_64,
         COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated AND age >= 65 THEN person_id END) AS vaccinated_65_plus,
         
-        -- Primary eligibility reasons (top categories)
-        COUNT(DISTINCT CASE WHEN is_eligible AND primary_rule_group_id = 'OVER65_GROUP' THEN person_id END) AS eligible_over_65,
-        COUNT(DISTINCT CASE WHEN is_eligible AND primary_rule_group_id = 'CHILD_PRESCHOOL' THEN person_id END) AS eligible_preschool,
-        COUNT(DISTINCT CASE WHEN is_eligible AND primary_rule_group_id = 'CHILD_SCHOOL_AGE' THEN person_id END) AS eligible_school_age,
-        COUNT(DISTINCT CASE WHEN is_eligible AND primary_rule_type = 'CLINICAL_CONDITION' THEN person_id END) AS eligible_clinical_condition,
-        COUNT(DISTINCT CASE WHEN is_eligible AND primary_rule_group_id = 'PREGNANCY_GROUP' THEN person_id END) AS eligible_pregnancy,
+        -- Primary eligibility categories
+        COUNT(DISTINCT CASE WHEN is_eligible AND campaign_category = 'Age-Based' THEN person_id END) AS eligible_age_based,
+        COUNT(DISTINCT CASE WHEN is_eligible AND campaign_category = 'Clinical Condition' THEN person_id END) AS eligible_clinical_condition,
         
         -- Time to vaccination metrics (for vaccinated eligible patients)
         AVG(CASE WHEN is_eligible AND vaccinated THEN days_to_vaccination END) AS avg_days_to_vaccination,

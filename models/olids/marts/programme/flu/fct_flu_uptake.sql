@@ -22,29 +22,15 @@ Usage:
 ) }}
 
 WITH eligible_people AS (
-    -- Get all eligible people with their primary eligibility reason
-    SELECT DISTINCT
+    -- Get all eligible people with ALL their eligibility reasons (not just primary)
+    SELECT 
         campaign_id,
         person_id,
-        FIRST_VALUE(rule_group_id) OVER (
-            PARTITION BY campaign_id, person_id 
-            ORDER BY eligibility_priority, rule_group_id
-        ) AS primary_rule_group_id,
-        FIRST_VALUE(rule_group_name) OVER (
-            PARTITION BY campaign_id, person_id 
-            ORDER BY eligibility_priority, rule_group_id
-        ) AS primary_rule_group_name,
-        FIRST_VALUE(eligibility_reason) OVER (
-            PARTITION BY campaign_id, person_id 
-            ORDER BY eligibility_priority, rule_group_id
-        ) AS primary_eligibility_reason,
-        FIRST_VALUE(rule_type) OVER (
-            PARTITION BY campaign_id, person_id 
-            ORDER BY eligibility_priority, rule_group_id
-        ) AS primary_rule_type,
-        COUNT(DISTINCT rule_group_id) OVER (
-            PARTITION BY campaign_id, person_id
-        ) AS eligibility_count
+        campaign_category,
+        risk_group,
+        eligibility_reason,
+        rule_type,
+        eligibility_priority
     FROM {{ ref('fct_flu_eligibility') }}
 ),
 
@@ -90,11 +76,10 @@ combined_data AS (
             WHEN e.person_id IS NOT NULL THEN TRUE 
             ELSE FALSE 
         END AS is_eligible,
-        e.primary_rule_group_id,
-        e.primary_rule_group_name,
-        e.primary_eligibility_reason,
-        e.primary_rule_type,
-        e.eligibility_count,
+        COALESCE(e.campaign_category, 'Not Eligible') AS campaign_category,
+        COALESCE(e.risk_group, 'Vaccinated Despite Ineligibility') AS risk_group,
+        e.eligibility_reason,
+        e.rule_type,
         
         -- Vaccination information
         v.vaccination_status,
@@ -122,6 +107,8 @@ combined_data AS (
     FULL OUTER JOIN vaccination_status v
         ON e.campaign_id = v.campaign_id 
         AND e.person_id = v.person_id
+    WHERE e.person_id IS NOT NULL  -- Keep all eligible people
+        OR v.vaccination_status IN ('VACCINATION_ADMINISTERED', 'LAIV_ADMINISTERED')  -- Keep only vaccinated non-eligible people
 ),
 
 -- Add demographics and practice information
@@ -151,11 +138,10 @@ final_uptake AS (
         
         -- Eligibility information
         cd.is_eligible,
-        cd.primary_rule_group_id,
-        cd.primary_rule_group_name,
-        cd.primary_eligibility_reason,
-        cd.primary_rule_type,
-        cd.eligibility_count,
+        cd.campaign_category,
+        cd.risk_group,
+        cd.eligibility_reason,
+        cd.rule_type,
         
         -- Vaccination information
         cd.vaccination_status,

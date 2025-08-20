@@ -29,15 +29,15 @@ people_over_65 AS (
         cc.audit_end_date
     FROM {{ ref('dim_person_demographics') }} demo
     CROSS JOIN all_campaigns cc
-    WHERE DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) >= 65
+    WHERE demo.birth_date_approx <= DATEADD('year', -65, cc.campaign_reference_date)
 ),
 
 -- Step 2: Format as standard eligibility output (for all campaigns)
 final_eligibility AS (
     SELECT 
         p65.campaign_id,
-        'OVER65_GROUP' AS rule_group_id,
-        'Age 65 and Over' AS rule_group_name,
+        'Age-Based' AS campaign_category,
+        'Age 65 and Over' AS risk_group,
         p65.person_id,
         NULL AS qualifying_event_date,  -- No specific event for age-based rules
         p65.campaign_reference_date AS reference_date,

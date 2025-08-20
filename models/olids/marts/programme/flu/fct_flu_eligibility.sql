@@ -22,7 +22,7 @@ Usage:
 
 {{ config(
     materialized='table',
-    cluster_by=['campaign_id', 'person_id', 'rule_group_id']
+    cluster_by=['campaign_id', 'person_id', 'campaign_category']
 ) }}
 
 WITH
@@ -30,7 +30,7 @@ WITH
 age_based_eligibility AS (
     -- Over 65
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'AGE_BASED' AS rule_type, 1 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_over_65') }}
@@ -39,7 +39,7 @@ age_based_eligibility AS (
     
     -- Children preschool age
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'AGE_BASED' AS rule_type, 1 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_children_preschool') }}
@@ -48,17 +48,26 @@ age_based_eligibility AS (
     
     -- Children school age
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'AGE_BASED' AS rule_type, 1 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_children_school_age') }}
+    
+    UNION ALL
+    
+    -- Under 65 At Risk (parent category for clinical conditions in under 65s)
+    SELECT 
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
+        description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
+        'PARENT_CATEGORY' AS rule_type, 2 AS eligibility_priority, created_at
+    FROM {{ ref('int_flu_under_65_at_risk') }}
 ),
 
 -- Simple clinical condition eligibility
 clinical_condition_eligibility AS (
     -- Chronic Heart Disease
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'CLINICAL_CONDITION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_chronic_heart_disease') }}
@@ -67,7 +76,7 @@ clinical_condition_eligibility AS (
     
     -- Chronic Liver Disease
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'CLINICAL_CONDITION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_chronic_liver_disease') }}
@@ -76,7 +85,7 @@ clinical_condition_eligibility AS (
     
     -- Chronic Neurological Disease
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'CLINICAL_CONDITION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_chronic_neurological_disease') }}
@@ -85,7 +94,7 @@ clinical_condition_eligibility AS (
     
     -- Asplenia
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'CLINICAL_CONDITION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_asplenia') }}
@@ -94,7 +103,7 @@ clinical_condition_eligibility AS (
     
     -- Learning Disability
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'CLINICAL_CONDITION' AS rule_type, 4 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_learning_disability') }}
@@ -103,7 +112,7 @@ clinical_condition_eligibility AS (
     
     -- Household Immunocompromised Contact
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'SOCIAL_FACTOR' AS rule_type, 4 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_household_immunocompromised') }}
@@ -112,7 +121,7 @@ clinical_condition_eligibility AS (
     
     -- Asthma Admission (simple rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'CLINICAL_CONDITION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_asthma_admission') }}
@@ -122,7 +131,7 @@ clinical_condition_eligibility AS (
 complex_clinical_eligibility AS (
     -- Asthma (combination rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'COMBINATION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_active_asthma_management') }}
@@ -131,7 +140,7 @@ complex_clinical_eligibility AS (
     
     -- CKD (hierarchical rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'HIERARCHICAL' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_chronic_kidney_disease') }}
@@ -140,7 +149,7 @@ complex_clinical_eligibility AS (
     
     -- Diabetes (exclusion rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'EXCLUSION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_diabetes') }}
@@ -149,7 +158,7 @@ complex_clinical_eligibility AS (
     
     -- Immunosuppression (combination rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'COMBINATION' AS rule_type, 2 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_immunosuppression') }}
@@ -158,7 +167,7 @@ complex_clinical_eligibility AS (
     
     -- Health & Social Care Workers (combination rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'COMBINATION' AS rule_type, 4 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_health_social_care_worker') }}
@@ -167,7 +176,7 @@ complex_clinical_eligibility AS (
     
     -- Chronic Respiratory Disease (combination rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'COMBINATION' AS rule_type, 3 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_chronic_respiratory_disease') }}
@@ -176,7 +185,7 @@ complex_clinical_eligibility AS (
     
     -- Severe Obesity (hierarchical rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'HIERARCHICAL' AS rule_type, 4 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_severe_obesity') }}
@@ -185,7 +194,7 @@ complex_clinical_eligibility AS (
     
     -- Homeless (hierarchical rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'HIERARCHICAL' AS rule_type, 4 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_homeless') }}
@@ -194,7 +203,7 @@ complex_clinical_eligibility AS (
     
     -- Long-term Residential Care (hierarchical rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'HIERARCHICAL' AS rule_type, 2 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_long_term_residential_care') }}
@@ -203,7 +212,7 @@ complex_clinical_eligibility AS (
     
     -- Pregnancy (hierarchical rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'HIERARCHICAL' AS rule_type, 2 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_pregnancy') }}
@@ -212,7 +221,7 @@ complex_clinical_eligibility AS (
     
     -- Unpaid Carer (exclusion rule)
     SELECT 
-        campaign_id, rule_group_id, rule_group_name, person_id, qualifying_event_date, reference_date,
+        campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'EXCLUSION' AS rule_type, 5 AS eligibility_priority, created_at
     FROM {{ ref('int_flu_unpaid_carer') }}
@@ -231,8 +240,8 @@ all_eligibility AS (
 final_eligibility AS (
     SELECT 
         campaign_id,
-        rule_group_id,
-        rule_group_name,
+        campaign_category,
+        risk_group,
         person_id,
         qualifying_event_date,
         reference_date,
@@ -247,4 +256,4 @@ final_eligibility AS (
 )
 
 SELECT * FROM final_eligibility
-ORDER BY person_id, eligibility_priority, rule_group_id
+ORDER BY person_id, eligibility_priority, campaign_category

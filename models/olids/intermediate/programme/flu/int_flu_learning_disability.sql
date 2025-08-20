@@ -3,7 +3,7 @@ Simplified Learning Disability Eligibility Rule
 
 Business Rule: Person is eligible if they have:
 1. A learning disability diagnosis (LEARNDIS_COD) - latest occurrence in history
-2. AND aged 6 months to under 65 years
+2. AND aged 6 months or older (minimum age for flu vaccination)
 
 Simple diagnosis rule - single code with age restrictions.
 */
@@ -35,8 +35,8 @@ people_with_learning_disability_diagnosis AS (
 final_eligibility AS (
     SELECT 
         ld.campaign_id,
-        'LEARNDIS_GROUP' AS rule_group_id,
-        'Learning Disability' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Learning Disability' AS risk_group,
         ld.person_id,
         ld.latest_learndis_date AS qualifying_event_date,
         cc.campaign_reference_date AS reference_date,
@@ -53,7 +53,6 @@ final_eligibility AS (
     WHERE 1=1
         -- Apply age restrictions: 6 months to under 65 years
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 6
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility

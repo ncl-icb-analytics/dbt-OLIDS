@@ -25,8 +25,8 @@ This approach is much simpler than the previous hardcoded comparison tables.
 
 SELECT 
     campaign_id,
-    rule_group_id,
-    rule_group_name,
+    campaign_category,
+    risk_group,
     rule_type,
     eligibility_priority,
     COUNT(*) as eligible_people,
@@ -34,5 +34,5 @@ SELECT
     MAX(age_years) as max_age,
     AVG(age_years) as avg_age
 FROM {{ ref('fct_flu_eligibility') }}
-GROUP BY campaign_id, rule_group_id, rule_group_name, rule_type, eligibility_priority
-ORDER BY campaign_id, eligibility_priority, rule_group_id
+GROUP BY campaign_id, campaign_category, risk_group, rule_type, eligibility_priority
+ORDER BY campaign_id, eligibility_priority, campaign_category

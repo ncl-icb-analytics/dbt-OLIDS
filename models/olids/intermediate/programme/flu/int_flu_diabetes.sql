@@ -5,7 +5,7 @@ Business Rule: Person is eligible if they have:
 1. Addison's disease diagnosis (ADDIS_COD) - earliest occurrence, OR
 2. Diabetes diagnosis (DIAB_COD) that is NOT superseded by a more recent 
    diabetes resolved code (DMRES_COD)
-3. AND aged 6 months to under 65 years
+3. AND aged 6 months or older (minimum age for flu vaccination)
 
 The exclusion logic ensures that people whose diabetes is resolved
 are not eligible unless they have a more recent diabetes code.
@@ -128,8 +128,8 @@ best_diabetes_eligibility AS (
 final_eligibility AS (
     SELECT 
         bde.campaign_id,
-        'DIAB_GROUP' AS rule_group_id,
-        'Diabetes' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Diabetes' AS risk_group,
         bde.person_id,
         bde.qualifying_event_date,
         cc.campaign_reference_date AS reference_date,
@@ -144,9 +144,8 @@ final_eligibility AS (
     JOIN {{ ref('dim_person_demographics') }} demo
         ON bde.person_id = demo.person_id
     WHERE bde.rn = 1  -- Only the best eligibility per person
-        -- Apply age restrictions: 6 months to under 65 years
+        -- Apply age restrictions: 6 months or older (minimum age for flu vaccination)
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 6
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility

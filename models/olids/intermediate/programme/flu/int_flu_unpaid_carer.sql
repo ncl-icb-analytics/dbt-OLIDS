@@ -5,7 +5,7 @@ Business Rule: Person is eligible if they have:
 1. Latest carer code (CARER_COD) AND no more recent not-carer code (NOTCARER_COD)
    - CARER_COD > NOTCARER_COD (or no NOTCARER_COD at all)
 2. AND NOT eligible via other clinical risk groups, BMI, or pregnancy
-3. AND aged 5 to under 65 years (60 months to under 65 years)
+3. AND aged 5 years or older (minimum age for carer flu vaccination)
 
 Exclusion rule - carer status with exclusion from other eligibility routes.
 */
@@ -116,12 +116,12 @@ people_eligible_as_carers_only AS (
 final_eligibility AS (
     SELECT 
         peco.campaign_id,
-        'CARER_GROUP' AS rule_group_id,
-        'Carer' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Carer' AS risk_group,
         peco.person_id,
         peco.latest_carer_date AS qualifying_event_date,
         cc.campaign_reference_date AS reference_date,
-        'Unpaid carers aged 5-64 (not eligible via other risk groups)' AS description,
+        'Unpaid carers aged 5+ (not eligible via other risk groups)' AS description,
         demo.birth_date_approx,
         DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) AS age_months_at_ref_date,
         DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) AS age_years_at_ref_date,
@@ -134,7 +134,6 @@ final_eligibility AS (
     WHERE 1=1
         -- Apply age restrictions: 5 to under 65 years (60 months to under 65 years)
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 60
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility

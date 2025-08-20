@@ -2,9 +2,12 @@
 Simplified Flu Vaccination Declined Rule
 
 Business Rule: Person has declined flu vaccination if they have:
-1. Vaccination declined code (DECL_COD) OR no consent code (NOCONS_COD)
-2. AND have NOT been vaccinated (not in FLUVAX_GROUP)
+1. Vaccination declined code (DECL_COD) OR no consent code (NOCONS_COD) within the campaign period
+2. AND have NOT been vaccinated (not in FLUVAX_GROUP) 
 3. No age restrictions (applies to all ages)
+
+Date Restrictions: Only considers declined codes after the campaign's vaccination tracking date
+to avoid counting historical declines from previous campaigns.
 
 Exclusion rule - tracks people with vaccination declination records.
 This is used for reporting/exclusion purposes.
@@ -29,6 +32,8 @@ people_with_declined_codes AS (
     FROM ({{ get_observations("'DECL_COD'", 'UKHSA_FLU') }}) obs
     CROSS JOIN all_campaigns cc
     WHERE obs.clinical_effective_date IS NOT NULL
+        -- Restrict to current campaign period (after previous campaign's vaccination tracking date)
+        AND obs.clinical_effective_date > cc.flu_vaccination_after_date
         AND obs.clinical_effective_date <= cc.audit_end_date
     GROUP BY cc.campaign_id, obs.person_id
 ),
@@ -43,6 +48,8 @@ people_with_no_consent_codes AS (
     FROM ({{ get_observations("'NOCONS_COD'", 'UKHSA_FLU') }}) obs
     CROSS JOIN all_campaigns cc
     WHERE obs.clinical_effective_date IS NOT NULL
+        -- Restrict to current campaign period (after previous campaign's vaccination tracking date)
+        AND obs.clinical_effective_date > cc.flu_vaccination_after_date
         AND obs.clinical_effective_date <= cc.audit_end_date
     GROUP BY cc.campaign_id, obs.person_id
 ),
@@ -90,8 +97,8 @@ people_who_declined_and_not_vaccinated AS (
 final_eligibility AS (
     SELECT 
         pwdnv.campaign_id,
-        'FLUDECLINED_GROUP' AS rule_group_id,
-        'Flu Vaccination Declined' AS rule_group_name,
+        'Vaccination Tracking' AS campaign_category,
+        'Flu Vaccination Declined' AS risk_group,
         pwdnv.person_id,
         pwdnv.decline_date AS qualifying_event_date,
         pwdnv.decline_type,

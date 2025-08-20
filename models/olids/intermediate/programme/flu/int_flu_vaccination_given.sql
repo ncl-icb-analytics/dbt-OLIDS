@@ -118,8 +118,8 @@ best_flu_vaccination_evidence AS (
 final_eligibility AS (
     SELECT 
         bfve.campaign_id,
-        'FLUVAX_GROUP' AS rule_group_id,
-        'Flu Vaccination Given' AS rule_group_name,
+        'Vaccination Tracking' AS campaign_category,
+        'Flu Vaccination Given' AS risk_group,
         bfve.person_id,
         bfve.vaccination_date AS qualifying_event_date,
         bfve.vaccination_type,

@@ -5,7 +5,7 @@ Business Rule: Person is eligible if they have:
 1. ANY of the following evidence of severe obesity:
    - BMI value >= 40 (from BMI_COD observations)
    - Severe obesity diagnosis code (SEV_OBESITY_COD)
-2. AND aged 18 to under 65 years (216 months to under 65 years)
+2. AND aged 18 years or older (minimum age for obesity flu vaccination)
 
 Hierarchical rule - BMI values and diagnostic codes with threshold logic.
 */
@@ -93,8 +93,8 @@ best_obesity_evidence AS (
 final_eligibility AS (
     SELECT 
         boe.campaign_id,
-        'BMI_GROUP' AS rule_group_id,
-        'Morbid Obesity' AS rule_group_name,
+        'Clinical Condition' AS campaign_category,
+        'Morbid Obesity' AS risk_group,
         boe.person_id,
         boe.evidence_date AS qualifying_event_date,
         cc.campaign_reference_date AS reference_date,
@@ -111,7 +111,6 @@ final_eligibility AS (
     WHERE boe.rn = 1  -- Only the most recent evidence per person
         -- Apply age restrictions: 18 to under 65 years (216 months to under 65 years)
         AND DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) >= 216
-        AND DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) < 65
 )
 
 SELECT * FROM final_eligibility
