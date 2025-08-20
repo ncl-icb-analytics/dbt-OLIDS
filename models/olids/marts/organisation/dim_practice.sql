@@ -17,7 +17,7 @@ SELECT
     
     -- Practice details
     dict.practicecode AS practice_code,
-    dict.practicename AS practice_name,
+    UPPER(dict.practicename) AS practice_name,
     
     -- PCN details
     dict.networkcode AS pcn_code,
