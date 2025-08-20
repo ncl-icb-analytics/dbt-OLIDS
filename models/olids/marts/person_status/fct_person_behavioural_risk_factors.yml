@@ -46,16 +46,19 @@ models:
         description: Flag indicating BMI data is available
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: has_smoking_data
         description: Flag indicating smoking data is available
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: has_alcohol_data
         description: Flag indicating alcohol data is available
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]

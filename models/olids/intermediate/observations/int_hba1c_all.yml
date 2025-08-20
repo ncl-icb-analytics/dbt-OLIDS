@@ -23,17 +23,20 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('int_patient_person_unique')
-              field: person_id
+              arguments:
+                to: ref('int_patient_person_unique')
+                field: person_id
       - name: measurement_type
         description: Type of HbA1c measurement (IFCC, DCCT, or UNKNOWN)
         tests:
           - not_null
           - accepted_values:
-              values: ['IFCC', 'DCCT', 'UNKNOWN']
+              arguments:
+                values: ['IFCC', 'DCCT', 'UNKNOWN']
       - name: is_valid_hba1c
         description: Flag indicating if HbA1c value is within valid range for its measurement type
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]

@@ -20,7 +20,8 @@ models:
         tests:
           - not_null  # Verifies demographics join worked
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: age
         description: Current age in years
@@ -32,7 +33,8 @@ models:
         tests:
           - not_null  # Demographics always has sex (even if 'Unknown')
           - accepted_values:
-              values: ['Male', 'Female', 'Unknown']
+              arguments:
+                values: ['Male', 'Female', 'Unknown']
       
       - name: ethnicity_category
         description: Main ethnicity category classification
@@ -51,7 +53,8 @@ models:
         description: BMI classification (may be null if no BMI data)
         tests:
           - accepted_values:
-              values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
+              arguments:
+                values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
               config:
                 where: "bmi_category is not null"
       
@@ -59,7 +62,8 @@ models:
         description: Current smoking status (may be null if no smoking data)
         tests:
           - accepted_values:
-              values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
+              arguments:
+                values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
               config:
                 where: "smoking_status is not null"
       
@@ -79,21 +83,24 @@ models:
         tests:
           - not_null  # Verifies behavioural risk factors join worked
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: has_smoking_data
         description: Flag indicating if smoking data is available for this person
         tests:
           - not_null  # Always TRUE/FALSE from behavioural risk factors
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: has_alcohol_data
         description: Flag indicating if alcohol data is available for this person
         tests:
           - not_null  # Always TRUE/FALSE from behavioural risk factors
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       # Conditions section (from dim_person_conditions - should never be null)
       - name: has_diabetes
@@ -101,7 +108,8 @@ models:
         tests:
           - not_null  # Verifies conditions join worked - always TRUE/FALSE
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: total_conditions
         description: Total number of recorded conditions

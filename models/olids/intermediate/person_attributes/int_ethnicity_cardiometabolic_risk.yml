@@ -25,8 +25,9 @@ models:
           - unique
           - not_null
           - relationships:
-              to: ref('int_patient_person_unique')
-              field: person_id
+              arguments:
+                to: ref('int_patient_person_unique')
+                field: person_id
       - name: observation_id
         description: Latest ethnicity observation identifier
         tests:
@@ -78,7 +79,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['South Asian', 'Chinese', 'Other Asian', 'Middle Eastern', 'Black African', 'African-Caribbean', 'Other/White']
+              arguments:
+                values: ['South Asian', 'Chinese', 'Other Asian', 'Middle Eastern', 'Black African', 'African-Caribbean', 'Other/White']
       - name: latest_ethnicity_date
         description: Date of most recent ethnicity observation for this person
       - name: all_ethnicity_groups

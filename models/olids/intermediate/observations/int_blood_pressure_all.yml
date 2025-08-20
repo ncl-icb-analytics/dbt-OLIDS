@@ -17,8 +17,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('int_patient_person_unique')
-              field: person_id
+              arguments:
+                to: ref('int_patient_person_unique')
+                field: person_id
       - name: clinical_effective_date
         description: Date of blood pressure measurement
         tests:

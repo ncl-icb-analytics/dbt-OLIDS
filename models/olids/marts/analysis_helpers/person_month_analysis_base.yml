@@ -23,7 +23,8 @@ models:
 
       Refresh Strategy: Incremental (new months only). Periodic full refresh captures late-arriving clinical data.'
     
-    tags: ['daily', 'monthly-full']
+    config:
+      tags: ['daily', 'monthly-full']
     
     columns:
       - name: analysis_month
@@ -83,64 +84,78 @@ models:
     tests:
       # Data quality tests
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - person_id
-            - analysis_month
+          arguments:
+            combination_of_columns:
+              - person_id
+              - analysis_month
       
       # Boolean fields should never be NULL (should be FALSE for no conditions)
       - dbt_utils.not_null_proportion:
-          column_name: has_dm
-          at_least: 0.99
+          arguments:
+            column_name: has_dm
+            at_least: 0.99
       
       - dbt_utils.not_null_proportion:
-          column_name: has_htn
-          at_least: 0.99
+          arguments:
+            column_name: has_htn
+            at_least: 0.99
       
       - dbt_utils.not_null_proportion:
-          column_name: has_ckd
-          at_least: 0.99
+          arguments:
+            column_name: has_ckd
+            at_least: 0.99
       
       # All boolean flags should be actual booleans (TRUE/FALSE, not NULL)
       - dbt_utils.expression_is_true:
-          expression: "has_dm IS NOT NULL"
+          arguments:
+            expression: "has_dm IS NOT NULL"
       
       - dbt_utils.expression_is_true:
-          expression: "has_htn IS NOT NULL"
+          arguments:
+            expression: "has_htn IS NOT NULL"
       
       - dbt_utils.expression_is_true:
-          expression: "has_any_condition IS NOT NULL"
+          arguments:
+            expression: "has_any_condition IS NOT NULL"
       
       # Logical consistency tests
       - dbt_utils.expression_is_true:
-          expression: "NOT (has_any_condition = FALSE AND total_active_conditions > 0)"
+          arguments:
+            expression: "NOT (has_any_condition = FALSE AND total_active_conditions > 0)"
           name: has_any_condition_consistency
       
       - dbt_utils.expression_is_true:
-          expression: "NOT (has_any_condition = TRUE AND total_active_conditions = 0)"
+          arguments:
+            expression: "NOT (has_any_condition = TRUE AND total_active_conditions = 0)"
           name: has_any_condition_consistency_reverse
       
       # Financial year consistency
       - dbt_utils.expression_is_true:
-          expression: "financial_quarter_number BETWEEN 1 AND 4"
+          arguments:
+            expression: "financial_quarter_number BETWEEN 1 AND 4"
           name: valid_financial_quarter
       
       - dbt_utils.expression_is_true:
-          expression: "month_number BETWEEN 1 AND 12"
+          arguments:
+            expression: "month_number BETWEEN 1 AND 12"
           name: valid_month_number
       
       # No future months
       - dbt_utils.expression_is_true:
-          expression: "analysis_month <= CURRENT_DATE()"
+          arguments:
+            expression: "analysis_month <= CURRENT_DATE()"
           name: no_future_months
       
       # Practice must exist for active registrations
       - dbt_utils.not_null_proportion:
-          column_name: practice_name
-          at_least: 0.99
+          arguments:
+            column_name: practice_name
+            at_least: 0.99
       
       # Demographics consistency
       - dbt_utils.expression_is_true:
-          expression: "sex IN ('Male', 'Female', 'Unknown', 'Other')"
+          arguments:
+            expression: "sex IN ('Male', 'Female', 'Unknown', 'Other')"
           name: valid_sex_values
       
       # Note: Prevalence checks moved to custom SQL test file

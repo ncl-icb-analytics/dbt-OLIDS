@@ -29,8 +29,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('int_patient_person_unique')
-              field: person_id
+              arguments:
+                to: ref('int_patient_person_unique')
+                field: person_id
       - name: bmi_value
         description: BMI value in kg/m²
         tests:
@@ -50,7 +51,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['recorded', 'calculated']
+              arguments:
+                values: ['recorded', 'calculated']
       - name: requires_lower_bmi_thresholds
         description: 'Flag indicating if person requires lower BMI thresholds per NICE guidance'
       - name: cardiometabolic_risk_ethnicity_group
@@ -64,7 +66,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Invalid', 'Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
+              arguments:
+                values: ['Invalid', 'Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
       - name: bmi_risk_sort_key
         description: 'BMI risk sort key using ethnicity-adjusted thresholds (higher = higher risk)'
         tests:

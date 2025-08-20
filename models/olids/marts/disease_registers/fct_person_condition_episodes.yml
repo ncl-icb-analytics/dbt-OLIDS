@@ -30,36 +30,86 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [
-                'Asthma', 'Atrial Fibrillation', 'Cancer', 'Coronary Heart Disease',
-                'Chronic Kidney Disease', 'COPD', 'Dementia', 'Depression', 'Diabetes',
-                'Epilepsy', 'Familial Hypercholesterolaemia', 'Frailty', 'Gestational Diabetes',
-                'Heart Failure', 'Hypertension', 'Learning Disability', 'NAFLD',
-                'Non-Diabetic Hyperglycaemia', 'Osteoporosis', 'Peripheral Arterial Disease',
-                'Palliative Care', 'Rheumatoid Arthritis', 'Severe Mental Illness', 'Stroke and TIA'
-              ]
+              arguments:
+                values:
+                  - 'Asthma'
+                  - 'Atrial Fibrillation'
+                  - 'Cancer'
+                  - 'Coronary Heart Disease'
+                  - 'Chronic Kidney Disease'
+                  - 'COPD'
+                  - 'Dementia'
+                  - 'Depression'
+                  - 'Diabetes'
+                  - 'Epilepsy'
+                  - 'Familial Hypercholesterolaemia'
+                  - 'Frailty'
+                  - 'Gestational Diabetes'
+                  - 'Heart Failure'
+                  - 'Hypertension'
+                  - 'Learning Disability'
+                  - 'NAFLD'
+                  - 'Non-Diabetic Hyperglycaemia'
+                  - 'Osteoporosis'
+                  - 'Peripheral Arterial Disease'
+                  - 'Palliative Care'
+                  - 'Rheumatoid Arthritis'
+                  - 'Severe Mental Illness'
+                  - 'Stroke and TIA'
 
       - name: condition_code
         description: 'Short condition code used in QOF registers'
         tests:
           - not_null
           - accepted_values:
-              values: [
-                'AST', 'AF', 'CAN', 'CHD', 'CKD', 'COPD', 'DEM', 'DEP', 'DM', 'EP',
-                'FH', 'FRAIL', 'GESTDIAB', 'HF', 'HTN', 'LD', 'NAFLD', 'NDH', 'OST',
-                'PAD', 'PC', 'RA', 'SMI', 'STIA'
-              ]
+              arguments:
+                values:
+                  - 'AST'
+                  - 'AF'
+                  - 'CAN'
+                  - 'CHD'
+                  - 'CKD'
+                  - 'COPD'
+                  - 'DEM'
+                  - 'DEP'
+                  - 'DM'
+                  - 'EP'
+                  - 'FH'
+                  - 'FRAIL'
+                  - 'GESTDIAB'
+                  - 'HF'
+                  - 'HTN'
+                  - 'LD'
+                  - 'NAFLD'
+                  - 'NDH'
+                  - 'OST'
+                  - 'PAD'
+                  - 'PC'
+                  - 'RA'
+                  - 'SMI'
+                  - 'STIA'
 
       - name: clinical_domain
         description: 'Clinical specialty domain for the condition'
         tests:
           - not_null
           - accepted_values:
-              values: [
-                'Respiratory', 'Cardiovascular', 'Oncology', 'Renal', 'Mental Health',
-                'Metabolic', 'Neurology', 'Genetics', 'Geriatric', 'Maternity',
-                'Neurodevelopmental', 'Hepatology', 'Musculoskeletal', 'Palliative Care'
-              ]
+              arguments:
+                values:
+                  - 'Respiratory'
+                  - 'Cardiovascular'
+                  - 'Oncology'
+                  - 'Renal'
+                  - 'Mental Health'
+                  - 'Metabolic'
+                  - 'Neurology'
+                  - 'Genetics'
+                  - 'Geriatric'
+                  - 'Maternity'
+                  - 'Neurodevelopmental'
+                  - 'Hepatology'
+                  - 'Musculoskeletal'
+                  - 'Palliative Care'
 
       - name: episode_number
         description: 'Sequential episode number for each condition per person'
@@ -79,7 +129,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['active', 'resolved']
+              arguments:
+                values: ['active', 'resolved']
 
       - name: episode_duration_days
         description: 'Duration of resolved episodes in days (NULL for active episodes)'
@@ -102,7 +153,8 @@ models:
         description: 'Current status for the most recent episode of this condition'
         tests:
           - accepted_values:
-              values: ['active', 'resolved']
+              arguments:
+                values: ['active', 'resolved']
               config:
                 where: 'current_condition_status IS NOT NULL'
 
