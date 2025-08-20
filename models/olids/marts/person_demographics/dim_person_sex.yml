@@ -17,5 +17,6 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Male', 'Female', 'Unknown']
+              arguments:
+                values: ['Male', 'Female', 'Unknown']
 

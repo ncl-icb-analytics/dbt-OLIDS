@@ -38,7 +38,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['recorded', 'calculated']
+              arguments:
+                values: ['recorded', 'calculated']
       - name: requires_lower_bmi_thresholds
         description: 'Flag indicating if person requires lower BMI thresholds per NICE guidance'
       - name: cardiometabolic_risk_ethnicity_group
@@ -48,13 +49,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true]
+              arguments:
+                values: [true]
       - name: bmi_category
         description: 'BMI categorisation using ethnicity-adjusted thresholds per NICE guidance'
         tests:
           - not_null
           - accepted_values:
-              values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
+              arguments:
+                values: ['Underweight', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III']
       - name: bmi_risk_sort_key
         description: 'BMI risk sort key using ethnicity-adjusted thresholds (higher = higher risk)'
         tests:
