@@ -21,12 +21,12 @@ SELECT
     
     -- PCN details
     dict.networkcode AS pcn_code,
-    UPPER(dict.networkname) AS pcn_name,
+    dict.networkname AS pcn_name,
     -- PCN name with borough prefix
     CASE 
         WHEN borough_map.pcn_borough IS NOT NULL 
-        THEN borough_map.pcn_borough || ': ' || UPPER(dict.networkname)
-        ELSE UPPER(dict.networkname)
+        THEN borough_map.pcn_borough || ': ' || dict.networkname
+        ELSE dict.networkname
     END AS pcn_name_with_borough,
     
     -- Borough information
