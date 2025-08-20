@@ -2,10 +2,10 @@ version: 2
 
 models:
   - name: dim_person_demographics_historical
-    description: 'Historical Person Demographics Dimension Table (Type 2 SCD)
+    description: 'Historical Person Demographics - Person-Month Grain
 
-      Provides person demographics with temporal context using modern Type 2 slowly changing dimensions approach.
-      Much more efficient than person-month grain - only creates new rows when demographics actually change.
+      Provides person demographics at monthly granularity for the last 5 years.
+      One row per person per month with accurate age and demographics for that specific month.
 
       
       Key Features:
@@ -91,19 +91,11 @@ models:
     tests:
       # SCD2 integrity tests
       - dbt_utils.unique_combination_of_columns:
-          name: dim_person_demographics_historical_unique_person_period
+          name: dim_person_demographics_historical_unique_person_month
           arguments:
             combination_of_columns:
               - person_id
-              - effective_start_date
+              - analysis_month
 
-      # Basic data quality tests - custom SCD2 tests moved to separate test files
-      - dbt_utils.expression_is_true:
-          name: dim_person_demographics_historical_valid_date_ranges
-          arguments:
-            expression: "effective_end_date IS NULL OR effective_start_date <= effective_end_date"
-
-      - dbt_utils.expression_is_true:
-          name: dim_person_demographics_historical_current_period_consistency
-          arguments:
-            expression: "(effective_end_date IS NULL AND is_current_period = true) OR (effective_end_date IS NOT NULL)"
+      # Person-month grain tests (SCD2 tests not applicable)
+      # Removed SCD2-specific temporal integrity tests since we use person-month grain

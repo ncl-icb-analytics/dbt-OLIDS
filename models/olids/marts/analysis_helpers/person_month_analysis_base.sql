@@ -182,11 +182,10 @@ FROM active_person_months apm
 INNER JOIN {{ ref('int_date_spine') }} ds
     ON apm.analysis_month = ds.month_end_date
 
--- Join demographics with temporal logic
+-- Join demographics (person-month grain - direct join)
 INNER JOIN {{ ref('dim_person_demographics_historical') }} d
     ON apm.person_id = d.person_id
-    AND apm.analysis_month >= d.effective_start_date
-    AND (d.effective_end_date IS NULL OR apm.analysis_month < d.effective_end_date)
+    AND apm.analysis_month = d.analysis_month
 
 -- Condition flags from episodes table
 LEFT JOIN (

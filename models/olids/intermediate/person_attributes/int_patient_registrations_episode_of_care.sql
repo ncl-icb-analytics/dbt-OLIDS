@@ -1,113 +1,108 @@
 {{
     config(
         materialized='table',
-        tags=['intermediate', 'registration', 'patient', 'practice'],
+        tags=['intermediate', 'registration', 'patient', 'practice', 'episode_of_care'],
         cluster_by=['person_id', 'registration_start_date'])
 }}
 
--- Patient Registrations - Clean registration periods from PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
--- Processes raw PATIENT_REGISTERED_PRACTITIONER_IN_ROLE into proper registration periods
--- Uses PATIENT_PERSON bridge table to get canonical person_id (not direct person_id field)
--- Handles overlapping registrations, active registrations, and historical periods
--- Forms the foundation for patient-practice relationship analysis
--- Uses the correct registration criteria for active patient determination
+-- Alternative Patient Registrations - Uses EPISODE_OF_CARE linked to PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
+-- Gets practitioner/organisation details from PATIENT_REGISTERED_PRACTITIONER_IN_ROLE via episode_of_care_id
+-- Uses episode temporal periods for proper historical registration tracking
+-- Uses PATIENT_PERSON bridge table to get canonical person_id
 
 WITH patient_to_person AS (
-    -- Get ALL person_id mappings for each patient_id to preserve registration history
-    -- Use staging table directly instead of deduplicated version to keep all patient_ids per person
+    -- Get canonical person_id for each patient_id via deduplicated PATIENT_PERSON bridge table
     SELECT 
         pp.patient_id,
         pp.person_id
-    FROM {{ ref('stg_olids_patient_person') }} AS pp
-    WHERE pp.patient_id IS NOT NULL 
-        AND pp.person_id IS NOT NULL
+    FROM {{ ref('int_patient_person_unique') }} AS pp
 ),
 
-raw_registrations AS (
-    -- Get all registration episodes from PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
-    -- Use patient_id to get canonical person_id via PATIENT_PERSON bridge
+raw_episodes AS (
+    -- Get episode of care records linked to practitioner registrations
+    -- Use practitioner role for organisation/practitioner details, episode for temporal periods
     SELECT
-        prpr.id AS registration_record_id,
-        prpr.patient_id,
+        eoc.id AS episode_record_id,
+        eoc.patient_id,
         ptp.person_id,  -- Use person_id from bridge table instead of direct field
         prpr.organisation_id,
-        prpr.start_date AS registration_start_date,
-        prpr.end_date AS registration_end_date,
+        eoc.episode_of_care_start_date AS registration_start_date,
+        eoc.episode_of_care_end_date AS registration_end_date,
         prpr.practitioner_id,
-        prpr.episode_of_care_id,
-        -- Get practice details
+        -- Get practice details using organisation_id from practitioner role
         o.name AS practice_name,
         o.organisation_code AS practice_ods_code,
         -- Get patient details
         p.sk_patient_id
-    FROM {{ ref('stg_olids_patient_registered_practitioner_in_role') }} AS prpr
+    FROM {{ ref('stg_olids_episode_of_care') }} AS eoc
     INNER JOIN patient_to_person AS ptp
-        ON prpr.patient_id = ptp.patient_id
+        ON eoc.patient_id = ptp.patient_id
+    INNER JOIN {{ ref('stg_olids_patient_registered_practitioner_in_role') }} AS prpr
+        ON eoc.id = prpr.episode_of_care_id
     LEFT JOIN {{ ref('stg_olids_organisation') }} AS o
         ON prpr.organisation_id = o.id
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
-        ON prpr.patient_id = p.id
-    WHERE prpr.start_date IS NOT NULL
-        AND prpr.patient_id IS NOT NULL  -- Filter out records without patient_id
-    -- FIX: Only deduplicate truly identical registration records from source data
-    -- Include person_id in partition to preserve same person's registrations via different patient_ids
+        ON eoc.patient_id = p.id
+    WHERE eoc.episode_of_care_start_date IS NOT NULL
+        AND eoc.patient_id IS NOT NULL  -- Filter out records without patient_id
+        AND prpr.organisation_id IS NOT NULL  -- Filter out records without organisation
+    -- FIX: Deduplicate identical episode records from source data
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY 
-            ptp.person_id,  -- Include person_id to preserve multiple patient_ids for same person
+            eoc.patient_id,
             prpr.organisation_id,
-            prpr.start_date,
-            prpr.end_date,
-            prpr.practitioner_id,
-            prpr.episode_of_care_id
-        ORDER BY prpr.id  -- Use ID as tie-breaker for deterministic results
+            eoc.episode_of_care_start_date,
+            eoc.episode_of_care_end_date,
+            prpr.practitioner_id
+        ORDER BY eoc.id  -- Use ID as tie-breaker for deterministic results
     ) = 1
 ),
 
 cleaned_registrations AS (
-    -- Clean and validate registration periods using new registration criteria
+    -- Clean and validate registration periods using same registration criteria as main table
     SELECT
-        rr.*,
-        -- Determine if registration is currently active using the new criteria:
+        re.*,
+        -- Determine if registration is currently active using the same criteria:
         -- Active if: end_date IS NULL OR end_date > CURRENT_DATE() OR end_date < start_date
         (
-            rr.registration_end_date IS NULL 
-            OR rr.registration_end_date > CURRENT_DATE()
-            OR rr.registration_end_date < rr.registration_start_date
+            re.registration_end_date IS NULL 
+            OR re.registration_end_date > CURRENT_DATE()
+            OR re.registration_end_date < re.registration_start_date
         ) AS is_current_registration,
 
         -- Calculate registration duration (only for completed registrations with valid end dates)
         CASE
-            WHEN rr.registration_end_date IS NOT NULL
-                AND rr.registration_end_date >= rr.registration_start_date
+            WHEN re.registration_end_date IS NOT NULL
+                AND re.registration_end_date >= re.registration_start_date
                 THEN
                     DATEDIFF(
                         'day',
-                        rr.registration_start_date,
-                        rr.registration_end_date
+                        re.registration_start_date,
+                        re.registration_end_date
                     )
         END AS registration_duration_days,
 
         -- Effective end date for analysis (NULL for active registrations)
         CASE
             WHEN (
-                rr.registration_end_date IS NULL 
-                OR rr.registration_end_date > CURRENT_DATE()
-                OR rr.registration_end_date < rr.registration_start_date
+                re.registration_end_date IS NULL 
+                OR re.registration_end_date > CURRENT_DATE()
+                OR re.registration_end_date < re.registration_start_date
             ) THEN NULL
-            ELSE rr.registration_end_date
+            ELSE re.registration_end_date
         END AS effective_end_date,
 
         -- Registration period classification
         CASE
             WHEN (
-                rr.registration_end_date IS NULL 
-                OR rr.registration_end_date > CURRENT_DATE()
-                OR rr.registration_end_date < rr.registration_start_date
+                re.registration_end_date IS NULL 
+                OR re.registration_end_date > CURRENT_DATE()
+                OR re.registration_end_date < re.registration_start_date
             ) THEN 'Active'
             ELSE 'Historical'
         END AS registration_status
 
-    FROM raw_registrations AS rr
+    FROM raw_episodes AS re
 ),
 
 person_registration_sequences AS (
@@ -117,14 +112,14 @@ person_registration_sequences AS (
         -- Number registrations chronologically per person
         ROW_NUMBER() OVER (
             PARTITION BY cr.person_id
-            ORDER BY cr.registration_start_date, cr.registration_record_id
+            ORDER BY cr.registration_start_date, cr.episode_record_id
         ) AS registration_sequence,
 
         -- Identify latest registration per person
         ROW_NUMBER() OVER (
             PARTITION BY cr.person_id
             ORDER BY
-                cr.registration_start_date DESC, cr.registration_record_id DESC
+                cr.registration_start_date DESC, cr.episode_record_id DESC
         ) = 1 AS is_latest_registration,
 
         -- Count total registrations per person
@@ -133,13 +128,13 @@ person_registration_sequences AS (
         -- Get next registration start date (for gap analysis)
         LEAD(cr.registration_start_date) OVER (
             PARTITION BY cr.person_id
-            ORDER BY cr.registration_start_date, cr.registration_record_id
+            ORDER BY cr.registration_start_date, cr.episode_record_id
         ) AS next_registration_start,
 
         -- Get previous registration end date
         LAG(cr.effective_end_date) OVER (
             PARTITION BY cr.person_id
-            ORDER BY cr.registration_start_date, cr.registration_record_id
+            ORDER BY cr.registration_start_date, cr.episode_record_id
         ) AS previous_registration_end
 
     FROM cleaned_registrations AS cr
@@ -148,7 +143,7 @@ person_registration_sequences AS (
 -- Final selection with complete registration analysis
 SELECT
     -- Core identifiers
-    prs.registration_record_id,
+    prs.episode_record_id AS registration_record_id,
     prs.person_id,
     prs.patient_id,
     prs.sk_patient_id,
@@ -188,7 +183,7 @@ SELECT
 
     -- Registration metadata
     prs.practitioner_id,
-    prs.episode_of_care_id
+    prs.episode_record_id AS episode_of_care_id
 
 FROM person_registration_sequences AS prs
 ORDER BY prs.person_id, prs.registration_start_date
