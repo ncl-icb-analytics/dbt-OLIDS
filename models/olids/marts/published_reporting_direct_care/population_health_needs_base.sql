@@ -30,6 +30,13 @@ SELECT
     d.age_at_least,
     d.death_date_approx,
     
+    -- Demographics: Age bands
+    d.age_band_5y,
+    d.age_band_10y,
+    d.age_band_nhs,
+    d.age_band_ons,
+    d.age_life_stage,
+    
     -- Demographics: Ethnicity
     d.ethnicity_category,
     d.ethnicity_subcategory,

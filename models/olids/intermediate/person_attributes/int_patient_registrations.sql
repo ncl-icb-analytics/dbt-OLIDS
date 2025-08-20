@@ -36,7 +36,7 @@ raw_registrations AS (
         prpr.practitioner_id,
         prpr.episode_of_care_id,
         -- Get practice details
-        o.name AS practice_name,
+        UPPER(o.name) AS practice_name,
         o.organisation_code AS practice_ods_code,
         -- Get patient details
         p.sk_patient_id

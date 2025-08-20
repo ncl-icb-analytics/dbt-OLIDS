@@ -17,16 +17,16 @@ SELECT
     
     -- Practice details
     dict.practicecode AS practice_code,
-    dict.practicename AS practice_name,
+    UPPER(dict.practicename) AS practice_name,
     
     -- PCN details
     dict.networkcode AS pcn_code,
-    dict.networkname AS pcn_name,
+    UPPER(dict.networkname) AS pcn_name,
     -- PCN name with borough prefix
     CASE 
         WHEN borough_map.pcn_borough IS NOT NULL 
-        THEN borough_map.pcn_borough || ': ' || dict.networkname
-        ELSE dict.networkname
+        THEN borough_map.pcn_borough || ': ' || UPPER(dict.networkname)
+        ELSE UPPER(dict.networkname)
     END AS pcn_name_with_borough,
     
     -- Borough information
