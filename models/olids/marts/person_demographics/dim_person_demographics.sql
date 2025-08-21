@@ -93,6 +93,17 @@ SELECT
     bd.person_id,
     bd.sk_patient_id,
 
+    -- Status Flags (key person attributes)
+    COALESCE(cr.is_current_registration, FALSE) AS is_active,
+    bd.is_deceased,
+    bd.is_dummy_patient,
+    CASE 
+        WHEN bd.is_deceased THEN 'Deceased'
+        WHEN cr.is_current_registration = FALSE THEN 'Registration ended'
+        WHEN cr.practice_code IS NULL THEN 'No registration history'
+        ELSE NULL
+    END AS inactive_reason,
+
     -- Basic Demographics from dim_person_birth_death
     bd.birth_year,
     bd.birth_date_approx,
@@ -103,7 +114,6 @@ SELECT
     END AS birth_date_approx_end_of_month,
     bd.death_year,
     bd.death_date_approx,
-    bd.is_deceased,
     
     -- Age calculations (current as of today or death date)
     CASE 
@@ -153,14 +163,6 @@ SELECT
     
     -- Sex from dim_person_sex
     COALESCE(sex.sex, 'Unknown') AS sex,
-
-    -- Active Status based on current registration
-    COALESCE(cr.is_current_registration, FALSE) AS is_active,
-    CASE 
-        WHEN cr.is_current_registration = FALSE THEN 'Registration ended'
-        WHEN cr.practice_code IS NULL THEN 'No registration history'
-        ELSE NULL
-    END AS inactive_reason,
 
     -- Ethnicity from latest recording
     COALESCE(le.ethnicity_category, 'Unknown') AS ethnicity_category,

@@ -17,7 +17,7 @@ SELECT
     
     -- Practice details
     dict.practicecode AS practice_code,
-    UPPER(dict.practicename) AS practice_name,
+    {{ clean_practice_name('dict_org.organisation_name', 'dict.practicename') }} AS practice_name,
     
     -- PCN details
     dict.networkcode AS pcn_code,
