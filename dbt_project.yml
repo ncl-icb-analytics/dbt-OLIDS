@@ -32,6 +32,8 @@ models:
   'dbt_olids':
     +materialized: table
     +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+    +persist_docs:
+      columns: true
     
     # Domain-specific configurations
     olids:

@@ -31,8 +31,8 @@ raw_registrations AS (
         prpr.patient_id,
         ptp.person_id,  -- Use person_id from bridge table instead of direct field
         prpr.organisation_id,
-        prpr.start_date AS registration_start_date,
-        prpr.end_date AS registration_end_date,
+        prpr.start_date AS registration_start_datetime,
+        prpr.end_date AS registration_end_datetime,
         prpr.practitioner_id,
         prpr.episode_of_care_id,
         -- Get practice details
@@ -72,39 +72,39 @@ cleaned_registrations AS (
         -- Determine if registration is currently active using the new criteria:
         -- Active if: end_date IS NULL OR end_date > CURRENT_DATE() OR end_date < start_date
         (
-            rr.registration_end_date IS NULL 
-            OR rr.registration_end_date > CURRENT_DATE()
-            OR rr.registration_end_date < rr.registration_start_date
+            rr.registration_end_datetime IS NULL 
+            OR rr.registration_end_datetime > CURRENT_DATE()
+            OR rr.registration_end_datetime < rr.registration_start_datetime
         ) AS is_current_registration,
 
         -- Calculate registration duration (only for completed registrations with valid end dates)
         CASE
-            WHEN rr.registration_end_date IS NOT NULL
-                AND rr.registration_end_date >= rr.registration_start_date
+            WHEN rr.registration_end_datetime IS NOT NULL
+                AND rr.registration_end_datetime >= rr.registration_start_datetime
                 THEN
                     DATEDIFF(
                         'day',
-                        rr.registration_start_date,
-                        rr.registration_end_date
+                        rr.registration_start_datetime,
+                        rr.registration_end_datetime
                     )
         END AS registration_duration_days,
 
         -- Effective end date for analysis (NULL for active registrations)
         CASE
             WHEN (
-                rr.registration_end_date IS NULL 
-                OR rr.registration_end_date > CURRENT_DATE()
-                OR rr.registration_end_date < rr.registration_start_date
+                rr.registration_end_datetime IS NULL 
+                OR rr.registration_end_datetime > CURRENT_DATE()
+                OR rr.registration_end_datetime < rr.registration_start_datetime
             ) THEN NULL
-            ELSE rr.registration_end_date
+            ELSE rr.registration_end_datetime
         END AS effective_end_date,
 
         -- Registration period classification
         CASE
             WHEN (
-                rr.registration_end_date IS NULL 
-                OR rr.registration_end_date > CURRENT_DATE()
-                OR rr.registration_end_date < rr.registration_start_date
+                rr.registration_end_datetime IS NULL 
+                OR rr.registration_end_datetime > CURRENT_DATE()
+                OR rr.registration_end_datetime < rr.registration_start_datetime
             ) THEN 'Active'
             ELSE 'Historical'
         END AS registration_status
@@ -119,29 +119,29 @@ person_registration_sequences AS (
         -- Number registrations chronologically per person
         ROW_NUMBER() OVER (
             PARTITION BY cr.person_id
-            ORDER BY cr.registration_start_date, cr.registration_record_id
+            ORDER BY cr.registration_start_datetime, cr.registration_record_id
         ) AS registration_sequence,
 
         -- Identify latest registration per person
         ROW_NUMBER() OVER (
             PARTITION BY cr.person_id
             ORDER BY
-                cr.registration_start_date DESC, cr.registration_record_id DESC
+                cr.registration_start_datetime DESC, cr.registration_record_id DESC
         ) = 1 AS is_latest_registration,
 
         -- Count total registrations per person
         COUNT(*) OVER (PARTITION BY cr.person_id) AS total_registrations_count,
 
         -- Get next registration start date (for gap analysis)
-        LEAD(cr.registration_start_date) OVER (
+        LEAD(cr.registration_start_datetime) OVER (
             PARTITION BY cr.person_id
-            ORDER BY cr.registration_start_date, cr.registration_record_id
+            ORDER BY cr.registration_start_datetime, cr.registration_record_id
         ) AS next_registration_start,
 
         -- Get previous registration end date
         LAG(cr.effective_end_date) OVER (
             PARTITION BY cr.person_id
-            ORDER BY cr.registration_start_date, cr.registration_record_id
+            ORDER BY cr.registration_start_datetime, cr.registration_record_id
         ) AS previous_registration_end
 
     FROM cleaned_registrations AS cr
@@ -158,9 +158,9 @@ SELECT
     prs.practice_name,
     prs.practice_ods_code,
 
-    -- Registration period details
-    prs.registration_start_date,
-    prs.registration_end_date,
+    -- Registration period details (expose as dates for downstream consumers)
+    prs.registration_start_datetime::date AS registration_start_date,
+    prs.registration_end_datetime::date AS registration_end_date,
     prs.effective_end_date,
     prs.registration_duration_days,
     prs.registration_status,
@@ -178,13 +178,13 @@ SELECT
     CASE
         WHEN
             prs.previous_registration_end IS NOT NULL
-            AND prs.registration_start_date
+            AND prs.registration_start_datetime
             > DATEADD('day', 1, prs.previous_registration_end)
             THEN
                 DATEDIFF(
                     'day',
                     prs.previous_registration_end,
-                    prs.registration_start_date
+                    prs.registration_start_datetime
                 )
     END AS gap_since_previous_registration_days,
 
@@ -193,4 +193,4 @@ SELECT
     prs.episode_of_care_id
 
 FROM person_registration_sequences AS prs
-ORDER BY prs.person_id, prs.registration_start_date
+ORDER BY prs.person_id, prs.registration_start_datetime

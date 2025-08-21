@@ -1,7 +1,7 @@
 {% macro generate_table_comment() %}
   {%- if execute -%}
     {%- set model_description = model.description or "" -%}
-    {%- set current_user = target.user | default('unknown') -%}
+    {%- set current_user = target.user | default('SYSTEM') if (target.user and target.user.strip()) else 'SYSTEM' -%}
     {%- set day = run_started_at.strftime('%d')|int -%}
     {%- set day_suffix = 'th' -%}
     {%- if day % 10 == 1 and day != 11 -%}{%- set day_suffix = 'st' -%}{%- endif -%}

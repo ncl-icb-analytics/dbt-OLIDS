@@ -2,34 +2,7 @@
     config(
         materialized='table',
         tags=['dimension', 'person', 'demographics', 'historical', 'person_month'],
-        cluster_by=['analysis_month', 'person_id'],
-        post_hook=[
-            "COMMENT ON COLUMN {{ this }}.analysis_month IS 'Month end date for this record'",
-            "COMMENT ON COLUMN {{ this }}.person_id IS 'Unique person identifier'",
-            "COMMENT ON COLUMN {{ this }}.sk_patient_id IS 'Surrogate key for patient record'",
-            "COMMENT ON COLUMN {{ this }}.age IS 'Age calculated as of analysis_month'",
-            "COMMENT ON COLUMN {{ this }}.age_at_least IS 'Conservative age calculation as of analysis_month'",
-            "COMMENT ON COLUMN {{ this }}.birth_year IS 'Birth year'",
-            "COMMENT ON COLUMN {{ this }}.birth_date_approx IS 'Approximate birth date'",
-            "COMMENT ON COLUMN {{ this }}.death_year IS 'Death year if deceased'",
-            "COMMENT ON COLUMN {{ this }}.death_date_approx IS 'Approximate death date if deceased'",
-            "COMMENT ON COLUMN {{ this }}.is_deceased IS 'Death status flag'",
-            "COMMENT ON COLUMN {{ this }}.age_band_5y IS '5-year age band as of analysis_month'",
-            "COMMENT ON COLUMN {{ this }}.age_band_10y IS '10-year age band as of analysis_month'", 
-            "COMMENT ON COLUMN {{ this }}.age_band_nhs IS 'NHS age band as of analysis_month'",
-            "COMMENT ON COLUMN {{ this }}.age_band_ons IS 'ONS age band as of analysis_month'",
-            "COMMENT ON COLUMN {{ this }}.age_life_stage IS 'Life stage as of analysis_month'",
-            "COMMENT ON COLUMN {{ this }}.practice_code IS 'Practice code active during this month'",
-            "COMMENT ON COLUMN {{ this }}.practice_name IS 'Practice name active during this month'",
-            "COMMENT ON COLUMN {{ this }}.registration_start_date IS 'Start date of practice registration'",
-            "COMMENT ON COLUMN {{ this }}.is_active IS 'Active registration status for this month'",
-            "COMMENT ON COLUMN {{ this }}.sex IS 'Sex'",
-            "COMMENT ON COLUMN {{ this }}.ethnicity_category IS 'Ethnicity category as recorded by this month'",
-            "COMMENT ON COLUMN {{ this }}.ethnicity_subcategory IS 'Ethnicity subcategory as recorded by this month'",
-            "COMMENT ON COLUMN {{ this }}.ethnicity_granular IS 'Detailed ethnicity as recorded by this month'",
-            "COMMENT ON COLUMN {{ this }}.main_language IS 'Main language'",
-            "COMMENT ON COLUMN {{ this }}.interpreter_needed IS 'Interpreter needed flag'"
-        ])
+        cluster_by=['analysis_month', 'person_id'])
 }}
 
 /*
@@ -351,6 +324,9 @@ SELECT
         ELSE 'Unknown'
     END AS age_life_stage,
     
+    -- School age flags (calculated for this analysis month using UK academic year logic)
+    {{ calculate_school_age_flags('bd.birth_date_approx', 'pm.analysis_month') }},
+    
     -- Sex
     COALESCE(sex.sex, 'Unknown') AS sex,
     
@@ -371,6 +347,7 @@ SELECT
     pm.practice_code,
     pm.practice_name,
     pm.registration_start_date,
+    pm.registration_end_date,
     
     -- PCN Information
     dp.pcn_code,

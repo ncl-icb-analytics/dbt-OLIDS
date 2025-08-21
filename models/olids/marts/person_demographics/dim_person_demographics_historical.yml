@@ -4,98 +4,221 @@ models:
   - name: dim_person_demographics_historical
     description: 'Historical Person Demographics - Person-Month Grain
 
-      Provides person demographics at monthly granularity for the last 5 years.
-      One row per person per month with accurate age and demographics for that specific month.
+      Provides person demographics at monthly granularity for complete temporal analysis.
+      One row per person per month with demographics valid for that specific month.
 
-      
       Key Features:
 
-      • Type 2 SCD with effective_start_date and effective_end_date (NULL = current period)
+      • Person-month grain for temporal demographic analysis
 
-      • 5-year rolling history window for performance optimisation
+      • Age calculated accurately for each analysis month
 
-      • Modern SCD2 implementation without sentinel dates (no 9999-12-31 values)
+      • Practice registration status as of each month
 
-      • Temporal tracking for: age progression, practice registration, address changes, ethnicity updates
+      • Ethnicity and address data as recorded by each month
 
-      • Static tracking for: sex, language, interpreter needs (assumed stable)
+      • 5-year rolling history window for performance
 
-      • Efficient storage - periods created only when demographics change, not monthly
-
-      
       Data Quality Filtering:
 
-      • EXCLUDES persons without practice registration (practice_code IS NULL)
+      • Excludes persons without birth dates (required for age)
 
-      • Ensures all records have valid GP practice information for complete demographics
+      • Excludes persons without any registration history
 
-      • Maintains data consistency with downstream analytics requirements
+      • Maintains temporal accuracy for all demographic attributes
 
-      
-      Implementation Notes:
-
-      • Uses NULL effective_end_date for current periods (not sentinel dates)
-
-      • Limited to last 5 years of data to balance completeness with performance
-
-      • Change points triggered by: practice moves, address changes, age milestones, ethnicity recordings
-
-      For analysis queries, join using:
-      WHERE analysis_date >= effective_start_date AND (effective_end_date IS NULL OR analysis_date < effective_end_date)'
+      For analysis queries using specific months.'
 
     columns:
+      - name: analysis_month
+        description: 'Month end date for this record'
+        tests:
+          - not_null
+
       - name: person_id
         description: 'Unique person identifier'
         tests:
           - not_null
 
-      - name: effective_start_date
-        description: 'SCD2: Period start date for temporal tracking'
+      - name: sk_patient_id
+        description: 'Surrogate key for patient record'
+
+      - name: is_active
+        description: 'Active registration status for this month'
         tests:
           - not_null
 
-      - name: effective_end_date
-        description: 'SCD2: Period end date for temporal tracking (NULL = current period)'
-
-      - name: period_sequence
-        description: 'SCD2: Sequential number for each temporal period per person'
+      - name: is_deceased
+        description: 'Death status flag'
         tests:
           - not_null
+
+      - name: is_dummy_patient
+        description: 'Dummy patient record flag'
+        tests:
+          - not_null
+
+      - name: inactive_reason
+        description: 'Reason for inactive status (Deceased, Registration ended, or NULL)'
+
+      - name: birth_year
+        description: 'Birth year'
+
+      - name: birth_month
+        description: 'Birth month'
+
+      - name: birth_date_approx
+        description: 'Approximate birth date'
+
+      - name: birth_date_approx_end_of_month
+        description: 'Birth date approximated to end of birth month'
+
+      - name: death_year
+        description: 'Death year if deceased'
+
+      - name: death_month
+        description: 'Death month if deceased'
+
+      - name: death_date_approx
+        description: 'Approximate death date if deceased'
 
       - name: age
-        description: 'SCD2: Age calculated as of effective_start_date (temporal)'
+        description: 'Age calculated as of analysis_month'
+
+      - name: age_at_least
+        description: 'Conservative age calculation as of analysis_month'
+
+      - name: age_band_5y
+        description: '5-year age bands as of analysis_month (0-4, 5-9, 10-14, ..., 80-84, 85+)'
 
       - name: age_band_10y
-        description: 'SCD2: 10-year age band as of effective_start_date (temporal)'
+        description: '10-year age bands as of analysis_month (0-9, 10-19, 20-29, ..., 70-79, 80+)'
 
-      - name: practice_code
-        description: 'SCD2: Practice registration valid during this period (temporal)'
+      - name: age_band_nhs
+        description: 'NHS Digital age bands as of analysis_month (0-4, 5-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, 85+)'
 
-      - name: sex
-        description: 'Static: Sex assumed stable over time (not temporally tracked)'
+      - name: age_band_ons
+        description: 'ONS age bands as of analysis_month (0-4, 5-9, 10-14, 15-19, 20-24, 25-29, ..., 80-84, 85+)'
 
-      - name: ethnicity_category
-        description: 'SCD2: Ethnicity category valid during this period (temporal)'
+      - name: age_life_stage
+        description: 'Life stage categories as of analysis_month (Infant, Toddler, Child, Adolescent, Young Adult, Adult, Senior, Elderly, Very Elderly)'
 
-      - name: post_code_hash
-        description: 'SCD2: Address hash valid during this period (temporal)'
-
-      - name: is_current_period
-        description: 'SCD2: Flag indicating if this is the current active period'
+      - name: is_primary_school_age
+        description: 'Flag indicating primary school age as of analysis_month (ages 4-10)'
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [true, false]
+
+      - name: is_secondary_school_age
+        description: 'Flag indicating secondary school age as of analysis_month (ages 11-17)'
+        tests:
+          - not_null
+
+      - name: sex
+        description: 'Sex'
+
+      - name: ethnicity_category
+        description: 'Ethnicity category as recorded by this month'
+
+      - name: ethnicity_subcategory
+        description: 'Ethnicity subcategory as recorded by this month'
+
+      - name: ethnicity_granular
+        description: 'Detailed ethnicity as recorded by this month'
+
+      - name: ethnicity_category_sort
+        description: 'Sort order for ethnicity category'
+
+      - name: ethnicity_display_sort_key
+        description: 'Display sort key for ethnicity'
+
+      - name: main_language
+        description: 'Main language'
+
+      - name: language_type
+        description: 'Language type classification'
+
+      - name: interpreter_type
+        description: 'Type of interpreter needed'
+
+      - name: interpreter_needed
+        description: 'Interpreter needed flag'
+
+      - name: practice_code
+        description: 'Practice code active during this month'
+
+      - name: practice_name
+        description: 'Practice name active during this month'
+
+      - name: registration_start_date
+        description: 'Start date of practice registration for this month'
+
+      - name: registration_end_date
+        description: 'End date of practice registration (NULL if active during this month)'
+
+      - name: pcn_code
+        description: 'Primary Care Network code'
+
+      - name: pcn_name
+        description: 'Primary Care Network name'
+
+      - name: pcn_name_with_borough
+        description: 'PCN name with borough prefix'
+
+      - name: practice_borough
+        description: 'Practice borough'
+
+      - name: practice_postcode
+        description: 'Practice postcode'
+
+      - name: practice_lsoa
+        description: 'Practice LSOA'
+
+      - name: practice_msoa
+        description: 'Practice MSOA'
+
+      - name: practice_latitude
+        description: 'Practice latitude coordinate'
+
+      - name: practice_longitude
+        description: 'Practice longitude coordinate'
+
+      - name: practice_neighbourhood
+        description: 'Practice neighbourhood classification'
+
+      - name: post_code_hash
+        description: 'Patient address postcode hash'
+
+      - name: uprn_hash
+        description: 'Patient address UPRN hash'
+
+      - name: household_id
+        description: 'Household identifier'
+
+      - name: lsoa_code_21
+        description: 'LSOA code 2021'
+
+      - name: lsoa_name_21
+        description: 'LSOA name 2021'
+
+      - name: ward_code
+        description: 'Ward code'
+
+      - name: ward_name
+        description: 'Ward name'
+
+      - name: imd_decile_19
+        description: 'IMD decile 2019'
+
+      - name: imd_quintile_19
+        description: 'IMD quintile 2019'
+
+      - name: patient_neighbourhood
+        description: 'Patient neighbourhood classification'
 
     tests:
-      # SCD2 integrity tests
       - dbt_utils.unique_combination_of_columns:
           name: dim_person_demographics_historical_unique_person_month
           arguments:
             combination_of_columns:
               - person_id
               - analysis_month
-
-      # Person-month grain tests (SCD2 tests not applicable)
-      # Removed SCD2-specific temporal integrity tests since we use person-month grain

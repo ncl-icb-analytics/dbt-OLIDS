@@ -1,58 +1,220 @@
 version: 2
+
 models:
   - name: dim_person_demographics
-    description: 'Current Person Demographics Dimension Table (Current State View)
+    description: 'Current Person Demographics Dimension Table
 
-      Provides current-state demographics derived from dim_person_demographics_historical.
-      Contains only the most recent demographic information for each person.
+      Provides current demographic snapshot for ALL persons with registration history.
+      Built directly from intermediate tables for daily refresh accuracy.
 
       Key Features:
 
-      • Current-state snapshot (is_current_period = TRUE)
+      • One row per person (current/latest demographics)
 
-      • Derived from historical SCD2 table for consistency
+      • Includes ALL persons with registration history (active and inactive)
 
-      • One row per person with complete demographic information
+      • Daily refresh compatible - age calculated dynamically
 
-      Data Quality Filtering:
+      • is_active flag shows current registration status
 
-      • EXCLUDES persons without practice registration (inherited from historical table)
+      • Practice details show latest/current registration
 
-      • Ensures all records have valid GP practice information
+      Data Quality Filters:
 
-      • Contains only persons with recorded birth dates and practice registration'
+      • Excludes persons without birth dates (required for age)
+
+      • Excludes persons without any registration history
+
+      For historical analysis, use dim_person_demographics_historical.'
+
     columns:
       - name: person_id
-        description: Unique identifier for the person
+        description: 'Unique person identifier'
         tests:
           - not_null
           - unique
-      
-      - name: birth_date_approx
-        description: Approximate date of birth (mid-month)
+
+      - name: sk_patient_id
+        description: 'Surrogate key for patient record'
+
+      - name: is_active
+        description: 'Current registration status'
         tests:
           - not_null
-      
+
+      - name: is_deceased
+        description: 'Death status flag'
+        tests:
+          - not_null
+
+      - name: is_dummy_patient
+        description: 'Dummy patient record flag'
+        tests:
+          - not_null
+
+      - name: inactive_reason
+        description: 'Reason for inactive status (Deceased, Registration ended, No registration history, or NULL)'
+
+      - name: birth_year
+        description: 'Birth year'
+
+      - name: birth_date_approx
+        description: 'Approximate birth date (mid-month)'
+        tests:
+          - not_null
+
       - name: birth_date_approx_end_of_month
-        description: 'Approximate date of birth using the last day of the recorded birth month, passed through from dim_person_age. Complements birth_date_approx (mid-month).'
-      
+        description: 'Birth date approximated to end of birth month'
+
+      - name: death_year
+        description: 'Death year if deceased'
+
+      - name: death_date_approx
+        description: 'Approximate death date if deceased'
+
       - name: age
-        description: Current age in years calculated from birth date
-        tests:
-          - not_null  # Always present since based on birth_date_approx
-      
+        description: 'Current age in years (or age at death)'
+
       - name: age_at_least
-        description: 'Minimum possible age in full years, derived from dim_person_age using DOB as the last day of the birth month.'
-      
+        description: 'Conservative age calculation using end of birth month'
+
+      - name: age_band_5y
+        description: '5-year age bands (0-4, 5-9, 10-14, ..., 80-84, 85+)'
+
+      - name: age_band_10y
+        description: '10-year age bands (0-9, 10-19, 20-29, ..., 70-79, 80+)'
+
+      - name: age_band_nhs
+        description: 'NHS Digital age bands (0-4, 5-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, 85+)'
+
+      - name: age_band_ons
+        description: 'ONS age bands (0-4, 5-9, 10-14, 15-19, 20-24, 25-29, ..., 80-84, 85+)'
+
+      - name: age_life_stage
+        description: 'Life stage categories (Infant, Toddler, Child, Adolescent, Young Adult, Adult, Senior, Elderly, Very Elderly)'
+
+      - name: is_primary_school_age
+        description: 'Flag indicating primary school age (Reception to Year 6)'
+        tests:
+          - not_null
+
+      - name: is_secondary_school_age
+        description: 'Flag indicating secondary school age (Year 7 to Year 13)'
+        tests:
+          - not_null
+
       - name: sex
-        description: Person's sex (Male, Female, or Unknown)
+        description: 'Sex'
         tests:
-          - not_null  # Always populated even if Unknown
+          - not_null
           - accepted_values:
-              arguments:
-                values: ['Male', 'Female', 'Unknown']
-      
-      - name: practice_code
-        description: GP practice code from registration (current or most recent historical)
+              values: ['Male', 'Female', 'Unknown']
+
+      - name: ethnicity_category
+        description: 'Ethnicity category from latest recording'
         tests:
-          - not_null  # Required - persons without practice info are excluded
+          - not_null
+
+      - name: ethnicity_subcategory
+        description: 'Ethnicity subcategory from latest recording'
+        tests:
+          - not_null
+
+      - name: ethnicity_granular
+        description: 'Detailed ethnicity from latest recording'
+        tests:
+          - not_null
+
+      - name: ethnicity_category_sort
+        description: 'Sort order for ethnicity category'
+
+      - name: ethnicity_display_sort_key
+        description: 'Display sort key for ethnicity'
+
+      - name: main_language
+        description: 'Main language'
+
+      - name: language_type
+        description: 'Language type classification'
+
+      - name: interpreter_type
+        description: 'Type of interpreter needed'
+
+      - name: interpreter_needed
+        description: 'Interpreter needed flag'
+        tests:
+          - not_null
+
+      - name: practice_code
+        description: 'Current or latest practice code'
+        tests:
+          - not_null
+
+      - name: practice_name
+        description: 'Current or latest practice name'
+
+      - name: registration_start_date
+        description: 'Start date of current or latest registration'
+
+      - name: registration_end_date
+        description: 'End date of current or latest registration (NULL if currently active)'
+
+      - name: pcn_code
+        description: 'Primary Care Network code'
+
+      - name: pcn_name
+        description: 'Primary Care Network name'
+
+      - name: pcn_name_with_borough
+        description: 'PCN name with borough prefix'
+
+      - name: practice_borough
+        description: 'Practice borough'
+
+      - name: practice_postcode
+        description: 'Practice postcode'
+
+      - name: practice_lsoa
+        description: 'Practice LSOA'
+
+      - name: practice_msoa
+        description: 'Practice MSOA'
+
+      - name: practice_latitude
+        description: 'Practice latitude coordinate'
+
+      - name: practice_longitude
+        description: 'Practice longitude coordinate'
+
+      - name: practice_neighbourhood
+        description: 'Practice neighbourhood classification'
+
+      - name: post_code_hash
+        description: 'Patient address postcode hash'
+
+      - name: uprn_hash
+        description: 'Patient address UPRN hash'
+
+      - name: household_id
+        description: 'Household identifier'
+
+      - name: lsoa_code_21
+        description: 'LSOA code 2021'
+
+      - name: lsoa_name_21
+        description: 'LSOA name 2021'
+
+      - name: ward_code
+        description: 'Ward code'
+
+      - name: ward_name
+        description: 'Ward name'
+
+      - name: imd_decile_19
+        description: 'IMD decile 2019'
+
+      - name: imd_quintile_19
+        description: 'IMD quintile 2019'
+
+      - name: patient_neighbourhood
+        description: 'Patient neighbourhood classification'
