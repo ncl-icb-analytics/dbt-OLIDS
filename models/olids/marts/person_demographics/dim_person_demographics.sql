@@ -39,6 +39,7 @@ WITH current_registrations AS (
         practice_ods_code as practice_code,
         practice_name,
         registration_start_date,
+        registration_end_date,
         is_current_registration,
         is_latest_registration
     FROM {{ ref('int_patient_registrations') }}
@@ -161,6 +162,10 @@ SELECT
     pa.age_band_ons,
     pa.age_life_stage,
     
+    -- School age flags
+    pa.is_primary_school_age,
+    pa.is_secondary_school_age,
+    
     -- Sex from dim_person_sex
     COALESCE(sex.sex, 'Unknown') AS sex,
 
@@ -181,6 +186,7 @@ SELECT
     cr.practice_code,
     cr.practice_name,
     cr.registration_start_date,
+    cr.registration_end_date,
     
     -- PCN Information from dim_practice
     dp.pcn_code,

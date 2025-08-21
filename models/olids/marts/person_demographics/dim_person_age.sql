@@ -91,14 +91,14 @@ SELECT
     -- 5-year age bands
     CASE
         WHEN ac.age < 0 THEN 'Unknown'
-        WHEN ac.age >= 100 THEN '100+'
+        WHEN ac.age >= 85 THEN '85+'
         ELSE TO_VARCHAR(FLOOR(ac.age / 5) * 5) || '-' || TO_VARCHAR(FLOOR(ac.age / 5) * 5 + 4)
     END AS age_band_5y,
 
     -- 10-year age bands
     CASE
         WHEN ac.age < 0 THEN 'Unknown'
-        WHEN ac.age >= 100 THEN '100+'
+        WHEN ac.age >= 80 THEN '80+'
         ELSE TO_VARCHAR(FLOOR(ac.age / 10) * 10) || '-' || TO_VARCHAR(FLOOR(ac.age / 10) * 10 + 9)
     END AS age_band_10y,
 
@@ -190,18 +190,7 @@ SELECT
         ELSE 'Unknown'
     END AS age_education_level,
 
-    -- Primary school age flag
-    CASE
-        WHEN ac.age >= 4 AND (ac.age < 11 OR (ac.age = 11 AND DATEDIFF(month, ac.birth_date_approx, DATE_FROM_PARTS(ac.academic_year_start, 9, 1)) < 132))
-        THEN TRUE
-        ELSE FALSE
-    END AS is_primary_school_age,
-
-    -- Secondary school age flag (including sixth form)
-    CASE
-         WHEN ac.age >= 11 AND (ac.age < 18 OR (ac.age = 18 AND DATEDIFF(month, ac.birth_date_approx, DATE_FROM_PARTS(ac.academic_year_start, 9, 1)) < 216))
-        THEN TRUE
-        ELSE FALSE
-    END AS is_secondary_school_age
+    -- School age flags using reusable macro with UK academic year logic
+    {{ calculate_school_age_flags('ac.birth_date_approx', 'ac.calculation_date') }}
 
 FROM age_calculations ac

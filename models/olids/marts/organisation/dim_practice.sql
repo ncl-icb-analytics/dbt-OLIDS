@@ -55,7 +55,7 @@ SELECT
     dict_org.lastupdated AS practice_last_updated,
     
     -- Geographic details from Dictionary Postcode
-    dict_pc.postcode AS practice_postcode_dict,
+    REGEXP_REPLACE(dict_pc.postcode, '\\s+', ' ') AS practice_postcode_dict,
     dict_pc.lsoa AS practice_lsoa,
     dict_pc.msoa AS practice_msoa,
     dict_pc.latitude AS practice_latitude,

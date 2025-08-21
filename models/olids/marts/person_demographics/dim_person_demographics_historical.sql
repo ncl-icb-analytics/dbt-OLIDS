@@ -324,6 +324,9 @@ SELECT
         ELSE 'Unknown'
     END AS age_life_stage,
     
+    -- School age flags (calculated for this analysis month using UK academic year logic)
+    {{ calculate_school_age_flags('bd.birth_date_approx', 'pm.analysis_month') }},
+    
     -- Sex
     COALESCE(sex.sex, 'Unknown') AS sex,
     
@@ -344,6 +347,7 @@ SELECT
     pm.practice_code,
     pm.practice_name,
     pm.registration_start_date,
+    pm.registration_end_date,
     
     -- PCN Information
     dp.pcn_code,

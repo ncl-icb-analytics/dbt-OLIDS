@@ -53,6 +53,10 @@ models:
         tests:
           - not_null
 
+      - name: is_dummy_patient
+        description: 'Dummy patient record flag'
+        tests:
+          - not_null
 
       - name: inactive_reason
         description: 'Reason for inactive status (Deceased, Registration ended, or NULL)'
@@ -85,10 +89,10 @@ models:
         description: 'Conservative age calculation as of analysis_month'
 
       - name: age_band_5y
-        description: '5-year age bands as of analysis_month (0-4, 5-9, 10-14, ..., 95-99, 100+)'
+        description: '5-year age bands as of analysis_month (0-4, 5-9, 10-14, ..., 80-84, 85+)'
 
       - name: age_band_10y
-        description: '10-year age bands as of analysis_month (0-9, 10-19, 20-29, ..., 90-99, 100+)'
+        description: '10-year age bands as of analysis_month (0-9, 10-19, 20-29, ..., 70-79, 80+)'
 
       - name: age_band_nhs
         description: 'NHS Digital age bands as of analysis_month (0-4, 5-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, 85+)'
@@ -98,6 +102,16 @@ models:
 
       - name: age_life_stage
         description: 'Life stage categories as of analysis_month (Infant, Toddler, Child, Adolescent, Young Adult, Adult, Senior, Elderly, Very Elderly)'
+
+      - name: is_primary_school_age
+        description: 'Flag indicating primary school age as of analysis_month (ages 4-10)'
+        tests:
+          - not_null
+
+      - name: is_secondary_school_age
+        description: 'Flag indicating secondary school age as of analysis_month (ages 11-17)'
+        tests:
+          - not_null
 
       - name: sex
         description: 'Sex'
@@ -136,7 +150,10 @@ models:
         description: 'Practice name active during this month'
 
       - name: registration_start_date
-        description: 'Start date of practice registration'
+        description: 'Start date of practice registration for this month'
+
+      - name: registration_end_date
+        description: 'End date of practice registration (NULL if active during this month)'
 
       - name: pcn_code
         description: 'Primary Care Network code'
