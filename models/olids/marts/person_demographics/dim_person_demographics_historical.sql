@@ -111,6 +111,16 @@ SELECT
     pm.person_id,
     bd.sk_patient_id,
     
+    -- Status Flags (key person attributes for this month)
+    pm.is_active,
+    bd.is_deceased,
+    bd.is_dummy_patient,
+    CASE 
+        WHEN bd.is_deceased AND bd.death_date_approx <= pm.analysis_month THEN 'Deceased'
+        WHEN pm.is_active = FALSE THEN 'Registration ended'
+        ELSE NULL
+    END AS inactive_reason,
+    
     -- Birth and death information
     bd.birth_year,
     bd.birth_month,
@@ -124,7 +134,6 @@ SELECT
     bd.death_year,
     bd.death_month,
     bd.death_date_approx,
-    bd.is_deceased,
     
     -- Age calculated for this specific month
     CASE 
@@ -317,13 +326,6 @@ SELECT
     
     -- Sex
     COALESCE(sex.sex, 'Unknown') AS sex,
-    
-    -- Active registration status for this month
-    pm.is_active,
-    CASE 
-        WHEN pm.is_active = FALSE THEN 'Registration ended'
-        ELSE NULL
-    END AS inactive_reason,
     
     -- Ethnicity as recorded by this month
     COALESCE(me.ethnicity_category, 'Unknown') AS ethnicity_category,
