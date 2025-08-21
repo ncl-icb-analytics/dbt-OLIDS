@@ -26,50 +26,11 @@ SELECT
     base_orders.bnf_code,
     base_orders.bnf_name,
 
-    -- Specific PPI classification
-    CASE
-        WHEN base_orders.bnf_code LIKE '0103050E%' THEN 'ESOMEPRAZOLE'
-        WHEN base_orders.bnf_code LIKE '0103050A%' THEN 'H_PYLORI_ERADICATION'
-        WHEN base_orders.bnf_code LIKE '0103050L%' THEN 'LANSOPRAZOLE'
-        WHEN base_orders.bnf_code LIKE '0103050P%' THEN 'OMEPRAZOLE'
-        WHEN base_orders.bnf_code LIKE '0103050R%' THEN 'PANTOPRAZOLE'
-        WHEN base_orders.bnf_code LIKE '0103050T%' THEN 'RABEPRAZOLE'
-        ELSE 'OTHER_PPI'
-    END AS ppi_type,
 
-    -- Common PPIs flags
-    CASE WHEN base_orders.bnf_code LIKE '0103050P%' THEN TRUE ELSE FALSE END AS is_omeprazole,
-    CASE WHEN base_orders.bnf_code LIKE '0103050L%' THEN TRUE ELSE FALSE END AS is_lansoprazole,
-    CASE WHEN base_orders.bnf_code LIKE '0103050E%' THEN TRUE ELSE FALSE END AS is_esomeprazole,
-    CASE WHEN base_orders.bnf_code LIKE '0103050R%' THEN TRUE ELSE FALSE END AS is_pantoprazole,
-    CASE WHEN base_orders.bnf_code LIKE '0103050T%' THEN TRUE ELSE FALSE END AS is_rabeprazole,
-
-    -- H. pylori eradication flag
+    -- H. pylori eradication flag (clinically distinct indication)
     CASE WHEN base_orders.bnf_code LIKE '0103050A%' THEN TRUE ELSE FALSE END AS is_h_pylori_eradication,
 
-    -- High dose PPI flag (for bleeding prophylaxis)
-    CASE
-        WHEN (base_orders.bnf_code LIKE '0103050P%' AND base_orders.order_dose LIKE '%40%') OR  -- Omeprazole 40mg
-             (base_orders.bnf_code LIKE '0103050L%' AND base_orders.order_dose LIKE '%30%') OR  -- Lansoprazole 30mg
-             (base_orders.bnf_code LIKE '0103050E%' AND base_orders.order_dose LIKE '%40%')     -- Esomeprazole 40mg
-        THEN TRUE
-        ELSE FALSE
-    END AS is_high_dose,
 
-    -- Standard dose PPI flag
-    CASE
-        WHEN (base_orders.bnf_code LIKE '0103050P%' AND base_orders.order_dose LIKE '%20%') OR  -- Omeprazole 20mg
-             (base_orders.bnf_code LIKE '0103050L%' AND base_orders.order_dose LIKE '%15%') OR  -- Lansoprazole 15mg
-             (base_orders.bnf_code LIKE '0103050E%' AND base_orders.order_dose LIKE '%20%')     -- Esomeprazole 20mg
-        THEN TRUE
-        ELSE FALSE
-    END AS is_standard_dose,
-
-    -- Long-term therapy flag (duration > 8 weeks suggests maintenance therapy)
-    CASE
-        WHEN base_orders.order_duration_days > 56 THEN TRUE
-        ELSE FALSE
-    END AS is_long_term_therapy,
 
 
     -- Order recency flags

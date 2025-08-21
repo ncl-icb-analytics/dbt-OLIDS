@@ -1,6 +1,48 @@
 version: 2
 models:
   - name: int_inhaled_corticosteroid_medications_all
-    description: 'Inhaled corticosteroid medication orders for asthma and COPD management.
-
-      One row per medication order with classification by ICS type (single agent vs combination preparations) and specific corticosteroid identification.'
+    description: 'Inhaled corticosteroid medication orders using BNF classification for respiratory conditions.'
+    tests: []
+    columns:
+      - name: person_id
+        description: 'Person identifier'
+      - name: medication_order_id
+        description: 'Unique medication order identifier'
+      - name: medication_statement_id
+        description: 'Related medication statement identifier'
+      - name: order_date
+        description: 'Date medication was ordered'
+        tests:
+          - not_null
+      - name: order_medication_name
+        description: 'Name of medication as ordered'
+      - name: order_dose
+        description: 'Prescribed dose'
+      - name: order_quantity_value
+        description: 'Quantity ordered'
+      - name: order_quantity_unit
+        description: 'Unit of quantity ordered'
+      - name: order_duration_days
+        description: 'Duration in days'
+      - name: statement_medication_name
+        description: 'Name from medication statement'
+      - name: mapped_concept_code
+        description: 'Mapped SNOMED concept code'
+      - name: mapped_concept_display
+        description: 'Mapped SNOMED concept display name'
+      - name: bnf_code
+        description: 'BNF classification code'
+      - name: bnf_name
+        description: 'BNF classification name'
+      - name: ics_type
+        description: 'ICS type (single agent, combination)'
+      - name: is_single_agent
+        description: 'Flag for single agent ICS'
+      - name: is_combination_therapy
+        description: 'Flag for combination therapy ICS'
+      - name: is_recent_3m
+        description: 'Order within last 3 months'
+      - name: is_recent_6m
+        description: 'Order within last 6 months'
+      - name: is_recent_12m
+        description: 'Order within last 12 months'

@@ -26,34 +26,19 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Specific statin classification
+    -- Statin intensity classification (based on typical therapeutic doses)
     CASE
-        WHEN bnf_code LIKE '0212000B0%' THEN 'ATORVASTATIN'
-        WHEN bnf_code LIKE '0212000C0%' THEN 'CERIVASTATIN'
-        WHEN bnf_code LIKE '0212000M0%' THEN 'FLUVASTATIN'
-        WHEN bnf_code LIKE '0212000X0%' THEN 'PRAVASTATIN'
-        WHEN bnf_code LIKE '0212000AA%' THEN 'ROSUVASTATIN'
-        WHEN bnf_code LIKE '0212000Y0%' THEN 'SIMVASTATIN'
-        WHEN bnf_code LIKE '0212000AC%' THEN 'SIMVASTATIN_EZETIMIBE'
+        WHEN bnf_code LIKE '0212000B0%' THEN 'HIGH_INTENSITY'     -- Atorvastatin (≥50% LDL reduction)
+        WHEN bnf_code LIKE '0212000AA%' THEN 'HIGH_INTENSITY'     -- Rosuvastatin (≥50% LDL reduction)
+        WHEN bnf_code LIKE '0212000Y0%' THEN 'MODERATE_INTENSITY' -- Simvastatin (30-49% LDL reduction)
+        WHEN bnf_code LIKE '0212000X0%' THEN 'MODERATE_INTENSITY' -- Pravastatin (30-49% LDL reduction)
+        WHEN bnf_code LIKE '0212000M0%' THEN 'MODERATE_INTENSITY' -- Fluvastatin (30-49% LDL reduction)
+        WHEN bnf_code LIKE '0212000AC%' THEN 'COMBINATION'        -- Statin + ezetimibe combination
         ELSE 'OTHER_STATIN'
-    END AS statin_type,
-
-    -- High intensity statin flag (for cardiovascular risk management)
-    CASE
-        WHEN bnf_code LIKE '0212000B0%' THEN TRUE  -- Atorvastatin
-        WHEN bnf_code LIKE '0212000AA%' THEN TRUE  -- Rosuvastatin
-        ELSE FALSE
-    END AS is_high_intensity_statin,
-
-    -- Common statins flags
-    CASE WHEN bnf_code LIKE '0212000B0%' THEN TRUE ELSE FALSE END AS is_atorvastatin,
-    CASE WHEN bnf_code LIKE '0212000Y0%' THEN TRUE ELSE FALSE END AS is_simvastatin,
-    CASE WHEN bnf_code LIKE '0212000AA%' THEN TRUE ELSE FALSE END AS is_rosuvastatin,
-    CASE WHEN bnf_code LIKE '0212000X0%' THEN TRUE ELSE FALSE END AS is_pravastatin,
+    END AS statin_intensity,
 
     -- Combination therapy flag
     CASE WHEN bnf_code LIKE '0212000AC%' THEN TRUE ELSE FALSE END AS is_combination_therapy,
-
 
     -- Order recency flags (statins are typically long-term therapy)
     CASE

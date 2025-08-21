@@ -26,54 +26,6 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Specific lithium preparation classification
-    CASE
-        WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' OR bnf_code LIKE '0402030M0%' THEN 'LITHIUM_CARBONATE'
-        WHEN statement_medication_name LIKE '%LITHIUM CITRATE%' OR bnf_code LIKE '0402030N0%' THEN 'LITHIUM_CITRATE'
-        ELSE 'OTHER_LITHIUM'
-    END AS lithium_type,
-
-    -- Brand classification (important for bioequivalence)
-    CASE
-        WHEN order_medication_name LIKE '%PRIADEL%' OR statement_medication_name LIKE '%PRIADEL%' THEN 'PRIADEL'
-        WHEN order_medication_name LIKE '%CAMCOLIT%' OR statement_medication_name LIKE '%CAMCOLIT%' THEN 'CAMCOLIT'
-        WHEN order_medication_name LIKE '%LISKONUM%' OR statement_medication_name LIKE '%LISKONUM%' THEN 'LISKONUM'
-        WHEN order_medication_name LIKE '%LI-LIQUID%' OR statement_medication_name LIKE '%LI-LIQUID%' THEN 'LI_LIQUID'
-        ELSE 'OTHER_BRAND'
-    END AS lithium_brand,
-
-    -- Lithium preparation flags
-    CASE WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' OR bnf_code LIKE '0402030M0%' THEN TRUE ELSE FALSE END AS is_lithium_carbonate,
-    CASE WHEN statement_medication_name LIKE '%LITHIUM CITRATE%' OR bnf_code LIKE '0402030N0%' THEN TRUE ELSE FALSE END AS is_lithium_citrate,
-
-    -- Common brand flags
-    CASE WHEN order_medication_name LIKE '%PRIADEL%' OR statement_medication_name LIKE '%PRIADEL%' THEN TRUE ELSE FALSE END AS is_priadel,
-    CASE WHEN order_medication_name LIKE '%CAMCOLIT%' OR statement_medication_name LIKE '%CAMCOLIT%' THEN TRUE ELSE FALSE END AS is_camcolit,
-
-    -- Dose range classification for lithium carbonate (standard therapeutic doses)
-    CASE
-        WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' AND (
-            order_dose LIKE '%200%' OR order_dose LIKE '%300%' OR order_dose LIKE '%400%'
-        ) THEN 'STANDARD_DOSE'
-        WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' AND (
-            order_dose LIKE '%600%' OR order_dose LIKE '%800%' OR order_dose LIKE '%1000%' OR order_dose LIKE '%1200%'
-        ) THEN 'HIGH_DOSE'
-        WHEN statement_medication_name LIKE '%LITHIUM CARBONATE%' AND (
-            order_dose LIKE '%100%' OR order_dose LIKE '%150%'
-        ) THEN 'LOW_DOSE'
-        ELSE 'UNKNOWN_DOSE'
-    END AS lithium_dose_category,
-
-    -- Formulation classification
-    CASE
-        WHEN order_medication_name LIKE '%TABLET%' OR statement_medication_name LIKE '%TABLET%' THEN 'TABLET'
-        WHEN order_medication_name LIKE '%CAPSULE%' OR statement_medication_name LIKE '%CAPSULE%' THEN 'CAPSULE'
-        WHEN order_medication_name LIKE '%LIQUID%' OR statement_medication_name LIKE '%LIQUID%' THEN 'LIQUID'
-        ELSE 'UNKNOWN_FORMULATION'
-    END AS formulation_type,
-
-    -- Monitoring requirement flag (all lithium requires regular monitoring)
-    TRUE AS requires_monitoring,
 
 
     -- Order recency flags (lithium requires regular monitoring and compliance tracking)

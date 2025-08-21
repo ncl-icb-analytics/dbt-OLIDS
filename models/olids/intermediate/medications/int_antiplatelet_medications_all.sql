@@ -26,49 +26,15 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Specific antiplatelet classification
-    CASE
-        WHEN bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%' THEN 'ASPIRIN'
-        WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN 'CLOPIDOGREL'
-        WHEN bnf_code LIKE '%DIPYRIDAMOLE%' OR bnf_code LIKE '0209000515%' THEN 'DIPYRIDAMOLE'
-        WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN 'PRASUGREL'
-        WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN 'TICAGRELOR'
-        WHEN bnf_code LIKE '%TICLOPIDINE%' OR bnf_code LIKE '0209000535%' THEN 'TICLOPIDINE'
-        ELSE 'OTHER_ANTIPLATELET'
-    END AS antiplatelet_type,
 
     -- P2Y12 inhibitor classification (for dual antiplatelet therapy)
     CASE
-        WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN TRUE
-        WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN TRUE
-        WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN TRUE
-        WHEN bnf_code LIKE '%TICLOPIDINE%' OR bnf_code LIKE '0209000535%' THEN TRUE
+        WHEN bnf_code LIKE '0209000510%' THEN TRUE  -- CLOPIDOGREL
+        WHEN bnf_code LIKE '0209000525%' THEN TRUE  -- PRASUGREL
+        WHEN bnf_code LIKE '0209000530%' THEN TRUE  -- TICAGRELOR
+        WHEN bnf_code LIKE '0209000535%' THEN TRUE  -- TICLOPIDINE
         ELSE FALSE
     END AS is_p2y12_inhibitor,
-
-    -- Evidence-based antiplatelets
-    CASE
-        WHEN bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%' THEN TRUE      -- Multiple trials
-        WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN TRUE  -- CAPRIE, CURE trials
-        WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN TRUE   -- PLATO trial
-        WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN TRUE    -- TRITON-TIMI trial
-        ELSE FALSE
-    END AS is_evidence_based_cvd,
-
-    -- Common antiplatelets flags
-    CASE WHEN bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%' THEN TRUE ELSE FALSE END AS is_aspirin,
-    CASE WHEN bnf_code LIKE '%CLOPIDOGREL%' OR bnf_code LIKE '0209000510%' THEN TRUE ELSE FALSE END AS is_clopidogrel,
-    CASE WHEN bnf_code LIKE '%TICAGRELOR%' OR bnf_code LIKE '0209000530%' THEN TRUE ELSE FALSE END AS is_ticagrelor,
-    CASE WHEN bnf_code LIKE '%PRASUGREL%' OR bnf_code LIKE '0209000525%' THEN TRUE ELSE FALSE END AS is_prasugrel,
-    CASE WHEN bnf_code LIKE '%DIPYRIDAMOLE%' OR bnf_code LIKE '0209000515%' THEN TRUE ELSE FALSE END AS is_dipyridamole,
-
-    -- Low dose aspirin flag (typically 75mg for cardioprotection)
-    CASE
-        WHEN (bnf_code LIKE '%ASPIRIN%' OR bnf_code LIKE '0209000502%')
-             AND (order_dose LIKE '%75%' OR order_dose LIKE '%low%') THEN TRUE
-        ELSE FALSE
-    END AS is_low_dose_aspirin,
-
 
     -- Order recency flags (antiplatelets are typically long-term therapy)
     CASE

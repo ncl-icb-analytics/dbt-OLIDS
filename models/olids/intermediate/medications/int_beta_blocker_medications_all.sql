@@ -26,48 +26,6 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Beta blocker selectivity classification
-    CASE
-        WHEN bnf_code LIKE '020400%' THEN 'NON_SELECTIVE'  -- Non-selective beta blockers
-        WHEN bnf_code LIKE '020401%' THEN 'SELECTIVE'      -- Selective (beta1) beta blockers
-        ELSE 'OTHER_BETA_BLOCKER'
-    END AS beta_blocker_selectivity,
-
-    -- Specific beta blocker classification
-    CASE
-        WHEN statement_medication_name LIKE '%ACEBUTOLOL%' OR bnf_code LIKE '0204010502%' THEN 'ACEBUTOLOL'
-        WHEN statement_medication_name LIKE '%ATENOLOL%' OR bnf_code LIKE '0204010510%' THEN 'ATENOLOL'
-        WHEN statement_medication_name LIKE '%BETAXOLOL%' OR bnf_code LIKE '0204010515%' THEN 'BETAXOLOL'
-        WHEN statement_medication_name LIKE '%BISOPROLOL%' OR bnf_code LIKE '0204010520%' THEN 'BISOPROLOL'
-        WHEN statement_medication_name LIKE '%CARVEDILOL%' OR bnf_code LIKE '0204000502%' THEN 'CARVEDILOL'
-        WHEN statement_medication_name LIKE '%LABETALOL%' OR bnf_code LIKE '0204000510%' THEN 'LABETALOL'
-        WHEN statement_medication_name LIKE '%METOPROLOL%' OR bnf_code LIKE '0204010530%' THEN 'METOPROLOL'
-        WHEN statement_medication_name LIKE '%NEBIVOLOL%' OR bnf_code LIKE '0204010535%' THEN 'NEBIVOLOL'
-        WHEN statement_medication_name LIKE '%PROPRANOLOL%' OR bnf_code LIKE '0204000520%' THEN 'PROPRANOLOL'
-        WHEN statement_medication_name LIKE '%SOTALOL%' OR bnf_code LIKE '0204000525%' THEN 'SOTALOL'
-        ELSE 'OTHER_BETA_BLOCKER'
-    END AS beta_blocker_type,
-
-    -- Evidence-based beta blockers for heart failure and post-MI
-    CASE
-        WHEN statement_medication_name LIKE '%BISOPROLOL%' OR bnf_code LIKE '0204010520%' THEN TRUE  -- CIBIS trials
-        WHEN statement_medication_name LIKE '%CARVEDILOL%' OR bnf_code LIKE '0204000502%' THEN TRUE  -- COPERNICUS trial
-        WHEN statement_medication_name LIKE '%METOPROLOL%' OR bnf_code LIKE '0204010530%' THEN TRUE  -- MERIT-HF trial
-        WHEN statement_medication_name LIKE '%NEBIVOLOL%' OR bnf_code LIKE '0204010535%' THEN TRUE   -- SENIORS trial
-        ELSE FALSE
-    END AS is_evidence_based_hf,
-
-    -- Common beta blockers flags
-    CASE WHEN statement_medication_name LIKE '%ATENOLOL%' OR bnf_code LIKE '0204010510%' THEN TRUE ELSE FALSE END AS is_atenolol,
-    CASE WHEN statement_medication_name LIKE '%BISOPROLOL%' OR bnf_code LIKE '0204010520%' THEN TRUE ELSE FALSE END AS is_bisoprolol,
-    CASE WHEN statement_medication_name LIKE '%CARVEDILOL%' OR bnf_code LIKE '0204000502%' THEN TRUE ELSE FALSE END AS is_carvedilol,
-    CASE WHEN statement_medication_name LIKE '%METOPROLOL%' OR bnf_code LIKE '0204010530%' THEN TRUE ELSE FALSE END AS is_metoprolol,
-    CASE WHEN statement_medication_name LIKE '%PROPRANOLOL%' OR bnf_code LIKE '0204000520%' THEN TRUE ELSE FALSE END AS is_propranolol,
-
-    -- Cardioselective flag (beta1 selective)
-    CASE WHEN bnf_code LIKE '020401%' THEN TRUE ELSE FALSE END AS is_cardioselective,
-
-
     -- Order recency flags (beta blockers are typically long-term therapy)
     CASE
         WHEN DATEDIFF(day, order_date, CURRENT_DATE()) <= 90 THEN TRUE

@@ -33,42 +33,10 @@ SELECT
         ELSE 'OTHER_ICS'
     END AS ics_type,
 
-    -- Specific inhaled corticosteroid classification
-    CASE
-        WHEN base_orders.statement_medication_name LIKE '%BECLOMETASONE%' OR base_orders.bnf_code LIKE '0302000C0%' THEN 'BECLOMETASONE'
-        WHEN base_orders.statement_medication_name LIKE '%BUDESONIDE%' OR base_orders.bnf_code LIKE '0302000K0%' THEN 'BUDESONIDE'
-        WHEN base_orders.statement_medication_name LIKE '%CICLESONIDE%' OR base_orders.bnf_code LIKE '0302000U0%' THEN 'CICLESONIDE'
-        WHEN base_orders.statement_medication_name LIKE '%FLUTICASONE%' OR base_orders.bnf_code LIKE '0302000N0%' THEN 'FLUTICASONE'
-        WHEN base_orders.statement_medication_name LIKE '%MOMETASONE%' OR base_orders.bnf_code LIKE '0302000R0%' THEN 'MOMETASONE'
-        ELSE 'OTHER_ICS'
-    END AS specific_ics,
-
-    -- Combination therapy classification
-    CASE
-        WHEN base_orders.statement_medication_name LIKE '%BUDESONIDE%' AND base_orders.statement_medication_name LIKE '%FORMOTEROL%' THEN 'BUDESONIDE_FORMOTEROL'
-        WHEN base_orders.statement_medication_name LIKE '%FLUTICASONE%' AND base_orders.statement_medication_name LIKE '%SALMETEROL%' THEN 'FLUTICASONE_SALMETEROL'
-        WHEN base_orders.statement_medication_name LIKE '%FLUTICASONE%' AND base_orders.statement_medication_name LIKE '%VILANTEROL%' THEN 'FLUTICASONE_VILANTEROL'
-        WHEN base_orders.statement_medication_name LIKE '%BECLOMETASONE%' AND base_orders.statement_medication_name LIKE '%FORMOTEROL%' THEN 'BECLOMETASONE_FORMOTEROL'
-        WHEN base_orders.bnf_code LIKE '030201%' THEN 'OTHER_COMBINATION'
-        ELSE NULL
-    END AS combination_type,
-
-    -- Common ICS flags
-    CASE WHEN base_orders.statement_medication_name LIKE '%BECLOMETASONE%' OR base_orders.bnf_code LIKE '0302000C0%' THEN TRUE ELSE FALSE END AS is_beclometasone,
-    CASE WHEN base_orders.statement_medication_name LIKE '%BUDESONIDE%' OR base_orders.bnf_code LIKE '0302000K0%' THEN TRUE ELSE FALSE END AS is_budesonide,
-    CASE WHEN base_orders.statement_medication_name LIKE '%FLUTICASONE%' OR base_orders.bnf_code LIKE '0302000N0%' THEN TRUE ELSE FALSE END AS is_fluticasone,
-    CASE WHEN base_orders.statement_medication_name LIKE '%MOMETASONE%' OR base_orders.bnf_code LIKE '0302000R0%' THEN TRUE ELSE FALSE END AS is_mometasone,
-    CASE WHEN base_orders.statement_medication_name LIKE '%CICLESONIDE%' OR base_orders.bnf_code LIKE '0302000U0%' THEN TRUE ELSE FALSE END AS is_ciclesonide,
 
     -- Preparation type flags
     CASE WHEN base_orders.bnf_code LIKE '030200%' THEN TRUE ELSE FALSE END AS is_single_agent,
     CASE WHEN base_orders.bnf_code LIKE '030201%' THEN TRUE ELSE FALSE END AS is_combination_therapy,
-
-    -- MART (Maintenance and Reliever Therapy) potential flag
-    CASE
-        WHEN base_orders.statement_medication_name LIKE '%BUDESONIDE%' AND base_orders.statement_medication_name LIKE '%FORMOTEROL%' THEN TRUE
-        ELSE FALSE
-    END AS is_mart_eligible,
 
 
     -- Order recency flags (ICS are typically long-term therapy)
