@@ -96,4 +96,3 @@ GROUP BY
   has_osteoporosis,
   has_palliative_care,
   has_rheumatoid_arthritis
-LIMIT 1000;
