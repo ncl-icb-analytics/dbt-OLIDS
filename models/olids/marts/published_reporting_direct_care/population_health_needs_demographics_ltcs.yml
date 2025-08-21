@@ -4,6 +4,9 @@ models:
   - name: population_health_needs_demographics_ltcs
     description: >
       Aggregate patient counts by age, ethnicity, PCN, neighbourhood, IMD quintile, LTCs for population health needs dashboard.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "patient_count > 1"
     config:
       materialized: view
     columns:
@@ -66,5 +69,3 @@ models:
       - name: has_rheumatoid_arthritis
       - name: patient_count
         description: Total number of patients in the group.
-    dbt_utils.expression_is_true:
-    expression: "patient_count > 1"
