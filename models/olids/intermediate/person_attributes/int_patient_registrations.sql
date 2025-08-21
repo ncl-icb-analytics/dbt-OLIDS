@@ -36,7 +36,7 @@ raw_registrations AS (
         prpr.practitioner_id,
         prpr.episode_of_care_id,
         -- Get practice details
-        UPPER(o.name) AS practice_name,
+        COALESCE(dp.practice_name, o.name) AS practice_name,  -- Use practice name from dim_practice
         o.organisation_code AS practice_ods_code,
         -- Get patient details
         p.sk_patient_id
@@ -45,6 +45,8 @@ raw_registrations AS (
         ON prpr.patient_id = ptp.patient_id
     LEFT JOIN {{ ref('stg_olids_organisation') }} AS o
         ON prpr.organisation_id = o.id
+    LEFT JOIN {{ ref('dim_practice') }} AS dp
+        ON o.organisation_code = dp.practice_code
     LEFT JOIN {{ ref('stg_olids_patient') }} AS p
         ON prpr.patient_id = p.id
     WHERE prpr.start_date IS NOT NULL
