@@ -66,3 +66,5 @@ models:
       - name: has_rheumatoid_arthritis
       - name: patient_count
         description: Total number of patients in the group.
+    dbt_utils.expression_is_true:
+    expression: "patient_count > 1"
