@@ -26,55 +26,16 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Specific cardiac glycoside classification
+    -- Specific cardiac glycoside classification (based on BNF codes)
     CASE
-        WHEN statement_medication_name LIKE '%DIGOXIN%' OR bnf_code LIKE '0201010R0%' THEN 'DIGOXIN'
-        WHEN statement_medication_name LIKE '%DIGITOXIN%' OR bnf_code LIKE '0201010Q0%' THEN 'DIGITOXIN'
+        WHEN bnf_code LIKE '0201010R0%' THEN 'DIGOXIN'
+        WHEN bnf_code LIKE '0201010Q0%' THEN 'DIGITOXIN'
         ELSE 'OTHER_CARDIAC_GLYCOSIDE'
     END AS cardiac_glycoside_type,
 
     -- Cardiac glycoside flags
-    CASE WHEN statement_medication_name LIKE '%DIGOXIN%' OR bnf_code LIKE '0201010R0%' THEN TRUE ELSE FALSE END AS is_digoxin,
-    CASE WHEN statement_medication_name LIKE '%DIGITOXIN%' OR bnf_code LIKE '0201010Q0%' THEN TRUE ELSE FALSE END AS is_digitoxin,
-
-    -- Dose classification for digoxin (requires careful monitoring)
-    CASE
-        WHEN statement_medication_name LIKE '%DIGOXIN%' AND (
-            order_dose LIKE '%125%' OR order_dose LIKE '%0.125%'
-        ) THEN 'STANDARD_DOSE'
-        WHEN statement_medication_name LIKE '%DIGOXIN%' AND (
-            order_dose LIKE '%250%' OR order_dose LIKE '%0.25%'
-        ) THEN 'HIGH_DOSE'
-        WHEN statement_medication_name LIKE '%DIGOXIN%' AND (
-            order_dose LIKE '%62.5%' OR order_dose LIKE '%0.0625%'
-        ) THEN 'LOW_DOSE'
-        ELSE 'UNKNOWN_DOSE'
-    END AS digoxin_dose_category,
-
-    -- Clinical indication flags based on dose patterns
-    CASE
-        WHEN statement_medication_name LIKE '%DIGOXIN%' AND (
-            order_dose LIKE '%125%' OR order_dose LIKE '%0.125%' OR
-            order_dose LIKE '%250%' OR order_dose LIKE '%0.25%'
-        ) THEN TRUE
-        ELSE FALSE
-    END AS is_heart_failure_dose,
-
-    CASE
-        WHEN statement_medication_name LIKE '%DIGOXIN%' AND (
-            order_dose LIKE '%250%' OR order_dose LIKE '%0.25%'
-        ) THEN TRUE
-        ELSE FALSE
-    END AS is_arrhythmia_dose,
-
-    -- Elderly/renal dose flag (62.5mcg typical for elderly or renal impairment)
-    CASE
-        WHEN statement_medication_name LIKE '%DIGOXIN%' AND (
-            order_dose LIKE '%62.5%' OR order_dose LIKE '%0.0625%'
-        ) THEN TRUE
-        ELSE FALSE
-    END AS is_elderly_renal_dose,
-
+    CASE WHEN bnf_code LIKE '0201010R0%' THEN TRUE ELSE FALSE END AS is_digoxin,
+    CASE WHEN bnf_code LIKE '0201010Q0%' THEN TRUE ELSE FALSE END AS is_digitoxin,
 
     -- Order recency flags (cardiac glycosides require ongoing monitoring)
     CASE

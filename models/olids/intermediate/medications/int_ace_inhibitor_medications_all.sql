@@ -26,38 +26,6 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Specific ACE inhibitor classification
-    CASE
-        WHEN bnf_code LIKE '0205050102%' THEN 'CAPTOPRIL'
-        WHEN bnf_code LIKE '0205050105%' THEN 'CILAZAPRIL'
-        WHEN bnf_code LIKE '0205050110%' THEN 'ENALAPRIL'
-        WHEN bnf_code LIKE '0205050115%' THEN 'FOSINOPRIL'
-        WHEN bnf_code LIKE '0205050120%' THEN 'IMIDAPRIL'
-        WHEN bnf_code LIKE '0205050125%' THEN 'LISINOPRIL'
-        WHEN bnf_code LIKE '0205050130%' THEN 'MOEXIPRIL'
-        WHEN bnf_code LIKE '0205050135%' THEN 'PERINDOPRIL'
-        WHEN bnf_code LIKE '0205050140%' THEN 'QUINAPRIL'
-        WHEN bnf_code LIKE '0205050145%' THEN 'RAMIPRIL'
-        WHEN bnf_code LIKE '0205050150%' THEN 'TRANDOLAPRIL'
-        ELSE 'OTHER_ACE_INHIBITOR'
-    END AS ace_inhibitor_type,
-
-    -- Evidence-based ACE inhibitors (commonly used in cardiovascular disease)
-    CASE
-        WHEN bnf_code LIKE '0205050145%' THEN TRUE  -- Ramipril (HOPE trial)
-        WHEN bnf_code LIKE '0205050135%' THEN TRUE  -- Perindopril (EUROPA trial)
-        WHEN bnf_code LIKE '0205050125%' THEN TRUE  -- Lisinopril (GISSI-3 trial)
-        WHEN bnf_code LIKE '0205050110%' THEN TRUE  -- Enalapril (SOLVD trial)
-        ELSE FALSE
-    END AS is_evidence_based_cvd,
-
-    -- Common ACE inhibitors flags
-    CASE WHEN bnf_code LIKE '0205050145%' THEN TRUE ELSE FALSE END AS is_ramipril,
-    CASE WHEN bnf_code LIKE '0205050125%' THEN TRUE ELSE FALSE END AS is_lisinopril,
-    CASE WHEN bnf_code LIKE '0205050135%' THEN TRUE ELSE FALSE END AS is_perindopril,
-    CASE WHEN bnf_code LIKE '0205050110%' THEN TRUE ELSE FALSE END AS is_enalapril,
-    CASE WHEN bnf_code LIKE '0205050102%' THEN TRUE ELSE FALSE END AS is_captopril,
-
 
     -- Order recency flags (ACE inhibitors are typically long-term therapy)
     CASE

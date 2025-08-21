@@ -26,47 +26,34 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Diabetes medication type classification
+    -- Diabetes medication type classification (corrected BNF codes)
     CASE
-        WHEN bnf_code LIKE '060101%' THEN 'INSULIN'                    -- BNF 6.1.1: Insulins
-        WHEN bnf_code LIKE '060102%' THEN 'ANTIDIABETIC'              -- BNF 6.1.2: Antidiabetic drugs
-        WHEN bnf_code LIKE '060103%' THEN 'DIABETIC_KETOACIDOSIS'     -- BNF 6.1.3: Diabetic ketoacidosis
-        WHEN bnf_code LIKE '060104%' THEN 'HYPOGLYCAEMIA_TREATMENT'   -- BNF 6.1.4: Treatment of hypoglycaemia
-        WHEN bnf_code LIKE '060105%' THEN 'BLOOD_GLUCOSE_TESTING'     -- BNF 6.1.5: Blood glucose testing
-        WHEN bnf_code LIKE '060106%' THEN 'MONITORING'                -- BNF 6.1.6: Diabetic diagnostic and monitoring agents
+        WHEN bnf_code LIKE '0601011%' OR bnf_code LIKE '0601012%' THEN 'INSULIN'  -- BNF 6.1.1: Insulins
+        WHEN bnf_code LIKE '0601021%' OR bnf_code LIKE '0601022%' OR bnf_code LIKE '0601023%' THEN 'ANTIDIABETIC'  -- BNF 6.1.2: Antidiabetic drugs
+        WHEN bnf_code LIKE '0601040%' THEN 'HYPOGLYCAEMIA_TREATMENT'   -- BNF 6.1.4: Treatment of hypoglycaemia
+        WHEN bnf_code LIKE '0601060%' THEN 'MONITORING'                -- BNF 6.1.6: Diabetic diagnostic and monitoring agents
         ELSE 'OTHER_DIABETES'
     END AS diabetes_medication_type,
 
-    -- Antidiabetic drug class classification (only for BNF 6.1.2)
+    -- Antidiabetic drug class classification (corrected BNF 6.1.2 subcodes)
     CASE
-        WHEN bnf_code LIKE '06010201%' THEN 'SULPHONYLUREAS'
-        WHEN bnf_code LIKE '06010202%' THEN 'BIGUANIDES'
-        WHEN bnf_code LIKE '06010203%' THEN 'OTHER_ANTIDIABETICS'
-        WHEN bnf_code LIKE '06010204%' THEN 'THIAZOLIDINEDIONES'
-        WHEN bnf_code LIKE '06010205%' THEN 'MEGLITINIDES'
-        WHEN bnf_code LIKE '06010206%' THEN 'ALPHA_GLUCOSIDASE_INHIBITORS'
-        WHEN bnf_code LIKE '06010207%' THEN 'DPP4_INHIBITORS'
-        WHEN bnf_code LIKE '06010208%' THEN 'SODIUM_GLUCOSE_COTRANSPORTER_2_INHIBITORS'
-        WHEN bnf_code LIKE '06010209%' THEN 'GLP1_RECEPTOR_AGONISTS'
+        WHEN bnf_code LIKE '0601021%' THEN 'SULPHONYLUREAS'            -- 6.1.2.1: Sulphonylureas
+        WHEN bnf_code LIKE '0601022%' THEN 'BIGUANIDES'                -- 6.1.2.2: Biguanides (metformin)
+        WHEN bnf_code LIKE '0601023%' THEN 'OTHER_ANTIDIABETICS'       -- 6.1.2.3: Other antidiabetic drugs
         ELSE NULL
     END AS antidiabetic_drug_class,
 
-    -- Insulin type classification (only for BNF 6.1.1)
+    -- Insulin type classification (corrected BNF 6.1.1 subcodes)
     CASE
-        WHEN bnf_code LIKE '06010101%' THEN 'SHORT_ACTING'
-        WHEN bnf_code LIKE '06010102%' THEN 'INTERMEDIATE_ACTING'
-        WHEN bnf_code LIKE '06010103%' THEN 'LONG_ACTING'
-        WHEN bnf_code LIKE '06010104%' THEN 'BIPHASIC'
+        WHEN bnf_code LIKE '0601011%' THEN 'SHORT_ACTING'              -- 6.1.1.1: Short-acting insulins
+        WHEN bnf_code LIKE '0601012%' THEN 'INTERMEDIATE_LONG_ACTING'   -- 6.1.1.2: Intermediate and long-acting insulins
         ELSE NULL
     END AS insulin_type,
 
-    -- Key medication flags
-    CASE WHEN bnf_code LIKE '060101%' THEN TRUE ELSE FALSE END AS is_insulin,
-    CASE WHEN bnf_code LIKE '06010202%' THEN TRUE ELSE FALSE END AS is_metformin,
-    CASE WHEN bnf_code LIKE '06010201%' THEN TRUE ELSE FALSE END AS is_sulphonylurea,
-    CASE WHEN bnf_code LIKE '06010207%' THEN TRUE ELSE FALSE END AS is_dpp4_inhibitor,
-    CASE WHEN bnf_code LIKE '06010208%' THEN TRUE ELSE FALSE END AS is_sglt2_inhibitor,
-    CASE WHEN bnf_code LIKE '06010209%' THEN TRUE ELSE FALSE END AS is_glp1_agonist,
+    -- Key medication flags (corrected BNF codes)
+    CASE WHEN bnf_code LIKE '0601011%' OR bnf_code LIKE '0601012%' THEN TRUE ELSE FALSE END AS is_insulin,
+    CASE WHEN bnf_code LIKE '0601022%' THEN TRUE ELSE FALSE END AS is_metformin,
+    CASE WHEN bnf_code LIKE '0601021%' THEN TRUE ELSE FALSE END AS is_sulphonylurea,
 
 
     -- Order recency flags

@@ -1,10 +1,41 @@
 version: 2
 models:
   - name: int_asthma_medications_12m
-    description: 'Asthma medication orders from the last 12 months for QOF monitoring.
-
-      One row per medication order using ASTTRT_COD cluster with classification by asthma medication type (SABA, LABA, ICS, combinations) and controller vs reliever categorisation.'
+    description: 'Asthma medication orders from last 12 months using ASTTRT_COD cluster for QOF monitoring.'
     tests:
       - cluster_ids_exist:
           arguments:
             cluster_ids: ASTTRT_COD
+    columns:
+      - name: person_id
+        description: 'Person identifier'
+      - name: medication_order_id
+        description: 'Unique medication order identifier'
+      - name: order_date
+        description: 'Date medication was ordered'
+        tests:
+          - not_null
+      - name: order_medication_name
+        description: 'Name of medication as ordered'
+      - name: mapped_concept_code
+        description: 'Mapped SNOMED concept code'
+      - name: mapped_concept_display
+        description: 'Mapped SNOMED concept display name'
+      - name: cluster_id
+        description: 'Cluster identifier (ASTTRT_COD)'
+      - name: is_asthma_treatment
+        description: 'Flag for asthma treatment medications'
+      - name: is_recent_12m
+        description: 'Order within last 12 months'
+      - name: is_recent_6m
+        description: 'Order within last 6 months'
+      - name: is_recent_3m
+        description: 'Order within last 3 months'
+      - name: recent_order_count_12m
+        description: 'Count of medication orders per person in 12 months'
+      - name: has_repeat_prescriptions
+        description: 'Flag for persons with 2 or more prescriptions'
+      - name: current_practice_id
+        description: 'Current practice identifier'
+      - name: total_patients
+        description: 'Total patients count'

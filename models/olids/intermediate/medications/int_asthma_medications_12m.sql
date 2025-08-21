@@ -32,62 +32,10 @@ asthma_enhanced AS (
     SELECT
         aob.*,
 
-        -- Classify asthma medication types based on medication names
-        CASE
-            WHEN aob.order_medication_name ILIKE '%SALBUTAMOL%'
-                OR aob.order_medication_name ILIKE '%VENTOLIN%' THEN 'SABA'
-            WHEN aob.order_medication_name ILIKE '%SALMETEROL%'
-                OR aob.order_medication_name ILIKE '%FORMOTEROL%'
-                OR aob.order_medication_name ILIKE '%INDACATEROL%' THEN 'LABA'
-            WHEN aob.order_medication_name ILIKE '%BECLOMETASONE%'
-                OR aob.order_medication_name ILIKE '%BUDESONIDE%'
-                OR aob.order_medication_name ILIKE '%FLUTICASONE%' THEN 'ICS'
-            WHEN aob.order_medication_name ILIKE '%SYMBICORT%'
-                OR aob.order_medication_name ILIKE '%SERETIDE%'
-                OR aob.order_medication_name ILIKE '%FOSTAIR%' THEN 'ICS_LABA_COMBINATION'
-            WHEN aob.order_medication_name ILIKE '%MONTELUKAST%'
-                OR aob.order_medication_name ILIKE '%ZAFIRLUKAST%' THEN 'LEUKOTRIENE_ANTAGONIST'
-            WHEN aob.order_medication_name ILIKE '%THEOPHYLLINE%'
-                OR aob.order_medication_name ILIKE '%AMINOPHYLLINE%' THEN 'METHYLXANTHINE'
-            WHEN aob.order_medication_name ILIKE '%PREDNISOLONE%'
-                OR aob.order_medication_name ILIKE '%HYDROCORTISONE%' THEN 'ORAL_STEROID'
-            ELSE 'OTHER_ASTHMA_TREATMENT'
-        END AS asthma_medication_type,
-
-        -- Identify reliever vs controller medications
-        CASE
-            WHEN aob.order_medication_name ILIKE '%SALBUTAMOL%'
-                OR aob.order_medication_name ILIKE '%TERBUTALINE%' THEN 'RELIEVER'
-            WHEN aob.order_medication_name ILIKE '%BECLOMETASONE%'
-                OR aob.order_medication_name ILIKE '%BUDESONIDE%'
-                OR aob.order_medication_name ILIKE '%FLUTICASONE%'
-                OR aob.order_medication_name ILIKE '%SYMBICORT%'
-                OR aob.order_medication_name ILIKE '%SERETIDE%'
-                OR aob.order_medication_name ILIKE '%MONTELUKAST%' THEN 'CONTROLLER'
-            ELSE 'OTHER'
-        END AS medication_role,
 
         -- QOF asthma care process indicators
         TRUE AS is_asthma_treatment,
 
-        -- Inhaler technique assessment flags
-        CASE
-            WHEN aob.order_medication_name ILIKE '%MDI%'
-                OR aob.order_medication_name ILIKE '%EVOHALER%' THEN 'MDI'
-            WHEN aob.order_medication_name ILIKE '%DPI%'
-                OR aob.order_medication_name ILIKE '%TURBOHALER%'
-                OR aob.order_medication_name ILIKE '%ACCUHALER%' THEN 'DPI'
-            WHEN aob.order_medication_name ILIKE '%NEBULISER%'
-                OR aob.order_medication_name ILIKE '%NEBULES%' THEN 'NEBULISER'
-            ELSE 'UNKNOWN_DEVICE'
-        END AS inhaler_device_type,
-
-        -- MART therapy identification (Maintenance and Reliever Therapy)
-        CASE
-            WHEN aob.order_medication_name ILIKE '%SYMBICORT%'
-                AND aob.order_medication_name ILIKE '%MART%' THEN TRUE
-            ELSE FALSE
-        END AS is_mart_therapy,
 
         -- Recency flags for monitoring
         TRUE AS is_recent_12m,
@@ -103,7 +51,6 @@ asthma_with_counts AS (
 
         -- Count of asthma medication orders per person in 12 months
         COUNT(*) OVER (PARTITION BY ae.person_id) AS recent_order_count_12m,
-        COUNT(*) OVER (PARTITION BY ae.person_id, ae.asthma_medication_type) AS medication_type_count,
 
         -- QOF indicators
         CASE

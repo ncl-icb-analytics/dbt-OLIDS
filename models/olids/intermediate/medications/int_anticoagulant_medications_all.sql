@@ -26,68 +26,33 @@ SELECT
     bnf_code,
     bnf_name,
 
-    -- Anticoagulant type classification
+    -- Anticoagulant type classification (based on BNF codes)
     CASE
         -- DOACs (Direct Oral Anticoagulants)
-        WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN 'DOAC'
-        WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN 'DOAC'
-        WHEN bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN 'DOAC'
-        WHEN bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' THEN 'DOAC'
+        WHEN bnf_code LIKE '0208020Z%' THEN 'DOAC'  -- APIXABAN
+        WHEN bnf_code LIKE '0208020X%' THEN 'DOAC'  -- DABIGATRAN
+        WHEN bnf_code LIKE '0208020AA%' THEN 'DOAC' -- EDOXABAN
+        WHEN bnf_code LIKE '0208020Y%' THEN 'DOAC'  -- RIVAROXABAN
         -- VKAs (Vitamin K Antagonists)
-        WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' THEN 'VKA'
-        WHEN bnf_code LIKE '%ACENOCOUMAROL%' OR bnf_code LIKE '0208020H%' THEN 'VKA'
-        WHEN bnf_code LIKE '%PHENINDIONE%' OR bnf_code LIKE '0208020N%' THEN 'VKA'
-        WHEN bnf_code LIKE '%PHENPROCOUMON%' OR bnf_code LIKE '0208020S%' THEN 'VKA'
+        WHEN bnf_code LIKE '0208020V%' THEN 'VKA'   -- WARFARIN
+        WHEN bnf_code LIKE '0208020H%' THEN 'VKA'   -- ACENOCOUMAROL
+        WHEN bnf_code LIKE '0208020N%' THEN 'VKA'   -- PHENINDIONE
+        WHEN bnf_code LIKE '0208020S%' THEN 'VKA'   -- PHENPROCOUMON
         ELSE 'OTHER_ANTICOAGULANT'
     END AS anticoagulant_type,
 
-    -- Specific anticoagulant classification
-    CASE
-        WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN 'APIXABAN'
-        WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN 'DABIGATRAN'
-        WHEN bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN 'EDOXABAN'
-        WHEN bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' THEN 'RIVAROXABAN'
-        WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' THEN 'WARFARIN'
-        WHEN bnf_code LIKE '%ACENOCOUMAROL%' OR bnf_code LIKE '0208020H%' THEN 'ACENOCOUMAROL'
-        WHEN bnf_code LIKE '%PHENINDIONE%' OR bnf_code LIKE '0208020N%' THEN 'PHENINDIONE'
-        WHEN bnf_code LIKE '%PHENPROCOUMON%' OR bnf_code LIKE '0208020S%' THEN 'PHENPROCOUMON'
-        ELSE 'OTHER_ANTICOAGULANT'
-    END AS specific_anticoagulant,
-
-    -- Evidence-based anticoagulants for AF
-    CASE
-        WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN TRUE    -- ARISTOTLE trial
-        WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN TRUE  -- RE-LY trial
-        WHEN bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' THEN TRUE -- ROCKET-AF trial
-        WHEN bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN TRUE   -- ENGAGE-AF trial
-        WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' THEN TRUE    -- Gold standard
-        ELSE FALSE
-    END AS is_evidence_based_af,
-
-    -- Common anticoagulants flags
-    CASE WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%' THEN TRUE ELSE FALSE END AS is_warfarin,
-    CASE WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%' THEN TRUE ELSE FALSE END AS is_apixaban,
-    CASE WHEN bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%' THEN TRUE ELSE FALSE END AS is_rivaroxaban,
-    CASE WHEN bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%' THEN TRUE ELSE FALSE END AS is_dabigatran,
-    CASE WHEN bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN TRUE ELSE FALSE END AS is_edoxaban,
-
     -- Anticoagulant class flags
     CASE
-        WHEN bnf_code LIKE '%APIXABAN%' OR bnf_code LIKE '0208020Z%'
-             OR bnf_code LIKE '%DABIGATRAN%' OR bnf_code LIKE '0208020X%'
-             OR bnf_code LIKE '%RIVAROXABAN%' OR bnf_code LIKE '0208020Y%'
-             OR bnf_code LIKE '%EDOXABAN%' OR bnf_code LIKE '0208020AA%' THEN TRUE
+        WHEN bnf_code LIKE '0208020Z%' OR bnf_code LIKE '0208020X%'
+             OR bnf_code LIKE '0208020Y%' OR bnf_code LIKE '0208020AA%' THEN TRUE
         ELSE FALSE
     END AS is_doac,
 
     CASE
-        WHEN bnf_code LIKE '%WARFARIN%' OR bnf_code LIKE '0208020V%'
-             OR bnf_code LIKE '%ACENOCOUMAROL%' OR bnf_code LIKE '0208020H%'
-             OR bnf_code LIKE '%PHENINDIONE%' OR bnf_code LIKE '0208020N%'
-             OR bnf_code LIKE '%PHENPROCOUMON%' OR bnf_code LIKE '0208020S%' THEN TRUE
+        WHEN bnf_code LIKE '0208020V%' OR bnf_code LIKE '0208020H%'
+             OR bnf_code LIKE '0208020N%' OR bnf_code LIKE '0208020S%' THEN TRUE
         ELSE FALSE
     END AS is_vka,
-
 
     -- Order recency flags (anticoagulants are typically long-term therapy)
     CASE

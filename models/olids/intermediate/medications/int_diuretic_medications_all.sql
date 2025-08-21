@@ -38,32 +38,6 @@ SELECT
         ELSE 'OTHER_DIURETIC'
     END AS diuretic_type,
 
-    -- Specific diuretic classification
-    CASE
-        WHEN bnf_code LIKE '%BENDROFLUMETHIAZIDE%' OR bnf_code LIKE '0202010502%' THEN 'BENDROFLUMETHIAZIDE'
-        WHEN bnf_code LIKE '%INDAPAMIDE%' OR bnf_code LIKE '0202010520%' THEN 'INDAPAMIDE'
-        WHEN bnf_code LIKE '%FUROSEMIDE%' OR bnf_code LIKE '0202020510%' THEN 'FUROSEMIDE'
-        WHEN bnf_code LIKE '%BUMETANIDE%' OR bnf_code LIKE '0202020502%' THEN 'BUMETANIDE'
-        WHEN bnf_code LIKE '%AMILORIDE%' OR bnf_code LIKE '0202030502%' THEN 'AMILORIDE'
-        WHEN bnf_code LIKE '%SPIRONOLACTONE%' OR bnf_code LIKE '0202030520%' THEN 'SPIRONOLACTONE'
-        WHEN bnf_code LIKE '%EPLERENONE%' OR bnf_code LIKE '0202030510%' THEN 'EPLERENONE'
-        ELSE 'OTHER_DIURETIC'
-    END AS specific_diuretic,
-
-    -- Evidence-based diuretics for heart failure
-    CASE
-        WHEN bnf_code LIKE '%SPIRONOLACTONE%' OR bnf_code LIKE '0202030520%' THEN TRUE  -- RALES trial
-        WHEN bnf_code LIKE '%EPLERENONE%' OR bnf_code LIKE '0202030510%' THEN TRUE      -- EPHESUS trial
-        WHEN bnf_code LIKE '%FUROSEMIDE%' OR bnf_code LIKE '0202020510%' THEN TRUE      -- Standard loop diuretic
-        ELSE FALSE
-    END AS is_evidence_based_hf,
-
-    -- Common diuretics flags
-    CASE WHEN bnf_code LIKE '%FUROSEMIDE%' OR bnf_code LIKE '0202020510%' THEN TRUE ELSE FALSE END AS is_furosemide,
-    CASE WHEN bnf_code LIKE '%BENDROFLUMETHIAZIDE%' OR bnf_code LIKE '0202010502%' THEN TRUE ELSE FALSE END AS is_bendroflumethiazide,
-    CASE WHEN bnf_code LIKE '%INDAPAMIDE%' OR bnf_code LIKE '0202010520%' THEN TRUE ELSE FALSE END AS is_indapamide,
-    CASE WHEN bnf_code LIKE '%SPIRONOLACTONE%' OR bnf_code LIKE '0202030520%' THEN TRUE ELSE FALSE END AS is_spironolactone,
-    CASE WHEN bnf_code LIKE '%AMILORIDE%' OR bnf_code LIKE '0202030502%' THEN TRUE ELSE FALSE END AS is_amiloride,
 
     -- Diuretic class flags
     CASE WHEN bnf_code LIKE '020201%' THEN TRUE ELSE FALSE END AS is_thiazide,
