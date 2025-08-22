@@ -1,6 +1,106 @@
 version: 2
 models:
   - name: dim_pcn
-    description: 'Primary Care Network dimension with PCN details and member practice information.
+    description: 'Primary Care Network dimension with comprehensive PCN details and member practice information.
 
-      One row per PCN filtered to STPCode = QMJ (North Central London) with organisational hierarchy and member practice arrays.'
+      Key Features:
+
+      • One row per PCN filtered to North Central London (STPCode = QMJ)
+
+      • Borough-prefixed PCN names for geographic clarity
+
+      • Member practice arrays with counts for network analysis
+
+      • Complete organisational hierarchy linking to commissioners and STP
+
+      • Address and operational details from Dictionary sources
+
+      Purpose: Supports PCN-level reporting, network membership tracking, and organisational hierarchy analysis.'
+
+    columns:
+      - name: pcn_code
+        description: 'Primary Care Network code'
+        tests:
+          - not_null
+          - unique
+
+      - name: pcn_name
+        description: 'PCN name as recorded in Dictionary'
+        tests:
+          - not_null
+
+      - name: pcn_name_with_borough
+        description: 'PCN name prefixed with borough (e.g., "Camden: Example PCN") for geographic identification'
+        tests:
+          - not_null
+
+      - name: sk_pcn_id
+        description: 'Surrogate key for PCN from Dictionary'
+
+      - name: pcn_borough
+        description: 'Borough where PCN is located for geographic grouping'
+
+      - name: member_practice_count
+        description: 'Number of practices in this PCN for network size analysis'
+        tests:
+          - not_null
+
+      - name: member_practice_codes
+        description: 'Array of practice codes in this PCN for member analysis'
+        tests:
+          - not_null
+
+      - name: pcn_start_date
+        description: 'PCN operational start date'
+
+      - name: pcn_end_date
+        description: 'PCN operational end date (NULL if still active)'
+
+      - name: pcn_address_line_1
+        description: 'PCN registered address line 1'
+
+      - name: pcn_address_line_2
+        description: 'PCN registered address line 2'
+
+      - name: pcn_address_line_3
+        description: 'PCN registered address line 3'
+
+      - name: pcn_address_line_4
+        description: 'PCN registered address line 4'
+
+      - name: pcn_address_line_5
+        description: 'PCN registered address line 5'
+
+      - name: pcn_first_created
+        description: 'Timestamp when PCN record first created in Dictionary'
+
+      - name: pcn_last_updated
+        description: 'Timestamp when PCN record last updated in Dictionary'
+
+      - name: commissionercode
+        description: 'Commissioner code for PCN (typically CCG/ICB)'
+
+      - name: commissionername
+        description: 'Commissioner name for PCN'
+
+      - name: sk_commissioner_id
+        description: 'Surrogate key for commissioner organisation'
+
+      - name: stpcode
+        description: 'STP code (always QMJ for North Central London in this dataset)'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['QMJ']
+
+      - name: stpname
+        description: 'STP name (NHS North Central London Integrated Care Board)'
+        tests:
+          - not_null
+
+      - name: sk_stp_id
+        description: 'Surrogate key for STP organisation'
+
+      - name: sk_pcn_dict_id
+        description: 'Dictionary organisation surrogate key for PCN'

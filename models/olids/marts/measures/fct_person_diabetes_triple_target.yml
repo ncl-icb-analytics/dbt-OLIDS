@@ -1,6 +1,69 @@
 version: 2
 models:
   - name: fct_person_diabetes_triple_target
-    description: 'Diabetes triple target achievement tracking for QOF reporting.
+    description: 'Diabetes triple target achievement tracking for clinical quality monitoring.
 
-      One row per person on diabetes register with HbA1c ≤58 mmol/mol, BP <130/80 mmHg, and cholesterol <5 mmol/L achievement status.'
+      Target Criteria:
+
+      • HbA1c ≤58 mmol/mol (QOF standard for glycaemic control)
+
+      • Blood pressure <130/80 mmHg (NICE guideline for diabetes)
+
+      • Total cholesterol <5 mmol/L (cardiovascular risk management)
+
+      Purpose: Supports diabetes care quality assessment and identification of patients requiring intensified management to achieve clinical targets.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: diabetes_type
+        description: Diabetes type classification (Type 1, Type 2, Unknown)
+        
+      - name: latest_hba1c_date
+        description: Date of most recent HbA1c measurement
+        
+      - name: latest_hba1c_value
+        description: Most recent HbA1c value
+        
+      - name: hba1c_unit
+        description: Unit for HbA1c measurement (mmol/mol or %)
+        
+      - name: hba1c_clinical_category
+        description: Clinical category for HbA1c level
+        
+      - name: latest_bp_date
+        description: Date of most recent blood pressure measurement
+        
+      - name: latest_systolic
+        description: Most recent systolic blood pressure (mmHg)
+        
+      - name: latest_diastolic
+        description: Most recent diastolic blood pressure (mmHg)
+        
+      - name: latest_chol_date
+        description: Date of most recent cholesterol measurement
+        
+      - name: latest_chol_value
+        description: Most recent total cholesterol value (mmol/L)
+        
+      - name: hba1c_type
+        description: HbA1c measurement standard (IFCC or DCCT)
+        
+      - name: hba1c_in_target_range
+        description: Whether HbA1c meets QOF target (≤58 mmol/mol)
+        
+      - name: bp_in_target_range
+        description: Whether blood pressure meets target (<130/80 mmHg)
+        
+      - name: cholesterol_in_target_range
+        description: Whether cholesterol meets target (<5 mmol/L)
+        
+      - name: triple_target_achieved
+        description: Whether all three targets are achieved
+        
+      - name: number_of_targets_achieved
+        description: Count of targets achieved (0-3)
+        
+      - name: has_all_measurements
+        description: Whether person has all three measurements available

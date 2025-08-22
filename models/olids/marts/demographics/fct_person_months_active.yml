@@ -2,23 +2,19 @@ version: 2
 
 models:
   - name: fct_person_months_active
-    description: 'Active person-months spine table for simplified temporal analysis.
-
-      Pre-computes the monthly active patient populations that analysts repeatedly need. Eliminates the need to recreate monthly spines and active patient logic in every analysis.
+    description: 'Monthly active patient spine table providing foundation for temporal analysis.
 
       Key Features:
 
-      • Ready-made monthly date spine (last 5 years)
+      • Monthly grain for last 5 years (60 months)
 
-      • Pre-filtered to actively registered patients only
+      • Active registrations only (excludes deducted/left patients)
 
-      • One row per person-month (no duplicates)
+      • One row per person-month with current practice details
 
-      • Current practice information for convenience
+      • Eliminates repetitive spine logic in analysis queries
 
-      • Optimised for joining to temporal data
-
-      Purpose: Foundation table for temporal analysis. Join this to demographics, conditions, or other temporal data using the temporal_join macro.'
+      Purpose: Foundation for temporal analysis enabling direct joins to demographics, conditions, and clinical data by person-month.'
     
     tests:
       - dbt_utils.unique_combination_of_columns:

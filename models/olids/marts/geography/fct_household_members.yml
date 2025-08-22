@@ -1,6 +1,101 @@
 version: 2
 models:
   - name: fct_household_members
-    description: 'Bridge table linking patients to households through UPRN hash mapping.
+    description: 'Bridge table linking patients to households with demographic and practice context.
 
-      One row per person with valid UPRN hash including demographic and practice registration details for household composition analysis.'
+      Key Features:
+
+      • Person-to-household relationships via UPRN hash
+
+      • Demographics and registration details for household composition
+
+      • Practice and PCN organisational context
+
+      Purpose: Enables household-level health analysis by linking residents to dwelling geography.'
+    columns:
+      - name: person_id
+        description: 'Unique identifier for patient'
+        tests:
+          - not_null
+      
+      - name: household_id
+        description: 'Unique identifier for household (links to dim_households)'
+        tests:
+          - not_null
+      
+      - name: uprn_hash
+        description: 'Hashed unique property reference number identifying dwelling'
+        tests:
+          - not_null
+      
+      - name: is_active
+        description: 'Flag indicating if patient has active registration'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      
+      - name: is_deceased
+        description: 'Flag indicating if patient is deceased'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      
+      - name: sex
+        description: 'Patient sex (Male, Female, Indeterminate, Not Known)'
+      
+      - name: age
+        description: 'Current age in years'
+      
+      - name: age_life_stage
+        description: 'Life stage category based on age (Child, Adult, Older Adult)'
+      
+      - name: age_band_ons
+        description: 'ONS standard age band classification'
+      
+      - name: ethnicity_category
+        description: 'Broad ethnicity categorisation'
+      
+      - name: main_language
+        description: 'Primary language spoken by patient'
+      
+      - name: interpreter_needed
+        description: 'Flag indicating if interpreter services are required'
+        tests:
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      
+      - name: practice_code
+        description: 'GP practice code where patient is registered'
+      
+      - name: practice_name
+        description: 'GP practice name where patient is registered'
+      
+      - name: registration_start_date
+        description: 'Date patient registered with current practice'
+      
+      - name: pcn_code
+        description: 'Primary Care Network code'
+      
+      - name: pcn_name
+        description: 'Primary Care Network name'
+      
+      - name: practice_borough
+        description: 'Borough where GP practice is located'
+      
+      - name: practice_neighbourhood
+        description: 'Neighbourhood where GP practice is located'
+      
+      - name: snapshot_date
+        description: 'Date when data was extracted'
+        tests:
+          - not_null
+      
+      - name: created_at
+        description: 'Timestamp when record was created'
+        tests:
+          - not_null

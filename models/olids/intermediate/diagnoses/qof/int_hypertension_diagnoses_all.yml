@@ -4,6 +4,34 @@ models:
     description: 'Hypertension diagnosis and resolution observations for QOF register management.
 
       One row per observation using HYP_COD (diagnosis) and HYPRES_COD (resolved) clusters.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: clinical_effective_date
+        description: 'Date when hypertension observation was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for hypertension diagnosis or resolution'
+
+      - name: concept_display
+        description: 'Human-readable description of the clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (HYP_COD or HYPRES_COD)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating hypertension diagnosis code (HYP_COD cluster)'
+
+      - name: is_resolved_code
+        description: 'Flag indicating hypertension resolution code (HYPRES_COD cluster)'
+
+      - name: hypertension_observation_type
+        description: 'Categorised hypertension observation type (Hypertension Diagnosis or Hypertension Resolved)'
+
     tests:
       - cluster_ids_exist:
           arguments:

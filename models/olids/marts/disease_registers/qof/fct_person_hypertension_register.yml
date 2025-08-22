@@ -4,3 +4,34 @@ models:
     description: 'QOF hypertension register for patients aged 18+ with active hypertension diagnosis.
 
       One row per person with latest HTN_COD > latest HTNRES_COD, including clinical staging based on NICE-aligned BP thresholds.'
+
+    columns:
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: age
+        description: 'Current age of the patient'
+
+      - name: is_on_register
+        description: 'Flag indicating patient is on the hypertension QOF register'
+
+      - name: earliest_diagnosis_date
+        description: 'Date of earliest hypertension diagnosis'
+
+      - name: latest_diagnosis_date
+        description: 'Date of most recent hypertension diagnosis'
+
+      - name: latest_resolved_date
+        description: 'Date of most recent hypertension resolution code (if any)'
+
+      - name: all_hypertension_concept_codes
+        description: 'Array of all hypertension concept codes for this patient'
+
+      - name: all_hypertension_concept_displays
+        description: 'Array of all hypertension concept displays for this patient'
+
+      - name: meets_age_criteria
+        description: 'Flag indicating patient meets age criteria (≥18 years for hypertension register)'
+
+      - name: has_active_diagnosis
+        description: 'Flag indicating patient has an active hypertension diagnosis'

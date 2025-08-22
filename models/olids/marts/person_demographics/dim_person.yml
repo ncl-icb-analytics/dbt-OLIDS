@@ -1,13 +1,75 @@
 version: 2
 models:
   - name: dim_person
-    description: 'Core person identity dimension aggregating multiple patient IDs per person.
+    description: 'Core person identity dimension aggregating multiple patient IDs and practice relationships per person.
 
-      One row per person in the HEI population with current and historical practice associations.'
+      Key Features:
+
+      • One row per person with all mapped patient IDs as arrays
+
+      • Current practice relationship for active state analysis
+
+      • Historical practice arrays for patient mobility tracking
+
+      • Deduplication logic handles multiple current registrations
+
+      • Patient relationship counts for data quality assessment
+
+      Purpose: Central person registry for linking across all patient-level data and practice relationships.'
     
     columns:
       - name: person_id
-        description: Unique identifier for the person
+        description: 'Unique identifier for the person'
         tests:
           - not_null
           - unique
+
+      - name: sk_patient_ids
+        description: 'Array of all surrogate patient keys mapped to this person for cross-referencing'
+        tests:
+          - not_null
+
+      - name: patient_ids
+        description: 'Array of all OLIDS patient IDs mapped to this person'
+        tests:
+          - not_null
+
+      - name: current_practice_id
+        description: 'OLIDS ID of current practice (if person has active registration)'
+
+      - name: current_practice_code
+        description: 'ODS code of current practice (if person has active registration)'
+
+      - name: current_practice_name
+        description: 'Name of current practice (if person has active registration)'
+
+      - name: total_patients
+        description: 'Number of patient IDs mapped to this person (typically 1, >1 indicates merges)'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+
+      - name: practice_ids
+        description: 'Array of all practice IDs this person has been registered with'
+        tests:
+          - not_null
+
+      - name: practice_codes
+        description: 'Array of all practice codes this person has been registered with'
+        tests:
+          - not_null
+
+      - name: practice_names
+        description: 'Array of all practice names this person has been registered with'
+        tests:
+          - not_null
+
+      - name: total_practices
+        description: 'Number of different practices this person has been registered with'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0

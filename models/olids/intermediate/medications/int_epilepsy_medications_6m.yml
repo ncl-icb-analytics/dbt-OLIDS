@@ -4,3 +4,55 @@ models:
     description: 'Anti-epileptic drug medication orders from the last 6 months for seizure management.
 
       One row per medication order using EPILDRUG_COD cluster with AED generation classification, therapeutic drug monitoring flags, and teratogenicity risk assessment.'
+
+    columns:
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: patient_id
+        description: 'Original patient identifier from source system'
+
+      - name: sk_patient_id
+        description: 'Surrogate key for patient identification'
+
+      - name: medication_order_id
+        description: 'Unique identifier for the medication order'
+
+      - name: medication_statement_id
+        description: 'Unique identifier for the medication statement'
+
+      - name: order_date
+        description: 'Date when epilepsy medication was ordered (last 6 months)'
+
+      - name: order_medication_name
+        description: 'Name of the anti-epileptic drug as ordered'
+
+      - name: order_dose
+        description: 'Prescribed dose of the AED medication'
+
+      - name: order_quantity_value
+        description: 'Quantity value of the AED medication ordered'
+
+      - name: order_quantity_unit
+        description: 'Unit of measurement for the medication quantity'
+
+      - name: order_duration_days
+        description: 'Duration of the medication order in days'
+
+      - name: statement_medication_name
+        description: 'Name of the AED medication in the statement record'
+
+      - name: mapped_concept_code
+        description: 'Standardised clinical code for the AED medication'
+
+      - name: mapped_concept_display
+        description: 'Human-readable description of the AED medication code'
+
+      - name: bnf_code
+        description: 'BNF code for the anti-epileptic drug'
+
+      - name: bnf_name
+        description: 'BNF name for the AED medication'
+
+      - name: cluster_id
+        description: 'Drug cluster identifier (EPILDRUG_COD) for epilepsy medications'

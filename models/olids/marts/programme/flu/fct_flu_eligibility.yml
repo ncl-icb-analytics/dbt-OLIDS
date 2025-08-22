@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: fct_flu_eligibility
+    description: 'Flu vaccination eligibility determination using clear business rules.
+
+      Eligibility Categories:
+
+      • Age-based: ≥65 years, 6 months-2 years, 2-3 years
+
+      • Clinical conditions: Chronic conditions increasing flu risk
+
+      • At-risk groups: Pregnancy, immunosuppression, care home residents
+
+      • Healthcare workers: Direct patient contact roles
+
+      Purpose: Supports flu campaign planning and vaccination programme management with clear eligibility tracking by campaign year.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: campaign_id
+        description: Flu campaign identifier (e.g., flu_2024_25)
+        
+      - name: campaign_year
+        description: Campaign year for reporting
+        
+      - name: campaign_category
+        description: Eligibility category for this person
+        
+      - name: is_eligible
+        description: Whether person is eligible for flu vaccination
+        
+      - name: eligibility_reason
+        description: Primary reason for eligibility
+        
+      - name: age_at_campaign_start
+        description: Person's age at campaign start date
+        
+      - name: has_clinical_condition
+        description: Whether person has qualifying clinical condition
+        
+      - name: is_pregnant
+        description: Whether person is pregnant during campaign
+        
+      - name: is_healthcare_worker
+        description: Whether person is a healthcare worker
+        
+      - name: is_care_home_resident
+        description: Whether person is a care home resident

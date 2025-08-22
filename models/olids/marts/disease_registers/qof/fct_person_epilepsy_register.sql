@@ -5,7 +5,7 @@
 }}
 
 -- Epilepsy Register (QOF Pattern 3: Complex QOF Register with External Validation)
--- Business Logic: Age ≥18 + Active epilepsy diagnosis (latest EPIL_COD > latest EPILRES_COD) + Recent epilepsy medication (last 6 months)
+-- Business Logic: Age ≥18 + Active epilepsy diagnosis (latest EPIL_COD > latest EPILDRUG_COD) + Recent epilepsy medication (last 6 months)
 -- External Validation: Requires medication confirmation to ensure active epilepsy management
 
 WITH epilepsy_diagnoses AS (

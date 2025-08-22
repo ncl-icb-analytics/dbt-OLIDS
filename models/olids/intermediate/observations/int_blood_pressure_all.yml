@@ -1,7 +1,21 @@
 version: 2
 models:
   - name: int_blood_pressure_all
-    description: 'Event-based blood pressure consolidation: one row per person per date with paired systolic/diastolic values, clinical context flags (Home/ABPM), and rich traceability metadata. Filters implausible values and NULL dates.'
+    description: 'Event-based blood pressure consolidation with paired systolic/diastolic values and clinical context identification.
+
+      Key Features:
+
+      • Event-based design: one row per person per date
+
+      • Pairs systolic and diastolic values from multiple observations
+
+      • Identifies clinical context (Home BP, ABPM)
+
+      • Applies plausible value filtering (Systolic: 40-350 mmHg, Diastolic: 20-200 mmHg)
+
+      • Uses six BP cluster types: BP_COD, SYSBP_COD, DIASBP_COD, HOMEAMBBP_COD, ABPM_COD, HOMEBP_COD
+
+      Purpose: Provide consolidated blood pressure events for clinical analysis and BP control assessment.'
     tests:
       - cluster_ids_exist:
           arguments:
@@ -42,3 +56,19 @@ models:
                 max_value: 200
                 inclusive: true
                 where: "diastolic_value IS NOT NULL"
+      - name: is_home_bp_event
+        description: 'Boolean flag indicating if any observation on this date was recorded as home blood pressure (HOMEBP_COD, HOMEAMBBP_COD)'
+      - name: is_abpm_bp_event
+        description: 'Boolean flag indicating if any observation on this date was recorded as ambulatory blood pressure monitoring (ABPM_COD)'
+      - name: result_unit_display
+        description: 'Unit of measurement for blood pressure values (always mmHg)'
+      - name: systolic_observation_id
+        description: 'Observation identifier for the systolic reading used in this consolidated event'
+      - name: diastolic_observation_id
+        description: 'Observation identifier for the diastolic reading used in this consolidated event'
+      - name: all_concept_codes
+        description: 'Array of all clinical concept codes used in observations for this BP event date'
+      - name: all_concept_displays
+        description: 'Array of all clinical concept display names used in observations for this BP event date'
+      - name: all_source_cluster_ids
+        description: 'Array of all source cluster identifiers used in observations for this BP event date'
