@@ -1,0 +1,196 @@
+version: 2
+
+models:
+  - name: fct_flu_weekly_org
+    description: 'Practice-level weekly flu vaccination tracking by risk group and campaign category.
+
+      This table provides detailed vaccination metrics broken down by practice, risk group, and campaign category, enabling comprehensive analysis while supporting organisational hierarchy rollups.
+
+      Key Features:
+
+      • Practice × Risk Group × Campaign Category grain with weekly and cumulative vaccination counts
+
+      • Includes both detailed risk group breakdowns AND practice totals to avoid double-counting
+
+      • Complete organisational hierarchy for natural PowerBI rollups
+
+      • Risk group analysis (Over 65, Diabetes, Clinical Conditions, etc.) plus "Total" rows
+
+      • Campaign category breakdowns (Age Based, Clinical Condition, At Risk Group) plus "All Categories"
+
+      • Handles overlapping risk groups correctly with distinct person counts in "Total" rows
+
+      • Handles campaign end dates using effective_end_date logic
+
+      • Optimised for detailed performance monitoring and risk group analysis
+
+      PowerBI Rollup Hierarchy:
+
+      • Practice Code → PCN → Practice Neighbourhood → Practice Borough
+
+      • All geographical attributes pre-joined for immediate use
+
+      • Supports drill-down and roll-up analysis without additional joins
+
+      Use Cases:
+
+      • Executive dashboards showing borough-level performance
+
+      • Practice manager views of individual practice progress
+
+      • PCN-level coordination and comparison
+
+      • Weekly operational reporting during flu campaigns'
+
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['flu_2023_24', 'flu_2024_25', 'flu_2025_26']
+
+      - name: campaign_name
+        description: 'Human-readable campaign name'
+        tests:
+          - not_null
+
+      - name: week_number
+        description: 'Week number within campaign (1-26)'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 26
+
+      - name: week_start_date
+        description: 'Start date of the week (Monday)'
+        tests:
+          - not_null
+
+      - name: week_end_date
+        description: 'End date of the week (Sunday)'
+        tests:
+          - not_null
+
+      - name: practice_code
+        description: 'GP practice code'
+        tests:
+          - not_null
+
+      - name: practice_name
+        description: 'GP practice name'
+        tests:
+          - not_null
+
+      - name: risk_group
+        description: 'Specific risk group for eligibility (e.g., Over 65, Diabetes, etc.) or "Total" for practice-level distinct counts'
+        tests:
+          - not_null
+
+      - name: campaign_category
+        description: 'High-level eligibility category (e.g., Age Based, Clinical Condition) or "All Categories" for practice totals'
+        tests:
+          - not_null
+
+      - name: pcn_code
+        description: 'Primary Care Network code'
+
+      - name: pcn_name
+        description: 'Primary Care Network name'
+
+      - name: practice_neighbourhood
+        description: 'Practice neighbourhood for geographical grouping'
+
+      - name: practice_borough
+        description: 'Practice borough for top-level geographical grouping'
+
+      - name: eligible_count
+        description: 'Number of eligible persons at this practice'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: weekly_vaccination_count
+        description: 'Number of vaccinations administered this specific week'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: cumulative_vaccination_count
+        description: 'Total vaccinations administered up to and including this week'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: uptake_rate_percent
+        description: 'Vaccination uptake rate as percentage (cumulative vaccinations / eligible)'
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+      - name: week_on_week_change
+        description: 'Change in cumulative vaccinations from previous week'
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: remaining_eligible
+        description: 'Number of eligible persons not yet vaccinated'
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: campaign_phase
+        description: 'Phase of campaign based on week number'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Campaign Start', 'Active Period', 'Peak Period', 'Campaign End']
+
+      - name: is_latest_week
+        description: 'Boolean flag indicating if this is the latest week with data'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - campaign_id
+              - week_number
+              - practice_code
+              - risk_group
+              - campaign_category
+          name: fct_flu_weekly_org_unique_campaign_week_practice_risk
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "cumulative_vaccination_count <= eligible_count"
+          name: fct_flu_weekly_org_cumulative_not_exceeds_eligible
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "weekly_vaccination_count <= cumulative_vaccination_count"
+          name: fct_flu_weekly_org_weekly_not_exceeds_cumulative
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "week_end_date = DATEADD('day', 6, week_start_date)"
+          name: fct_flu_weekly_org_valid_week_range
