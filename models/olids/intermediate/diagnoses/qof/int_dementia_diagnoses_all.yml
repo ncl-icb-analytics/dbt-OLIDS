@@ -4,6 +4,31 @@ models:
     description: 'Dementia diagnosis observations for QOF register management and dementia care pathway coordination.
 
       One row per dementia diagnosis observation using DEM_COD cluster with permanent condition tracking and no age restrictions.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: clinical_effective_date
+        description: 'Date when dementia diagnosis was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for dementia diagnosis'
+
+      - name: concept_display
+        description: 'Human-readable description of the dementia clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (DEM_COD)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating dementia diagnosis code (always true)'
+
+      - name: dementia_observation_type
+        description: 'Categorised dementia observation type (Dementia Diagnosis)'
+
     tests:
       - cluster_ids_exist:
           arguments:

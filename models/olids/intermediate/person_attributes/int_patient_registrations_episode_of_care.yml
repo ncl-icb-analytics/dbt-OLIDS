@@ -1,0 +1,63 @@
+version: 2
+models:
+  - name: int_patient_registrations_episode_of_care
+    description: 'Patient registration history using episode of care data with temporal periods and practice change tracking.
+
+      Key Features:
+
+      • Uses episode of care linked to patient registered practitioner in role
+
+      • Tracks registration periods with proper temporal analysis
+
+      • Identifies active vs historical registrations
+
+      • Calculates registration sequences and practice changes
+
+      • Performs gap analysis between registrations
+
+      • Deduplicates identical episode records from source
+
+      • Active registration criteria: end_date IS NULL OR end_date > current_date OR end_date < start_date
+
+      Purpose: Provide registration history for patients with episode-based temporal tracking and practice change analysis.'
+    columns:
+      - name: registration_record_id
+        description: 'Unique identifier for the registration record (episode record ID)'
+      - name: person_id
+        description: 'Unique person identifier from deduplicated patient-person mapping'
+      - name: patient_id
+        description: 'Patient identifier'
+      - name: sk_patient_id
+        description: 'Surrogate key for patient from source system'
+      - name: organisation_id
+        description: 'Organisation identifier for the registered practice'
+      - name: practice_name
+        description: 'Name of the registered practice'
+      - name: practice_ods_code
+        description: 'ODS code for the registered practice'
+      - name: registration_start_date
+        description: 'Start date of the registration period'
+      - name: registration_end_date
+        description: 'End date of the registration period (NULL for active registrations)'
+      - name: effective_end_date
+        description: 'Effective end date for analysis (NULL for active registrations, actual end date for historical)'
+      - name: registration_duration_days
+        description: 'Duration of completed registrations in days (NULL for active registrations)'
+      - name: registration_status
+        description: 'Registration status classification: Active or Historical'
+      - name: is_current_registration
+        description: 'Boolean flag indicating if registration is currently active'
+      - name: is_latest_registration
+        description: 'Boolean flag indicating if this is the most recent registration for the person'
+      - name: registration_sequence
+        description: 'Chronological sequence number of registrations per person (1 = first registration)'
+      - name: total_registrations_count
+        description: 'Total number of registrations for this person'
+      - name: has_changed_practice
+        description: 'Boolean flag indicating if person has had more than one registration (practice change)'
+      - name: gap_since_previous_registration_days
+        description: 'Number of days between end of previous registration and start of this registration'
+      - name: practitioner_id
+        description: 'Practitioner identifier associated with the registration'
+      - name: episode_of_care_id
+        description: 'Episode of care identifier linking to practitioner role'

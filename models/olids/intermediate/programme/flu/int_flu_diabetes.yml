@@ -1,0 +1,43 @@
+version: 2
+models:
+  - name: int_flu_diabetes
+    description: 'Flu vaccination eligibility for people with diabetes or Addisons disease with resolution logic.
+
+      Key Features:
+
+      • Two eligibility pathways: Addisons disease (ADDIS_COD) or active diabetes (DIAB_COD)
+
+      • Exclusion logic for resolved diabetes (DMRES_COD superseding DIAB_COD)
+
+      • Age restriction: minimum 6 months for flu vaccination
+
+      • Uses latest diabetes code vs latest resolved code comparison
+
+      • Generates data for current and previous flu campaigns
+
+      • Deduplicates to best qualifying event per person
+
+      Purpose: Identify people eligible for flu vaccination due to diabetes or related conditions.'
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Clinical Condition")'
+      - name: risk_group
+        description: 'Risk group classification (always "Diabetes")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying diagnosis (earliest Addisons or latest active diabetes)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (minimum 6 months required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

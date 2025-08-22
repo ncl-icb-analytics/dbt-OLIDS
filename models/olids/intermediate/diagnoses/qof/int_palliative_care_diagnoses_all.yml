@@ -4,6 +4,37 @@ models:
     description: 'Palliative care pathway observations for QOF register management.
 
       One row per observation using PALCARE_COD (pathway) and PALCARENI_COD (no longer indicated) clusters. Register inclusion on/after 1 April 2008.'
+    columns:
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: clinical_effective_date
+        description: 'Date when palliative care observation was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for palliative care pathway or status'
+
+      - name: concept_display
+        description: 'Human-readable description of the clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (PALCARE_COD or PALCARENI_COD)'
+
+      - name: is_palliative_care_code
+        description: 'Flag indicating palliative care pathway code (PALCARE_COD cluster)'
+
+      - name: is_palliative_care_not_indicated_code
+        description: 'Flag indicating palliative care no longer indicated code (PALCARENI_COD cluster)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating palliative care diagnosis code'
+
+      - name: is_resolved_code
+        description: 'Flag indicating palliative care resolution code'
+
     tests:
       - cluster_ids_exist:
           arguments:

@@ -1,8 +1,106 @@
 version: 2
 models:
   - name: dim_person_current_practice
-    description: 'Current practice registration details for each person with organisational context.
+    description: 'Current practice registration snapshot for each person with registration history and practice context.
 
-      One row per person with active practice registration including practice hierarchy and registration timeline.'
+      Key Features:
+
+      • One row per person with current/latest practice registration
+
+      • Deduplication logic ensures single row per person via ROW_NUMBER()
+
+      • Practice details including type, postcode, and operational status
+
+      • Registration sequence and timeline for patient mobility analysis
+
+      • Age at registration start for demographic analysis
+
+      Purpose: Supports current state analysis, practice population profiling, and patient registration tracking.'
+
+    columns:
+      - name: person_id
+        description: 'Unique person identifier'
+        tests:
+          - not_null
+          - unique
+
+      - name: sk_patient_id
+        description: 'Surrogate key for patient record'
+
+      - name: practice_id
+        description: 'OLIDS internal practice ID'
+        tests:
+          - not_null
+
+      - name: practice_code
+        description: 'Practice ODS code'
+        tests:
+          - not_null
+
+      - name: practice_name
+        description: 'Practice name'
+        tests:
+          - not_null
+
+      - name: practice_type_code
+        description: 'Practice type code from OLIDS'
+
+      - name: practice_type_desc
+        description: 'Practice type description (e.g., GP surgery, health centre)'
+
+      - name: practice_postcode
+        description: 'Practice postcode'
+
+      - name: practice_parent_org_id
+        description: 'Parent organisation ID for practice'
+
+      - name: practice_open_date
+        description: 'Practice opening date'
+
+      - name: practice_close_date
+        description: 'Practice closure date (NULL if still open)'
+
+      - name: practice_is_obsolete
+        description: 'Flag indicating if practice record is obsolete'
+        tests:
+          - not_null
+
+      - name: registration_start_date
+        description: 'Start date of current registration'
+        tests:
+          - not_null
+
+      - name: registration_end_date
+        description: 'End date of current registration (NULL if still active)'
+
+      - name: registration_duration_days
+        description: 'Duration of current registration in days'
+
+      - name: registration_sequence
+        description: 'Sequential number of this registration for the person (1st, 2nd, 3rd, etc.)'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+
+      - name: total_registrations_count
+        description: 'Total number of registrations this person has had'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+
+      - name: has_changed_practice
+        description: 'Flag indicating if person has ever changed practice (based on total registrations)'
+        tests:
+          - not_null
+
+      - name: age_at_registration_start
+        description: 'Persons approximate age when this registration started'
+
+      - name: practitioner_id
+        description: 'Practitioner ID associated with this registration'
 
 

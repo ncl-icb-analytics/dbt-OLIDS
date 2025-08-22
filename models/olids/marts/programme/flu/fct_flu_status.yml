@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: fct_flu_status
+    description: 'Flu vaccination status tracking combining eligibility with vaccination records.
+
+      Status Categories:
+
+      • Eligible and vaccinated
+
+      • Eligible but not vaccinated
+
+      • Not eligible
+
+      • Vaccination outside campaign period
+
+      Purpose: Supports flu vaccination monitoring, coverage reporting, and identification of unvaccinated eligible patients.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: campaign_id
+        description: Flu campaign identifier
+        
+      - name: campaign_year
+        description: Campaign year
+        
+      - name: is_eligible
+        description: Whether person is eligible for vaccination
+        
+      - name: is_vaccinated
+        description: Whether person received flu vaccination
+        
+      - name: vaccination_date
+        description: Date of flu vaccination (if vaccinated)
+        
+      - name: vaccination_status
+        description: Combined eligibility and vaccination status
+        
+      - name: eligibility_category
+        description: Category for eligibility (age, clinical, etc.)
+        
+      - name: vaccination_in_campaign_period
+        description: Whether vaccination occurred within campaign period
+        
+      - name: days_to_vaccination
+        description: Days from campaign start to vaccination

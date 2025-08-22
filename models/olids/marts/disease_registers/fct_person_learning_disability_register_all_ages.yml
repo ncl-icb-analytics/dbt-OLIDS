@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: fct_person_learning_disability_register_all_ages
+    description: 'Learning disability register including all ages (differs from QOF register which requires age ≥14).
+
+      Inclusion Criteria:
+
+      • Any learning disability diagnosis code (LD_COD cluster)
+
+      • No age restrictions applied
+
+      • Active diagnosis required (not historical)
+
+      Purpose: Supports comprehensive learning disability population analysis across all age groups, complementing the age-restricted QOF register.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: is_on_register
+        description: Whether person is on the learning disability register
+        
+      - name: earliest_diagnosis_date
+        description: Date of earliest learning disability diagnosis
+        
+      - name: latest_diagnosis_date
+        description: Date of most recent learning disability diagnosis
+        
+      - name: all_ld_concept_codes
+        description: All learning disability concept codes for this person
+        
+      - name: all_ld_concept_displays
+        description: All learning disability concept display names for this person

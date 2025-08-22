@@ -3,8 +3,49 @@ models:
   - name: int_diabetes_diagnoses_all
     description: 'Diabetes diagnosis observations with type classification and prioritisation for QOF register management.
 
-      One row per observation using DMTYPE1_COD, DMTYPE2_COD, DM_COD, and DMRES_COD clusters with clinical prioritisation logic.'
+      Key Features:
+
+      • Uses four cluster types with clinical prioritisation logic
+
+      • DMTYPE1_COD: Type 1 diabetes specific diagnoses (highest priority)
+
+      • DMTYPE2_COD: Type 2 diabetes specific diagnoses
+
+      • DM_COD: General diabetes diagnoses
+
+      • DMRES_COD: Diabetes resolved/remission codes (lowest priority)
+
+      • Flags ALL applicable categories per observation rather than just most specific
+
+      Purpose: Provide observation-level data with comprehensive diabetes type classification for QOF register and disease progression tracking.'
     tests:
       - cluster_ids_exist:
           arguments:
             cluster_ids: DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: clinical_effective_date
+        description: 'Date when the diabetes observation was recorded'
+      - name: concept_code
+        description: 'Clinical code for diabetes diagnosis or resolution'
+      - name: concept_display
+        description: 'Human-readable description of the diabetes concept'
+      - name: source_cluster_id
+        description: 'Most specific cluster identifier based on clinical prioritisation (DMTYPE1_COD > DMTYPE2_COD > DM_COD > DMRES_COD)'
+      - name: is_general_diabetes_code
+        description: 'Boolean flag indicating if observation belongs to DM_COD cluster'
+      - name: is_type1_diabetes_code
+        description: 'Boolean flag indicating if observation belongs to DMTYPE1_COD cluster'
+      - name: is_type2_diabetes_code
+        description: 'Boolean flag indicating if observation belongs to DMTYPE2_COD cluster'
+      - name: is_diabetes_resolved_code
+        description: 'Boolean flag indicating if observation belongs to DMRES_COD cluster'
+      - name: is_diagnosis_code
+        description: 'Boolean flag indicating if code represents diabetes diagnosis (TRUE for DM_COD, DMTYPE1_COD, DMTYPE2_COD)'
+      - name: is_resolved_code
+        description: 'Boolean flag indicating if code represents diabetes resolution (TRUE for DMRES_COD)'
+      - name: diabetes_observation_type
+        description: 'Classification of diabetes observation: Type 1, Type 2, General, Resolved, or Unknown'

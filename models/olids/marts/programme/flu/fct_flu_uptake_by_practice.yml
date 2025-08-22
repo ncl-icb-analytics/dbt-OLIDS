@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: fct_flu_uptake_by_practice
+    description: 'Practice-level flu vaccination uptake rates for performance monitoring.
+
+      Practice Metrics:
+
+      • Eligible patient counts by category
+
+      • Vaccination counts and percentages
+
+      • Performance against targets
+
+      • Comparison with local and national averages
+
+      Purpose: Supports practice performance monitoring and quality improvement initiatives for flu vaccination programmes.'
+    
+    columns:
+      - name: practice_id
+        description: Practice identifier
+        
+      - name: practice_name
+        description: Practice name
+        
+      - name: practice_code
+        description: Practice ODS code
+        
+      - name: campaign_year
+        description: Flu campaign year
+        
+      - name: pcn_name
+        description: Primary Care Network name
+        
+      - name: borough
+        description: Borough where practice is located
+        
+      - name: total_eligible
+        description: Total eligible patients at practice
+        
+      - name: total_vaccinated
+        description: Total vaccinated patients at practice
+        
+      - name: uptake_rate
+        description: Practice vaccination coverage percentage
+        
+      - name: eligible_65_plus
+        description: Eligible patients aged 65 and over
+        
+      - name: vaccinated_65_plus
+        description: Vaccinated patients aged 65 and over
+        
+      - name: uptake_rate_65_plus
+        description: Coverage rate for patients aged 65 and over
+        
+      - name: eligible_at_risk
+        description: Eligible patients in at-risk groups
+        
+      - name: vaccinated_at_risk
+        description: Vaccinated patients in at-risk groups
+        
+      - name: uptake_rate_at_risk
+        description: Coverage rate for at-risk patients

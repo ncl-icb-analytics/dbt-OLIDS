@@ -1,5 +1,61 @@
 models:
   - name: fct_person_diabetes_register
-    description: 'QOF diabetes register for patients aged 17+ with active diabetes diagnosis.
+    description: 'QOF diabetes register with type classification for patients aged 17+ with active diabetes.
 
-      One row per person with latest DM_COD > latest DMRES_COD, including Type 1, Type 2, or Unknown classification.'
+      QOF Criteria:
+
+      • Age ≥17 years
+
+      • Active diabetes diagnosis (DM_COD codes)
+
+      • Latest diabetes code more recent than latest resolution code
+
+      • Type classification: Type 1, Type 2, or Unknown (Type 1 takes precedence)
+
+      Purpose: Supports QOF reporting and diabetes care management with accurate type classification for treatment planning.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: is_on_register
+        description: Whether person meets QOF diabetes register criteria
+        
+      - name: age
+        description: Person's current age
+        
+      - name: diabetes_type
+        description: Diabetes type classification (Type 1, Type 2, Unknown)
+        
+      - name: earliest_diagnosis_date
+        description: Date of earliest diabetes diagnosis
+        
+      - name: latest_diagnosis_date
+        description: Date of most recent diabetes diagnosis
+        
+      - name: earliest_type1_date
+        description: Date of earliest Type 1 diabetes diagnosis
+        
+      - name: latest_type1_date
+        description: Date of most recent Type 1 diabetes diagnosis
+        
+      - name: earliest_type2_date
+        description: Date of earliest Type 2 diabetes diagnosis
+        
+      - name: latest_type2_date
+        description: Date of most recent Type 2 diabetes diagnosis
+        
+      - name: latest_resolved_date
+        description: Date of most recent diabetes resolution code
+        
+      - name: is_type1_diabetes
+        description: Whether classified as Type 1 diabetes
+        
+      - name: is_type2_diabetes
+        description: Whether classified as Type 2 diabetes
+        
+      - name: all_diabetes_concept_codes
+        description: All diabetes concept codes for this person
+        
+      - name: all_diabetes_concept_displays
+        description: All diabetes concept display names for this person

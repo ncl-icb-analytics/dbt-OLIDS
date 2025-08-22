@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: dim_person_active_status
+    description: 'Unified person activity status dimension combining active and inactive patient logic.
+
+      Status Logic:
+
+      • Active: Current registration, alive, practice operational
+
+      • Inactive reasons: Deceased, no registration, practice closed, dummy patient
+
+      • Excludes dummy patients from all outputs
+
+      Purpose: Single source of truth for person activity status supporting population analysis and patient management.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: sk_patient_id
+        description: Surrogate key for patient record
+        
+      - name: patient_ids
+        description: Array of all patient IDs for this person
+        
+      - name: is_active
+        description: Whether person is currently active (alive, registered, practice operational)
+        
+      - name: is_deceased
+        description: Whether person is deceased
+        
+      - name: is_dummy_patient
+        description: Whether this is a dummy patient record (excluded from outputs)
+        
+      - name: is_confidential
+        description: Whether patient record is confidential
+        
+      - name: is_spine_sensitive
+        description: Whether patient record is spine sensitive
+        
+      - name: inactive_reason
+        description: Reason for inactive status (NULL if active)
+        
+      - name: birth_year
+        description: Birth year
+        
+      - name: birth_month
+        description: Birth month
+        
+      - name: death_year
+        description: Death year (NULL if alive)
+        
+      - name: death_month
+        description: Death month (NULL if alive)
+        
+      - name: current_practice_id
+        description: Current practice identifier (for active patients)
+        
+      - name: current_practice_code
+        description: Current practice ODS code (for active patients)
+        
+      - name: current_practice_name
+        description: Current practice name (for active patients)
+        
+      - name: current_registration_start
+        description: Current registration start date (for active patients)
+        
+      - name: current_registration_duration
+        description: Duration of current registration in days (for active patients)
+        
+      - name: total_registrations_count
+        description: Total number of registrations for this person
+        
+      - name: has_changed_practice
+        description: Whether person has changed practice
+        
+      - name: practitioner_id
+        description: Current practitioner identifier
+        
+      - name: registered_practice_id
+        description: Historical practice identifier (for inactive patients)
+        
+      - name: historical_practice_name
+        description: Historical practice name (for inactive patients)
+        
+      - name: practice_type_code
+        description: Practice type code
+        
+      - name: practice_type_desc
+        description: Practice type description
+        
+      - name: practice_postcode
+        description: Practice postcode
+        
+      - name: practice_parent_org_id
+        description: Practice parent organisation identifier
+        
+      - name: practice_open_date
+        description: Practice opening date
+        
+      - name: practice_close_date
+        description: Practice closure date (NULL if open)
+        
+      - name: practice_is_obsolete
+        description: Whether practice is obsolete
+        
+      - name: record_owner_org_code
+        description: Organisation code owning this record
+        
+      - name: latest_record_date
+        description: Date of latest record acquisition
