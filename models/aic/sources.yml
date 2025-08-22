@@ -1,0 +1,12 @@
+sources:
+  - name: olids_uat
+    database: "Data_Store_OLIDS_UAT"
+    schema: OLIDS_TERMINOLOGY
+    tables:
+      - name: CONCEPT
+      - name: CONCEPT_MAP
+    # Required to get around atypical snowflake usage
+    quoting:
+      database: true
+      schema: false
+      identifier: false
