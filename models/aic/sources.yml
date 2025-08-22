@@ -10,3 +10,86 @@ sources:
       database: true
       schema: false
       identifier: false
+
+  - name: olids_masked
+    database: "Data_Store_OLIDS_UAT"
+    schema: OLIDS_MASKED
+    tables:
+      - name: OBSERVATION
+      - name: PATIENT
+      - name: PATIENT_PERSON
+      - name: PATIENT_ADDRESS
+      - name: PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
+    # Required to get around atypical snowflake usage
+    quoting:
+      database: true
+      schema: false
+      identifier: false
+
+  - name: snomed
+    database: "Dictionary"
+    schema: "Snomed"
+    tables:
+      - name: "Concept"
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+  - name: sus_apc
+    database: "Data_Store_SUS_Unified"
+    schema: APC
+    tables:
+      - name: "spell_episodes"
+        identifier: "spell.episodes"
+      - name: "spell_episodes_diagnosis_icd"
+        identifier: "spell.episodes.clinical_coding.diagnosis.icd"
+      - name: "spell_episodes_procedure_opcs"
+        identifier: "spell.episodes.clinical_coding.procedure.opcs"
+      - name: "spell_episodes_commissioning_grouping_unbundled_hrg"
+        identifier: "spell.episodes.commissioning.grouping.unbundled_hrg"
+    # Required to get around atypical snowflake usage
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+  - name: sus_ecds
+    database: "Data_Store_SUS_Unified"
+    schema: ECDS
+    tables:
+      - name: "clinical_diagnoses_snomed"
+        identifier: "clinical.diagnoses.snomed"
+      - name: "emergency_care"
+        identifier: "emergency_care"
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+  - name: sus_op
+    database: "Data_Store_SUS_Unified"
+    schema: OP
+    tables:
+      - name: "appointment"
+        identifier: "appointment"
+      - name: "appointment_clinical_coding_diagnosis_icd"
+        identifier: "appointment.clinical_coding.diagnosis.icd"
+      - name: "appointment_clinical_coding_procedure_opcs"
+        identifier: "appointment.clinical_coding.procedure.opcs"
+      - name: "appointment_commissioning_grouping_unbundled_hrg"
+        identifier: "appointment.commissioning.grouping.unbundled_hrg"
+    quoting:
+      database: true
+      schema: true
+      identifier: true
+
+  - name: athena
+    database: "DATA_LAB_OLIDS_UAT"
+    schema: "COMMON"
+    tables:
+      - name: "ATHENA_ICD10_OPCS4"
+    quoting:
+      database: true
+      schema: true
+      identifier: false
