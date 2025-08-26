@@ -1,9 +1,9 @@
 version: 2
 models:
   - name: fct_cervical_screening_status
-    description: 'Cervical screening programme status for eligible females aged 25-64 years.
+    description: 'Cervical screening programme status for eligible females aged 25-64 years only.
 
-      Simplified person-level view focusing on core programme monitoring with screening intervals, compliance status and coverage metrics.'
+      Simplified person-level view focusing on core programme monitoring with screening intervals, compliance status and coverage metrics. Only includes women within the eligible screening age range.'
     columns:
       - name: person_id
         description: 'Unique identifier for the person'
@@ -17,7 +17,7 @@ models:
       - name: screening_interval_years
         description: 'Target screening interval in years based on age (3 years for 25-49, 5 years for 50-64)'
       - name: programme_status
-        description: 'Overall programme compliance status (Up to Date, Overdue, Never Screened, Unsuitable, Not Eligible)'
+        description: 'Overall programme compliance status (Up to Date, Overdue, Never Screened, Unsuitable)'
       - name: latest_screening_type
         description: 'Type of the most recent screening observation'
       - name: latest_screening_date

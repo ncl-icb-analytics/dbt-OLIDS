@@ -55,6 +55,7 @@ WITH person_demographics AS (
     FROM {{ ref('dim_person_age') }} dpa
     LEFT JOIN {{ ref('dim_person_sex') }} dps ON dpa.person_id = dps.person_id
     WHERE dps.sex = 'Female'  -- Only include women
+        AND dpa.age BETWEEN 25 AND 64  -- Only include eligible age range
 ),
 
 screening_history AS (
@@ -117,7 +118,6 @@ programme_status AS (
         
         -- Programme compliance status (simplified)
         CASE
-            WHEN NOT pd.is_screening_eligible THEN 'Not Eligible'
             WHEN sh.total_completed_screenings = 0 OR sh.latest_completed_date IS NULL THEN 'Never Screened'
             WHEN sh.latest_unsuitable_date IS NOT NULL 
                 AND (sh.latest_completed_date IS NULL OR sh.latest_unsuitable_date > sh.latest_completed_date)
@@ -177,6 +177,6 @@ SELECT
     total_non_response_records
 
 FROM programme_status
-WHERE is_screening_eligible = TRUE  -- Only include women eligible for screening
+-- Already filtered to eligible women (25-64) in person_demographics CTE
 
 ORDER BY person_id
