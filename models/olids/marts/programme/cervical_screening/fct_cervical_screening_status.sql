@@ -5,7 +5,7 @@
 
 /*
 Cervical Screening Programme Status - Person-Level Analytics
-Comprehensive cervical screening programme tracking with age-specific business rules.
+Simplified tracking focused on core programme monitoring requirements.
 
 Key Business Rules:
 1. Screening Intervals:
@@ -13,21 +13,16 @@ Key Business Rules:
    - Women aged 50-64: invited every 5 years
    - Women outside 25-64 age range: not eligible for routine screening
 
-2. Status Validity Rules:
-   - Completed screening (SMEAR_COD): Always valid for programme compliance
-   - Unsuitable status (CSPU_COD): Permanent until superseded by completed screening
-   - Declined/Non-response (CSDEC_COD/CSPCAINVITE_COD): Valid for 12 months only
-
-3. Programme Compliance:
+2. Programme Status:
    - Up to date: Completed screening within age-appropriate interval
-   - Overdue: Last screening outside age-appropriate interval but within programme history
-   - Never screened: No completed screening history within eligible age range
+   - Overdue: Last screening outside age-appropriate interval
+   - Never screened: No completed screening history
+   - Not eligible: Outside age range or not female
 
 Clinical Purpose:
-- Programme compliance monitoring and reporting
-- Risk stratification for population health management
+- Programme compliance monitoring
 - Screening interval tracking and invitation planning
-- Quality assurance and outcome monitoring
+- Population coverage reporting
 */
 
 WITH person_demographics AS (
@@ -60,6 +55,7 @@ WITH person_demographics AS (
     FROM {{ ref('dim_person_age') }} dpa
     LEFT JOIN {{ ref('dim_person_sex') }} dps ON dpa.person_id = dps.person_id
     WHERE dps.sex = 'Female'  -- Only include women
+        AND dpa.age BETWEEN 25 AND 64  -- Only include eligible age range
 ),
 
 screening_history AS (
@@ -87,7 +83,7 @@ screening_history AS (
     GROUP BY person_id
 ),
 
-current_status AS (
+programme_status AS (
     SELECT
         pd.person_id,
         pd.current_age,
@@ -100,12 +96,11 @@ current_status AS (
         cls.source_cluster_id AS latest_screening_type,
         cls.screening_observation_type,
         
-        -- Cytology results (from latest screening)
-        cls.cytology_result_category,
-        cls.cervical_screening_risk_category,
-        cls.abnormality_grade,
-        cls.sample_adequacy,
-        cls.clinical_action_required,
+        -- Core screening flags
+        cls.is_completed_screening AS latest_is_completed,
+        cls.is_unsuitable_screening AS latest_is_unsuitable,
+        cls.is_declined_screening AS latest_is_declined,
+        cls.is_non_response_screening AS latest_is_non_response,
         
         -- Screening history
         sh.latest_completed_date,
@@ -114,85 +109,42 @@ current_status AS (
         sh.total_declined_records,
         sh.total_non_response_records,
         
-        -- Time calculations
-        
-        
-        -- Status validity flags (business rules)
-        CASE
-            WHEN cls.source_cluster_id = 'SMEAR_COD' THEN TRUE  -- Completed screening always valid
-            WHEN cls.source_cluster_id = 'CSPU_COD' THEN TRUE   -- Unsuitable status permanent
-            WHEN cls.source_cluster_id IN ('CSDEC_COD', 'CSPCAINVITE_COD') 
-                AND DATEDIFF(day, cls.clinical_effective_date, CURRENT_DATE()) <= 365 THEN TRUE
-            ELSE FALSE
-        END AS is_current_status_valid,
-        
-        -- Current screening status determination
-        CASE
-            WHEN cls.is_completed_screening THEN 'Up to Date (Screened)'
-            WHEN cls.is_unsuitable_screening THEN 'Unsuitable for Screening'
-            WHEN cls.is_declined_screening 
-                AND DATEDIFF(day, cls.clinical_effective_date, CURRENT_DATE()) <= 365 THEN 'Recently Declined'
-            WHEN cls.is_non_response_screening 
-                AND DATEDIFF(day, cls.clinical_effective_date, CURRENT_DATE()) <= 365 THEN 'Non-responsive'
-            ELSE 'Status Expired'
-        END AS current_screening_status,
-        
         -- Never screened flag
         CASE
-            WHEN sh.total_completed_screenings = 0 THEN TRUE
+            WHEN sh.total_completed_screenings = 0 OR sh.total_completed_screenings IS NULL 
+            THEN TRUE
             ELSE FALSE
-        END AS never_screened
+        END AS never_screened,
+        
+        -- Programme compliance status (simplified)
+        CASE
+            WHEN sh.total_completed_screenings = 0 OR sh.latest_completed_date IS NULL THEN 'Never Screened'
+            WHEN sh.latest_unsuitable_date IS NOT NULL 
+                AND (sh.latest_completed_date IS NULL OR sh.latest_unsuitable_date > sh.latest_completed_date)
+                THEN 'Unsuitable'
+            WHEN DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE()) <= pd.screening_interval_days THEN 'Up to Date'
+            WHEN DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE()) > pd.screening_interval_days THEN 'Overdue'
+            ELSE 'Unknown'
+        END AS programme_status,
+        
+        -- Next screening due calculation
+        CASE
+            WHEN sh.latest_completed_date IS NOT NULL AND pd.screening_interval_days IS NOT NULL
+            THEN DATEADD(day, pd.screening_interval_days, sh.latest_completed_date)
+            ELSE NULL
+        END AS next_screening_due_date,
+        
+        -- Days overdue calculation
+        CASE
+            WHEN sh.latest_completed_date IS NOT NULL AND pd.screening_interval_days IS NOT NULL
+                AND DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE()) > pd.screening_interval_days
+            THEN DATEDIFF(day, sh.latest_completed_date, CURRENT_DATE()) - pd.screening_interval_days
+            ELSE NULL
+        END AS days_overdue
         
     FROM person_demographics pd
     LEFT JOIN {{ ref('int_cervical_screening_latest') }} cls ON pd.person_id = cls.person_id
     LEFT JOIN screening_history sh ON pd.person_id = sh.person_id
-),
-
-programme_compliance AS (
-    SELECT
-        cs.*,
-        
-        -- Programme compliance determination
-        CASE
-            WHEN NOT cs.is_screening_eligible THEN 'Not Eligible'
-            WHEN cs.never_screened OR cs.latest_completed_date IS NULL THEN 'Never Screened'
-            WHEN DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) <= cs.screening_interval_days THEN 'Up to Date'
-            WHEN DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) > cs.screening_interval_days THEN 'Overdue'
-            ELSE 'Unknown'
-        END AS programme_compliance_status,
-        
-        -- Risk flags based on abnormality grade
-        CASE
-            WHEN cs.abnormality_grade = 'High Grade' THEN TRUE
-            ELSE FALSE
-        END AS requires_urgent_follow_up,
-        
-        CASE
-            WHEN cs.clinical_action_required = 'Colposcopy Required' THEN TRUE
-            ELSE FALSE
-        END AS requires_colposcopy_referral,
-        
-        CASE
-            WHEN DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) > cs.screening_interval_days
-                AND ROUND(DATEDIFF(day, cs.latest_completed_date, CURRENT_DATE()) / 365.25, 1) > 5 THEN TRUE
-            ELSE FALSE
-        END AS long_term_non_attendance,
-        
-        -- Next screening due calculation
-        CASE
-            WHEN cs.latest_completed_date IS NOT NULL AND cs.screening_interval_days IS NOT NULL
-            THEN DATEADD(day, cs.screening_interval_days, cs.latest_completed_date)
-            ELSE NULL
-        END AS next_screening_due_date,
-        
-        -- Overdue calculation
-        CASE
-            WHEN cs.latest_completed_date IS NOT NULL AND cs.screening_interval_days IS NOT NULL
-            THEN GREATEST(0, DATEDIFF(day, DATEADD(day, cs.screening_interval_days, cs.latest_completed_date), CURRENT_DATE()))
-            ELSE NULL
-        END AS days_overdue
-        
-    FROM current_status cs
 )
 
 SELECT
@@ -201,28 +153,22 @@ SELECT
     is_screening_eligible,
     screening_interval_years,
     
-    -- Programme compliance
-    programme_compliance_status,
-    current_screening_status,
+    -- Programme status
+    programme_status,
+    screening_observation_type AS latest_screening_type,
     
-    -- Latest screening information
+    -- Key dates
     latest_screening_date,
     latest_completed_date,
     next_screening_due_date,
     days_overdue,
     
-    -- Cytology results
-    cytology_result_category,
-    cervical_screening_risk_category,
-    abnormality_grade,
-    sample_adequacy,
-    clinical_action_required,
-    
-    -- Programme flags
+    -- Core flags
     never_screened,
-    requires_urgent_follow_up,
-    requires_colposcopy_referral,
-    long_term_non_attendance,
+    latest_is_completed,
+    latest_is_unsuitable,
+    latest_is_declined,
+    latest_is_non_response,
     
     -- Screening history counts
     total_completed_screenings,
@@ -230,7 +176,7 @@ SELECT
     total_declined_records,
     total_non_response_records
 
-FROM programme_compliance
-WHERE is_screening_eligible = TRUE  -- Only include women eligible for screening
+FROM programme_status
+-- Already filtered to eligible women (25-64) in person_demographics CTE
 
-ORDER BY person_id 
+ORDER BY person_id

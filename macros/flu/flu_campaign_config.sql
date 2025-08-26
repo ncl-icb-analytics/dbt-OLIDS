@@ -38,7 +38,7 @@ CHILD AGE GROUPS:
             '2023-09-01'::DATE AS campaign_start_date,
             '2024-03-31'::DATE AS campaign_reference_date, 
             '2023-08-31'::DATE AS child_reference_date,
-            '2024-02-29'::DATE AS campaign_end_date,
+            '2024-03-31'::DATE AS campaign_end_date,
             
             -- Medication lookback dates
             '2022-09-01'::DATE AS asthma_medication_lookback_date,

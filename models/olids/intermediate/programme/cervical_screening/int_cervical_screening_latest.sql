@@ -28,12 +28,7 @@ SELECT
     is_completed_screening,
     is_unsuitable_screening,
     is_declined_screening,
-    is_non_response_screening,
-    cytology_result_category,
-    cervical_screening_risk_category,
-    abnormality_grade,
-    sample_adequacy,
-    clinical_action_required
+    is_non_response_screening
 
 FROM {{ ref('int_cervical_screening_all') }}
 
@@ -42,4 +37,4 @@ QUALIFY ROW_NUMBER() OVER (
     ORDER BY clinical_effective_date DESC, observation_id DESC
 ) = 1
 
-ORDER BY person_id 
+ORDER BY person_id

@@ -1,6 +1,29 @@
 version: 2
 models:
   - name: int_cervical_screening_latest
-    description: 'Most recent cervical screening status per person for current programme management.
+    description: 'Most recent cervical screening observation per person.
 
-      One row per person representing most recent cervical screening observation with cytology and risk information for programme coordination and clinical decision support.'
+      One row per person representing their latest cervical screening observation for programme tracking.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the observation'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: clinical_effective_date
+        description: 'Date of the most recent screening observation'
+      - name: concept_code
+        description: 'Mapped clinical concept code'
+      - name: concept_display
+        description: 'Mapped clinical concept display text'
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (SMEAR_COD, CSPU_COD, CSDEC_COD, CSPCAINVITE_COD)'
+      - name: screening_observation_type
+        description: 'Type of screening observation based on cluster'
+      - name: is_completed_screening
+        description: 'Flag indicating if latest observation is a completed screening'
+      - name: is_unsuitable_screening
+        description: 'Flag indicating if latest observation marks person as unsuitable'
+      - name: is_declined_screening
+        description: 'Flag indicating if latest observation is a declined screening'
+      - name: is_non_response_screening
+        description: 'Flag indicating if latest observation is non-response to invitations'

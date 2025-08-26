@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: int_flu_person_week_snapshot
+    description: 'Sparse person-week snapshot for flu vaccination tracking.
+
+      This model dramatically reduces storage requirements by only storing weeks where vaccination status changes occur, rather than maintaining a full person-week table.
+
+      Key Features:
+
+      • Only stores "interesting" weeks: baseline (week 1), vaccination events, and final week
+
+      • Supports multiple campaigns automatically via flu_campaign_config macro
+
+      • Handles campaign end dates correctly using effective_end_date logic
+
+      • ~2M rows instead of 156M for full person-week approach (98% storage reduction)
+
+      • Optimised for expansion via window functions in downstream models
+
+      Technical Implementation:
+
+      • Incremental materialisation for efficient updates during campaigns
+
+      • Clustered by campaign_id, week_number, person_id for optimal query performance
+
+      • Uses sparse storage pattern: baseline + events + final state
+
+      • Deduplicates records to ensure data quality
+
+      The sparse approach enables complete analytical capability while maintaining excellent performance and minimal storage overhead.'
+
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['flu_2023_24', 'flu_2024_25', 'flu_2025_26']
+
+      - name: person_id
+        description: 'Unique person identifier'
+        tests:
+          - not_null
+
+      - name: week_number
+        description: 'Week number within campaign (1-26, starting from September)'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 26
+
+      - name: week_start_date
+        description: 'Start date of the week (Monday)'
+        tests:
+          - not_null
+
+      - name: vaccination_status
+        description: 'Vaccination status for this person-week'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['ELIGIBLE_NOT_VACCINATED', 'VACCINATION_ADMINISTERED', 'LAIV_ADMINISTERED', 'VACCINATION_DECLINED']
+
+      - name: is_vaccinated
+        description: 'Boolean flag indicating if person is vaccinated at this point'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+      - name: primary_risk_group
+        description: 'Primary risk group for eligibility (highest priority)'
+        tests:
+          - not_null
+
+      - name: record_type
+        description: 'Type of sparse record: baseline, vaccination, or final'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['baseline', 'vaccination', 'final']
+
+      - name: created_at
+        description: 'Timestamp when record was created'
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - campaign_id
+              - person_id
+              - week_number
+          name: int_flu_person_week_snapshot_unique_person_week
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "vaccination_status = 'ELIGIBLE_NOT_VACCINATED' OR is_vaccinated = true"
+          name: int_flu_person_week_snapshot_vaccination_status_consistency
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "record_type IN ('baseline', 'vaccination', 'final')"
+          name: int_flu_person_week_snapshot_valid_record_types
