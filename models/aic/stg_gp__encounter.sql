@@ -3,8 +3,11 @@
 -- note: using sk_patient_id as person_id
 
 with
+    -- source data has duplicates!
+    -- DISTINCT requires full aggregation (too expensive)
     encounter_base as (
-        select distinct * from {{ ref("base_olids__encounter") }} -- the source olids table has duplicates!!
+        select * from {{ ref("base_olids__encounter") }}
+        qualify row_number() over (partition by id order by lds_datetime_data_acquired desc) = 1
     ),
 
     patient_mapping as (select * from {{ ref("stg_gp__patient_pseudo_id") }}),
