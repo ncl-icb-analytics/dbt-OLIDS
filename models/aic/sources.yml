@@ -15,6 +15,7 @@ sources:
     database: "Data_Store_OLIDS_UAT"
     schema: OLIDS_MASKED
     tables:
+      - name: ENCOUNTER
       - name: OBSERVATION
       - name: PATIENT
       - name: PATIENT_PERSON
@@ -92,4 +93,18 @@ sources:
     quoting:
       database: true
       schema: true
+      identifier: false
+
+  - name: phenolab_dev
+    database: "DATA_LAB_OLIDS_UAT"
+    schema: PHENOLAB_DEV
+    tables:
+      - name: DEFINITIONSTORE
+      - name: MEASUREMENT_CONFIGS
+      - name: UNIT_MAPPINGS
+      - name: UNIT_CONVERSIONS
+      - name: VALUE_BOUNDS
+    quoting:
+      database: true
+      schema: false
       identifier: false

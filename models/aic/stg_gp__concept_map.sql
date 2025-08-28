@@ -1,9 +1,13 @@
-{{ config(materialized='view') }}
+{{ config(materialized='table') }}
 
 with
-    concept_map_base as (select * from {{ ref("base_olids__concept_map") }}),
+    concept_map_base as (
+        select distinct * from {{ ref("base_olids__concept_map") }}
+    ),
 
-    concept_base as (select * from {{ ref("base_olids__concept") }}),
+    concept_base as (
+        select distinct * from {{ ref("base_olids__concept") }}
+    ),
 
     snomed_base as (select * from {{ ref("base_snomed__concept") }}),
 

@@ -1,23 +1,37 @@
 {{ config(materialized='view') }}
 
-with
-    observation_base as (select * from {{ ref("base_olids__observation") }}),
+-- note: using sk_patient_id as person_id
 
-    concept_map as (select * from {{ ref("stg_gp__concept_map") }}),
+with
+    observation_base as (
+        select * from {{ ref("base_olids__observation") }}
+    ),
+
+    patient_mapping as (select * from {{ ref("stg_gp__patient_pseudo_id") }}),
+
+    concept_map as (select * from {{ ref("stg_gp__concept_map") }} where target_concept_vocabulary = 'SNOMED'),
 
     concept as (select * from {{ ref("stg_gp__concept") }}),
 
-    observation_w_concept as (
+    observation_w_person as (
         select
             o.*,
-            c.concept_code as observation_concept_code,
-            c.concept_name as observation_concept_name,
-            c.concept_vocabulary as observation_concept_vocabulary
+            pm.master_person_id as mapped_person_id
         from observation_base o
+        left join patient_mapping pm
+            on o.patient_id = pm.id_value
+            and pm.id_type = 'patient_id'
+    ),
+
+    observation_w_concept as (
+        select distinct
+            o.*,
+            cm.target_concept_code as observation_concept_code,
+            cm.target_concept_name as observation_concept_name,
+            cm.target_concept_vocabulary as observation_concept_vocabulary
+        from observation_w_person o
         left join concept_map cm
             on o.observation_source_concept_id = cm.source_db_concept_id
-        left join concept c
-            on cm.target_db_concept_id = c.db_concept_id
     ),
 
     observation_w_unit_concept as (
@@ -32,9 +46,8 @@ with
     )
 
 select
-    md5(cast(id as varchar)) as gp_observation_id,
-    id as observation_id,
-    person_id,
+    id as gp_observation_id,
+    mapped_person_id as person_id,
     patient_id,
     practitioner_id,
     encounter_id,

@@ -1,25 +1,42 @@
-{{ config(materialized='view') }}
+{{ config(materialized='table') }}
+
+-- note: sk_patient_id as person_id
+-- note: gender concept ids (uuids) in source are mixed case, and appear in different cases for the same id.
+-- These are cast to lower case, but the fix should ideally be at source
 
 with
     patient_base as (select * from {{ ref("base_olids__patient") }}),
 
-    patient_person_base as (select * from {{ ref("base_olids__patient_person") }}),
+    concept as (select * from {{ ref("stg_gp__concept") }}),
+
+    id_map as (select * from {{ ref("stg_gp__patient_pseudo_id") }}),
+
+    patient_w_gender as (
+        select
+            p.*,
+            gc.concept_code as gender_concept_code,
+            gc.concept_name as gender_concept_name,
+            gc.concept_vocabulary as gender_concept_vocabulary
+        from patient_base p
+        left join concept gc on lower(p.gender_concept_id) = gc.db_concept_id
+    ),
+
+    -- patient mapping for master_person_id lookup
+    patient_mapping as (
+        select distinct
+            id_value,
+            master_person_id
+        from id_map
+        where id_type = 'patient_id'
+    ),
 
     practitioner_base as (
         select * from {{ ref("base_olids__patient_registered_practitioner_in_role") }}
     ),
 
-    person_patients as (
-        select
-            pp.person_id,
-            p.*
-        from patient_person_base pp
-        inner join patient_base p on pp.patient_id = p.id
-    ),
-
     reg_base as (
         select
-            person_id,
+            patient_id,
             max(
                 case
                     when end_date is null
@@ -30,32 +47,22 @@ with
                 end
             ) as has_active_registration
         from practitioner_base
-        group by person_id
+        group by patient_id
     ),
 
     person_w_reg as (
         select
             p.*,
+            pm.master_person_id,
             coalesce(r.has_active_registration = 1, false) as active_registration_flag
-        from person_patients p
-        left join reg_base r on p.person_id = r.person_id
-    ),
-
-    concept as (select * from {{ ref("stg_gp__concept") }}),
-
-    person_w_gender as (
-        select
-            p.*,
-            gc.concept_code as gender_concept_code,
-            gc.concept_name as gender_concept_name,
-            gc.concept_vocabulary as gender_concept_vocabulary
-        from person_w_reg p
-        left join concept gc on p.gender_concept_id = gc.db_concept_id
+        from patient_w_gender p
+        left join patient_mapping pm on p.id = pm.id_value
+        left join reg_base r on p.id = r.patient_id
     )
 
 select
-    person_id,
-    id as patient_id,
+    master_person_id as person_id,
+    lower(id) as patient_id,
     sk_patient_id,
     null::varchar as current_address_id,
     birth_year,
@@ -66,7 +73,7 @@ select
         then date_from_parts(death_year, death_month, 1)
         else null
     end as date_of_death,
-    gender_concept_id,
+    lower(gender_concept_id) as gender_concept_id,
     gender_concept_code,
     gender_concept_name,
     gender_concept_vocabulary,
@@ -78,4 +85,4 @@ select
     lds_end_date_time::date as valid_to,
     case when death_year is not null then true else false end as death_flag,
     active_registration_flag
-from person_w_gender
+from person_w_reg

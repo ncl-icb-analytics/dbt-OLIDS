@@ -1,8 +1,15 @@
 {{ config(materialized="table") }}
+
+-- note: using sk_patient_id as person_id
+
 with
-    -- deduplicate patient mapping
-    patients as (
-        select distinct sk_patient_id, person_id from {{ ref("stg_gp__patient_pseudo_id") }}
+    -- patient mapping for master_person_id lookup
+    patient_mapping as (
+        select
+            id_value as sk_patient_id,
+            master_person_id
+        from {{ ref("stg_gp__patient_pseudo_id") }}
+        where id_type = 'sk_patient_id'
     )
 
 select
@@ -12,12 +19,12 @@ select
         )
     }} as apc_procedure_id,
     f.primarykey_id as visit_occurrence_id,
+    pm.master_person_id as person_id,
     'APC_SPELL' as visit_occurrence_type,
     f.episodes_id,
     opcs_id,
     f.rownumber_id,
     se.patient_identity_nhs_number_value_pseudo as sk_patient_id,
-    pp.person_id,
     se.commissioning_service_agreement_provider_derived as organisation_id,
     null as organisation_name,  -- join to reference
     se.commissioning_service_agreement_provider as sub_organisation_id,
@@ -33,4 +40,4 @@ left join
     on replace(c.concept_code, '.', '') = f.code
     and c.vocabulary_id = 'OPCS4'
 left join {{ ref("base_sus__apc_spell_episode") }} se on se.primarykey_id = f.primarykey_id
-left join patients pp on pp.sk_patient_id = se.patient_identity_nhs_number_value_pseudo
+left join patient_mapping pm on se.patient_identity_nhs_number_value_pseudo = pm.sk_patient_id
