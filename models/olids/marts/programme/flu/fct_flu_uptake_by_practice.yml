@@ -2,62 +2,74 @@ version: 2
 
 models:
   - name: fct_flu_uptake_by_practice
-    description: 'Practice-level flu vaccination uptake rates for performance monitoring.
+    description: 'Simplified flu vaccination uptake by practice and eligibility criterion.
 
-      Practice Metrics:
+      Key Features:
 
-      • Eligible patient counts by category
+      • One row per eligibility criterion per practice
 
-      • Vaccination counts and percentages
+      • Includes TOTAL row for each practice
 
-      • Performance against targets
+      • Focus on core uptake metrics
 
-      • Comparison with local and national averages
+      • Easy filtering and aggregation
 
-      Purpose: Supports practice performance monitoring and quality improvement initiatives for flu vaccination programmes.'
+      Purpose: Enables flexible analysis of uptake by eligibility criterion with simple structure for reporting.'
     
     columns:
-      - name: practice_id
-        description: Practice identifier
-        
-      - name: practice_name
-        description: Practice name
+      - name: campaign_id
+        description: Campaign identifier
         
       - name: practice_code
         description: Practice ODS code
         
-      - name: campaign_year
-        description: Flu campaign year
+      - name: practice_name
+        description: Practice name
+        
+      - name: pcn_code
+        description: Primary Care Network code
         
       - name: pcn_name
         description: Primary Care Network name
         
-      - name: borough
+      - name: practice_borough
         description: Borough where practice is located
         
-      - name: total_eligible
-        description: Total eligible patients at practice
+      - name: practice_neighbourhood
+        description: Practice neighbourhood
         
-      - name: total_vaccinated
-        description: Total vaccinated patients at practice
+      - name: eligibility_criterion
+        description: 'Specific eligibility criterion (risk_group) or TOTAL for practice summary'
+        
+      - name: eligible_population
+        description: Count of eligible patients for this criterion at this practice
+        
+      - name: vaccinated_count
+        description: Count of vaccinated patients for this criterion
+        
+      - name: declined_count
+        description: Count of patients who declined vaccination
+        
+      - name: no_record_count
+        description: Count of eligible patients with no vaccination record
+        
+      - name: laiv_given_count
+        description: Count of patients who received LAIV vaccine
         
       - name: uptake_rate
-        description: Practice vaccination coverage percentage
+        description: Vaccination coverage percentage
         
-      - name: eligible_65_plus
-        description: Eligible patients aged 65 and over
+      - name: declination_rate
+        description: Percentage who declined vaccination
         
-      - name: vaccinated_65_plus
-        description: Vaccinated patients aged 65 and over
+      - name: no_record_rate
+        description: Percentage with no vaccination record
         
-      - name: uptake_rate_65_plus
-        description: Coverage rate for patients aged 65 and over
+      - name: laiv_proportion
+        description: Percentage of vaccinated who received LAIV
         
-      - name: eligible_at_risk
-        description: Eligible patients in at-risk groups
+      - name: coverage_gap
+        description: Number of eligible patients not vaccinated
         
-      - name: vaccinated_at_risk
-        description: Vaccinated patients in at-risk groups
-        
-      - name: uptake_rate_at_risk
-        description: Coverage rate for at-risk patients
+      - name: created_at
+        description: Timestamp when record was created

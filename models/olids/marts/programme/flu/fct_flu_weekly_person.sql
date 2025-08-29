@@ -220,8 +220,7 @@ final_with_demographics AS (
         AND et.person_id = ef.person_id
         AND et.primary_risk_group = ef.risk_group
     
-    WHERE d.is_active = TRUE
-        AND d.age BETWEEN 0 AND 120  -- Filter out invalid ages
+    WHERE d.age BETWEEN 0 AND 120  -- Filter out invalid ages
     
     -- Deduplicate in case of multiple eligibility records
     QUALIFY ROW_NUMBER() OVER (

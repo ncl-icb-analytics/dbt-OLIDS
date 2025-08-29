@@ -123,9 +123,18 @@ final_uptake AS (
         demo.age,
         demo.age_band_5y,
         demo.age_band_10y,
+        demo.age_band_nhs,
         demo.ethnicity_category,
+        demo.ethnicity_subcategory,
+        demo.ethnicity_granular,
         demo.main_language,
+        demo.language_type,
         demo.interpreter_needed,
+        demo.interpreter_type,
+        -- Geographic and deprivation (currently NULL placeholders)
+        demo.imd_quintile_19,
+        demo.imd_decile_19,
+        demo.lsoa_code_21 as lsoa_code,
         
         -- Practice information
         demo.practice_code,
@@ -165,9 +174,14 @@ final_uptake AS (
             ELSE 'Not Eligible - No Activity'
         END AS uptake_category,
         
-        -- Time to vaccination (days from campaign start)
+        -- Time to vaccination (days from campaign start) - only for vaccinated people within campaign period
         CASE 
-            WHEN cd.vaccination_date IS NOT NULL AND cc.campaign_start_date IS NOT NULL 
+            WHEN cd.vaccinated = TRUE 
+                AND cd.vaccination_date IS NOT NULL 
+                AND cc.campaign_start_date IS NOT NULL 
+                AND cc.campaign_end_date IS NOT NULL
+                AND cd.vaccination_date >= cc.campaign_start_date
+                AND cd.vaccination_date <= cc.campaign_end_date
             THEN DATEDIFF('day', cc.campaign_start_date, cd.vaccination_date)
             ELSE NULL
         END AS days_to_vaccination,
@@ -183,10 +197,10 @@ final_uptake AS (
     LEFT JOIN {{ ref('dim_person_demographics') }} demo
         ON cd.person_id = demo.person_id
     LEFT JOIN (
-        SELECT DISTINCT campaign_id, campaign_start_date, campaign_reference_date, audit_end_date
+        SELECT DISTINCT campaign_id, campaign_start_date, campaign_end_date, campaign_reference_date, audit_end_date
         FROM ({{ flu_campaign_config(var('flu_current_campaign', 'flu_2024_25')) }})
         UNION ALL
-        SELECT DISTINCT campaign_id, campaign_start_date, campaign_reference_date, audit_end_date  
+        SELECT DISTINCT campaign_id, campaign_start_date, campaign_end_date, campaign_reference_date, audit_end_date  
         FROM ({{ flu_campaign_config(var('flu_previous_campaign', 'flu_2023_24')) }})
     ) cc
         ON cd.campaign_id = cc.campaign_id
