@@ -29,16 +29,12 @@ tests:
   +schema: "test_audit"
 
 models:
-  'dbt_olids':
+  dbt_olids:
     +materialized: table
     +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
     +persist_docs:
       columns: true
-    
-    # Domain-specific configurations
     olids:
-      +materialized: table
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
       staging:
         +materialized: view
         +post-hook: ["{{ add_model_comment() }}"]
@@ -53,8 +49,6 @@ models:
         +tags: ["marts"]
     
     shared:
-      +materialized: table
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
       staging:
         +materialized: view
         +post-hook: ["{{ add_model_comment() }}"]

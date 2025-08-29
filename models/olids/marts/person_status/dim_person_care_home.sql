@@ -34,7 +34,7 @@ latest_residence_status_per_person AS (
     -- Then get the latest observation per person with all its details
     SELECT
         o.person_id,
-        o.sk_patient_id,
+        pp.sk_patient_id,
         o.clinical_effective_date,
         o.mapped_concept_id AS concept_id,
         o.mapped_concept_code AS concept_code,
@@ -53,6 +53,8 @@ latest_residence_status_per_person AS (
     FROM (
         {{ get_observations("'CAREHOME_COD', 'NURSEHOME_COD', 'TEMPCARHOME_COD'") }}
     ) o
+    JOIN {{ ref('int_patient_person_unique') }} pp
+        ON o.patient_id = pp.patient_id
     JOIN observation_clusters oc
         ON o.observation_id = oc.observation_id
     WHERE oc.residence_type IS NOT NULL -- Only include records with a valid residence type

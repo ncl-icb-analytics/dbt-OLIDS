@@ -14,7 +14,7 @@ WITH all_language_and_interpreter_records AS (
     -- Get all language preference records
     SELECT
         o.person_id,
-        o.sk_patient_id,
+        pp1.sk_patient_id,
         o.clinical_effective_date,
         o.mapped_concept_id AS concept_id,
         o.mapped_concept_code AS concept_code,
@@ -44,13 +44,15 @@ WITH all_language_and_interpreter_records AS (
     FROM (
         {{ get_observations("'PREFLANG_COD'") }}
     ) o
+    JOIN {{ ref('int_patient_person_unique') }} pp1
+        ON o.patient_id = pp1.patient_id
     
     UNION ALL
     
     -- Get interpreter requirement records that specify a language
     SELECT
         o.person_id,
-        o.sk_patient_id,
+        pp2.sk_patient_id,
         o.clinical_effective_date,
         o.mapped_concept_id AS concept_id,
         o.mapped_concept_code AS concept_code,
@@ -84,6 +86,8 @@ WITH all_language_and_interpreter_records AS (
     FROM (
         {{ get_observations("'REQINTERPRETER_COD'") }}
     ) o
+    JOIN {{ ref('int_patient_person_unique') }} pp2
+        ON o.patient_id = pp2.patient_id
     WHERE o.code_description LIKE '%interpreter needed%'
       AND o.code_description NOT LIKE 'Requires language interpretation service%'
       AND o.code_description NOT LIKE '%interpreter not needed%'
