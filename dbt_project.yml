@@ -31,14 +31,14 @@ tests:
 models:
   'dbt_olids':
     +materialized: table
-    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+    +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
     +persist_docs:
       columns: true
     
     # Domain-specific configurations
     olids:
       +materialized: table
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
       staging:
         +materialized: view
         +post-hook: ["{{ add_model_comment() }}"]
@@ -54,7 +54,7 @@ models:
     
     shared:
       +materialized: table
-      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
+      +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
       staging:
         +materialized: view
         +post-hook: ["{{ add_model_comment() }}"]
