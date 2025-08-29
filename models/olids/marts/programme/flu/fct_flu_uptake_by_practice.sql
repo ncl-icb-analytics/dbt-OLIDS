@@ -1,30 +1,65 @@
 /*
-Flu Vaccination Uptake by Practice (Aggregated)
+Flu Vaccination Uptake by Practice and Eligibility Criterion
 
-This model aggregates flu vaccination uptake at the practice level,
-providing key metrics for performance monitoring and comparison.
+This model provides one row per eligibility criterion per practice,
+facilitating easier filtering and aggregation of uptake data.
 
-Key metrics:
-- Total eligible population by practice
-- Vaccination counts and rates
-- Declination rates
-- Coverage gaps
-- Demographic breakdowns
-- Comparison across campaigns
+Key features:
+- One row per eligibility criterion (risk_group) and practice
+- Includes a 'TOTAL' row per practice for overall metrics
+- Simple structure for easy filtering and summing
+- Focus on core uptake metrics without complex breakdowns
 
 Usage:
-- Monitor practice performance
-- Compare uptake across PCNs and boroughs
-- Identify practices with low uptake for targeted interventions
-- Track improvement over time between campaigns
+- Filter by risk_group for specific eligibility criteria
+- Use the 'TOTAL' rows to get practice-level summaries
+- Easy aggregation to PCN or borough level
 */
 
 {{ config(
     materialized='table',
-    cluster_by=['campaign_id', 'practice_code']
+    cluster_by=['campaign_id', 'practice_code', 'eligibility_criterion']
 ) }}
 
-WITH practice_uptake AS (
+WITH uptake_by_criterion AS (
+    -- Get uptake metrics for each eligibility criterion and practice
+    SELECT 
+        fu.campaign_id,
+        fu.practice_code,
+        fu.practice_name,
+        fu.pcn_code,
+        fu.pcn_name,
+        fu.practice_borough,
+        fu.practice_neighbourhood,
+        fe.risk_group AS eligibility_criterion,
+        
+        -- Population counts
+        COUNT(DISTINCT fe.person_id) AS eligible_population,
+        COUNT(DISTINCT CASE WHEN fu.vaccinated THEN fe.person_id END) AS vaccinated_count,
+        COUNT(DISTINCT CASE WHEN fu.declined THEN fe.person_id END) AS declined_count,
+        COUNT(DISTINCT CASE WHEN fu.eligible_no_record THEN fe.person_id END) AS no_record_count,
+        
+        -- LAIV specific
+        COUNT(DISTINCT CASE WHEN fu.laiv_given = 1 THEN fe.person_id END) AS laiv_given_count
+        
+    FROM {{ ref('fct_flu_eligibility') }} fe
+    INNER JOIN {{ ref('fct_flu_uptake') }} fu
+        ON fe.campaign_id = fu.campaign_id
+        AND fe.person_id = fu.person_id
+    WHERE fu.practice_code IS NOT NULL  -- Exclude patients without practice registration
+    GROUP BY 
+        fu.campaign_id,
+        fu.practice_code,
+        fu.practice_name,
+        fu.pcn_code,
+        fu.pcn_name,
+        fu.practice_borough,
+        fu.practice_neighbourhood,
+        fe.risk_group
+),
+
+practice_totals AS (
+    -- Calculate overall practice totals (across all eligibility criteria)
     SELECT 
         campaign_id,
         practice_code,
@@ -33,45 +68,18 @@ WITH practice_uptake AS (
         pcn_name,
         practice_borough,
         practice_neighbourhood,
+        'TOTAL' AS eligibility_criterion,
         
-        -- Population counts
-        COUNT(DISTINCT person_id) AS total_population,
-        COUNT(DISTINCT CASE WHEN is_eligible THEN person_id END) AS eligible_population,
-        COUNT(DISTINCT CASE WHEN NOT is_eligible AND vaccinated THEN person_id END) AS non_eligible_vaccinated,
-        
-        -- Vaccination counts by status
-        COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated THEN person_id END) AS eligible_vaccinated,
-        COUNT(DISTINCT CASE WHEN is_eligible AND declined THEN person_id END) AS eligible_declined,
-        COUNT(DISTINCT CASE WHEN is_eligible AND eligible_no_record THEN person_id END) AS eligible_no_record,
-        
-        -- LAIV specific
-        COUNT(DISTINCT CASE WHEN is_eligible AND laiv_given = 1 THEN person_id END) AS laiv_given_count,
-        
-        -- Demographic breakdowns for eligible population
-        -- Age groups
-        COUNT(DISTINCT CASE WHEN is_eligible AND age < 5 THEN person_id END) AS eligible_under_5,
-        COUNT(DISTINCT CASE WHEN is_eligible AND age BETWEEN 5 AND 17 THEN person_id END) AS eligible_5_to_17,
-        COUNT(DISTINCT CASE WHEN is_eligible AND age BETWEEN 18 AND 64 THEN person_id END) AS eligible_18_to_64,
-        COUNT(DISTINCT CASE WHEN is_eligible AND age >= 65 THEN person_id END) AS eligible_65_plus,
-        
-        -- Vaccinated by age groups
-        COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated AND age < 5 THEN person_id END) AS vaccinated_under_5,
-        COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated AND age BETWEEN 5 AND 17 THEN person_id END) AS vaccinated_5_to_17,
-        COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated AND age BETWEEN 18 AND 64 THEN person_id END) AS vaccinated_18_to_64,
-        COUNT(DISTINCT CASE WHEN is_eligible AND vaccinated AND age >= 65 THEN person_id END) AS vaccinated_65_plus,
-        
-        -- Primary eligibility categories
-        COUNT(DISTINCT CASE WHEN is_eligible AND campaign_category = 'Age-Based' THEN person_id END) AS eligible_age_based,
-        COUNT(DISTINCT CASE WHEN is_eligible AND campaign_category = 'Clinical Condition' THEN person_id END) AS eligible_clinical_condition,
-        
-        -- Time to vaccination metrics (for vaccinated eligible patients)
-        AVG(CASE WHEN is_eligible AND vaccinated THEN days_to_vaccination END) AS avg_days_to_vaccination,
-        MEDIAN(CASE WHEN is_eligible AND vaccinated THEN days_to_vaccination END) AS median_days_to_vaccination,
-        MIN(CASE WHEN is_eligible AND vaccinated THEN days_to_vaccination END) AS min_days_to_vaccination,
-        MAX(CASE WHEN is_eligible AND vaccinated THEN days_to_vaccination END) AS max_days_to_vaccination
+        -- Population counts (distinct to avoid double counting across multiple criteria)
+        COUNT(DISTINCT person_id) AS eligible_population,
+        COUNT(DISTINCT CASE WHEN vaccinated THEN person_id END) AS vaccinated_count,
+        COUNT(DISTINCT CASE WHEN declined THEN person_id END) AS declined_count,
+        COUNT(DISTINCT CASE WHEN eligible_no_record THEN person_id END) AS no_record_count,
+        COUNT(DISTINCT CASE WHEN laiv_given = 1 THEN person_id END) AS laiv_given_count
         
     FROM {{ ref('fct_flu_uptake') }}
-    WHERE practice_code IS NOT NULL  -- Exclude patients without practice registration
+    WHERE practice_code IS NOT NULL
+        AND is_eligible = TRUE  -- Only count eligible patients for totals
     GROUP BY 
         campaign_id,
         practice_code,
@@ -82,75 +90,47 @@ WITH practice_uptake AS (
         practice_neighbourhood
 ),
 
-practice_metrics AS (
+combined AS (
+    SELECT * FROM uptake_by_criterion
+    UNION ALL
+    SELECT * FROM practice_totals
+),
+
+final AS (
     SELECT 
-        *,
+        campaign_id,
+        practice_code,
+        practice_name,
+        pcn_code,
+        pcn_name,
+        practice_borough,
+        practice_neighbourhood,
+        eligibility_criterion,
+        
+        -- Core counts
+        eligible_population,
+        vaccinated_count,
+        declined_count,
+        no_record_count,
+        laiv_given_count,
         
         -- Calculate rates
-        ROUND(eligible_vaccinated * 100.0 / NULLIF(eligible_population, 0), 1) AS uptake_rate,
-        ROUND(eligible_declined * 100.0 / NULLIF(eligible_population, 0), 1) AS declination_rate,
-        ROUND(eligible_no_record * 100.0 / NULLIF(eligible_population, 0), 1) AS no_record_rate,
-        ROUND(laiv_given_count * 100.0 / NULLIF(eligible_vaccinated, 0), 1) AS laiv_proportion,
-        
-        -- Age-specific uptake rates
-        ROUND(vaccinated_under_5 * 100.0 / NULLIF(eligible_under_5, 0), 1) AS uptake_rate_under_5,
-        ROUND(vaccinated_5_to_17 * 100.0 / NULLIF(eligible_5_to_17, 0), 1) AS uptake_rate_5_to_17,
-        ROUND(vaccinated_18_to_64 * 100.0 / NULLIF(eligible_18_to_64, 0), 1) AS uptake_rate_18_to_64,
-        ROUND(vaccinated_65_plus * 100.0 / NULLIF(eligible_65_plus, 0), 1) AS uptake_rate_65_plus,
+        ROUND(vaccinated_count * 100.0 / NULLIF(eligible_population, 0), 1) AS uptake_rate,
+        ROUND(declined_count * 100.0 / NULLIF(eligible_population, 0), 1) AS declination_rate,
+        ROUND(no_record_count * 100.0 / NULLIF(eligible_population, 0), 1) AS no_record_rate,
+        ROUND(laiv_given_count * 100.0 / NULLIF(vaccinated_count, 0), 1) AS laiv_proportion,
         
         -- Coverage gap
-        eligible_population - eligible_vaccinated AS coverage_gap,
-        
-        -- Performance indicators
-        CASE 
-            WHEN eligible_vaccinated * 100.0 / NULLIF(eligible_population, 0) >= 75 THEN 'High'
-            WHEN eligible_vaccinated * 100.0 / NULLIF(eligible_population, 0) >= 50 THEN 'Medium'
-            WHEN eligible_vaccinated * 100.0 / NULLIF(eligible_population, 0) >= 25 THEN 'Low'
-            ELSE 'Very Low'
-        END AS uptake_performance,
-        
-        -- List size category
-        CASE 
-            WHEN total_population >= 15000 THEN 'Very Large (15k+)'
-            WHEN total_population >= 10000 THEN 'Large (10-15k)'
-            WHEN total_population >= 5000 THEN 'Medium (5-10k)'
-            WHEN total_population >= 2500 THEN 'Small (2.5-5k)'
-            ELSE 'Very Small (<2.5k)'
-        END AS practice_size_category,
+        eligible_population - vaccinated_count AS coverage_gap,
         
         CURRENT_TIMESTAMP() AS created_at
         
-    FROM practice_uptake
-),
-
--- Add campaign information
-final_metrics AS (
-    SELECT 
-        pm.*,
-        cc.campaign_name,
-        cc.campaign_start_date,
-        cc.campaign_reference_date,
-        cc.audit_end_date
-    FROM practice_metrics pm
-    LEFT JOIN (
-        SELECT DISTINCT 
-            campaign_id, 
-            campaign_name,
-            campaign_start_date, 
-            campaign_reference_date, 
-            audit_end_date
-        FROM ({{ flu_campaign_config(var('flu_current_campaign', 'flu_2024_25')) }})
-        UNION ALL
-        SELECT DISTINCT 
-            campaign_id,
-            campaign_name,
-            campaign_start_date, 
-            campaign_reference_date, 
-            audit_end_date  
-        FROM ({{ flu_campaign_config(var('flu_previous_campaign', 'flu_2023_24')) }})
-    ) cc
-        ON pm.campaign_id = cc.campaign_id
+    FROM combined
 )
 
-SELECT * FROM final_metrics
-ORDER BY campaign_id, practice_borough, pcn_code, practice_code
+SELECT * FROM final
+ORDER BY 
+    campaign_id,
+    practice_code,
+    CASE WHEN eligibility_criterion = 'TOTAL' THEN 0 ELSE 1 END,  -- TOTAL rows first
+    eligibility_criterion

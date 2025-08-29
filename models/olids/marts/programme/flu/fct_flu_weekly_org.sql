@@ -83,7 +83,6 @@ practice_eligible AS (
         COUNT(DISTINCT e.person_id) AS eligible_count
     FROM {{ ref('fct_flu_eligibility') }} e
     JOIN {{ ref('dim_person_demographics') }} d ON e.person_id = d.person_id
-    WHERE d.is_active = TRUE
     GROUP BY 1, 2, 3, 4
 ),
 
@@ -103,7 +102,6 @@ weekly_vaccinations AS (
     WHERE u.vaccinated = TRUE
         AND u.vaccination_date >= cc.campaign_start_date
         AND u.vaccination_date <= ed.effective_end_date
-        AND d.is_active = TRUE
         AND u.risk_group IS NOT NULL  -- Ensure we have risk group info
     GROUP BY 1, 2, 3, 4, 5
 ),
@@ -148,7 +146,6 @@ practice_totals AS (
         COUNT(DISTINCT e.person_id) AS total_eligible_count
     FROM {{ ref('fct_flu_eligibility') }} e
     JOIN {{ ref('dim_person_demographics') }} d ON e.person_id = d.person_id
-    WHERE d.is_active = TRUE
     GROUP BY 1, 2
 ),
 
@@ -167,7 +164,6 @@ weekly_vaccination_totals AS (
     WHERE u.vaccinated = TRUE
         AND u.vaccination_date >= cc.campaign_start_date
         AND u.vaccination_date <= ed.effective_end_date
-        AND d.is_active = TRUE
     GROUP BY 1, 2, 3, 4, 5
 ),
 
@@ -279,7 +275,6 @@ final_output AS (
             practice_lsoa,
             practice_msoa
         FROM {{ ref('dim_person_demographics') }}
-        WHERE is_active = TRUE
     ) d ON pw.practice_code = d.practice_code
 )
 
