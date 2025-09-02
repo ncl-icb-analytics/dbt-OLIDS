@@ -4,6 +4,34 @@ models:
     description: 'Chronic kidney disease diagnosis and resolution observations for QOF register management.
 
       One row per observation using CKD_COD (diagnosis) and CKDRES_COD (resolved) clusters. Age restrictions ≥18 years typically applied downstream.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: clinical_effective_date
+        description: 'Date when CKD observation was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for CKD diagnosis or resolution'
+
+      - name: concept_display
+        description: 'Human-readable description of the clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (CKD_COD or CKDRES_COD)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating CKD diagnosis code (CKD_COD cluster)'
+
+      - name: is_resolved_code
+        description: 'Flag indicating CKD resolution code (CKDRES_COD cluster)'
+
+      - name: ckd_observation_type
+        description: 'Categorised CKD observation type (CKD Diagnosis or CKD Resolved)'
+
     tests:
       - cluster_ids_exist:
           arguments:

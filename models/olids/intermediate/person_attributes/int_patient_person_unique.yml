@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: int_patient_person_unique
+    description: 'Deduplicated patient-person mappings ensuring one-to-one relationships for consistent data linking.
+
+      Key Features:
+
+      • Handles multiple patient_ids mapping to same person_id
+
+      • Selects lowest patient_id when duplicates exist
+
+      • Excludes orphaned person records without valid patient links
+
+      • Requires basic demographics (birth_year) for inclusion
+
+      • Ensures consistent mapping for downstream models
+
+      Purpose: Prevent duplicate persons in models that join observations and medications to person data.'
+    columns:
+      - name: patient_id
+        description: 'Unique patient identifier (lowest patient_id when multiple exist for same person)'
+      - name: person_id
+        description: 'Unique person identifier'

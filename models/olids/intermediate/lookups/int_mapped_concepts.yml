@@ -1,0 +1,34 @@
+models:
+  - name: int_mapped_concepts
+    description: 'Lookup table mapping clinical codes to concepts and source code identifiers.
+
+      Creates relationships between raw clinical codes and standardised terminology concepts, enabling efficient early filtering by source_code_id. Combines reference codesets with OLIDS terminology mappings to provide a unified lookup structure.
+
+      Key Features:
+
+      • Maps source codes to concept identifiers
+
+      • Includes cluster information for grouped codes
+
+      • Provides standardised concept display names
+
+      • Optimised for early filtering operations
+
+      Purpose: Support efficient clinical code lookups and concept mapping across the OLIDS system.'
+    columns:
+      - name: source_code_id
+        description: 'Unique identifier for the source clinical code'
+      - name: mapped_concept_id
+        description: 'Identifier for the mapped terminology concept'
+      - name: mapped_concept_code
+        description: 'Code value of the mapped terminology concept'
+      - name: mapped_concept_display
+        description: 'Human-readable display name for the mapped concept'
+      - name: cluster_id
+        description: 'Identifier for the clinical code cluster grouping'
+      - name: cluster_description
+        description: 'Description of the clinical code cluster'
+      - name: code_description
+        description: 'Description of the individual clinical code'
+      - name: source
+        description: 'Source system or codeset origin'

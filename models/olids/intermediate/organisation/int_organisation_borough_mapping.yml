@@ -1,15 +1,31 @@
 version: 2
 models:
   - name: int_organisation_borough_mapping
-    description: 'Organisation borough mapping for North Central London practices and PCNs.
+    description: 'Organisation borough mapping for North Central London practices and PCNs with historic CCG relationships.
 
+      Key Features:
 
-      Data Sources:
+      • Maps practices to boroughs using historic CCG relationships via organisational hierarchy
 
-      • Dictionary.dbo.OrganisationDescendent - Historic organisational relationships via hierarchy paths
+      • Maps PCNs to boroughs based on majority practice allocation
 
-      • stg_dictionary_organisation_matrix_practice_view - Practice-to-PCN relationships
+      • Hardcoded CCG-to-borough mapping: 07R→Camden, 08H→Islington, 07M→Barnet, 07X→Enfield, 08D→Haringey
 
-      • Hardcoded CCG-to-borough mapping for North Central London
+      • Special handling for cross-borough services (Medicus Select Care Y03103 assigned to Enfield)
 
-      • One row per practice with borough assignments for both practice and PCN levels'
+      • Uses most recent relationship for each practice-borough combination
+
+      Purpose: Provide borough context for North Central London practices and PCNs for geographic analysis.'
+    columns:
+      - name: practice_code
+        description: 'Unique identifier for the GP practice'
+      - name: practice_borough
+        description: 'Borough assignment for the practice based on historic CCG relationships'
+      - name: practice_historic_ccg
+        description: 'Historic CCG code used for borough mapping (07R, 08H, 07M, 07X, 08D)'
+      - name: network_code
+        description: 'Primary Care Network (PCN) identifier that the practice belongs to'
+      - name: pcn_borough
+        description: 'Borough assignment for the PCN based on majority practice allocation'
+      - name: pcn_borough_practice_count
+        description: 'Number of practices within the PCN assigned to this borough'

@@ -1,8 +1,63 @@
 models:
   - name: dq_bmi_issues
-    description: 'Data quality monitoring for BMI measurements identifying out-of-range values and extreme outliers.
+    description: 'Data quality issues in BMI measurements requiring review or correction.
 
-      One row per BMI observation with issues including values <10 or >150 (out-of-range) and <8 or >100 (extreme outliers).'
+      Quality Criteria:
+
+      • Valid range: 10-150 BMI (physiologically plausible values)
+
+      • Extreme outliers: <8 or >100 BMI (require clinical validation)
+
+      • Date validation: Missing or future dates
+
+      Purpose: Supports BMI data validation and clinical review of extreme values.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: observation_id
+        description: Observation record identifier
+        
+      - name: clinical_effective_date
+        description: Date of BMI measurement
+        
+      - name: bmi_value
+        description: BMI measurement value
+        
+      - name: result_unit_display
+        description: Unit of measurement for BMI
+        
+      - name: concept_code
+        description: Concept code for BMI measurement
+        
+      - name: concept_display
+        description: Concept display name for BMI
+        
+      - name: source_cluster_id
+        description: Source cluster identifier
+        
+      - name: result_value
+        description: Original result value
+        
+      - name: bmi_category
+        description: Original BMI category classification
+        
+      - name: is_bmi_out_of_range
+        description: Whether BMI is outside valid range (10-150)
+        
+      - name: is_date_missing
+        description: Whether clinical effective date is missing
+        
+      - name: is_future_date
+        description: Whether measurement date is in the future
+        
+      - name: is_extreme_outlier
+        description: Whether BMI is an extreme outlier (<8 or >100)
+        
+      - name: bmi_category_with_issues
+        description: BMI category including issue classifications
+    
     tests:
       - cluster_ids_exist:
           arguments:

@@ -2,42 +2,43 @@ version: 2
 
 models:
   - name: person_month_analysis_base
-    description: 'Primary analysis table for population health analytics, combining person-months with demographics and conditions in one fast, queryable table.
+    description: 'Analysis foundation table providing person-months with demographics and condition flags for population health analytics.
 
+      Key Features:
 
-      Built from date spine (5-year monthly grain) with temporal joins to SCD2 demographics and condition episodes. Incremental materialization processes only new months for performance.
+      • Person-month grain with active registrations (5-year history)
 
+      • Point-in-time demographics with UK geography and practice details
 
-      Core Components:
+      • Condition flags for all major long-term conditions
 
-      • Person-month grain with active registrations only
+      • New episode detection for incidence analysis
 
-      • Point-in-time demographics (age, sex, ethnicity, practice)
+      • UK financial year and quarter dimensions
 
-      • Condition flags calculated from clinical episodes
-
-      • UK financial year dimensions and date helpers
-
-      • Geographic and practice information
-
-
-      Refresh Strategy: Incremental (new months only). Periodic full refresh captures late-arriving clinical data.'
+      Purpose: Supports population health reporting and clinical quality indicators. Incremental processing handles new months whilst full refresh captures late-arriving data.'
     
     config:
       tags: ['daily', 'monthly-full']
     
     columns:
       - name: analysis_month
-        description: First day of analysis month
+        description: Month end date for this analysis period
       
       - name: person_id
         description: Unique person identifier
+        
+      - name: practice_id
+        description: Practice identifier where person was registered
+        
+      - name: practice_name
+        description: Practice name where person was registered
       
       - name: year_number
-        description: Year as integer for filtering (e.g., 2024)
+        description: Year as integer (e.g., 2024)
       
       - name: month_number
-        description: Month as integer for filtering (1-12)
+        description: Month as integer (1-12)
       
       - name: quarter_number
         description: Calendar quarter as integer (1-4)
@@ -57,9 +58,18 @@ models:
       - name: financial_quarter_number
         description: UK financial quarter as integer (1-4, where 1 is Apr-Jun)
       
-      - name: practice_name
-        description: Practice where person was registered this month
-      
+      - name: birth_year
+        description: Person's birth year
+        
+      - name: birth_date_approx
+        description: Approximate birth date
+        
+      - name: birth_date_approx_end_of_month
+        description: Birth date approximated to month end
+        
+      - name: age_at_least
+        description: Minimum confirmed age
+        
       - name: age
         description: Person's age at this time point
       
@@ -67,19 +77,295 @@ models:
         description: Person's sex
       
       - name: ethnicity_category
-        description: Ethnicity category at this time point
+        description: Ethnicity category
+        
+      - name: ethnicity_subcategory
+        description: Ethnicity subcategory
+        
+      - name: ethnicity_granular
+        description: Granular ethnicity classification
+        
+      - name: ethnicity_category_sort
+        description: Ethnicity category sort order
+        
+      - name: ethnicity_display_sort_key
+        description: Display sort key for ethnicity
+        
+      - name: age_band_5y
+        description: Age banded in 5-year groups
+        
+      - name: age_band_10y
+        description: Age banded in 10-year groups
+        
+      - name: age_band_nhs
+        description: NHS standard age bands
+        
+      - name: age_band_ons
+        description: ONS standard age bands
+        
+      - name: age_life_stage
+        description: Life stage classification
+        
+      - name: main_language
+        description: Person's main language
+        
+      - name: language_type
+        description: Language type classification
+        
+      - name: interpreter_type
+        description: Type of interpreter needed
+        
+      - name: interpreter_needed
+        description: Whether interpreter is needed
+        
+      - name: is_active
+        description: Whether person is actively registered
+        
+      - name: inactive_reason
+        description: Reason for inactive status
+        
+      - name: death_year
+        description: Year of death if deceased
+        
+      - name: death_date_approx
+        description: Approximate date of death
+        
+      - name: is_deceased
+        description: Whether person is deceased
       
+      - name: practice_code
+        description: Practice ODS code
+        
       - name: practice_borough
         description: Borough where practice is located
+        
+      - name: practice_postcode
+        description: Practice postcode
+        
+      - name: practice_lsoa
+        description: Practice LSOA code
+        
+      - name: practice_msoa
+        description: Practice MSOA code
+        
+      - name: practice_latitude
+        description: Practice latitude coordinate
+        
+      - name: practice_longitude
+        description: Practice longitude coordinate
+        
+      - name: practice_neighbourhood
+        description: Practice neighbourhood classification
+        
+      - name: pcn_code
+        description: Primary Care Network code
+        
+      - name: pcn_name
+        description: Primary Care Network name
+        
+      - name: pcn_name_with_borough
+        description: PCN name including borough
+        
+      - name: post_code_hash
+        description: Hashed postcode for privacy
+        
+      - name: uprn_hash
+        description: Hashed UPRN for privacy
+        
+      - name: household_id
+        description: Household identifier
+        
+      - name: lsoa_code_21
+        description: 2021 LSOA code
+        
+      - name: lsoa_name_21
+        description: 2021 LSOA name
+        
+      - name: ward_code
+        description: Electoral ward code
+        
+      - name: ward_name
+        description: Electoral ward name
+        
+      - name: imd_decile_19
+        description: Index of Multiple Deprivation decile (2019)
+        
+      - name: imd_quintile_19
+        description: Index of Multiple Deprivation quintile (2019)
+        
+      - name: patient_neighbourhood
+        description: Patient neighbourhood classification
+        
+      - name: effective_start_date
+        description: Start date of this demographics record
+        
+      - name: effective_end_date
+        description: End date of this demographics record
+        
+      - name: period_sequence
+        description: Sequence number for SCD2 periods
+        
+      - name: is_current_period
+        description: Whether this is the current period
+        
+      - name: age_changes_in_period
+        description: Whether age changes in this period
       
+      - name: has_ast
+        description: Had active asthma this month
+        
+      - name: has_copd
+        description: Had active COPD this month
+        
       - name: has_htn
-        description: Had active hypertension this month (1/0)
+        description: Had active hypertension this month
+        
+      - name: has_chd
+        description: Had active coronary heart disease this month
+        
+      - name: has_af
+        description: Had active atrial fibrillation this month
+        
+      - name: has_hf
+        description: Had active heart failure this month
+        
+      - name: has_pad
+        description: Had active peripheral arterial disease this month
       
       - name: has_dm
-        description: Had active diabetes this month (1/0)
+        description: Had active diabetes this month
+        
+      - name: has_gestdiab
+        description: Had active gestational diabetes this month
+        
+      - name: has_ndh
+        description: Had active non-diabetic hyperglycaemia this month
+        
+      - name: has_dep
+        description: Had active depression this month
+        
+      - name: has_smi
+        description: Had active severe mental illness this month
+        
+      - name: has_ckd
+        description: Had active chronic kidney disease this month
+        
+      - name: has_dem
+        description: Had active dementia this month
+        
+      - name: has_ep
+        description: Had active epilepsy this month
+        
+      - name: has_stia
+        description: Had active stroke/TIA this month
+        
+      - name: has_can
+        description: Had active cancer this month
+        
+      - name: has_pc
+        description: Had active palliative care this month
+        
+      - name: has_ld
+        description: Had active learning disability this month
+        
+      - name: has_frail
+        description: Had active frailty this month
+        
+      - name: has_ra
+        description: Had active rheumatoid arthritis this month
+        
+      - name: has_ost
+        description: Had active osteoporosis this month
+        
+      - name: has_nafld
+        description: Had active NAFLD this month
+        
+      - name: has_fh
+        description: Had active familial hypercholesterolaemia this month
+        
+      - name: new_ast
+        description: New asthma episode started this month
+        
+      - name: new_copd
+        description: New COPD episode started this month
+        
+      - name: new_htn
+        description: New hypertension episode started this month
+        
+      - name: new_chd
+        description: New coronary heart disease episode started this month
+        
+      - name: new_af
+        description: New atrial fibrillation episode started this month
+        
+      - name: new_hf
+        description: New heart failure episode started this month
+        
+      - name: new_pad
+        description: New peripheral arterial disease episode started this month
+        
+      - name: new_dm
+        description: New diabetes episode started this month
+        
+      - name: new_gestdiab
+        description: New gestational diabetes episode started this month
+        
+      - name: new_ndh
+        description: New non-diabetic hyperglycaemia episode started this month
+        
+      - name: new_dep
+        description: New depression episode started this month
+        
+      - name: new_smi
+        description: New severe mental illness episode started this month
+        
+      - name: new_ckd
+        description: New chronic kidney disease episode started this month
+        
+      - name: new_dem
+        description: New dementia episode started this month
+        
+      - name: new_ep
+        description: New epilepsy episode started this month
+        
+      - name: new_stia
+        description: New stroke/TIA episode started this month
+        
+      - name: new_can
+        description: New cancer episode started this month
+        
+      - name: new_pc
+        description: New palliative care episode started this month
+        
+      - name: new_ld
+        description: New learning disability episode started this month
+        
+      - name: new_frail
+        description: New frailty episode started this month
+        
+      - name: new_ra
+        description: New rheumatoid arthritis episode started this month
+        
+      - name: new_ost
+        description: New osteoporosis episode started this month
+        
+      - name: new_nafld
+        description: New NAFLD episode started this month
+        
+      - name: new_fh
+        description: New familial hypercholesterolaemia episode started this month
       
       - name: total_active_conditions
         description: Total number of active conditions this month
+        
+      - name: total_new_episodes_this_month
+        description: Total number of new episodes this month
+        
+      - name: has_any_condition
+        description: Whether person has any active condition this month
+        
+      - name: has_any_new_episode
+        description: Whether person has any new episode this month
     
     tests:
       # Data quality tests

@@ -1,0 +1,154 @@
+version: 2
+
+models:
+  - name: int_observations_mapped
+    description: |
+      Pre-mapped observations for performance optimization.
+      Pre-joins concept and unit mappings to eliminate expensive runtime joins.
+      Append-only incremental model using lds_start_date_time.
+      
+      Performance: Reduces query scans from 100GB+ to <1GB for typical queries.
+      Maintenance: Daily incremental, monthly full refresh.
+
+    columns:
+      - name: observation_id
+        description: Observation unique identifier
+        data_type: varchar
+        
+      - name: patient_id
+        description: Patient identifier
+        data_type: varchar
+        
+      - name: person_id
+        description: Person identifier
+        data_type: number
+        
+      - name: clinical_effective_date
+        description: Date of observation (cast from datetime)
+        data_type: date
+        
+      - name: observation_source_concept_id
+        description: Source concept identifier for observation
+        data_type: number
+        
+      - name: result_value
+        description: Numeric result value
+        data_type: number
+        
+      - name: result_value_unit_concept_id
+        description: Unit concept identifier for result
+        data_type: number
+        
+      - name: result_text
+        description: Text result value
+        data_type: varchar
+        
+      - name: is_problem
+        description: Problem flag
+        data_type: boolean
+        
+      - name: is_review
+        description: Review flag
+        data_type: boolean
+        
+      - name: problem_end_date
+        description: Problem resolution date
+        data_type: date
+        
+      - name: mapped_concept_id
+        description: Pre-mapped target concept identifier
+        data_type: number
+        
+      - name: mapped_concept_code
+        description: Pre-mapped target concept code (e.g., SNOMED)
+        data_type: varchar
+        
+      - name: mapped_concept_display
+        description: Pre-mapped target concept display text
+        data_type: varchar
+        
+      - name: result_unit_code
+        description: Pre-mapped unit code
+        data_type: varchar
+        
+      - name: result_unit_display
+        description: Pre-mapped unit display text
+        data_type: varchar
+        
+      - name: lds_start_date_time
+        description: Row insert/update timestamp for incremental processing
+        data_type: timestamp_ntz
+
+  - name: int_medication_orders_mapped
+    description: |
+      Pre-mapped medication orders for performance optimization.
+      Pre-joins medication statements and concept mappings.
+      Append-only incremental model using lds_start_date_time.
+      
+      Performance: Reduces query scans from 80GB+ to <1GB for typical queries.
+      Maintenance: Daily incremental, monthly full refresh.
+
+    columns:
+      - name: medication_order_id
+        description: Medication order unique identifier
+        data_type: varchar
+        
+      - name: medication_statement_id
+        description: Associated medication statement identifier
+        data_type: varchar
+        
+      - name: patient_id
+        description: Patient identifier
+        data_type: varchar
+        
+      - name: person_id
+        description: Person identifier
+        data_type: number
+        
+      - name: order_date
+        description: Date of medication order (cast from datetime)
+        data_type: date
+        
+      - name: order_dose
+        description: Medication dose
+        data_type: varchar
+        
+      - name: order_quantity_value
+        description: Quantity prescribed
+        data_type: number
+        
+      - name: order_quantity_unit
+        description: Unit of quantity
+        data_type: varchar
+        
+      - name: order_duration_days
+        description: Duration in days
+        data_type: number
+        
+      - name: order_medication_name
+        description: Medication name from order
+        data_type: varchar
+        
+      - name: medication_statement_core_concept_id
+        description: Source concept identifier for medication
+        data_type: number
+        
+      - name: statement_medication_name
+        description: Medication name from statement
+        data_type: varchar
+        
+      - name: mapped_concept_id
+        description: Pre-mapped target concept identifier
+        data_type: number
+        
+      - name: mapped_concept_code
+        description: Pre-mapped target concept code (e.g., SNOMED)
+        data_type: varchar
+        
+      - name: mapped_concept_display
+        description: Pre-mapped target concept display text
+        data_type: varchar
+        
+      - name: lds_start_date_time
+        description: Row insert/update timestamp for incremental processing
+        data_type: timestamp_ntz

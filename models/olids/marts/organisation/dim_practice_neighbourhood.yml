@@ -1,6 +1,34 @@
 version: 2
 models:
   - name: dim_practice_neighbourhood
-    description: 'Geographic context and neighbourhood classification for GP practices.
+    description: 'Practice geographic context with local authority and neighbourhood classifications.
 
-      One row per practice with local authority and neighbourhood information from practice neighbourhood lookup.'
+      Key Features:
+
+      • One row per practice with geographic context
+
+      • Local authority boundaries for administrative analysis
+
+      • Practice neighbourhood classifications for community context
+
+      • Working with dummy data - geographic information may be limited
+
+      Purpose: Supports geographic analysis, local authority reporting, and neighbourhood-based population health assessments.'
+
+    columns:
+      - name: practice_code
+        description: 'Practice ODS code'
+        tests:
+          - not_null
+          - unique
+
+      - name: practice_name
+        description: 'Practice name'
+        tests:
+          - not_null
+
+      - name: local_authority
+        description: 'Local authority where practice is located for administrative boundary analysis'
+
+      - name: practice_neighbourhood
+        description: 'Practice neighbourhood classification for community context analysis'

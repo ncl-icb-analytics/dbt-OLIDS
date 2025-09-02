@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: fct_flu_uptake
+    description: 'Flu vaccination uptake rates aggregated by demographics and geography.
+
+      Uptake Metrics:
+
+      • Total eligible population
+
+      • Total vaccinated population
+
+      • Vaccination coverage percentage
+
+      • Uptake by age bands, ethnicity, deprivation
+
+      Purpose: Supports flu programme monitoring and identification of uptake gaps for targeted interventions.'
+    
+    columns:
+      - name: campaign_year
+        description: Flu campaign year
+        
+      - name: geography_type
+        description: Geographic aggregation level (practice, PCN, borough)
+        
+      - name: geography_code
+        description: Geographic area identifier
+        
+      - name: geography_name
+        description: Geographic area name
+        
+      - name: demographic_group
+        description: Demographic grouping (age band, ethnicity, etc.)
+        
+      - name: eligible_population
+        description: Total eligible population
+        
+      - name: vaccinated_population
+        description: Total vaccinated population
+        
+      - name: uptake_rate
+        description: Vaccination coverage percentage
+        
+      - name: unvaccinated_population
+        description: Eligible but unvaccinated population

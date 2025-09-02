@@ -4,6 +4,31 @@ models:
     description: 'Learning disability diagnosis observations for QOF register management.
 
       One row per diagnosis observation using LD_COD cluster. Annual health check eligibility typically ≥14 years.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: clinical_effective_date
+        description: 'Date when learning disability diagnosis was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for learning disability diagnosis'
+
+      - name: concept_display
+        description: 'Human-readable description of the learning disability clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (LD_COD)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating learning disability diagnosis code (LD_COD cluster)'
+
+      - name: learning_disability_observation_type
+        description: 'Categorised learning disability observation type (Learning Disability Diagnosis)'
+
     tests:
       - cluster_ids_exist:
           arguments:

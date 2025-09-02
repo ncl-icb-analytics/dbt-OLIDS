@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: int_flu_over_65
+    description: 'Flu vaccination eligibility for people aged 65 and over based on age criteria.
+
+      Key Features:
+
+      • Simple age-based eligibility rule (≥65 years at campaign reference date)
+
+      • Generates data for current and previous flu campaigns automatically
+
+      • No clinical codes or complex logic required
+
+      • Uses birth_date_approx for age calculation
+
+      Purpose: Identify people eligible for flu vaccination based on age threshold alone.'
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Age-Based")'
+      - name: risk_group
+        description: 'Risk group classification (always "Age 65 and Over")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying event (NULL for age-based rules as no specific event)'
+      - name: reference_date
+        description: 'Campaign reference date used for age calculation'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

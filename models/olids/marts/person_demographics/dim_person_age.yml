@@ -1,9 +1,23 @@
 version: 2
 models:
   - name: dim_person_age
-    description: 'Person age attributes with age bands, school stages, and life stage categories.
+    description: 'Person age attributes with comprehensive age bands, school stages, and life stage categories.
 
-      One row per person with recorded birth dates. Current age for living persons, age at death for deceased persons.'
+      Key Features:
+
+      • One row per person with recorded birth dates
+
+      • Current age for living persons, age at death for deceased persons
+
+      • Multiple age band standards: 5-year, 10-year, NHS Digital, ONS
+
+      • UK school system integration with academic year logic
+
+      • Life stage categorisation from infant to very elderly
+
+      • Conservative age calculation for minimum age scenarios
+
+      Purpose: Supports demographic analysis, service planning, educational needs assessment, and age-based cohort analysis.'
     columns:
       - name: person_id
         description: Unique identifier for the person

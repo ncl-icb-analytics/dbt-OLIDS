@@ -4,6 +4,31 @@ models:
     description: 'Peripheral arterial disease diagnosis observations for QOF register data collection and cardiovascular risk stratification.
 
       One row per peripheral arterial disease diagnosis observation using PAD_COD cluster with lifelong condition tracking and no resolution codes.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: clinical_effective_date
+        description: 'Date when PAD diagnosis was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for peripheral arterial disease diagnosis'
+
+      - name: concept_display
+        description: 'Human-readable description of the PAD clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (PAD_COD)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating PAD diagnosis code (PAD_COD cluster)'
+
+      - name: pad_observation_type
+        description: 'Categorised PAD observation type (PAD Diagnosis)'
+
     tests:
       - cluster_ids_exist:
           arguments:

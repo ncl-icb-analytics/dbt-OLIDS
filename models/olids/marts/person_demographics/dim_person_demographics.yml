@@ -108,7 +108,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Male', 'Female', 'Unknown']
+              arguments:
+                values: ['Male', 'Female', 'Unknown']
 
       - name: ethnicity_category
         description: 'Ethnicity category from latest recording'

@@ -1,6 +1,44 @@
 version: 2
 models:
   - name: fct_organisation_active_patients
-    description: 'Current active patient count per non-obsolete organisation for capacity planning.
+    description: 'Organisation active patient counts for capacity planning and service utilisation analysis.
 
-      One row per organisation with active patient list size calculated from active patient dimension.'
+      Key Features:
+
+      • One row per non-obsolete organisation with current active patient count
+
+      • Calculated from active patient dimension for accuracy
+
+      • Standardised measure_id for consistent metric identification
+
+      • Excludes obsolete organisations to focus on operational practices
+
+      Purpose: Supports capacity planning, patient list size analysis, and organisational performance monitoring.'
+
+    columns:
+      - name: organisation_id
+        description: 'OLIDS internal organisation ID'
+        tests:
+          - not_null
+          - unique
+
+      - name: ods_code
+        description: 'Organisation ODS code (NHS organisational code)'
+        tests:
+          - not_null
+
+      - name: measure_id
+        description: 'Standardised measure identifier (ORGANISATION_ACTIVE_LIST_SIZE)'
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['ORGANISATION_ACTIVE_LIST_SIZE']
+
+      - name: active_patient_count
+        description: 'Current number of active patients registered with this organisation'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0

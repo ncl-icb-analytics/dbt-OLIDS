@@ -4,6 +4,31 @@ models:
     description: 'Osteoporosis diagnosis observations for QOF register management.
 
       One row per diagnosis observation using OSTEO_COD cluster. DXA scan confirmation logic handled in fact layer.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+
+      - name: person_id
+        description: 'Patient identifier'
+
+      - name: clinical_effective_date
+        description: 'Date when osteoporosis diagnosis was clinically effective'
+
+      - name: concept_code
+        description: 'Clinical code for osteoporosis diagnosis'
+
+      - name: concept_display
+        description: 'Human-readable description of the osteoporosis clinical code'
+
+      - name: source_cluster_id
+        description: 'QOF cluster identifier (OSTEO_COD)'
+
+      - name: is_diagnosis_code
+        description: 'Flag indicating osteoporosis diagnosis code (OSTEO_COD cluster)'
+
+      - name: osteoporosis_observation_type
+        description: 'Categorised osteoporosis observation type (Osteoporosis Diagnosis)'
+
     tests:
       - cluster_ids_exist:
           arguments:

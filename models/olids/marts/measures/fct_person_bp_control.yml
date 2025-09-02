@@ -1,6 +1,65 @@
 version: 2
 models:
   - name: fct_person_bp_control
-    description: 'Blood pressure control assessment for QOF reporting using NICE NG136 guidelines.
+    description: 'Blood pressure control assessment using NICE NG136 guidelines with patient-specific targets.
 
-      One row per patient with BP readings, applying patient-specific thresholds based on age, Type 2 diabetes, CKD, and ACR levels.'
+      Target Criteria (NICE NG136):
+
+      • Standard target: <140/90 mmHg
+
+      • Diabetes target: <130/80 mmHg
+
+      • CKD with ACR ≥30: <130/80 mmHg
+
+      • Age-specific adjustments: 80+ years may have higher targets
+
+      Purpose: Supports hypertension management and QOF reporting with personalised BP targets based on patient comorbidities.'
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        
+      - name: age
+        description: Person's current age
+        
+      - name: latest_bp_date
+        description: Date of most recent blood pressure measurement
+        
+      - name: latest_systolic
+        description: Most recent systolic blood pressure (mmHg)
+        
+      - name: latest_diastolic
+        description: Most recent diastolic blood pressure (mmHg)
+        
+      - name: has_diabetes
+        description: Whether person has Type 2 diabetes
+        
+      - name: has_ckd
+        description: Whether person has chronic kidney disease
+        
+      - name: has_high_acr
+        description: Whether person has ACR ≥30 (kidney damage indicator)
+        
+      - name: systolic_target
+        description: Patient-specific systolic BP target (mmHg)
+        
+      - name: diastolic_target
+        description: Patient-specific diastolic BP target (mmHg)
+        
+      - name: target_rationale
+        description: Reason for specific BP target (diabetes, CKD, age, standard)
+        
+      - name: systolic_controlled
+        description: Whether systolic BP meets patient-specific target
+        
+      - name: diastolic_controlled
+        description: Whether diastolic BP meets patient-specific target
+        
+      - name: bp_controlled
+        description: Whether both systolic and diastolic BP meet targets
+        
+      - name: systolic_excess
+        description: mmHg above systolic target (negative if below target)
+        
+      - name: diastolic_excess
+        description: mmHg above diastolic target (negative if below target)

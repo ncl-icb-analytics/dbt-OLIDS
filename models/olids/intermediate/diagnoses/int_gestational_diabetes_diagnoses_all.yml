@@ -3,4 +3,31 @@ models:
   - name: int_gestational_diabetes_diagnoses_all
     description: 'Gestational diabetes diagnosis observations for QOF register data collection and pregnancy-related diabetes monitoring.
 
-      One row per gestational diabetes diagnosis observation using GESTDIAB_COD cluster with pregnancy-specific tracking and postpartum diabetes risk stratification.'
+      Key Features:
+
+      • Uses GESTDIAB_COD cluster for diagnosis identification
+
+      • Supports QOF register requirements
+
+      • Enables pregnancy-specific diabetes tracking
+
+      • Informs postpartum diabetes risk assessment
+
+      • No resolution codes as condition is pregnancy-specific
+
+      Purpose: Provide observation-level data for gestational diabetes monitoring and future diabetes prevention planning.'
+    columns:
+      - name: observation_id
+        description: 'Unique identifier for the clinical observation'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: clinical_effective_date
+        description: 'Date when the gestational diabetes observation was recorded'
+      - name: concept_code
+        description: 'Clinical code for the gestational diabetes diagnosis'
+      - name: concept_display
+        description: 'Human-readable description of the gestational diabetes diagnosis'
+      - name: source_cluster_id
+        description: 'Source cluster identifier (GESTDIAB_COD for gestational diabetes diagnoses)'
+      - name: is_diagnosis_code
+        description: 'Boolean flag indicating if the code represents a gestational diabetes diagnosis (always TRUE for GESTDIAB_COD cluster)'
