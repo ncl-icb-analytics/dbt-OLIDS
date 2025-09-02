@@ -1,0 +1,167 @@
+version: 2
+
+models:
+  - name: population_health_needs_base_readable
+    description: >
+      Turns base table into readable names for fields that will be directly in Power BI.
+    columns:
+      - name: person_id
+        description: Unique identifier for the person
+      - name: sk_patient_id
+        description: Surrogate key for the patient
+      - name: Active Flag
+        description: Indicates if the patient is currently active
+      - name: Deceased Flag
+        description: Indicates if the patient is deceased
+      - name: Gender
+        description: Patient's gender
+      - name: Age
+        description: Patient's age
+      - name: Age (at least)
+        description: Minimum estimated age
+      - name: Death Date (est.)
+        description: Approximate date of death
+      - name: Age Band (5 Years)
+        description: Age band in 5-year intervals
+      - name: Age Band (10 Years)
+        description: Age band in 10-year intervals
+      - name: Age Band (NHS)
+        description: NHS-defined age band
+      - name: Age (Stage of Life)
+        description: Life stage based on age
+      - name: Ethnicity Category
+        description: Broad ethnicity category
+      - name: Ethnicity Subcategory
+        description: More specific ethnicity subcategory
+      - name: Ethnicity
+        description: Granular ethnicity classification
+      - name: Main Language
+        description: Primary language spoken by the patient
+      - name: Interpreter Needed Flag
+        description: Indicates if an interpreter is needed
+      - name: Practice Code
+        description: Code of the registered GP practice
+      - name: GP Practice
+        description: Name of the GP practice
+      - name: PCN
+        description: Primary Care Network name
+      - name: PCN (Borough)
+        description: PCN name with borough context
+      - name: Neighbourhood (Registered)
+        description: Registered neighbourhood of the patient
+      - name: Borough (Registered)
+        description: Registered borough of the patient
+      - name: lsoa_code_21
+        description: LSOA code (2021)
+      - name: lsoa_name_21
+        description: LSOA name (2021)
+      - name: ward_code
+        description: Electoral ward code
+      - name: Ward
+        description: Electoral ward name
+      - name: imd_decile_19
+        description: IMD decile (2019)
+      - name: IMD Quintile
+        description: IMD quintile (2019)
+      - name: Neighbourhood (Resident)
+        description: Residential neighbourhood of the patient
+      - name: post_code_hash
+        description: Hashed postcode
+      - name: uprn_hash
+        description: Hashed UPRN
+      - name: registration_start_date
+        description: Date of registration with GP
+      - name: BMI Category
+        description: BMI classification
+      - name: BMI
+        description: Body Mass Index value
+      - name: bmi_risk_sort_key
+        description: Sort key for BMI risk
+      - name: Smoking Status
+        description: Smoking status of the patient
+      - name: smoking_risk_sort_key
+        description: Sort key for smoking risk
+      - name: Alcohol Status
+        description: Alcohol consumption status
+      - name: alcohol_risk_sort_key
+        description: Sort key for alcohol risk
+      - name: risk_factor_count
+        description: Count of risk factors
+      - name: has_bmi_data
+        description: Indicates if BMI data is available
+      - name: has_alcohol_data
+        description: Indicates if alcohol data is available
+      - name: has_atrial_fibrillation
+        description: Presence of atrial fibrillation
+      - name: has_coronary_heart_disease
+        description: Presence of coronary heart disease
+      - name: has_heart_failure
+        description: Presence of heart failure
+      - name: has_hypertension
+        description: Presence of hypertension
+      - name: has_peripheral_arterial_disease
+        description: Presence of peripheral arterial disease
+      - name: has_stroke_tia
+        description: Presence of stroke or TIA
+      - name: has_asthma
+        description: Presence of asthma
+      - name: has_copd
+        description: Presence of COPD
+      - name: has_cyp_asthma
+        description: Presence of childhood asthma
+      - name: has_diabetes
+        description: Presence of diabetes
+      - name: has_gestational_diabetes
+        description: Presence of gestational diabetes
+      - name: has_non_diabetic_hyperglycaemia
+        description: Presence of non-diabetic hyperglycaemia
+      - name: has_obesity
+        description: Presence of obesity
+      - name: has_nafld
+        description: Presence of non-alcoholic fatty liver disease
+      - name: has_dementia
+        description: Presence of dementia
+      - name: has_depression
+        description: Presence of depression
+      - name: has_severe_mental_illness
+        description: Presence of severe mental illness
+      - name: has_cancer
+        description: Presence of cancer
+      - name: has_epilepsy
+        description: Presence of epilepsy
+      - name: has_familial_hypercholesterolaemia
+        description: Presence of familial hypercholesterolaemia
+      - name: has_frailty
+        description: Presence of frailty
+      - name: has_learning_disability
+        description: Presence of learning disability
+      - name: has_osteoporosis
+        description: Presence of osteoporosis
+      - name: has_palliative_care
+        description: Receiving palliative care
+      - name: has_rheumatoid_arthritis
+        description: Presence of rheumatoid arthritis
+      - name: total_conditions
+        description: Total number of conditions
+      - name: total_qof_conditions
+        description: Total QOF conditions
+      - name: total_non_qof_conditions
+        description: Total non-QOF conditions
+      - name: cardiovascular_conditions
+        description: Count of cardiovascular conditions
+      - name: respiratory_conditions
+        description: Count of respiratory conditions
+      - name: mental_health_conditions
+        description: Count of mental health conditions
+      - name: metabolic_conditions
+        description: Count of metabolic conditions
+      - name: musculoskeletal_conditions
+        description: Count of musculoskeletal conditions
+      - name: neurology_conditions
+        description: Count of neurological conditions
+      - name: geriatric_conditions
+        description: Count of geriatric conditions
+      - name: earliest_condition_diagnosis
+        description: Earliest diagnosis date
+      - name: latest_condition_diagnosis
+        description: Latest diagnosis date
