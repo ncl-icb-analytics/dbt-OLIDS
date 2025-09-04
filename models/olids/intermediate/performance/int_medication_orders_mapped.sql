@@ -30,7 +30,7 @@ SELECT
     mo.id as medication_order_id,
     mo.medication_statement_id,
     mo.patient_id,
-    mo.person_id,
+    -- person_id excluded as it's rarely populated in source, use patient_person join instead
     mo.clinical_effective_date::DATE as order_date,
     
     -- Order details
@@ -55,9 +55,9 @@ SELECT
 FROM {{ ref('stg_olids_medication_order') }} mo
 JOIN {{ ref('stg_olids_medication_statement') }} ms
     ON mo.medication_statement_id = ms.id
-LEFT JOIN {{ ref('stg_olids_terminology_concept_map') }} cm
+INNER JOIN {{ ref('stg_olids_terminology_concept_map') }} cm
     ON ms.medication_statement_core_concept_id = cm.source_code_id
-LEFT JOIN {{ ref('stg_olids_terminology_concept') }} c
+INNER JOIN {{ ref('stg_olids_terminology_concept') }} c
     ON cm.target_code_id = c.id
 WHERE mo.clinical_effective_date IS NOT NULL
 

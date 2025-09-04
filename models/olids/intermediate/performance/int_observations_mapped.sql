@@ -29,7 +29,7 @@ SELECT
     -- Core identifiers
     o.id as observation_id,
     o.patient_id,
-    o.person_id,
+    -- person_id excluded as it's rarely populated in source, use patient_person join instead
     o.clinical_effective_date::DATE as clinical_effective_date,
     
     -- Observation details
@@ -56,12 +56,15 @@ SELECT
     o.lds_start_date_time
 
 FROM {{ ref('stg_olids_observation') }} o
-LEFT JOIN {{ ref('stg_olids_terminology_concept_map') }} cm
+INNER JOIN {{ ref('stg_olids_terminology_concept_map') }} cm
     ON o.observation_source_concept_id = cm.source_code_id
-LEFT JOIN {{ ref('stg_olids_terminology_concept') }} c
+INNER JOIN {{ ref('stg_olids_terminology_concept') }} c
     ON cm.target_code_id = c.id
+-- Unit concept mapping (separate path, optional)
+LEFT JOIN {{ ref('stg_olids_terminology_concept_map') }} unit_cm
+    ON o.result_value_unit_concept_id = unit_cm.source_code_id
 LEFT JOIN {{ ref('stg_olids_terminology_concept') }} unit_c
-    ON o.result_value_unit_concept_id = unit_c.id
+    ON unit_cm.target_code_id = unit_c.id
 
 {% if is_incremental() %}
 WHERE o.lds_start_date_time > (
