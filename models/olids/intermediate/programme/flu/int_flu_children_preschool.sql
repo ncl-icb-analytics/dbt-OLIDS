@@ -4,7 +4,7 @@ Children Preschool Age Eligibility Rule
 Business Rule: Person is eligible if they are:
 1. Born between the campaign-specific date range for preschool children
    (age range varies by campaign year - typically 2-3 years old)
-   (e.g., Sept 2020 to Aug 2022 for 2024-25 campaign)
+   (dates determined by campaign configuration child_preschool_birth_start/end)
 
 Pure birth date range rule - no clinical codes, just demographics.
 Age-agnostic naming allows for year-to-year age range changes.

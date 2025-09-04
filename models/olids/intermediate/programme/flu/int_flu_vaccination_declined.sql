@@ -34,7 +34,7 @@ people_with_declined_codes AS (
     WHERE obs.clinical_effective_date IS NOT NULL
         -- Restrict to current campaign period (after previous campaign's vaccination tracking date)
         AND obs.clinical_effective_date > cc.flu_vaccination_after_date
-        AND obs.clinical_effective_date <= cc.audit_end_date
+        AND obs.clinical_effective_date <= cc.campaign_end_date
     GROUP BY cc.campaign_id, obs.person_id
 ),
 
@@ -50,7 +50,7 @@ people_with_no_consent_codes AS (
     WHERE obs.clinical_effective_date IS NOT NULL
         -- Restrict to current campaign period (after previous campaign's vaccination tracking date)
         AND obs.clinical_effective_date > cc.flu_vaccination_after_date
-        AND obs.clinical_effective_date <= cc.audit_end_date
+        AND obs.clinical_effective_date <= cc.campaign_end_date
     GROUP BY cc.campaign_id, obs.person_id
 ),
 

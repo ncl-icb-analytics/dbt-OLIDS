@@ -4,7 +4,7 @@ Children School Age Eligibility Rule
 Business Rule: Person is eligible if they are:
 1. Born between the campaign-specific date range for school age children
    (age range varies by campaign year - typically 4-16 years old)
-   (e.g., Sept 2008 to Aug 2020 for 2024-25 campaign)
+   (dates determined by campaign configuration child_school_age_birth_start/end)
 
 Pure birth date range rule - no clinical codes, just demographics.
 Age-agnostic naming allows for year-to-year age range changes.

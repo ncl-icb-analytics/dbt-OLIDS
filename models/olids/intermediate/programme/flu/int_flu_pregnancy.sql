@@ -6,9 +6,9 @@ Business Rule: Person is eligible if they have:
 2. Scenario B: Became pregnant between campaign start and reference date (remains eligible even if delivered)
 3. AND aged 12 years or older (minimum age for pregnancy flu vaccination)
 
-For 2024-25 campaign:
-- Scenario A: Pregnant on 2024-01-01 with no delivery after that date
-- Scenario B: Pregnancy code between 2024-09-01 and 2025-03-31
+Campaign-specific logic:
+- Scenario A: Pregnant 9 months before campaign start with no subsequent delivery
+- Scenario B: Pregnancy code between campaign_start_date and campaign_reference_date
 
 Simplified rule - focuses on flu season timing rather than complex pregnancy state logic.
 */
