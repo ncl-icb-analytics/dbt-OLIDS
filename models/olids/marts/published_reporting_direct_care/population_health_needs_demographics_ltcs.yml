@@ -40,8 +40,10 @@ models:
         description: Neighbourhood of the patient's GP practice.
       - name: practice_borough
         description: Borough of the patient's GP practice.
-      - name: imd_quintile_19
-        description: Index of Multiple Deprivation quintile (2019).
+      - name: practice_imd_quintile_19
+        description: Index of Multiple Deprivation quintile (2019) of the patient's GP practice.
+      - name: patient_imd_quintile_19
+        description: Index of Multiple Deprivation quintile (2019) of the patient.
       - name: has_atrial_fibrillation
       - name: has_coronary_heart_disease
       - name: has_heart_failure
