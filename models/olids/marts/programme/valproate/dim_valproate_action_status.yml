@@ -1,6 +1,40 @@
 version: 2
 models:
   - name: dim_valproate_action_status
-    description: 'Valproate safety monitoring with clinical decision logic and priority actions (1-9).
-
-      One row per person calculating recommended actions based on pregnancy status, PPP enrollment, ARAF completion, age and risk factors.'
+    description: |
+      Valproate safety monitoring clinical decision logic implementing MHRA guidelines for teratogen risk management.
+      
+      **CLINICAL DECISION FRAMEWORK:**
+      
+      This model categorises patients based on safety documentation completeness and vulnerability factors:
+      
+      - **Safety Documentation Requirements:**
+        - PPP (Pregnancy Prevention Programme): Must be enrolled or explicitly declined/discontinued  
+        - ARAF (Annual Risk Acknowledgement Form): Must be current within lookback period
+      
+      - **Vulnerability Factors:**
+        - Pregnancy status (highest risk)
+        - Learning disability (requires additional support)
+        - Age-based reproductive risk: 0-6 (low), 7-12 (medium), 13-60 (high)
+        - Permanent absence of pregnancy risk (lowest risk)
+      
+      **ACTION CATEGORIES:**
+      
+      1. **"Review or refer"** - Missing safety documentation or high-risk situations requiring immediate clinical review
+      2. **"Keep under review"** - PPP declined/discontinued but documented; routine monitoring sufficient  
+      3. **"Consider expiry of ARAF"** - All safety measures present; check if ARAF needs renewal
+      4. **"No action required"** - Low risk patients requiring minimal intervention
+      
+      **PRIORITY ORDER (1 = Most Urgent, 9 = Least Urgent):**
+      
+      1. **PREGNANCY** - Immediate teratogenic risk, urgent review required
+      2. **MISSING DOCS + LEARNING DISABILITY** - Vulnerable population without safety measures
+      3. **MISSING DOCS + HIGH RISK AGE (13-60)** - Prime reproductive age without safety measures
+      4. **MISSING DOCS + MEDIUM RISK AGE (7-12)** - Approaching reproductive age without safety measures  
+      5. **PPP DECLINED** - Documented decision to decline PPP, routine monitoring
+      6. **COMPLETE DOCS + LEARNING DISABILITY** - Monitor ARAF expiry in vulnerable population
+      7. **COMPLETE DOCS + MEDIUM RISK AGE (7-12)** - Monitor ARAF expiry
+      8. **COMPLETE DOCS + HIGH RISK AGE (13-60)** - Monitor ARAF expiry  
+      9. **LOW RISK** - Age 0-6 or permanent absence of pregnancy risk, minimal monitoring
+      
+      One row per person in valproate cohort (non-males aged 0-55 with recent valproate orders).
