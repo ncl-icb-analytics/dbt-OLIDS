@@ -44,12 +44,11 @@ SELECT
   pcn_name_with_borough AS "PCN (Borough)",
   practice_neighbourhood AS "Neighbourhood (Registered)",
   practice_borough AS "Borough (Registered)",
-  lsoa_code_21,
-  lsoa_name_21,
+  patient_lsoa AS "LSOA Code",
   ward_code,
   ward_name AS "Ward",
-  imd_decile_19,
-  imd_quintile_19 AS "IMD Quintile",
+  patient_imd_decile_19 AS "IMD Decile",
+  patient_imd_quintile_19 AS "IMD Quintile",
   patient_neighbourhood AS "Neighbourhood (Resident)",
   post_code_hash,
   uprn_hash,
@@ -101,4 +100,4 @@ SELECT
   geriatric_conditions,
   earliest_condition_diagnosis,
   latest_condition_diagnosis
-FROM data_lab_olids_uat.dbt_dev.population_health_needs_base
+FROM {{ ref('population_health_needs_base') }}
