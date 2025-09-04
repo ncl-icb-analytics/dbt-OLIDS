@@ -5,25 +5,24 @@
 }}
 /**
 Deduplicated patient-person mappings.
-Handles cases where multiple patient_ids may map to the same person_id.
-When multiple patient_ids exist for the same person_id, selects the
-lowest patient_id to ensure consistent mapping.
-This intermediate model prevents duplicate persons in downstream models
-that join observations/medications to person data.
+Now simplified since staging models handle UUID generation and deduplication.
+The staging model stg_olids_patient_person now includes sk_patient_id directly
+and generates consistent UUID-based person_id values.
 EXCLUDES orphaned person records that don't link to valid patient records.
 */
 SELECT DISTINCT
     pp.patient_id,
     pp.person_id,
-    pat.sk_patient_id
+    pp.sk_patient_id
 FROM {{ ref('stg_olids_patient_person') }} pp
 INNER JOIN {{ ref('stg_olids_person') }} p
     ON pp.person_id = p.id
--- CRITICAL: Only include mappings where the patient actually exists
+-- Additional validation: ensure patient has basic demographics
 INNER JOIN {{ ref('stg_olids_patient') }} pat
     ON pp.patient_id = pat.id
 WHERE pp.patient_id IS NOT NULL
     AND pp.person_id IS NOT NULL
+    AND pp.sk_patient_id IS NOT NULL
     -- Only include patients with basic demographics
     AND pat.birth_year IS NOT NULL
 ORDER BY person_id, patient_id
