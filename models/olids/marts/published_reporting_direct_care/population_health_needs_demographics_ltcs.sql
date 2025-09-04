@@ -54,5 +54,5 @@ SELECT
   has_palliative_care,
   has_rheumatoid_arthritis,
   COUNT(*) AS patient_count
-FROM data_lab_olids_uat.dbt_dev.population_health_needs_base
+FROM {{ ref('population_health_needs_base') }}
 GROUP BY ALL

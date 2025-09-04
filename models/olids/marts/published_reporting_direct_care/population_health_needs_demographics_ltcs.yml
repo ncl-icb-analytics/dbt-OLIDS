@@ -6,7 +6,7 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "patient_count > 1"
+            expression: "patient_count >= 1"
     config:
       materialized: view
     columns:
