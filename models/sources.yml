@@ -302,6 +302,13 @@ sources:
       data_type: NUMBER
     - name: DISPLAY_SORT_KEY
       data_type: TEXT
+  - name: IMD2019
+    identifier: '"IMD2019"'
+    columns:
+    - name: LSOACODE
+      data_type: TEXT
+    - name: IMDDECILE
+      data_type: NUMBER
   - name: IMMS_SCHEDULE_LATEST
     identifier: '"IMMS_SCHEDULE_LATEST"'
     columns:

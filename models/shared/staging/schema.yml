@@ -440,6 +440,10 @@ models:
   description: Staging model for reference ethnicity codes
   tests:
   - all_source_columns_in_staging
+- name: stg_reference_imd2019
+  description: Staging model for reference imd2019
+  tests:
+  - all_source_columns_in_staging
 - name: stg_reference_imms_schedule_latest
   description: Staging model for reference imms schedule latest
   tests:
