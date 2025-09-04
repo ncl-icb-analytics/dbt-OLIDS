@@ -30,7 +30,7 @@ people_with_laiv_vaccination_admin AS (
     CROSS JOIN all_campaigns cc
     WHERE obs.clinical_effective_date IS NOT NULL
         AND obs.clinical_effective_date > cc.laiv_vaccination_after_date
-        AND obs.clinical_effective_date <= cc.audit_end_date
+        AND obs.clinical_effective_date <= cc.campaign_end_date
     GROUP BY cc.campaign_id, obs.person_id
 ),
 
@@ -45,7 +45,7 @@ people_with_laiv_vaccination_medication AS (
     CROSS JOIN all_campaigns cc
     WHERE med.order_date IS NOT NULL
         AND med.order_date > cc.laiv_vaccination_after_date
-        AND med.order_date <= cc.audit_end_date
+        AND med.order_date <= cc.campaign_end_date
     GROUP BY cc.campaign_id, med.person_id
 ),
 
