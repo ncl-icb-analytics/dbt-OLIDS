@@ -3,17 +3,126 @@ models:
   - name: fct_person_bp_control
     description: 'Blood pressure control assessment using NICE NG136 guidelines with patient-specific targets.
 
-      Target Criteria (NICE NG136):
+      Treatment Targets:
 
-      • Standard target: <140/90 mmHg
+      • Standard (under 80): <140/90 mmHg
 
-      • Diabetes target: <130/80 mmHg
+      • Age 80+: <150/90 mmHg
 
-      • CKD with ACR ≥30: <130/80 mmHg
+      • Type 2 Diabetes: <140/90 mmHg
 
-      • Age-specific adjustments: 80+ years may have higher targets
+      • CKD (under 80): <140/90 mmHg
+
+      • CKD with ACR ≥70: <130/80 mmHg
+
+      Diagnostic Thresholds:
+
+      • Stage 1 - Clinic: ≥140/90 mmHg
+
+      • Stage 1 - ABPM/HBPM: ≥135/85 mmHg
+
+      • Stage 2 - Clinic: ≥160/100 mmHg
+
+      • Stage 2 - ABPM/HBPM: ≥150/95 mmHg
+
+      • Stage 3 - Severe: ≥180/120 mmHg
 
       Purpose: Supports hypertension management and QOF reporting with personalised BP targets based on patient comorbidities.'
+    
+    config:
+      meta:
+        indicator:
+          id: "NG136_BP"
+          type: "MEASURE"
+          category: "CARDIOVASCULAR"
+          clinical_domain: "Hypertension"
+          name_short: "Blood Pressure Control"
+          description_short: "NICE NG136 blood pressure targets and diagnostic criteria"
+          description_long: >
+            Complete NICE NG136 hypertension guidance including treatment targets for different 
+            patient populations and diagnostic thresholds for hypertension staging. Treatment 
+            targets vary by age, diabetes status, and CKD severity. Diagnostic criteria use 
+            different thresholds for clinic vs ABPM/HBPM measurements across 3 severity stages.
+          is_qof: false
+          source_column: "bp_controlled"
+          usage_contexts:
+            - "NICE_GUIDANCE"
+          code_clusters:
+            - cluster_id: "BP_COD"
+              category: "INCLUSION"
+          thresholds:
+            # Treatment Targets
+            - population_group: "AGE_LT_80"
+              threshold_type: "TARGET_UPPER"
+              threshold_value: "140/90"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Standard target for adults under 80"
+              sort_order: 1
+            - population_group: "AGE_GE_80"
+              threshold_type: "TARGET_UPPER"
+              threshold_value: "150/90"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Target for adults 80 and over"
+              sort_order: 2
+            - population_group: "T2DM"
+              threshold_type: "TARGET_UPPER"
+              threshold_value: "140/90"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Target for adults with Type 2 Diabetes"
+              sort_order: 3
+            - population_group: "CKD"
+              threshold_type: "TARGET_UPPER"
+              threshold_value: "140/90"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Target for adults with CKD (under 80)"
+              sort_order: 4
+            - population_group: "CKD_ACR_GE_70"
+              threshold_type: "TARGET_UPPER"
+              threshold_value: "130/80"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Target for CKD with ACR ≥70"
+              sort_order: 5
+            # Diagnostic Criteria
+            - population_group: "DIAGNOSIS"
+              threshold_type: "DIAGNOSIS_S1_CLINIC"
+              threshold_value: "140/90"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "mmHg"
+              description: "Stage 1 diagnosis - clinic readings"
+              sort_order: 6
+            - population_group: "DIAGNOSIS"
+              threshold_type: "DIAGNOSIS_S1_ABPM_HBPM"
+              threshold_value: "135/85"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "mmHg"
+              description: "Stage 1 diagnosis - ABPM/HBPM"
+              sort_order: 7
+            - population_group: "DIAGNOSIS"
+              threshold_type: "DIAGNOSIS_S2_CLINIC"
+              threshold_value: "160/100"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "mmHg"
+              description: "Stage 2 diagnosis - clinic readings"
+              sort_order: 8
+            - population_group: "DIAGNOSIS"
+              threshold_type: "DIAGNOSIS_S2_ABPM_HBPM"
+              threshold_value: "150/95"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "mmHg"
+              description: "Stage 2 diagnosis - ABPM/HBPM"
+              sort_order: 9
+            - population_group: "DIAGNOSIS"
+              threshold_type: "DIAGNOSIS_S3_CLINIC"
+              threshold_value: "180/120"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "mmHg"
+              description: "Severe hypertension diagnosis"
+              sort_order: 10
     
     columns:
       - name: person_id
@@ -41,22 +150,22 @@ models:
         description: Whether person has ACR ≥30 (kidney damage indicator)
         
       - name: systolic_target
-        description: Patient-specific systolic BP target (mmHg)
+        description: "Patient-specific systolic BP target - 140 (standard/diabetes/CKD), 150 (age 80+), 130 (CKD with high ACR)"
         
       - name: diastolic_target
-        description: Patient-specific diastolic BP target (mmHg)
+        description: "Patient-specific diastolic BP target - 90 (standard/age 80+), 80 (CKD with high ACR)"
         
       - name: target_rationale
-        description: Reason for specific BP target (diabetes, CKD, age, standard)
+        description: "NICE NG136 rationale - Standard (<140/90), Age 80+ (<150/90), CKD high ACR (<130/80)"
         
       - name: systolic_controlled
-        description: Whether systolic BP meets patient-specific target
+        description: "Whether systolic BP below target (varies: 140/150/130 per NICE NG136)"
         
       - name: diastolic_controlled
-        description: Whether diastolic BP meets patient-specific target
+        description: "Whether diastolic BP below target (90 standard, 80 for CKD high ACR)"
         
       - name: bp_controlled
-        description: Whether both systolic and diastolic BP meet targets
+        description: "Overall BP control per NICE NG136 - both systolic and diastolic below patient-specific targets"
         
       - name: systolic_excess
         description: mmHg above systolic target (negative if below target)

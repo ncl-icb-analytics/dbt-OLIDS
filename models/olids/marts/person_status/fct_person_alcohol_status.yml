@@ -5,6 +5,134 @@ models:
     description: 'Combined alcohol risk assessment from screening and diagnoses.
 
       One row per person with any alcohol-related data, integrating AUDIT/AUDIT-C scores with alcohol disorder diagnoses using 12-month recency window for conflict resolution.'
+    
+    config:
+      meta:
+        indicator:
+          id: "BRF_ALCOHOL_RISK"
+          type: "BRF"
+          category: "BRF"
+          clinical_domain: "Lifestyle"
+          name_short: "Alcohol Risk Assessment"
+          description_short: "AUDIT-based alcohol risk screening and captures alcohol disorder diagnoses"
+          description_long: >
+            Combined alcohol risk assessment integrating AUDIT/AUDIT-C screening scores with 
+            alcohol disorder diagnoses. Uses evidence-based thresholds for brief intervention 
+            (AUDIT-C ≥3, Full AUDIT ≥8) and higher risk referral (AUDIT-C ≥5, Full AUDIT ≥16).
+            Integrates clinical diagnoses with 12-month recency window for comprehensive 
+            risk assessment supporting population health monitoring and clinical interventions.
+          is_qof: false
+          source_column: "alcohol_status"
+          sort_order: "BRF_3_ALCOHOL"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "ALCOHOL_AUDIT_COD"
+              category: "INCLUSION"
+            - cluster_id: "ALCOHOL_DISORDER_COD" 
+              category: "INCLUSION"
+          thresholds:
+            # AUDIT-C Risk Categories
+            - population_group: "ALL"
+              threshold_type: "AUDIT_C_OCCASIONAL"
+              threshold_value: "1-2"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "AUDIT-C occasional drinker"
+              sort_order: 1
+            - population_group: "ALL"
+              threshold_type: "AUDIT_C_LOWER_RISK"
+              threshold_value: "3-4"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "AUDIT-C lower risk drinking"
+              sort_order: 2
+            - population_group: "ALL"
+              threshold_type: "AUDIT_C_INCREASING_RISK"
+              threshold_value: "5-7"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "AUDIT-C increasing risk drinking"
+              sort_order: 3
+            - population_group: "ALL"
+              threshold_type: "AUDIT_C_HIGHER_RISK"
+              threshold_value: "8-10"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "AUDIT-C higher risk drinking"
+              sort_order: 4
+            - population_group: "ALL"
+              threshold_type: "AUDIT_C_DEPENDENCE"
+              threshold_value: "11-12"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "AUDIT-C possible dependence"
+              sort_order: 5
+            # Full AUDIT Risk Categories
+            - population_group: "ALL"
+              threshold_type: "AUDIT_OCCASIONAL"
+              threshold_value: "1-3"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "Full AUDIT occasional drinker"
+              sort_order: 6
+            - population_group: "ALL"
+              threshold_type: "AUDIT_LOWER_RISK"
+              threshold_value: "4-7"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "Full AUDIT lower risk drinking"
+              sort_order: 7
+            - population_group: "ALL"
+              threshold_type: "AUDIT_INCREASING_RISK"
+              threshold_value: "8-15"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "Full AUDIT increasing risk drinking"
+              sort_order: 8
+            - population_group: "ALL"
+              threshold_type: "AUDIT_HIGHER_RISK"
+              threshold_value: "16-19"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "score"
+              description: "Full AUDIT higher risk drinking"
+              sort_order: 9
+            - population_group: "ALL"
+              threshold_type: "AUDIT_DEPENDENCE"
+              threshold_value: "20+"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "score"
+              description: "Full AUDIT possible dependence"
+              sort_order: 10
+            # Clinical Intervention Thresholds
+            - population_group: "ALL"
+              threshold_type: "BRIEF_INTERVENTION_AUDIT_C"
+              threshold_value: "5"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "score"
+              description: "AUDIT-C brief intervention threshold"
+              sort_order: 11
+            - population_group: "ALL"
+              threshold_type: "BRIEF_INTERVENTION_AUDIT"
+              threshold_value: "8"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "score"
+              description: "Full AUDIT brief intervention threshold"
+              sort_order: 12
+            - population_group: "ALL"
+              threshold_type: "SPECIALIST_REFERRAL_AUDIT_C"
+              threshold_value: "8"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "score"
+              description: "AUDIT-C specialist intervention threshold"
+              sort_order: 13
+            - population_group: "ALL"
+              threshold_type: "SPECIALIST_REFERRAL_AUDIT"
+              threshold_value: "16"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "score"
+              description: "Full AUDIT specialist intervention threshold"
+              sort_order: 14
 
     columns:
       - name: person_id

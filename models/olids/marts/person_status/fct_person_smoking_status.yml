@@ -5,9 +5,93 @@ models:
 
       One row per person with recorded smoking observations including earliest and all recorded smoking history.'
     
+    config:
+      meta:
+        indicator:
+          id: "BRF_SMOKING_STATUS"
+          type: "BRF"
+          category: "BRF"
+          clinical_domain: "Lifestyle"
+          name_short: "Smoking Status"
+          description_short: "Current smoking status for population health assessment"
+          description_long: >
+            Smoking status classification based on most recent clinical observations.
+            Categories include Never Smoked (lowest risk), Ex-Smoker (past risk requiring 
+            relapse monitoring), and Current Smoker (active risk requiring intervention).
+            Supports population health monitoring and smoking cessation programmes.
+          is_qof: false
+          source_column: "smoking_status"
+          sort_order: "BRF_2_SMOKING"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "SMOKING_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "CURRENT_SMOKER"
+              threshold_value: "Current Smoker"
+              threshold_operator: "EQUALS"
+              threshold_unit: "status"
+              description: "Current smoking status - active risk requiring intervention"
+              sort_order: 1
+            - population_group: "ALL"
+              threshold_type: "EX_SMOKER"
+              threshold_value: "Ex-Smoker"
+              threshold_operator: "EQUALS"
+              threshold_unit: "status"
+              description: "Ex-smoking status - past risk requiring relapse monitoring"
+              sort_order: 2
+            - population_group: "ALL"
+              threshold_type: "NEVER_SMOKER"
+              threshold_value: "Never Smoked"
+              threshold_operator: "EQUALS"
+              threshold_unit: "status"
+              description: "Never smoking status - lowest risk"
+              sort_order: 3
+    
     columns:
       - name: person_id
         description: Unique identifier for the person
         tests:
           - not_null
           - unique
+          
+      - name: age
+        description: Person's current age
+        
+      - name: smoking_status
+        description: Current smoking status (Never Smoked, Ex-Smoker, Current Smoker, Unknown)
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Never Smoked', 'Ex-Smoker', 'Current Smoker', 'Unknown']
+                
+      - name: smoking_risk_sort_key
+        description: Smoking risk level (1=Never, 2=Ex-smoker, 3=Current smoker, 0=Unknown)
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 3
+        
+      - name: latest_smoking_date
+        description: Date of most recent smoking status observation
+        
+      - name: earliest_smoking_date
+        description: Date of earliest smoking status observation
+        
+      - name: latest_concept_code
+        description: SNOMED concept code for most recent smoking observation
+        
+      - name: latest_code_description
+        description: Description of most recent smoking concept code
+        
+      - name: latest_cluster_id
+        description: Code cluster ID for most recent smoking observation
+        
+      - name: all_smoking_concept_codes
+        description: Array of all smoking concept codes for this person
+        
+      - name: all_smoking_concept_displays
+        description: Array of all smoking concept display terms for this person

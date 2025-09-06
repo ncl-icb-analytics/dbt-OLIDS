@@ -15,6 +15,98 @@ models:
 
       Purpose: Supports clinical assessment and population health monitoring with appropriate ethnic considerations.'
     
+    config:
+      meta:
+        indicator:
+          id: "BRF_BMI_ETHNIC"
+          type: "BRF"
+          category: "BRF"
+          clinical_domain: "Lifestyle"
+          name_short: "BMI with Ethnicity Adjustment"
+          description_short: "BMI categories with ethnicity-adjusted thresholds for cardiometabolic risk"
+          description_long: >
+            BMI categorisation using ethnicity-adjusted thresholds per NICE guidance.
+            Standard populations use conventional BMI categories (overweight ≥25, obese ≥30).
+            Populations with increased cardiometabolic risk (South Asian, Chinese, other Asian, 
+            Middle Eastern, Black African, African-Caribbean) use lower thresholds 
+            (overweight ≥23, obese ≥27.5) to reflect increased risk at lower BMI levels.
+          is_qof: false
+          source_column: "bmi_category"
+          sort_order: "BRF_1_BMI"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "BMIVAL_COD"
+              category: "INCLUSION"
+            - cluster_id: "HEIGHT"
+              category: "CALCULATION"
+            - cluster_id: "WEIGHT"
+              category: "CALCULATION"
+            # Ethnicity clusters for cardiometabolic risk adjustment
+            - cluster_id: "ETH2016AI_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016AP_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016AB_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016AC_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016AO_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016MWA_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016OA_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016BA_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016MWBA_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016BC_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016MWBC_COD"
+              category: "REFINEMENT"
+            - cluster_id: "ETH2016BO_COD"
+              category: "REFINEMENT"
+          thresholds:
+            # Standard population thresholds
+            - population_group: "STANDARD"
+              threshold_type: "OVERWEIGHT"
+              threshold_value: "25"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "kg/m²"
+              description: "Overweight threshold for standard populations"
+              sort_order: 1
+            - population_group: "STANDARD"
+              threshold_type: "OBESE"
+              threshold_value: "30"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "kg/m²"
+              description: "Obesity threshold for standard populations"
+              sort_order: 2
+            # Increased cardiometabolic risk populations
+            - population_group: "CARDIOMETABOLIC_RISK"
+              threshold_type: "OVERWEIGHT"
+              threshold_value: "23"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "kg/m²"
+              description: "Overweight threshold for populations with increased cardiometabolic risk"
+              sort_order: 3
+            - population_group: "CARDIOMETABOLIC_RISK"
+              threshold_type: "OBESE"
+              threshold_value: "27.5"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "kg/m²"
+              description: "Obesity threshold for populations with increased cardiometabolic risk"
+              sort_order: 4
+            # Universal thresholds
+            - population_group: "ALL"
+              threshold_type: "UNDERWEIGHT"
+              threshold_value: "18.5"
+              threshold_operator: "BELOW"
+              threshold_unit: "kg/m²"
+              description: "Underweight threshold for all populations"
+              sort_order: 5
+    
     columns:
       - name: person_id
         description: Unique identifier for the person

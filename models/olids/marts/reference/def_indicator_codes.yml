@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: def_indicator_codes
+    description: 'SNOMED codes that define each clinical indicator.
+    
+      Expands cluster IDs from indicator definitions to show the specific SNOMED codes 
+      used for inclusion, exclusion or resolution.'
+    
+    columns:
+      - name: indicator_id
+        description: Foreign key linking to def_indicator table
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('def_indicator')
+                field: indicator_id
+              
+      - name: cluster_id
+        description: Source cluster from reference data (e.g., DM_COD, DMRES_COD)
+        tests:
+          - not_null
+          
+      - name: code_category
+        description: Purpose of this code in the indicator logic
+        tests:
+          - not_null
+              
+      - name: code_system
+        description: Coding system for this code
+        tests:
+          - not_null
+              
+      - name: code
+        description: The specific SNOMED code value
+        tests:
+          - not_null
+          
+      - name: code_description
+        description: Human-readable description of the SNOMED code
+        tests:
+          - not_null
+          
+      - name: metadata_extracted_at
+        description: Timestamp when metadata was extracted from YAML
+        tests:
+          - not_null

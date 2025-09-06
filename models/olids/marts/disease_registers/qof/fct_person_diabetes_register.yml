@@ -14,6 +14,38 @@ models:
 
       Purpose: Supports QOF reporting and diabetes care management with accurate type classification for treatment planning.'
     
+    config:
+      meta:
+        indicator:
+          id: "DM017"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Metabolic"
+          name_short: "Diabetes"
+          description_short: "QOF diabetes register (all types)"
+          description_long: >
+            Diabetes mellitus diagnosed using QOF criteria: Age ≥17 years with active 
+            diagnosis where latest diabetes code is more recent than any resolution code. 
+            Includes all diabetes types - Type 1, Type 2, and unspecified diabetes codes.
+            Type classification prioritises Type 1 over Type 2 when both present on same date.
+            Maps to QOF indicator DM017 (Diabetes Register). Uses DM_COD (general), 
+            DMTYPE1_COD (Type 1), and DMTYPE2_COD (Type 2) cluster codes.
+          is_qof: true
+          qof_indicator: "DM017"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "DM_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMTYPE1_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMTYPE2_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMRES_COD"
+              category: "RESOLUTION"
+    
     columns:
       - name: person_id
         description: Unique person identifier
