@@ -3,3 +3,34 @@ models:
     description: 'QOF non-diabetic hyperglycaemia register for patients with pre-diabetes diagnosis.
 
       One row per person with NDH_COD present (elevated glucose but not diabetic), excluding those with diabetes diagnosis.'
+    
+    config:
+      meta:
+        indicator:
+          id: "NDH001"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Metabolic"
+          name_short: "Non-Diabetic Hyperglycaemia"
+          description_short: "QOF non-diabetic hyperglycaemia register"
+          description_long: >
+            Non-diabetic hyperglycaemia diagnosed using QOF criteria: Age ≥18 years with NDH, 
+            IGT, or pre-diabetes diagnosis codes, excluding those with active diabetes diagnosis. 
+            Used for diabetes prevention programmes and lifestyle intervention monitoring. Maps 
+            to QOF indicator NDH001 (NDH Register). Uses NDH_COD, IGT_COD, and PRD_COD for 
+            diagnosis codes with complex diabetes exclusion logic.
+          is_qof: true
+          qof_indicator: "NDH001"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "NDH_COD"
+              category: "INCLUSION"
+            - cluster_id: "IGT_COD"
+              category: "INCLUSION"
+            - cluster_id: "PRD_COD"
+              category: "INCLUSION"
+            - cluster_id: "DM_COD"
+              category: "EXCLUSION"

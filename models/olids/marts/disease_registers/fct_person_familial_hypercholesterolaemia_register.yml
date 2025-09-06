@@ -4,3 +4,28 @@ models:
     description: 'Familial hypercholesterolaemia register for patients with genetic lipid disorder diagnosed at age 20+.
 
       One row per active patient with FHYP_COD present and age at first diagnosis 20+ years (genetic condition is lifelong).'
+    
+    config:
+      meta:
+        indicator:
+          id: "FH"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Cardiovascular"
+          name_short: "Familial Hypercholesterolaemia"
+          description_short: "Familial hypercholesterolaemia register for genetic lipid disorder (non-QOF)"
+          description_long: >
+            Familial hypercholesterolaemia register for persons with genetic lipid disorder 
+            diagnosis. Includes active patients with FH diagnosis code (FHYP_COD) and age 
+            at first diagnosis ≥20 years. No resolution codes as FH is a genetic condition. 
+            Used for cascade family screening programmes, high-intensity statin therapy 
+            monitoring, and genetic cardiovascular risk management. Critical for identifying 
+            families requiring lipid screening and specialist cardiovascular care.
+          is_qof: false
+          source_column: "is_on_register"
+          sort_order: "COND_CARDIO_FH"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "FHYP_COD"
+              category: "INCLUSION"

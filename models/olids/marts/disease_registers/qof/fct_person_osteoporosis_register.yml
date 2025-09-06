@@ -4,3 +4,27 @@ models:
     description: 'QOF osteoporosis register for fracture prevention in at-risk patients aged 50-74.
 
       One row per person with fragility fracture after April 2012, OSTEO_COD present, and DXA confirmation (DXA scan or T-score ≤ -2.5).'
+    
+    config:
+      meta:
+        indicator:
+          id: "OST004"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Musculoskeletal"
+          name_short: "Osteoporosis"
+          description_short: "QOF osteoporosis register"
+          description_long: >
+            Osteoporosis diagnosed using QOF criteria: Age 50-74 years with fragility fracture 
+            after April 2012, osteoporosis diagnosis present, and DXA confirmation (DXA scan or 
+            T-score ≤ -2.5). Used for fracture prevention in at-risk patients. Maps to QOF 
+            indicator OST004 (Osteoporosis Register). Uses OSTEO_COD for diagnosis codes.
+          is_qof: true
+          qof_indicator: "OST004"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "OSTEO_COD"
+              category: "INCLUSION"

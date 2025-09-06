@@ -4,3 +4,27 @@ models:
     description: 'QOF palliative care register for patients receiving end-of-life care.
 
       One row per person with PALLCARE_COD present (palliative care status maintained).'
+    
+    config:
+      meta:
+        indicator:
+          id: "PC001"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Palliative Care"
+          name_short: "Palliative Care"
+          description_short: "QOF palliative care register"
+          description_long: >
+            Palliative care diagnosed using QOF criteria: Patients receiving end-of-life care 
+            with palliative care status codes present. Palliative care status is maintained 
+            for care coordination and quality monitoring. Maps to QOF indicator PC001 
+            (Palliative Care Register). Uses PALLCARE_COD for diagnosis codes.
+          is_qof: true
+          qof_indicator: "PC001"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "PALLCARE_COD"
+              category: "INCLUSION"

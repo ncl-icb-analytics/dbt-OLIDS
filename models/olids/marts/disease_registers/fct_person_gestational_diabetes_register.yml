@@ -4,3 +4,29 @@ models:
     description: 'Gestational diabetes register for patients with pregnancy-related diabetes diagnosis history.
 
       One row per active patient with GESTDIAB_COD present (permanent record for postpartum diabetes risk monitoring).'
+    
+    config:
+      meta:
+        indicator:
+          id: "GDM"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Metabolic"
+          name_short: "Gestational Diabetes"
+          description_short: "Gestational diabetes register for pregnancy-related diabetes (non-QOF)"
+          description_long: >
+            Gestational diabetes mellitus register for persons with history of pregnancy-related 
+            diabetes diagnosis. Includes active patients with gestational diabetes diagnosis code 
+            (GESTDIAB_COD) with no age restrictions as pregnancy-related. No resolution codes as 
+            gestational diabetes history is permanent record for future risk assessment. Used for 
+            postpartum diabetes screening, future type 2 diabetes prevention planning, and ongoing 
+            diabetes risk monitoring. Critical for identifying women at increased risk of developing 
+            type 2 diabetes later in life.
+          is_qof: false
+          source_column: "is_on_register"
+          sort_order: "COND_METABOL_GDM"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "GESTDIAB_COD"
+              category: "INCLUSION"

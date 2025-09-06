@@ -41,8 +41,8 @@
             'name_short': model_meta.name_short,
             'description_short': model_meta.description_short,
             'description_long': model_meta.description_long,
-            'source_model': node.name,
-            'source_column': model_meta.source_column,
+            'source_model': node.name|upper,
+            'source_column': model_meta.source_column|upper,
             'is_qof': model_meta.get('is_qof', false),
             'qof_indicator': model_meta.get('qof_indicator'),
             'sort_order': model_meta.get('sort_order', sort_order)
@@ -111,8 +111,8 @@
               'name_short': col_meta.name_short,
               'description_short': col_meta.description_short,
               'description_long': col_meta.description_long,
-              'source_model': node.name,
-              'source_column': col_meta.source_column,
+              'source_model': node.name|upper,
+              'source_column': col_meta.source_column|upper,
               'is_qof': col_meta.get('is_qof', false),
               'qof_indicator': col_meta.get('qof_indicator'),
               'sort_order': col_meta.get('sort_order', sort_order)

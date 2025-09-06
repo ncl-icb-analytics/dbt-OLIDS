@@ -14,6 +14,33 @@ models:
 
       Purpose: Supports comprehensive learning disability population analysis across all age groups, complementing the age-restricted QOF register.'
     
+    config:
+      meta:
+        indicator:
+          id: "LD_ALL"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Neurodevelopmental"
+          name_short: "Learning Disability (All Ages)"
+          description_short: "Learning disability register for all ages (non-QOF)"
+          description_long: >
+            Learning disability register for all persons with learning disability diagnosis, 
+            including all age groups. Uses LD_COD cluster codes for learning disability 
+            diagnoses. Differs from QOF learning disability register by removing age 
+            restrictions (QOF requires age ≥14 years). No resolution codes applied as 
+            learning disability is typically lifelong. Used for comprehensive population 
+            health analysis, service planning across all age groups, and identifying 
+            children and young people with learning disabilities who require additional 
+            support services.
+          is_qof: false
+          source_column: "is_on_register"
+          sort_order: "COND_NEURODEV_LD_ALL"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "LD_COD"
+              category: "INCLUSION"
+    
     columns:
       - name: person_id
         description: Unique person identifier

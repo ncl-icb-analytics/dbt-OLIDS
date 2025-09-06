@@ -13,19 +13,25 @@ models:
           category: "BRF"
           clinical_domain: "Lifestyle"
           name_short: "Smoking Status"
-          description_short: "Current smoking status for population health assessment"
+          description_short: "Smoking status classification using QOF codes"
           description_long: >
-            Smoking status classification based on most recent clinical observations.
-            Categories include Never Smoked (lowest risk), Ex-Smoker (past risk requiring 
-            relapse monitoring), and Current Smoker (active risk requiring intervention).
-            Supports population health monitoring and smoking cessation programmes.
+            Comprehensive smoking status classification based on most recent clinical observations using 
+            QOF-defined cluster codes (LSMOK_COD, EXSMOK_COD, NSMOK_COD). Categories include 
+            Never Smoked, Ex-Smoker, and Current Smoker. Differs from QOF smoking register which 
+            focuses on current smokers and recent ex-smokers needing clinical intervention - this 
+            model provides complete population smoking classification for population health analysis 
+            and smoking cessation programme planning.
           is_qof: false
           source_column: "smoking_status"
           sort_order: "BRF_2_SMOKING"
           usage_contexts:
             - "POPULATION_HEALTH_NEEDS_DASHBOARD"
           code_clusters:
-            - cluster_id: "SMOKING_COD"
+            - cluster_id: "LSMOK_COD"
+              category: "INCLUSION"
+            - cluster_id: "EXSMOK_COD"
+              category: "INCLUSION"
+            - cluster_id: "NSMOK_COD"
               category: "INCLUSION"
           thresholds:
             - population_group: "ALL"

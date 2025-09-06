@@ -3,3 +3,30 @@ models:
     description: 'QOF epilepsy register for patients aged 18+ with active epilepsy diagnosis.
 
       One row per person with latest EPIL_COD > latest EPILRES_COD and epilepsy medication prescribed within last 6 months.'
+    
+    config:
+      meta:
+        indicator:
+          id: "EPIL001"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Neurology"
+          name_short: "Epilepsy"
+          description_short: "QOF epilepsy register"
+          description_long: >
+            Epilepsy diagnosed using QOF criteria: Age ≥18 years with active epilepsy diagnosis 
+            where latest epilepsy code is more recent than any resolution code, plus epilepsy 
+            medication prescribed within last 6 months for medication validation. Ensures active 
+            epilepsy management and treatment monitoring. Maps to QOF indicator EPIL001 (Epilepsy 
+            Register). Uses EPIL_COD for diagnosis codes and EPILRES_COD for resolution codes.
+          is_qof: true
+          qof_indicator: "EPIL001"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "EPIL_COD"
+              category: "INCLUSION"
+            - cluster_id: "EPILRES_COD"
+              category: "RESOLUTION"

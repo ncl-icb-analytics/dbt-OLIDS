@@ -4,6 +4,33 @@ models:
     description: 'QOF atrial fibrillation register for patients with active AF diagnosis.
 
       One row per person with latest AFIB_COD > latest AFIBRES_COD or no resolution recorded.'
+    
+    config:
+      meta:
+        indicator:
+          id: "AF006"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Cardiovascular"
+          name_short: "Atrial Fibrillation"
+          description_short: "QOF atrial fibrillation register"
+          description_long: >
+            Atrial fibrillation diagnosed using QOF criteria: Active AF diagnosis where 
+            latest atrial fibrillation code is more recent than any resolution code, or 
+            no resolution recorded. No age restrictions apply. Maps to QOF indicator 
+            AF006 (Atrial Fibrillation Register). Uses AFIB_COD for diagnosis codes and 
+            AFIBRES_COD for resolution codes.
+          is_qof: true
+          qof_indicator: "AF006"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "AFIB_COD"
+              category: "INCLUSION"
+            - cluster_id: "AFIBRES_COD"
+              category: "RESOLUTION"
 
     columns:
       - name: person_id

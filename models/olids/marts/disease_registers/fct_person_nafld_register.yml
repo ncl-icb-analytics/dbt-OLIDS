@@ -4,3 +4,30 @@ models:
     description: 'Non-alcoholic fatty liver disease register for patients with NAFLD diagnosis.
 
       One row per active patient with NAFLD diagnosis (currently using hardcoded SNOMED codes - awaiting NAFLD_COD cluster).'
+    
+    config:
+      meta:
+        indicator:
+          id: "NAFLD"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Hepatic"
+          name_short: "NAFLD"
+          description_short: "Non-alcoholic fatty liver disease register (non-QOF)"
+          description_long: >
+            Non-alcoholic fatty liver disease register for persons with NAFLD diagnosis. 
+            Includes active patients with NAFLD diagnosis using hardcoded SNOMED concept 
+            codes (awaiting formal NAFLD_COD cluster implementation). No age restrictions 
+            or resolution codes applied. Used for liver health assessment, cardiovascular 
+            risk stratification, and potential metabolic syndrome monitoring. Critical for 
+            identifying patients requiring hepatic monitoring and lifestyle interventions 
+            for liver health. Currently uses hardcoded NAFLD concepts pending cluster 
+            development.
+          is_qof: false
+          source_column: "is_on_register"
+          sort_order: "COND_HEPAT_NAFLD"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+          code_clusters:
+            - cluster_id: "HARDCODED_NAFLD"
+              category: "INCLUSION"

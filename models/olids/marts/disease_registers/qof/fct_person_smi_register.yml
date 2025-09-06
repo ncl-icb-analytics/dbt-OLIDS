@@ -4,3 +4,30 @@ models:
     description: 'QOF serious mental illness register for patients with active mental health diagnosis or lithium therapy.
 
       One row per person with MH_COD not in remission (latest diagnosis > latest remission) or lithium therapy in last 6 months.'
+    
+    config:
+      meta:
+        indicator:
+          id: "MH003"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Mental Health"
+          name_short: "Serious Mental Illness"
+          description_short: "QOF serious mental illness register"
+          description_long: >
+            Serious mental illness diagnosed using QOF criteria: Active mental health diagnosis 
+            where latest diagnosis is more recent than latest remission, or lithium therapy 
+            within last 6 months. Includes bipolar disorder, schizophrenia, and other severe 
+            mental health conditions. Maps to QOF indicator MH003 (SMI Register). Uses MH_COD 
+            for diagnosis codes and MHRES_COD for remission codes.
+          is_qof: true
+          qof_indicator: "MH003"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "MH_COD"
+              category: "INCLUSION"
+            - cluster_id: "MHRES_COD"
+              category: "RESOLUTION"
