@@ -98,31 +98,82 @@ SELECT
         ELSE 'High Risk'
     END AS risk_of_pregnancy,
     
-    -- Action determination matching original logic exactly
+    /*
+    ACTION DETERMINATION LOGIC:
+    
+    This implements a clinical decision tree for Valproate safety monitoring.
+    Actions are determined by safety documentation completeness, then prioritised by vulnerability.
+    
+    CLINICAL ACTIONS:
+    - "Review or refer": Missing safety documentation or high-risk situations requiring immediate clinical review
+    - "Keep under review": PPP declined/discontinued but documented - routine monitoring sufficient
+    - "Consider expiry of ARAF": All safety measures present - check if ARAF needs renewal
+    - "No action required": Low risk patients requiring minimal intervention
+    
+    SAFETY DOCUMENTATION REQUIREMENTS:
+    - PPP (Pregnancy Prevention Programme): Must be enrolled or explicitly declined/discontinued
+    - ARAF (Annual Risk Acknowledgement Form): Must be current (within lookback period)
+    */
     CASE
+        -- PRIORITY 1: Pregnancy detected - URGENT clinical review required
         WHEN COALESCE(preg_status.is_currently_pregnant, FALSE) = TRUE THEN 'Review or refer'
+        
+        -- PRIORITY 9: Low risk - minimal intervention needed
         WHEN db.age BETWEEN 0 AND 6 OR COALESCE(preg_status.has_permanent_absence_of_pregnancy_risk, FALSE) = TRUE THEN 'No action required'
+        
+        -- PRIORITY 5: PPP declined/discontinued - routine monitoring
         WHEN COALESCE(ppp.is_ppp_non_enrolled, FALSE) = TRUE THEN 'Keep under review'
-        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR (COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE AND COALESCE(ld.is_on_register, FALSE) = TRUE) THEN 'Review or refer'
-        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR (COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE AND db.age BETWEEN 13 AND 60) THEN 'Review or refer'
-        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR (COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE AND db.age BETWEEN 7 AND 12) THEN 'Review or refer'
-        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE AND db.age BETWEEN 7 AND 60 AND COALESCE(ld.is_on_register, FALSE) = TRUE THEN 'Consider expiry of ARAF'
-        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE AND db.age BETWEEN 7 AND 12 THEN 'Consider expiry of ARAF'
-        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE AND db.age BETWEEN 13 AND 60 THEN 'Consider expiry of ARAF'
+        
+        -- PRIORITIES 2-4: Missing safety documentation - clinical review required
+        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE THEN 'Review or refer'
+        
+        -- PRIORITIES 6-8: Complete safety documentation - routine ARAF monitoring
+        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE THEN 'Consider expiry of ARAF'
+        
         ELSE 'Review or refer'
     END AS action,
     
-    -- Action priority order matching original logic exactly
+    /*
+    ACTION PRIORITY ORDER (1 = Most Urgent, 9 = Least Urgent):
+    
+    Prioritisation is based on clinical risk and vulnerability factors:
+    
+    1. PREGNANCY: Immediate teratogenic risk - urgent review required
+    2. MISSING DOCUMENTATION + LEARNING DISABILITY: Vulnerable population without safety measures
+    3. MISSING DOCUMENTATION + HIGH RISK AGE (13-60): Prime reproductive age without safety measures  
+    4. MISSING DOCUMENTATION + MEDIUM RISK AGE (7-12): Approaching reproductive age without safety measures
+    5. PPP DECLINED: Documented decision to decline PPP - routine monitoring
+    6. COMPLETE DOCUMENTATION + LEARNING DISABILITY: Monitor ARAF expiry in vulnerable population
+    7. COMPLETE DOCUMENTATION + MEDIUM RISK AGE (7-12): Monitor ARAF expiry 
+    8. COMPLETE DOCUMENTATION + HIGH RISK AGE (13-60): Monitor ARAF expiry
+    9. LOW RISK: Age 0-6 or permanent absence of pregnancy risk - minimal monitoring
+    */
     CASE
+        -- PRIORITY 1: Pregnancy - immediate clinical review
         WHEN COALESCE(preg_status.is_currently_pregnant, FALSE) = TRUE THEN 1
+        
+        -- PRIORITY 9: Low risk patients
         WHEN db.age BETWEEN 0 AND 6 OR COALESCE(preg_status.has_permanent_absence_of_pregnancy_risk, FALSE) = TRUE THEN 9
+        
+        -- PRIORITY 5: PPP non-enrolled (declined/discontinued)
         WHEN COALESCE(ppp.is_ppp_non_enrolled, FALSE) = TRUE THEN 5
-        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR (COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE AND COALESCE(ld.is_on_register, FALSE) = TRUE) THEN 2
-        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR (COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE AND db.age BETWEEN 13 AND 60) THEN 3
-        WHEN COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR (COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE AND db.age BETWEEN 7 AND 12) THEN 4
-        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE AND db.age BETWEEN 7 AND 60 AND COALESCE(ld.is_on_register, FALSE) = TRUE THEN 6
-        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE AND db.age BETWEEN 7 AND 12 THEN 7
-        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE AND db.age BETWEEN 13 AND 60 THEN 8
+        
+        -- PRIORITIES 2-4: Missing safety documentation, stratified by vulnerability
+        WHEN (COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE) 
+             AND COALESCE(ld.is_on_register, FALSE) = TRUE THEN 2
+        WHEN (COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE) 
+             AND db.age BETWEEN 13 AND 60 THEN 3
+        WHEN (COALESCE(ppp.has_ppp_event, FALSE) = FALSE OR COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = FALSE) 
+             AND db.age BETWEEN 7 AND 12 THEN 4
+        
+        -- PRIORITIES 6-8: Complete safety documentation, stratified by vulnerability
+        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE 
+             AND db.age BETWEEN 7 AND 60 AND COALESCE(ld.is_on_register, FALSE) = TRUE THEN 6
+        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE 
+             AND db.age BETWEEN 7 AND 12 THEN 7
+        WHEN COALESCE(ppp.is_currently_ppp_enrolled, FALSE) = TRUE AND COALESCE(araf.has_specific_araf_form_meeting_lookback, FALSE) = TRUE 
+             AND db.age BETWEEN 13 AND 60 THEN 8
+        
         ELSE NULL
     END AS action_order,
     
