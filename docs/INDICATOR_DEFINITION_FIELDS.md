@@ -136,7 +136,7 @@ config:
 
 ## Generated Tables
 
-This metadata feeds into these reference tables:
+This metadata feeds into these definition tables:
 - `def_indicator` - Core indicator definitions
 - `def_indicator_usage` - Usage contexts
 - `def_indicator_codes` - Code cluster mappings  
