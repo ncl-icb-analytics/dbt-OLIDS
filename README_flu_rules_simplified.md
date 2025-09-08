@@ -51,7 +51,7 @@ All 19 flu eligibility rules now have clear, individual models:
 
 **Exclusion Rules (2):**
 - `int_flu_diabetes.sql` - Diabetes with resolution exclusion
-- `int_flu_unpaid_carer.sql` - Carer status with eligibility exclusions
+- `int_flu_carer.sql` - Carer status with eligibility exclusions
 
 **Vaccination Tracking (3):**
 - `int_flu_vaccination_given.sql` - Flu vaccine administered

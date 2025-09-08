@@ -4,3 +4,73 @@ models:
     description: 'Most recent valid serum creatinine measurement per person for kidney function assessment.
 
       One row per person with their latest creatinine including clinical creatinine categorisation and elevated creatinine flags.'
+    
+    config:
+      meta:
+        indicator:
+          id: "CREATININE_LATEST"
+          type: "PATHOLOGY"
+          category: "LABORATORY_RESULT"
+          clinical_domain: "Nephrology"
+          name_short: "Latest Creatinine"
+          description_short: "Most recent serum creatinine measurement for kidney function assessment"
+          description_long: >
+            Latest valid serum creatinine measurement per person supporting kidney function assessment
+            and chronic kidney disease monitoring. Provides current renal function status with clinical
+            categorisation (normal ≤125 μmol/L males/≤110 μmol/L females, elevated >150 μmol/L suggesting
+            CKD Stage 3+, significantly elevated >200 μmol/L requiring investigation). Key biomarker for 
+            CKD pathway management, medication dosing adjustments, and cardiovascular risk assessment.
+            Supports QOF diabetes care processes and nephrology referral pathways.
+          is_qof: false
+          source_column: "creatinine_value"
+          usage_contexts:
+            - "LABORATORY_MONITORING"
+          code_clusters:
+            - cluster_id: "CREAT_COD"
+              category: "INCLUSION"
+          thresholds:
+            # Gender-specific normal ranges
+            - population_group: "MALE"
+              threshold_type: "NORMAL_UPPER"
+              threshold_value: "125"
+              threshold_operator: "AT_OR_BELOW"
+              threshold_unit: "μmol/L"
+              description: "Upper limit of normal range for males"
+              sort_order: 1
+            - population_group: "FEMALE"
+              threshold_type: "NORMAL_UPPER"
+              threshold_value: "110"
+              threshold_operator: "AT_OR_BELOW"
+              threshold_unit: "μmol/L"
+              description: "Upper limit of normal range for females"
+              sort_order: 2
+            # Clinical Categories
+            - population_group: "MALE"
+              threshold_type: "MILDLY_ELEVATED"
+              threshold_value: "150"
+              threshold_operator: "AT_OR_BELOW"
+              threshold_unit: "μmol/L"
+              description: "Mildly elevated creatinine in males"
+              sort_order: 3
+            - population_group: "FEMALE"
+              threshold_type: "MILDLY_ELEVATED"
+              threshold_value: "130"
+              threshold_operator: "AT_OR_BELOW"
+              threshold_unit: "μmol/L"
+              description: "Mildly elevated creatinine in females"
+              sort_order: 4
+            - population_group: "ALL"
+              threshold_type: "SIGNIFICANTLY_ELEVATED"
+              threshold_value: "200"
+              threshold_operator: "ABOVE"
+              threshold_unit: "μmol/L"
+              description: "Significantly elevated creatinine requiring investigation"
+              sort_order: 5
+            # CKD Stage Indicators
+            - population_group: "ALL"
+              threshold_type: "CKD_STAGE_3_INDICATOR"
+              threshold_value: "150"
+              threshold_operator: "ABOVE"
+              threshold_unit: "μmol/L"
+              description: "Creatinine level suggesting possible CKD Stage 3+"
+              sort_order: 6

@@ -1,0 +1,77 @@
+version: 2
+models:
+  - name: int_flu_long_term_residential_care
+    description: 'Flu vaccination eligibility for people in long-term residential care settings.
+
+      Key Features:
+
+      • Residential status logic using LONGRES_COD vs RESIDE_COD comparison
+
+      • Latest residential code must be long-term care to qualify
+
+      • Age restriction: minimum 6 months for flu vaccination
+
+      • Captures current residential status (not historical)
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify care home residents eligible for flu vaccination due to communal living infection risk.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_CARE_HOME_RESIDENT"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Social Care"
+          name_short: "Flu Eligible Care Home Resident"
+          description_short: "Care home residents eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility for people in long-term residential care settings.
+            Uses residential status logic where latest residence code (RESIDE_COD) must be
+            from long-term care cluster (LONGRES_COD) to qualify. Minimum age requirement
+            of 6 months. Captures current residential status to identify communal living
+            infection risks.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_18_CARE_HOME_RESIDENT"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "LONGRES_COD"
+              category: "INCLUSION"
+            - cluster_id: "RESIDE_COD"
+              category: "REFINEMENT"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for flu vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Social Care")'
+      - name: risk_group
+        description: 'Risk group classification (always "Long Term Residential Care")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying residential care code'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (minimum 6 months required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

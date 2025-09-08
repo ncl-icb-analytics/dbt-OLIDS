@@ -10,7 +10,7 @@ models:
           id: "NDH001"
           type: "CONDITION"
           category: "LTC"
-          clinical_domain: "Metabolic"
+          clinical_domain: "Cardiometabolic"
           name_short: "Non-Diabetic Hyperglycaemia"
           description_short: "QOF non-diabetic hyperglycaemia register"
           description_long: >

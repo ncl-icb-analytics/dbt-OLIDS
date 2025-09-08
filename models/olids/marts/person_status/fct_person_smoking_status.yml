@@ -9,17 +9,17 @@ models:
       meta:
         indicator:
           id: "BRF_SMOKING_STATUS"
-          type: "BRF"
-          category: "BRF"
+          type: "RISK_FACTOR"
+          category: "BEHAVIOURAL_RISK_FACTOR"
           clinical_domain: "Lifestyle"
           name_short: "Smoking Status"
           description_short: "Smoking status classification using QOF codes"
           description_long: >
-            Comprehensive smoking status classification based on most recent clinical observations using 
+            Smoking status classification based on most recent clinical observations using 
             QOF-defined cluster codes (LSMOK_COD, EXSMOK_COD, NSMOK_COD). Categories include 
             Never Smoked, Ex-Smoker, and Current Smoker. Differs from QOF smoking register which 
             focuses on current smokers and recent ex-smokers needing clinical intervention - this 
-            model provides complete population smoking classification for population health analysis 
+            model provides population smoking classification for population health analysis 
             and smoking cessation programme planning.
           is_qof: false
           source_column: "smoking_status"

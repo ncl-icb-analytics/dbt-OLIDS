@@ -11,7 +11,7 @@ models:
           id: "GDM"
           type: "CONDITION"
           category: "LTC"
-          clinical_domain: "Metabolic"
+          clinical_domain: "Maternity"
           name_short: "Gestational Diabetes"
           description_short: "Gestational diabetes register for pregnancy-related diabetes (non-QOF)"
           description_long: >

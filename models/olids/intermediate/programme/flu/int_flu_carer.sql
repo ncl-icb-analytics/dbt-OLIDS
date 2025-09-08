@@ -1,5 +1,5 @@
 /*
-Simplified Unpaid Carer Eligibility Rule
+Simplified Carer Eligibility Rule
 
 Business Rule: Person is eligible if they have:
 1. Latest carer code (CARER_COD) AND no more recent not-carer code (NOTCARER_COD)
@@ -121,7 +121,7 @@ final_eligibility AS (
         peco.person_id,
         peco.latest_carer_date AS qualifying_event_date,
         cc.campaign_reference_date AS reference_date,
-        'Unpaid carers aged 5+ (not eligible via other risk groups)' AS description,
+        'Carers aged 5+ (not eligible via other risk groups)' AS description,
         demo.birth_date_approx,
         DATEDIFF('month', demo.birth_date_approx, cc.campaign_reference_date) AS age_months_at_ref_date,
         DATEDIFF('year', demo.birth_date_approx, cc.campaign_reference_date) AS age_years_at_ref_date,

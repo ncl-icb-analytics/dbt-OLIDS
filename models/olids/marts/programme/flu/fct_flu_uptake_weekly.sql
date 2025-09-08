@@ -231,7 +231,7 @@ ORDER BY
         WHEN risk_group = 'Severe Obesity' THEN 14
         WHEN risk_group = 'Asplenia' THEN 15
         WHEN risk_group = 'Health & Social Care Worker' THEN 16
-        WHEN risk_group = 'Unpaid Carer' THEN 17
+        WHEN risk_group = 'Carer' THEN 17
         WHEN risk_group = 'Household Immunocompromised Contact' THEN 18
         WHEN risk_group = 'Homeless' THEN 19
         ELSE 99

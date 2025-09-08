@@ -11,7 +11,7 @@ models:
           id: "OB001"
           type: "CONDITION"
           category: "LTC"
-          clinical_domain: "Lifestyle"
+          clinical_domain: "Cardiometabolic"
           name_short: "Obesity"
           description_short: "QOF obesity register"
           description_long: >

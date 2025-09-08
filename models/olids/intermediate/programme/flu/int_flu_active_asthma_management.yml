@@ -1,0 +1,85 @@
+version: 2
+models:
+  - name: int_flu_active_asthma_management
+    description: 'Flu vaccination eligibility for people with active asthma management requiring diagnosis plus medication evidence.
+
+      Key Features:
+
+      • Two-part eligibility: asthma diagnosis (AST_COD) AND recent medication evidence
+
+      • Medication evidence from ASTMED_COD (admin codes) or ASTRX_COD (prescriptions)
+
+      • 12-month medication lookback period from campaign audit date
+
+      • Age restriction: minimum 6 months for flu vaccination
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify people eligible for flu vaccination due to actively managed asthma.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_ACTIVE_ASTHMA"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Respiratory"
+          name_short: "Flu Eligible Active Asthma"
+          description_short: "People with actively managed asthma eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility for people with actively managed asthma requiring both
+            asthma diagnosis (AST_COD) and evidence of recent medication (ASTMED_COD admin codes
+            or ASTRX_COD prescriptions within 12 months). Uses 12-month lookback period from
+            campaign audit date to capture current treatment. Minimum age requirement of 6 months.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_13_ACTIVE_ASTHMA"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "AST_COD"
+              category: "INCLUSION"
+            - cluster_id: "ASTMED_COD"
+              category: "INCLUSION"
+            - cluster_id: "ASTRX_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for flu vaccination"
+              sort_order: 1
+            - population_group: "MEDICATION_EVIDENCE"
+              threshold_type: "RECENCY_PERIOD"
+              threshold_value: "12"
+              threshold_operator: "WITHIN"
+              threshold_unit: "months"
+              description: "Lookback period for asthma medication evidence"
+              sort_order: 2
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Clinical Condition")'
+      - name: risk_group
+        description: 'Risk group classification (always "Active Asthma Management")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying event (latest medication evidence date)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (minimum 6 months required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

@@ -3,7 +3,7 @@ models:
   - name: int_bmi_latest
     description: 'Most recent valid BMI measurement per person with ethnicity-adjusted categorisation.
 
-      One row per person with their latest BMI including ethnicity-adjusted clinical categorisation per NICE guidance. Uses lower BMI thresholds for cardiometabolic risk populations.
+      One row per person with their latest BMI including ethnicity-adjusted clinical categorisation per NICE NG246. Uses lower BMI thresholds for cardiometabolic risk populations.
 
       Key Features:
 
@@ -19,17 +19,18 @@ models:
       meta:
         indicator:
           id: "BRF_BMI_CATEGORIES"
-          type: "BRF"
-          category: "BRF"
+          type: "RISK_FACTOR"
+          category: "BEHAVIOURAL_RISK_FACTOR"
           clinical_domain: "Lifestyle"
-          name_short: "BMI Categories"
-          description_short: "BMI categories with ethnicity-adjusted thresholds for cardiometabolic risk"
+          name_short: "Adult BMI Categories"
+          description_short: "Adult BMI categories with ethnicity-adjusted thresholds for cardiometabolic risk"
           description_long: >
-            BMI categorisation using ethnicity-adjusted thresholds per NICE guidance.
+            Adult BMI categorisation (age 18+) using ethnicity-adjusted thresholds per NICE NG246.
             Standard populations use conventional BMI categories (overweight ≥25, obese ≥30).
             Populations with increased cardiometabolic risk (South Asian, Chinese, other Asian, 
             Middle Eastern, Black African, African-Caribbean) use lower thresholds 
             (overweight ≥23, obese ≥27.5) to reflect increased risk at lower BMI levels.
+            Age restriction: Adult BMI categories are only clinically appropriate for ages 18+.
           is_qof: false
           source_column: "bmi_category"
           sort_order: "BRF_1_BMI_CATEGORIES"
@@ -155,6 +156,15 @@ models:
         tests:
           - not_null
           - unique
+      - name: age
+        description: 'Age in years at time of analysis (adults 18+ only)'
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 18
+                max_value: 150
+                inclusive: true
       - name: observation_id
         description: Latest BMI observation identifier
         tests:
@@ -175,7 +185,7 @@ models:
               arguments:
                 values: ['recorded', 'calculated']
       - name: requires_lower_bmi_thresholds
-        description: 'Flag indicating if person requires lower BMI thresholds per NICE guidance'
+        description: 'Flag indicating if person requires lower BMI thresholds per NICE NG246'
       - name: cardiometabolic_risk_ethnicity_group
         description: 'Ethnicity group classification for cardiometabolic risk assessment'
       - name: is_valid_bmi
@@ -186,7 +196,7 @@ models:
               arguments:
                 values: [true]
       - name: bmi_category
-        description: 'BMI categorisation using ethnicity-adjusted thresholds per NICE guidance'
+        description: 'BMI categorisation using ethnicity-adjusted thresholds per NICE NG246'
         tests:
           - not_null
           - accepted_values:

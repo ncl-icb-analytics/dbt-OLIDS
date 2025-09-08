@@ -187,7 +187,7 @@ final_with_demographics AS (
         CASE WHEN ef.risk_group = 'Pregnancy' THEN TRUE ELSE FALSE END AS is_pregnant,
         CASE WHEN ef.risk_group = 'Severe Obesity' THEN TRUE ELSE FALSE END AS has_severe_obesity,
         CASE WHEN ef.risk_group = 'Learning Disability' THEN TRUE ELSE FALSE END AS has_learning_disability,
-        CASE WHEN ef.risk_group = 'Unpaid Carer' THEN TRUE ELSE FALSE END AS is_unpaid_carer,
+        CASE WHEN ef.risk_group = 'Carer' THEN TRUE ELSE FALSE END AS is_carer,
         CASE WHEN ef.risk_group = 'Health Social Care Worker' THEN TRUE ELSE FALSE END AS is_health_worker,
         CASE WHEN ef.risk_group = 'Long Term Residential Care' THEN TRUE ELSE FALSE END AS in_residential_care,
         CASE WHEN ef.risk_group = 'Homeless' THEN TRUE ELSE FALSE END AS is_homeless,

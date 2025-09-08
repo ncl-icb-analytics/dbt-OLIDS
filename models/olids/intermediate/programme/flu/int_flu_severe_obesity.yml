@@ -1,0 +1,85 @@
+version: 2
+models:
+  - name: int_flu_severe_obesity
+    description: 'Flu vaccination eligibility for people with severe obesity using BMI logic and age restrictions.
+
+      Key Features:
+
+      • BMI threshold logic: BMI ≥40 or severe obesity codes
+
+      • Complex BMI calculation using BMI_COD values vs BMI_STAGE_COD timing
+
+      • Age restriction: 18+ years (adults only)
+
+      • Uses latest BMI values and severe obesity stage codes
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify people with severe obesity eligible for flu vaccination due to increased infection risk.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_SEVERE_OBESITY"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Cardiometabolic"
+          name_short: "Flu Eligible Severe Obesity"
+          description_short: "People with severe obesity eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility for people with severe obesity (BMI ≥40) using
+            complex BMI logic. Uses latest BMI values (BMI_COD) ≥40 or severe obesity
+            stage codes (SEV_OBESITY_COD) when more recent than general BMI stage codes.
+            Age restriction of 18+ years for adults only.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_21_SEVERE_OBESITY"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "BMI_COD"
+              category: "INCLUSION"
+            - cluster_id: "BMI_STAGE_COD"
+              category: "REFINEMENT"
+            - cluster_id: "SEV_OBESITY_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ADULTS"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "18"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for severe obesity eligibility"
+              sort_order: 1
+            - population_group: "ALL"
+              threshold_type: "BMI_VALUE"
+              threshold_value: "40"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "kg/m2"
+              description: "BMI threshold for severe obesity"
+              sort_order: 3
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Clinical Condition")'
+      - name: risk_group
+        description: 'Risk group classification (always "Severe Obesity")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying BMI measurement or obesity code'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (18-64 years required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

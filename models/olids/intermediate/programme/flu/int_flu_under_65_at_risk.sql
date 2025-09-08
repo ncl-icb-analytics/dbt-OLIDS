@@ -146,7 +146,7 @@ clinical_conditions_under_65 AS (
             campaign_id, person_id, campaign_category, risk_group, qualifying_event_date,
             reference_date, description, birth_date_approx, age_months_at_ref_date,
             age_years_at_ref_date, created_at
-        FROM {{ ref('int_flu_unpaid_carer') }}
+        FROM {{ ref('int_flu_carer') }}
     ) clinical_conditions
 ),
 

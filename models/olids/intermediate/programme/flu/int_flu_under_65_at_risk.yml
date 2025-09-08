@@ -1,0 +1,126 @@
+version: 2
+models:
+  - name: int_flu_under_65_at_risk
+    description: 'Flu vaccination eligibility parent category for people under 65 years with clinical risk factors.
+
+      Key Features:
+
+      • Aggregates all clinical condition-based eligibility for under 65s
+
+      • Age restriction: under 65 years at campaign reference date  
+
+      • Includes all clinical conditions: diabetes, heart disease, respiratory, etc.
+
+      • Deduplicates people with multiple conditions to best qualifying event
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Provides single view of under 65 at-risk cohort whilst preserving individual condition details for analysis.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_UNDER_65_AT_RISK"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Programme Management"
+          name_short: "Flu Eligible Under 65 At Risk"
+          description_short: "People under 65 with clinical risk factors eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility parent category combining all clinical condition-based
+            eligibility for people under 65 years. Aggregates diabetes, heart disease, respiratory
+            conditions, kidney disease, neurological conditions, and other clinical risk factors.
+            Age restriction applied to complement age-based eligibility (65+) and provide clear
+            view of under 65 clinical risk cohort. One row per person with best qualifying condition.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_0_UNDER_65_AT_RISK"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "DIAB_COD"
+              category: "INCLUSION"
+            - cluster_id: "CHD_COD"
+              category: "INCLUSION"
+            - cluster_id: "RESP_COD"
+              category: "INCLUSION"
+            - cluster_id: "CKD_COD"
+              category: "INCLUSION"
+            - cluster_id: "CLD_COD"
+              category: "INCLUSION"
+            - cluster_id: "CNSGROUP_COD"
+              category: "INCLUSION"
+            - cluster_id: "AST_COD"
+              category: "INCLUSION"
+            - cluster_id: "IMMDX_COD"
+              category: "INCLUSION"
+            - cluster_id: "IMMRX_COD"
+              category: "INCLUSION"
+            - cluster_id: "PNSPLEEN_COD"
+              category: "INCLUSION"
+            - cluster_id: "BMI_COD"
+              category: "INCLUSION"
+            - cluster_id: "LEARNING_DISABILITY_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "UNDER_65"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for flu vaccination"
+              sort_order: 1
+            - population_group: "UNDER_65"
+              threshold_type: "AGE_ELIGIBILITY" 
+              threshold_value: "65"
+              threshold_operator: "UNDER"
+              threshold_unit: "years"
+              description: "Maximum age for under 65 at-risk classification"
+              sort_order: 2
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Campaign category for this person (always "Age-Based")'
+        tests:
+          - not_null
+      - name: risk_group
+        description: 'Risk group classification (always "Under 65 At Risk")'
+        tests:
+          - not_null
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date of earliest qualifying clinical condition'
+        tests:
+          - not_null
+      - name: reference_date
+        description: 'Campaign reference date used for age calculation'
+        tests:
+          - not_null
+      - name: description
+        description: 'Standard description of eligibility criteria'
+        tests:
+          - not_null
+      - name: birth_date_approx
+        description: 'Person birth date for age calculation'
+        tests:
+          - not_null
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+        tests:
+          - not_null
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+        tests:
+          - not_null
+      - name: created_at
+        description: 'Most recent processing timestamp from aggregated conditions'
+        tests:
+          - not_null

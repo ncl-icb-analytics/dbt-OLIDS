@@ -11,7 +11,7 @@ models:
           id: "LD001"
           type: "CONDITION"
           category: "LTC"
-          clinical_domain: "Learning Disability"
+          clinical_domain: "Neurodevelopmental"
           name_short: "Learning Disability"
           description_short: "QOF learning disability register"
           description_long: >

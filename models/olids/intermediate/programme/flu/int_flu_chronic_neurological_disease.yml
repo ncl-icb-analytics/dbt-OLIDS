@@ -1,50 +1,44 @@
 version: 2
 models:
-  - name: int_flu_diabetes
-    description: 'Flu vaccination eligibility for people with diabetes or Addisons disease with resolution logic.
+  - name: int_flu_chronic_neurological_disease
+    description: 'Flu vaccination eligibility for people with chronic neurological conditions including stroke/TIA, cerebral palsy, and MS.
 
       Key Features:
 
-      • Two eligibility pathways: Addisons disease (ADDIS_COD) or active diabetes (DIAB_COD)
+      • Single diagnosis pathway using CNSGROUP_COD codes
 
-      • Exclusion logic for resolved diabetes (DMRES_COD superseding DIAB_COD)
+      • Earliest occurrence in medical history qualifies
 
       • Age restriction: minimum 6 months for flu vaccination
 
-      • Uses latest diabetes code vs latest resolved code comparison
+      • Includes stroke/TIA, cerebral palsy, MS, and other neurological conditions
 
-      • Generates data for current and previous flu campaigns
+      • Generates data for current and previous flu campaigns automatically
 
-      • Deduplicates to best qualifying event per person
-
-      Purpose: Identify people eligible for flu vaccination due to diabetes or related conditions.'
+      Purpose: Identify people eligible for flu vaccination due to chronic neurological conditions.'
     
     config:
       meta:
         indicator:
-          id: "FLU_DIABETES"
+          id: "FLU_CHRONIC_NEUROLOGICAL"
           type: "PROGRAMME"
           category: "FLU"
-          clinical_domain: "Cardiometabolic"
-          name_short: "Flu Eligible Diabetes"
-          description_short: "People with diabetes or Addisons disease eligible for flu vaccination"
+          clinical_domain: "Neurology"
+          name_short: "Flu Eligible Chronic Neurological"
+          description_short: "People with chronic neurological disease eligible for flu vaccination"
           description_long: >
-            Flu vaccination eligibility for people with diabetes mellitus or Addisons disease.
-            Includes active diabetes (DIAB_COD) where latest diabetes code is more recent than
-            any resolved code (DMRES_COD), or Addisons disease (ADDIS_COD) regardless of resolution.
-            Minimum age requirement of 6 months. Uses latest diabetes vs resolution code comparison logic.
+            Flu vaccination eligibility for people with chronic neurological conditions including
+            stroke/TIA, cerebral palsy, multiple sclerosis, and other neurological
+            diseases. Uses CNSGROUP_COD cluster codes with earliest occurrence qualifying.
+            Minimum age requirement of 6 months for flu vaccination.
           is_qof: false
           source_column: "person_id"
-          sort_order: "FLU_10_DIABETES"
+          sort_order: "FLU_11_CHRONIC_NEUROLOGICAL"
           usage_contexts:
             - "COVID_AND_FLU_DASHBOARD"
             - "FLU_REPORTING"
           code_clusters:
-            - cluster_id: "DIAB_COD"
-              category: "INCLUSION"
-            - cluster_id: "DMRES_COD"
-              category: "EXCLUSION"
-            - cluster_id: "ADDIS_COD"
+            - cluster_id: "CNSGROUP_COD"
               category: "INCLUSION"
           thresholds:
             - population_group: "ALL"
@@ -54,17 +48,18 @@ models:
               threshold_unit: "months"
               description: "Minimum age for flu vaccination"
               sort_order: 1
+    
     columns:
       - name: campaign_id
         description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
       - name: campaign_category
         description: 'Category of eligibility criteria (always "Clinical Condition")'
       - name: risk_group
-        description: 'Risk group classification (always "Diabetes")'
+        description: 'Risk group classification (always "Chronic Neurological Disease")'
       - name: person_id
         description: 'Unique identifier for the person'
       - name: qualifying_event_date
-        description: 'Date of qualifying diagnosis (earliest Addisons or latest active diabetes)'
+        description: 'Date of qualifying diagnosis (earliest neurological diagnosis)'
       - name: reference_date
         description: 'Campaign reference date used for eligibility assessment'
       - name: description

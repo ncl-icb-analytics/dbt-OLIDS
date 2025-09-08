@@ -35,7 +35,7 @@ models:
           id: "NG136_BP"
           type: "MEASURE"
           category: "CARDIOVASCULAR"
-          clinical_domain: "Hypertension"
+          clinical_domain: "Cardiometabolic"
           name_short: "Blood Pressure Control"
           description_short: "NICE NG136 blood pressure targets and diagnostic criteria"
           description_long: >

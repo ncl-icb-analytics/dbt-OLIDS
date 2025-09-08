@@ -1,50 +1,44 @@
 version: 2
 models:
-  - name: int_flu_diabetes
-    description: 'Flu vaccination eligibility for people with diabetes or Addisons disease with resolution logic.
+  - name: int_flu_asthma_admission
+    description: 'Flu vaccination eligibility for people with emergency asthma admission history.
 
       Key Features:
 
-      • Two eligibility pathways: Addisons disease (ADDIS_COD) or active diabetes (DIAB_COD)
+      • Single pathway: emergency asthma admission codes (ASTADM_COD)
 
-      • Exclusion logic for resolved diabetes (DMRES_COD superseding DIAB_COD)
+      • Any historical admission qualifies (no time restrictions)
 
       • Age restriction: minimum 6 months for flu vaccination
 
-      • Uses latest diabetes code vs latest resolved code comparison
+      • No diagnosis or medication requirements (admission alone sufficient)
 
-      • Generates data for current and previous flu campaigns
+      • Generates data for current and previous flu campaigns automatically
 
-      • Deduplicates to best qualifying event per person
-
-      Purpose: Identify people eligible for flu vaccination due to diabetes or related conditions.'
+      Purpose: Identify people eligible for flu vaccination due to severe asthma history requiring emergency care.'
     
     config:
       meta:
         indicator:
-          id: "FLU_DIABETES"
+          id: "FLU_ASTHMA_ADMISSION"
           type: "PROGRAMME"
           category: "FLU"
-          clinical_domain: "Cardiometabolic"
-          name_short: "Flu Eligible Diabetes"
-          description_short: "People with diabetes or Addisons disease eligible for flu vaccination"
+          clinical_domain: "Respiratory"
+          name_short: "Flu Eligible Asthma Admission"
+          description_short: "People with asthma admission history eligible for flu vaccination"
           description_long: >
-            Flu vaccination eligibility for people with diabetes mellitus or Addisons disease.
-            Includes active diabetes (DIAB_COD) where latest diabetes code is more recent than
-            any resolved code (DMRES_COD), or Addisons disease (ADDIS_COD) regardless of resolution.
-            Minimum age requirement of 6 months. Uses latest diabetes vs resolution code comparison logic.
+            Flu vaccination eligibility for people with emergency asthma admission history.
+            Uses ASTADM_COD cluster codes with any historical admission qualifying (no time
+            restrictions). This pathway recognises severe asthma risk without requiring
+            ongoing diagnosis or medication evidence. Minimum age requirement of 6 months.
           is_qof: false
           source_column: "person_id"
-          sort_order: "FLU_10_DIABETES"
+          sort_order: "FLU_14_ASTHMA_ADMISSION"
           usage_contexts:
             - "COVID_AND_FLU_DASHBOARD"
             - "FLU_REPORTING"
           code_clusters:
-            - cluster_id: "DIAB_COD"
-              category: "INCLUSION"
-            - cluster_id: "DMRES_COD"
-              category: "EXCLUSION"
-            - cluster_id: "ADDIS_COD"
+            - cluster_id: "ASTADM_COD"
               category: "INCLUSION"
           thresholds:
             - population_group: "ALL"
@@ -54,17 +48,18 @@ models:
               threshold_unit: "months"
               description: "Minimum age for flu vaccination"
               sort_order: 1
+    
     columns:
       - name: campaign_id
         description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
       - name: campaign_category
         description: 'Category of eligibility criteria (always "Clinical Condition")'
       - name: risk_group
-        description: 'Risk group classification (always "Diabetes")'
+        description: 'Risk group classification (always "Asthma Admission")'
       - name: person_id
         description: 'Unique identifier for the person'
       - name: qualifying_event_date
-        description: 'Date of qualifying diagnosis (earliest Addisons or latest active diabetes)'
+        description: 'Date of qualifying event (latest asthma admission)'
       - name: reference_date
         description: 'Campaign reference date used for eligibility assessment'
       - name: description

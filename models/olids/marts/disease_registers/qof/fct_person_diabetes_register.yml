@@ -20,7 +20,7 @@ models:
           id: "DM017"
           type: "CONDITION"
           category: "LTC"
-          clinical_domain: "Metabolic"
+          clinical_domain: "Cardiometabolic"
           name_short: "Diabetes"
           description_short: "QOF diabetes register (all types)"
           description_long: >

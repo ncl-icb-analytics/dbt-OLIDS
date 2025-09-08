@@ -11,7 +11,7 @@ models:
           id: "HTN005"
           type: "CONDITION"
           category: "LTC"
-          clinical_domain: "Cardiovascular"
+          clinical_domain: "Cardiometabolic"
           name_short: "Hypertension"
           description_short: "QOF hypertension register"
           description_long: >

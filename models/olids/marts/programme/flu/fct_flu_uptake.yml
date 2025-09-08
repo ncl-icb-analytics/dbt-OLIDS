@@ -16,6 +16,48 @@ models:
 
       Purpose: Supports flu programme monitoring and identification of uptake gaps for targeted interventions.'
     
+    config:
+      meta:
+        indicator:
+          id: "FLU_UPTAKE_COVERAGE"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Programme Management"
+          name_short: "Flu Uptake Coverage"
+          description_short: "Flu vaccination uptake rates by demographics and geography"
+          description_long: >
+            Flu vaccination uptake rates aggregated by demographics (age bands,
+            ethnicity, deprivation) and geography (practice, PCN, borough). Calculates eligible
+            population, vaccinated population, coverage percentages, and unvaccinated populations.
+            Supports programme monitoring, performance assessment, and identification of uptake
+            gaps for targeted interventions and health equity analysis.
+          is_qof: false
+          source_column: "uptake_rate"
+          sort_order: "FLU_102_UPTAKE_COVERAGE"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "FLUVAX_COD"
+              category: "INCLUSION"
+            - cluster_id: "FLURX_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "NATIONAL_TARGET"
+              threshold_type: "COVERAGE_RATE"
+              threshold_value: "75"
+              threshold_operator: "TARGET"
+              threshold_unit: "percentage"
+              description: "National flu vaccination coverage target"
+              sort_order: 1
+            - population_group: "HIGH_RISK_GROUPS"
+              threshold_type: "COVERAGE_RATE"
+              threshold_value: "85"
+              threshold_operator: "TARGET"
+              threshold_unit: "percentage"
+              description: "High-risk group coverage target"
+              sort_order: 2
+    
     columns:
       - name: campaign_year
         description: Flu campaign year

@@ -1,6 +1,6 @@
 {{ config(
     materialized='table',
-    cluster_by=['indicator_id', 'population_group'],
+    cluster_by=['indicator_id', 'sort_order', 'population_group'],
     tags=['indicator_definitions'],
     post_hook="{{ archive_thresholds() }}"
 ) }}

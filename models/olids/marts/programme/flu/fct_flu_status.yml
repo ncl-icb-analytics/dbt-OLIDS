@@ -16,6 +16,45 @@ models:
 
       Purpose: Supports flu vaccination monitoring, coverage reporting, and identification of unvaccinated eligible patients.'
     
+    config:
+      meta:
+        indicator:
+          id: "FLU_STATUS_TRACKING"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Programme Management"
+          name_short: "Flu Status Tracking"
+          description_short: "Flu vaccination status combining eligibility and vaccination records"
+          description_long: >
+            Flu vaccination status tracking combining eligibility determination
+            with vaccination records to create status categories: eligible and vaccinated,
+            eligible but not vaccinated, not eligible, and vaccination outside campaign period.
+            Supports vaccination monitoring, coverage reporting, and identification of unvaccinated
+            eligible patients for targeted interventions.
+          is_qof: false
+          source_column: "vaccination_status"
+          sort_order: "FLU_101_STATUS_TRACKING"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "FLUVAX_COD"
+              category: "INCLUSION"
+            - cluster_id: "FLURX_COD"
+              category: "INCLUSION"
+            - cluster_id: "DECL_COD"
+              category: "REFINEMENT"
+            - cluster_id: "NOCONS_COD"
+              category: "REFINEMENT"
+          thresholds:
+            - population_group: "CAMPAIGN"
+              threshold_type: "DATE_RANGE"
+              threshold_value: "campaign_date_range"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "dates"
+              description: "Campaign period for vaccination timing"
+              sort_order: 1
+    
     columns:
       - name: person_id
         description: Unique person identifier
