@@ -219,12 +219,12 @@ complex_clinical_eligibility AS (
     
     UNION ALL
     
-    -- Unpaid Carer (exclusion rule)
+    -- Carer (exclusion rule)
     SELECT 
         campaign_id, campaign_category, risk_group, person_id, qualifying_event_date, reference_date,
         description, birth_date_approx, age_months_at_ref_date, age_years_at_ref_date,
         'EXCLUSION' AS rule_type, 5 AS eligibility_priority, created_at
-    FROM {{ ref('int_flu_unpaid_carer') }}
+    FROM {{ ref('int_flu_carer') }}
 ),
 
 -- Union all eligibility types (vaccination tracking removed - belongs in separate table)

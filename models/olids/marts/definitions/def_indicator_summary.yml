@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: def_indicator_summary
+    description: 'Combined view of indicators with usage and code counts.
+    
+      User-friendly view joining indicators, usage contexts, and code statistics. 
+      Primary interface for dashboards and applications needing indicator metadata 
+      without complex joins.'
+    
+    columns:
+      - name: indicator_id
+        description: Unique identifier for the indicator
+        tests:
+          - not_null
+          - unique
+          
+      - name: indicator_type
+        description: High-level indicator classification
+        tests:
+          - not_null
+          
+      - name: category
+        description: Indicator category for grouping
+        tests:
+          - not_null
+          
+      - name: clinical_domain
+        description: Medical specialty or clinical area
+        
+      - name: name_short
+        description: Brief display name
+        tests:
+          - not_null
+          
+      - name: description_short
+        description: One-line description for tooltips
+        tests:
+          - not_null
+          
+      - name: source_model
+        description: dbt model containing this indicator's data
+        tests:
+          - not_null
+          
+      - name: source_column
+        description: Column name in the source model
+        tests:
+          - not_null
+          
+      - name: is_qof
+        description: Whether this is a QOF indicator
+        tests:
+          - not_null
+          
+      - name: qof_indicator
+        description: Specific QOF indicator code
+        
+      - name: usage_contexts
+        description: Comma-separated list of where indicator is used
+        
+      - name: in_pop_health_dashboard
+        description: Flag indicating usage in Population Health Needs Dashboard
+        tests:
+          - not_null
+              
+      - name: in_qof
+        description: Flag indicating usage in QOF reporting
+        tests:
+          - not_null
+
+      - name: inclusion_code_count
+        description: Number of SNOMED inclusion codes for this indicator
+        tests:
+          - not_null
+          
+      - name: resolution_code_count
+        description: Number of SNOMED resolution codes for this indicator
+        tests:
+          - not_null
+          
+      - name: cluster_count
+        description: Number of distinct clusters defining this indicator
+        tests:
+          - not_null
+          
+      - name: metadata_extracted_at
+        description: Timestamp when metadata was extracted from YAML
+        tests:
+          - not_null

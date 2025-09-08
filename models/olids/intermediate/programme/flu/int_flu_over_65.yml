@@ -14,6 +14,37 @@ models:
       • Uses birth_date_approx for age calculation
 
       Purpose: Identify people eligible for flu vaccination based on age threshold alone.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_OVER_65"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Age-Based"
+          name_short: "Flu Eligible Over 65"
+          description_short: "Adults aged 65+ eligible for flu vaccination"
+          description_long: >
+            Adults aged 65 years and over eligible for annual flu vaccination as part of the 
+            NHS flu immunisation programme. Age calculated at campaign reference date (31st March).
+            All adults in this age group are eligible regardless of clinical risk factors.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_1_OVER_65"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "FLUVAX_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "65"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for eligibility"
+              sort_order: 1
     columns:
       - name: campaign_id
         description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
@@ -24,7 +55,7 @@ models:
       - name: person_id
         description: 'Unique identifier for the person'
       - name: qualifying_event_date
-        description: 'Date of qualifying event (NULL for age-based rules as no specific event)'
+        description: 'Date of qualifying event (NULL for age-based rules as no event)'
       - name: reference_date
         description: 'Campaign reference date used for age calculation'
       - name: description

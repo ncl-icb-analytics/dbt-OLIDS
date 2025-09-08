@@ -5,6 +5,33 @@ models:
 
       One row per person with BMI ≥30 (all ethnicities) or BMI ≥27.5 (BAME populations).'
     
+    config:
+      meta:
+        indicator:
+          id: "OB001"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Cardiometabolic"
+          name_short: "Obesity"
+          description_short: "QOF obesity register"
+          description_long: >
+            Obesity diagnosed using QOF criteria: Age ≥18 years using ethnicity-specific BMI 
+            thresholds (BMI ≥30 for all ethnicities, BMI ≥27.5 for BAME populations to reflect 
+            increased cardiometabolic risk). Uses BMI measurements and ethnicity data for 
+            accurate risk stratification. Maps to QOF indicator OB001 (Obesity Register). 
+            Uses BMI_COD and ETH2016AI_COD cluster codes.
+          is_qof: true
+          qof_indicator: "OB001"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "BMI_COD"
+              category: "INCLUSION"
+            - cluster_id: "ETH2016AI_COD"
+              category: "REFINEMENT"
+    
     columns:
       - name: person_id
         description: Unique identifier for the person

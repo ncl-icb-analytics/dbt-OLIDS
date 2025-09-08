@@ -1,0 +1,74 @@
+version: 2
+models:
+  - name: int_flu_children_school_age
+    description: 'Flu vaccination eligibility for children of school age based on campaign birth date ranges.
+
+      Key Features:
+
+      • Pure birth date range eligibility (typically school-age children 4-11 years)
+
+      • Campaign age ranges using child_school_birth_start/end dates
+
+      • No clinical codes required - demographics only
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify school-aged children eligible for flu vaccination within campaign-defined age parameters.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_CHILDREN_SCHOOL"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Age-Based"
+          name_short: "Flu Eligible Children School"
+          description_short: "School-age children eligible for flu vaccination"
+          description_long: >
+            Children of school age eligible for flu vaccination based on campaign
+            birth date ranges (typically 4-11 years old). Uses child_school_birth_start and
+            child_school_birth_end dates from flu campaign configuration. No clinical
+            conditions required - pure age-based eligibility for school immunisation programmes.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_3_CHILDREN_SCHOOL"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "FLUVAX_COD"
+              category: "INCLUSION"
+            - cluster_id: "SCHOOLVAC_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "SCHOOL_CHILDREN"
+              threshold_type: "BIRTH_DATE_RANGE"
+              threshold_value: "campaign_date_range"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "dates"
+              description: "Campaign school age birth date range"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Age-Based")'
+      - name: risk_group
+        description: 'Risk group classification (always "Children School Age")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying event (NULL for age-based rules as no event)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

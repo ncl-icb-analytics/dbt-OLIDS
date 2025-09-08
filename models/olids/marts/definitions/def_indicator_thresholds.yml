@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: def_indicator_thresholds
+    description: 'Population-specific thresholds for clinical indicators.
+    
+      Defines targets, diagnostic criteria, and risk boundaries for different population groups.
+      Supports complex clinical guidelines like NICE NG136 with multiple patient-specific thresholds.'
+    
+    columns:
+      - name: indicator_id
+        description: Foreign key linking to def_indicator table
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('def_indicator')
+                field: indicator_id
+              
+      - name: population_group
+        description: Target population (e.g., AGE_LT_80, T2DM, CKD_ACR_GE_70)
+        tests:
+          - not_null
+          
+      - name: threshold_type
+        description: Type of threshold (TARGET_UPPER, DIAGNOSIS_S1_CLINIC, etc.)
+        tests:
+          - not_null
+          
+      - name: threshold_value
+        description: Threshold value (e.g., 140/90, 130/80, ≥30)
+        tests:
+          - not_null
+          
+      - name: threshold_operator
+        description: Comparison operator (BELOW, AT_OR_ABOVE, BETWEEN)
+        tests:
+          - not_null
+          
+      - name: threshold_unit
+        description: Unit of measurement (mmHg, kg/m², score, percentage)
+        tests:
+          - not_null
+          
+      - name: description
+        description: Human-readable description of the threshold
+        tests:
+          - not_null
+          
+      - name: sort_order
+        description: Sorting key for consistent ordering
+        tests:
+          - not_null
+          
+      - name: metadata_extracted_at
+        description: Timestamp when metadata was extracted from YAML

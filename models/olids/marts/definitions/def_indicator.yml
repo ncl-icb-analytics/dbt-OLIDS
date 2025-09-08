@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: def_indicator
+    description: 'Indicator definitions extracted from dbt model YAML meta properties.
+    
+      Source of truth for indicator defintions and metadata for all clinical indicators. Each indicator has standardised 
+      descriptions, categorisation, and usage context for consistent reporting.'
+    
+    columns:
+      - name: indicator_id
+        description: Unique identifier for the indicator (e.g., COND_DM, BRF_BMI)
+        tests:
+          - not_null
+          - unique
+          
+      - name: indicator_type
+        description: High-level indicator classification
+              
+      - name: category
+        description: Indicator category for grouping and filtering
+              
+      - name: clinical_domain
+        description: Medical specialty or clinical area (for conditions)
+                
+      - name: name_short
+        description: Brief display name for dashboards and reports
+          
+      - name: description_short
+        description: One-line description for tooltips and summary views
+
+      - name: description_long
+        description: Detailed definition including clinical criteria and logic
+      - name: source_model
+        description: dbt model containing this indicator's data
+          
+      - name: source_column
+        description: Column name in the source model
+      - name: is_qof
+        description: Whether this is a Quality and Outcomes Framework indicator
+              
+      - name: qof_indicator
+        description: Specific QOF indicator code (e.g., DM017, HYP001)
+                
+      - name: sort_order
+        description: Sort key for consistent ordering in reports
+          
+      - name: metadata_extracted_at
+        description: Timestamp when metadata was extracted from YAML

@@ -4,3 +4,63 @@ models:
     description: 'Diabetes 8 care processes achievement for QOF reporting.
 
       One row per person on diabetes register with completion status for HbA1c, blood pressure, cholesterol, creatinine, ACR, foot check, BMI, and smoking status within 12 months.'
+    
+    config:
+      meta:
+        indicator:
+          id: "DM_8_CARE_PROCESSES"
+          type: "MEASURE"
+          category: "DIABETES_QUALITY"
+          clinical_domain: "Cardiometabolic"
+          name_short: "Diabetes 8 Care Processes"
+          description_short: "QOF diabetes care processes completion within 12 months"
+          description_long: >
+            Tracks completion of 8 diabetes care processes required for QOF reporting:
+            HbA1c measurement, blood pressure check, cholesterol assessment, creatinine measurement,
+            ACR (albumin:creatinine ratio), foot examination, BMI recording, and smoking status
+            documentation. All measurements must be completed within 12 months for QOF compliance.
+            Supports diabetes care pathway monitoring and quality improvement.
+          is_qof: true
+          source_column: "care_processes_completed_count"
+          usage_contexts:
+            - "DIABETES_CARE_MONITORING"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "DM_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMTYPE1_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMTYPE2_COD"
+              category: "INCLUSION"
+            - cluster_id: "HBA1C_COD"
+              category: "CALCULATION"
+            - cluster_id: "BP_COD"
+              category: "CALCULATION"
+            - cluster_id: "CHOL_COD"
+              category: "CALCULATION"
+            - cluster_id: "CREAT_COD"
+              category: "CALCULATION"
+            - cluster_id: "ACR_COD"
+              category: "CALCULATION"
+            - cluster_id: "FOOT_COD"
+              category: "CALCULATION"
+            - cluster_id: "BMIVAL_COD"
+              category: "CALCULATION"
+            - cluster_id: "SMOKE_COD"
+              category: "CALCULATION"
+          thresholds:
+            # Process completion timeframes
+            - population_group: "DIABETES"
+              threshold_type: "PROCESS_COMPLETION_PERIOD"
+              threshold_value: "12"
+              threshold_operator: "WITHIN"
+              threshold_unit: "months"
+              description: "QOF requirement for all care processes within 12 months"
+              sort_order: 1
+            - population_group: "DIABETES"
+              threshold_type: "FULL_COMPLIANCE"
+              threshold_value: "8"
+              threshold_operator: "EQUALS"
+              threshold_unit: "processes"
+              description: "All 8 care processes completed for full QOF compliance"
+              sort_order: 2

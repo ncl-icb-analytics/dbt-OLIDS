@@ -13,6 +13,70 @@ models:
 
       Purpose: Supports diabetes care quality assessment and identification of patients requiring intensified management to achieve clinical targets.'
     
+    config:
+      meta:
+        indicator:
+          id: "DM_TRIPLE_TARGET"
+          type: "MEASURE"
+          category: "DIABETES_QUALITY"
+          clinical_domain: "Cardiometabolic"
+          name_short: "Diabetes Triple Target Achievement"
+          description_short: "Diabetes care quality assessment using HbA1c ≤58 mmol/mol, BP <130/80 mmHg, cholesterol <5 mmol/L"
+          description_long: >
+            Diabetes care quality indicator tracking achievement of three clinical targets:
+            HbA1c ≤58 mmol/mol for glycaemic control, blood pressure <130/80 mmHg for cardiovascular 
+            protection, and total cholesterol <5 mmol/L for cardiovascular risk management. Supports 
+            QOF reporting and identifies patients requiring intensified management.
+          is_qof: false
+          source_column: "triple_target_achieved"
+          usage_contexts:
+            - "DIABETES_CARE_MONITORING"
+          code_clusters:
+            - cluster_id: "DM_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMTYPE1_COD"
+              category: "INCLUSION"
+            - cluster_id: "DMTYPE2_COD"
+              category: "INCLUSION"
+            - cluster_id: "HBA1C_COD"
+              category: "CALCULATION"
+            - cluster_id: "BP_COD"
+              category: "CALCULATION"
+            - cluster_id: "CHOL_COD"
+              category: "CALCULATION"
+          thresholds:
+            # HbA1c Target
+            - population_group: "DIABETES"
+              threshold_type: "HBA1C_TARGET"
+              threshold_value: "58"
+              threshold_operator: "AT_OR_BELOW"
+              threshold_unit: "mmol/mol"
+              description: "QOF HbA1c target for glycaemic control"
+              sort_order: 1
+            # Blood Pressure Target
+            - population_group: "DIABETES"
+              threshold_type: "BP_TARGET_SYSTOLIC"
+              threshold_value: "130"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Systolic BP target for diabetes"
+              sort_order: 2
+            - population_group: "DIABETES"
+              threshold_type: "BP_TARGET_DIASTOLIC"
+              threshold_value: "80"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmHg"
+              description: "Diastolic BP target for diabetes"
+              sort_order: 3
+            # Cholesterol Target
+            - population_group: "DIABETES"
+              threshold_type: "CHOLESTEROL_TARGET"
+              threshold_value: "5"
+              threshold_operator: "BELOW"
+              threshold_unit: "mmol/L"
+              description: "Total cholesterol target for cardiovascular risk management"
+              sort_order: 4
+    
     columns:
       - name: person_id
         description: Unique person identifier

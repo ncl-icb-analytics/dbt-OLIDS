@@ -1,0 +1,74 @@
+version: 2
+models:
+  - name: int_flu_chronic_neurological_disease
+    description: 'Flu vaccination eligibility for people with chronic neurological conditions including stroke/TIA, cerebral palsy, and MS.
+
+      Key Features:
+
+      • Single diagnosis pathway using CNSGROUP_COD codes
+
+      • Earliest occurrence in medical history qualifies
+
+      • Age restriction: minimum 6 months for flu vaccination
+
+      • Includes stroke/TIA, cerebral palsy, MS, and other neurological conditions
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify people eligible for flu vaccination due to chronic neurological conditions.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_CHRONIC_NEUROLOGICAL"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Neurology"
+          name_short: "Flu Eligible Chronic Neurological"
+          description_short: "People with chronic neurological disease eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility for people with chronic neurological conditions including
+            stroke/TIA, cerebral palsy, multiple sclerosis, and other neurological
+            diseases. Uses CNSGROUP_COD cluster codes with earliest occurrence qualifying.
+            Minimum age requirement of 6 months for flu vaccination.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_11_CHRONIC_NEUROLOGICAL"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "CNSGROUP_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for flu vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Clinical Condition")'
+      - name: risk_group
+        description: 'Risk group classification (always "Chronic Neurological Disease")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying diagnosis (earliest neurological diagnosis)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (minimum 6 months required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

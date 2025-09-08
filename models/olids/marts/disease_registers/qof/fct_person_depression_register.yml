@@ -4,3 +4,31 @@ models:
     description: 'QOF depression register for patients aged 18+ with active depression diagnosis.
 
       One row per person with latest DEP_COD > latest DEPRES_COD or no resolution recorded.'
+    
+    config:
+      meta:
+        indicator:
+          id: "DEP001"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Mental Health"
+          name_short: "Depression"
+          description_short: "QOF depression register"
+          description_long: >
+            Depression diagnosed using QOF criteria: Age ≥18 years with latest depression 
+            episode on/after 1 April 2006, where latest depression code is more recent than 
+            any resolution code, or no resolved code present. Used for depression care pathways, 
+            treatment monitoring, recovery planning, and psychological therapy access. Maps to 
+            QOF indicator DEP001 (Depression Register). Uses DEP_COD for diagnosis codes and 
+            DEPRES_COD for resolution codes.
+          is_qof: true
+          qof_indicator: "DEP001"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "DEP_COD"
+              category: "INCLUSION"
+            - cluster_id: "DEPRES_COD"
+              category: "RESOLUTION"

@@ -5,10 +5,11 @@
 }}
 
 /*
-All BMI measurements including both recorded BMI values and calculated BMI from HEIGHT/WEIGHT.
-Includes ALL persons (active, inactive, deceased) with basic validation (10-150 range).
-Uses ethnicity-adjusted BMI categories per NICE guidance for cardiometabolic risk populations.
+All BMI measurements for adults aged 18+ including both recorded BMI values and calculated BMI from HEIGHT/WEIGHT.
+Includes ALL persons (active, inactive, deceased) aged 18+ with basic validation (10-150 range).
+Uses ethnicity-adjusted BMI categories per NICE NG246 for cardiometabolic risk populations.
 Avoids calculating BMI on dates where recorded BMI already exists for the same person.
+Age restriction: Adult BMI categories are only clinically appropriate for ages 18+.
 */
 
 WITH recorded_bmi AS (
@@ -160,12 +161,17 @@ all_bmi AS (
 ),
 
 bmi_with_ethnicity AS (
-    -- Join BMI data with ethnicity cardiometabolic risk information
+    -- Join BMI data with ethnicity cardiometabolic risk information and age
+    -- Filter to adults aged 18+ as pediatric BMI requires different percentile-based assessment
     SELECT
         ab.*,
         ecr.requires_lower_bmi_thresholds,
-        ecr.cardiometabolic_risk_ethnicity_group
+        ecr.cardiometabolic_risk_ethnicity_group,
+        age.age
     FROM all_bmi ab
+    INNER JOIN {{ ref('dim_person_age') }} age
+        ON ab.person_id = age.person_id
+        AND age.age >= 18  -- Adults only - pediatric BMI uses age/sex-specific percentiles
     LEFT JOIN {{ ref('int_ethnicity_cardiometabolic_risk') }} ecr
         ON ab.person_id = ecr.person_id
 )
@@ -181,6 +187,9 @@ SELECT
     source_cluster_id,
     result_value,
     bmi_source,
+
+    -- Age information
+    age,
 
     -- Ethnicity information
     requires_lower_bmi_thresholds,

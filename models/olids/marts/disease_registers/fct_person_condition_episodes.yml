@@ -17,7 +17,526 @@ models:
       • Unified schema across all diagnosis-based conditions
 
       Purpose: Enables analysis of condition patterns, episode durations, and patient journeys across the complete clinical history.'
-
+    
+    config:
+      meta:
+        indicators:
+          # Respiratory Conditions
+          - id: "CONDITION_EPISODES_AST"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Respiratory"
+            name_short: "Asthma Episodes"
+            description_short: "Simplified asthma condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for asthma using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_AST"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "AST_COD"
+                category: "INCLUSION"
+              - cluster_id: "AST_RESOLVED_COD"
+                category: "RESOLUTION"
+                
+          - id: "CONDITION_EPISODES_COPD"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Respiratory"
+            name_short: "COPD Episodes"
+            description_short: "Simplified COPD condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for COPD using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_COPD"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "COPD_COD"
+                category: "INCLUSION"
+              - cluster_id: "COPD_RESOLVED_COD"
+                category: "RESOLUTION"
+          
+          # Cardiovascular Conditions
+          - id: "CONDITION_EPISODES_AF"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiovascular"
+            name_short: "Atrial Fibrillation Episodes"
+            description_short: "Simplified atrial fibrillation condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for atrial fibrillation using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_AF"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "AF_COD"
+                category: "INCLUSION"
+              - cluster_id: "AF_RESOLVED_COD"
+                category: "RESOLUTION"
+                
+          - id: "CONDITION_EPISODES_CHD"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiovascular"
+            name_short: "Coronary Heart Disease Episodes"
+            description_short: "Simplified CHD condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for coronary heart disease using diagnosis codes only.
+              Permanent condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_CHD"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "CHD_COD"
+                category: "INCLUSION"
+                
+          - id: "CONDITION_EPISODES_HF"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiovascular"
+            name_short: "Heart Failure Episodes"
+            description_short: "Simplified heart failure condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for heart failure using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_HF"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "HF_COD"
+                category: "INCLUSION"
+              - cluster_id: "HF_RESOLVED_COD"
+                category: "RESOLUTION"
+          
+          # Cardiometabolic Conditions
+          - id: "CONDITION_EPISODES_HTN"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiometabolic"
+            name_short: "Hypertension Episodes"
+            description_short: "Simplified hypertension condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for hypertension using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_HTN"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "HTN_COD"
+                category: "INCLUSION"
+              - cluster_id: "HTN_RESOLVED_COD"
+                category: "RESOLUTION"
+                
+          - id: "CONDITION_EPISODES_DM"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiometabolic"
+            name_short: "Diabetes Episodes"
+            description_short: "Simplified diabetes condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for diabetes using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_DM"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "DM_COD"
+                category: "INCLUSION"
+              - cluster_id: "DM_RESOLVED_COD"
+                category: "RESOLUTION"
+                
+          - id: "CONDITION_EPISODES_NDH"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiometabolic"
+            name_short: "Non-Diabetic Hyperglycaemia Episodes"
+            description_short: "Simplified NDH condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for non-diabetic hyperglycaemia using diagnosis codes only without QOF restrictions.
+              Captures diagnosis events for complete clinical history analysis without resolved state
+              tracking or episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_NDH"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "NDH_COD"
+                category: "INCLUSION"
+          
+          # Renal Conditions
+          - id: "CONDITION_EPISODES_CKD"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Nephrology"
+            name_short: "Chronic Kidney Disease Episodes"
+            description_short: "Simplified CKD condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for chronic kidney disease using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_CKD"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "CKD_COD"
+                category: "INCLUSION"
+              - cluster_id: "CKD_RESOLVED_COD"
+                category: "RESOLUTION"
+          
+          # Mental Health Conditions
+          - id: "CONDITION_EPISODES_DEM"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Mental Health"
+            name_short: "Dementia Episodes"
+            description_short: "Simplified dementia condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for dementia using diagnosis codes only.
+              Progressive condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_DEM"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "DEM_COD"
+                category: "INCLUSION"
+                
+          - id: "CONDITION_EPISODES_DEP"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Mental Health"
+            name_short: "Depression Episodes"
+            description_short: "Simplified depression condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for depression using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_DEP"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "DEP_COD"
+                category: "INCLUSION"
+              - cluster_id: "DEP_RESOLVED_COD"
+                category: "RESOLUTION"
+                
+          - id: "CONDITION_EPISODES_SMI"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Mental Health"
+            name_short: "Severe Mental Illness Episodes"
+            description_short: "Simplified SMI condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for severe mental illness using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_SMI"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "SMI_COD"
+                category: "INCLUSION"
+              - cluster_id: "SMI_RESOLVED_COD"
+                category: "RESOLUTION"
+          
+          # Neurology Conditions
+          - id: "CONDITION_EPISODES_EP"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Neurology"
+            name_short: "Epilepsy Episodes"
+            description_short: "Simplified epilepsy condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for epilepsy using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_EP"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "EP_COD"
+                category: "INCLUSION"
+              - cluster_id: "EP_RESOLVED_COD"
+                category: "RESOLUTION"
+                
+          - id: "CONDITION_EPISODES_STIA"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Neurology"
+            name_short: "Stroke and TIA Episodes"
+            description_short: "Simplified stroke/TIA condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for stroke and TIA using diagnosis codes only.
+              Permanent condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_STIA"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "STIA_COD"
+                category: "INCLUSION"
+          
+          # Neurodevelopmental Conditions
+          - id: "CONDITION_EPISODES_LD"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Neurodevelopmental"
+            name_short: "Learning Disability Episodes"
+            description_short: "Simplified learning disability condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for learning disability using diagnosis codes only without QOF restrictions.
+              Permanent condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_LD"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "LD_COD"
+                category: "INCLUSION"
+          
+          # Oncology Conditions
+          - id: "CONDITION_EPISODES_CAN"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Oncology"
+            name_short: "Cancer Episodes"
+            description_short: "Simplified cancer condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for cancer using diagnosis codes only without QOF restrictions.
+              Permanent condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_CAN"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "CAN_COD"
+                category: "INCLUSION"
+          
+          # Genetics Conditions
+          - id: "CONDITION_EPISODES_FH"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Genetics"
+            name_short: "Familial Hypercholesterolaemia Episodes"
+            description_short: "Simplified familial hypercholesterolaemia condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for familial hypercholesterolaemia using diagnosis codes only without QOF restrictions.
+              Permanent genetic condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_FH"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "FH_COD"
+                category: "INCLUSION"
+          
+          # Geriatric Conditions
+          - id: "CONDITION_EPISODES_FRAIL"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Geriatric"
+            name_short: "Frailty Episodes"
+            description_short: "Simplified frailty condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for frailty using diagnosis codes only without QOF restrictions.
+              Progressive condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_FRAIL"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "FRAIL_COD"
+                category: "INCLUSION"
+          
+          # Maternity Conditions
+          - id: "CONDITION_EPISODES_GESTDIAB"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Maternity"
+            name_short: "Gestational Diabetes Episodes"
+            description_short: "Simplified gestational diabetes condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for gestational diabetes using diagnosis codes only without QOF restrictions.
+              Pregnancy-related condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_GESTDIAB"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "GESTDIAB_COD"
+                category: "INCLUSION"
+          
+          # Hepatology Conditions
+          - id: "CONDITION_EPISODES_NAFLD"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Hepatology"
+            name_short: "NAFLD Episodes"
+            description_short: "Simplified NAFLD condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for NAFLD using diagnosis codes only without QOF restrictions.
+              Progressive condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_NAFLD"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "NAFLD_COD"
+                category: "INCLUSION"
+          
+          # Musculoskeletal Conditions
+          - id: "CONDITION_EPISODES_OST"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Musculoskeletal"
+            name_short: "Osteoporosis Episodes"
+            description_short: "Simplified osteoporosis condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for osteoporosis using diagnosis codes only without QOF restrictions.
+              Progressive condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_OST"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "OST_COD"
+                category: "INCLUSION"
+                
+          - id: "CONDITION_EPISODES_RA"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Musculoskeletal"
+            name_short: "Rheumatoid Arthritis Episodes"
+            description_short: "Simplified rheumatoid arthritis condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for rheumatoid arthritis using diagnosis codes only.
+              Progressive condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_RA"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "RA_COD"
+                category: "INCLUSION"
+          
+          # Cardiovascular Conditions  
+          - id: "CONDITION_EPISODES_PAD"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Cardiovascular"
+            name_short: "Peripheral Arterial Disease Episodes"
+            description_short: "Simplified PAD condition episodes with diagnosis tracking only"
+            description_long: >
+              Episode tracking for peripheral arterial disease using diagnosis codes only.
+              Progressive condition with no resolved state tracking - captures diagnosis events for
+              complete clinical history analysis without episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_PAD"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "PAD_COD"
+                category: "INCLUSION"
+          
+          # Palliative Care Conditions
+          - id: "CONDITION_EPISODES_PC"
+            type: "CONDITION"
+            category: "SIMPLIFIED_CONDITION_MODEL"
+            clinical_domain: "Palliative Care"
+            name_short: "Palliative Care Episodes"
+            description_short: "Simplified palliative care condition episodes with resolved state tracking"
+            description_long: >
+              Episode tracking for palliative care using diagnosis and resolved codes without QOF restrictions.
+              Captures multiple condition cycles per person for complete clinical history analysis.
+              Includes onset and resolved states enabling episode duration calculations.
+            is_qof: false
+            source_column: "current_condition_status"
+            sort_order: "CONDITION_EPISODES_PC"
+            usage_contexts:
+              - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+              - "HISTORICAL_CONDITION_TRACKING"
+            code_clusters:
+              - cluster_id: "PC_COD"
+                category: "INCLUSION"
+              - cluster_id: "PC_RESOLVED_COD"
+                category: "RESOLUTION"
 
     columns:
       - name: person_id
@@ -97,11 +616,11 @@ models:
               arguments:
                 values:
                   - 'Respiratory'
+                  - 'Cardiometabolic'
                   - 'Cardiovascular'
                   - 'Oncology'
                   - 'Renal'
                   - 'Mental Health'
-                  - 'Metabolic'
                   - 'Neurology'
                   - 'Genetics'
                   - 'Geriatric'
@@ -193,4 +712,3 @@ models:
             expression: 'episode_end_date IS NULL AND episode_duration_days IS NULL'
           config:
             where: "episode_status = 'active'"
-      

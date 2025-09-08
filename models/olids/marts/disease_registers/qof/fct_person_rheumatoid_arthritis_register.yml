@@ -4,3 +4,27 @@ models:
     description: 'QOF rheumatoid arthritis register for patients with rheumatoid arthritis diagnosis.
 
       One row per person with RA_COD present (RA is lifelong condition).'
+    
+    config:
+      meta:
+        indicator:
+          id: "RA002"
+          type: "CONDITION"
+          category: "LTC"
+          clinical_domain: "Rheumatology"
+          name_short: "Rheumatoid Arthritis"
+          description_short: "QOF rheumatoid arthritis register"
+          description_long: >
+            Rheumatoid arthritis diagnosed using QOF criteria: Any RA diagnosis code qualifies 
+            for register inclusion. RA is considered a lifelong condition with no resolution 
+            codes. Used for rheumatology care monitoring and disease-modifying therapy 
+            management. Maps to QOF indicator RA002 (RA Register). Uses RA_COD for diagnosis codes.
+          is_qof: true
+          qof_indicator: "RA002"
+          source_column: "is_on_register"
+          usage_contexts:
+            - "POPULATION_HEALTH_NEEDS_DASHBOARD"
+            - "QOF"
+          code_clusters:
+            - cluster_id: "RA_COD"
+              category: "INCLUSION"

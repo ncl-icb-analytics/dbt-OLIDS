@@ -1,0 +1,82 @@
+version: 2
+models:
+  - name: int_flu_chronic_respiratory_disease
+    description: 'Flu vaccination eligibility for people with chronic respiratory conditions combining asthma and other lung diseases.
+
+      Key Features:
+
+      • Three eligibility pathways: active asthma management, asthma admission, or chronic respiratory diagnosis (RESP_COD)
+
+      • Combines existing asthma eligibility rules with additional respiratory disease codes
+
+      • Age restriction: minimum 6 months for flu vaccination
+
+      • Deduplicates respiratory conditions to best qualifying event per person
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify people eligible for flu vaccination due to chronic respiratory conditions including asthma and COPD.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_CHRONIC_RESPIRATORY"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Respiratory"
+          name_short: "Flu Eligible Chronic Respiratory"
+          description_short: "People with chronic respiratory disease eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility for people with chronic respiratory conditions including
+            asthma, COPD, cystic fibrosis and other chronic lung diseases. Combines three pathways:
+            active asthma management (AST_GROUP), asthma admission history (AST_ADM_GROUP), or
+            chronic respiratory disease diagnosis (RESP_COD). Minimum age requirement of 6 months.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_8_CHRONIC_RESPIRATORY"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "RESP_COD"
+              category: "INCLUSION"
+            - cluster_id: "AST_COD"
+              category: "INCLUSION"
+            - cluster_id: "ASTMED_COD"
+              category: "INCLUSION"
+            - cluster_id: "ASTRX_COD"
+              category: "INCLUSION"
+            - cluster_id: "ASTADM_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for flu vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Clinical Condition")'
+      - name: risk_group
+        description: 'Risk group classification (always "Chronic Respiratory Disease")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying respiratory event (latest asthma management, admission, or earliest respiratory diagnosis)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (minimum 6 months required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

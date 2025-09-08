@@ -21,6 +21,9 @@ SELECT
     result_value,
     bmi_source,
 
+    -- Age information
+    age,
+
     -- Ethnicity information
     requires_lower_bmi_thresholds,
     cardiometabolic_risk_ethnicity_group,

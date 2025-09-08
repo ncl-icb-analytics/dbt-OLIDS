@@ -1,0 +1,74 @@
+version: 2
+models:
+  - name: int_flu_household_immunocompromised
+    description: 'Flu vaccination eligibility for household contacts of immunocompromised individuals.
+
+      Key Features:
+
+      • Single pathway using HHLD_IMDEF_COD codes
+
+      • Latest occurrence in medical history qualifies
+
+      • Age restriction: minimum 6 months for flu vaccination
+
+      • Protects immunocompromised people via household immunity
+
+      • Generates data for current and previous flu campaigns automatically
+
+      Purpose: Identify household contacts eligible for flu vaccination to protect vulnerable immunocompromised family members.'
+    
+    config:
+      meta:
+        indicator:
+          id: "FLU_HOUSEHOLD_IMMUNOCOMPROMISED"
+          type: "PROGRAMME"
+          category: "FLU"
+          clinical_domain: "Social Care"
+          name_short: "Flu Eligible Household Immunocompromised Contact"
+          description_short: "Household contacts of immunocompromised people eligible for flu vaccination"
+          description_long: >
+            Flu vaccination eligibility for household contacts of immunocompromised individuals.
+            Uses HHLD_IMDEF_COD cluster codes with latest occurrence qualifying. Minimum age
+            requirement of 6 months. This pathway protects vulnerable immunocompromised people
+            by creating household immunity barriers to infection transmission.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "FLU_22_HOUSEHOLD_IMMUNOCOMPROMISED"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "FLU_REPORTING"
+          code_clusters:
+            - cluster_id: "HHLD_IMDEF_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for flu vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'Flu campaign identifier (e.g., flu_2024_25, flu_2023_24)'
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "Social Care")'
+      - name: risk_group
+        description: 'Risk group classification (always "Household Immunocompromised")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+      - name: qualifying_event_date
+        description: 'Date of qualifying household contact code'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date (minimum 6 months required)'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

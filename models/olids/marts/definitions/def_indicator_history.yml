@@ -1,0 +1,180 @@
+version: 2
+
+models:
+  - name: def_indicator_history
+    description: 'Historical versions of indicator definitions.
+    
+      Automatically maintained archive of all changes to indicator definitions. Each time an indicator 
+      definition changes, the previous version is preserved here with validity dates and version numbers.'
+    
+    columns:
+      - name: indicator_id
+        description: Unique identifier for the indicator
+        
+      - name: indicator_type
+        description: High-level indicator classification at time of archive
+        
+      - name: category
+        description: Indicator category at time of archive
+        
+      - name: clinical_domain
+        description: Medical specialty or clinical area at time of archive
+        
+      - name: name_short
+        description: Brief display name at time of archive
+        
+      - name: description_short
+        description: One-line description at time of archive
+        
+      - name: description_long
+        description: Detailed definition at time of archive
+        
+      - name: source_model
+        description: dbt model containing indicator at time of archive
+        
+      - name: source_column
+        description: Column name in source model at time of archive
+        
+      - name: is_qof
+        description: QOF indicator flag at time of archive
+        
+      - name: qof_indicator
+        description: QOF code at time of archive
+        
+      - name: sort_order
+        description: Sort key at time of archive
+        
+      - name: metadata_extracted_at
+        description: Original extraction timestamp
+        
+      - name: version_number
+        description: Sequential version number for this indicator
+        
+      - name: valid_from
+        description: When this definition version became active
+        
+      - name: valid_to
+        description: When this definition was superseded (NULL if current)
+        
+      - name: archived_at
+        description: When this record was archived
+        
+      - name: archived_by
+        description: User who ran the dbt process that created archive
+        
+      - name: dbt_run_id
+        description: dbt invocation ID for traceability
+
+  - name: def_indicator_codes_history
+    description: 'Historical versions of indicator code mappings.
+    
+      Archive of all SNOMED codes associated with indicators over time. Tracks changes to 
+      inclusion/exclusion/resolution criteria.'
+    
+    columns:
+      - name: indicator_id
+        description: Foreign key to indicator
+        
+      - name: cluster_id
+        description: Code cluster identifier
+        
+      - name: code_category
+        description: Category (INCLUSION, EXCLUSION, RESOLUTION)
+        
+      - name: code_system
+        description: Coding system (always SNOMED currently)
+        
+      - name: code
+        description: SNOMED code
+        
+      - name: code_description
+        description: SNOMED code description
+        
+      - name: metadata_extracted_at
+        description: Original extraction timestamp
+        
+      - name: valid_from
+        description: When this code mapping became active
+        
+      - name: valid_to
+        description: When this code mapping was superseded
+        
+      - name: archived_at
+        description: When this record was archived
+        
+      - name: dbt_run_id
+        description: dbt invocation ID for traceability
+
+  - name: def_indicator_usage_history
+    description: 'Historical tracking of indicator usage contexts.
+    
+      Archive of where indicators have been used over time. Tracks additions and removals 
+      of indicators from dashboards and reporting contexts.'
+    
+    columns:
+      - name: indicator_id
+        description: Foreign key to indicator
+        
+      - name: usage_context
+        description: Where indicator was used (e.g., POPULATION_HEALTH_NEEDS_DASHBOARD, QOF)
+        
+      - name: metadata_extracted_at
+        description: Original extraction timestamp
+        
+      - name: valid_from
+        description: When this usage mapping became active
+        
+      - name: valid_to
+        description: When this usage was removed (NULL if current)
+        
+      - name: archived_at
+        description: When this record was archived
+        
+      - name: dbt_run_id
+        description: dbt invocation ID for traceability
+
+  - name: def_indicator_thresholds_history
+    description: 'Historical versions of indicator threshold definitions.
+    
+      Archive of population-specific targets, diagnostic criteria, and risk boundaries over time. 
+      Tracks changes to clinical guidelines and thresholds for different patient populations.'
+    
+    columns:
+      - name: indicator_id
+        description: Foreign key to indicator
+        
+      - name: population_group
+        description: Target population at time of archive
+        
+      - name: threshold_type
+        description: Type of threshold at time of archive
+        
+      - name: threshold_value
+        description: Threshold value at time of archive
+        
+      - name: threshold_operator
+        description: Comparison operator at time of archive
+        
+      - name: threshold_unit
+        description: Unit of measurement at time of archive
+        
+      - name: description
+        description: Human-readable description at time of archive
+        
+      - name: sort_order
+        description: Sorting key at time of archive
+        
+      - name: metadata_extracted_at
+        description: Original extraction timestamp
+        
+      - name: valid_from
+        description: When this threshold became active
+        
+      - name: valid_to
+        description: When this threshold was superseded
+        
+      - name: archived_at
+        description: When this record was archived
+        
+      - name: dbt_run_id
+        description: dbt invocation ID for traceability
