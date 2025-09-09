@@ -39,9 +39,9 @@ SELECT
     u.usage_contexts,
     u.in_pop_health_dashboard,
     u.in_qof,
-    c.inclusion_code_count,
-    c.resolution_code_count,
-    c.cluster_count,
+    COALESCE(c.inclusion_code_count, 0) AS inclusion_code_count,
+    COALESCE(c.resolution_code_count, 0) AS resolution_code_count,
+    COALESCE(c.cluster_count, 0) AS cluster_count,
     i.metadata_extracted_at
 FROM {{ ref('def_indicator') }} i
 LEFT JOIN usage_summary u ON i.indicator_id = u.indicator_id

@@ -10,6 +10,28 @@ PROJECT_DIR = os.path.dirname(SCRIPTS_DIR)  # actual project root
 INPUT_FILE = os.path.join(CURRENT_DIR, 'table_metadata.csv')
 OUTPUT_FILE = os.path.join(PROJECT_DIR, 'models', 'sources.yml')
 MAPPINGS_FILE = os.path.join(CURRENT_DIR, 'source_mappings.yml')
+IGNORE_LIST_FILE = os.path.join(CURRENT_DIR, 'sources_ignore_list.yml')
+
+def load_ignore_list():
+    """Load tables to ignore from YAML file"""
+    ignored_tables = set()
+    
+    if os.path.exists(IGNORE_LIST_FILE):
+        with open(IGNORE_LIST_FILE, 'r') as f:
+            ignore_data = yaml.safe_load(f)
+            
+        # Handle preserved models - we should ignore their source tables
+        if ignore_data and 'preserved_models' in ignore_data:
+            for item in ignore_data['preserved_models']:
+                if 'source_table' in item:
+                    # Assume olids_core schema if not specified differently
+                    schema = 'OLIDS_CORE'  # Default schema
+                    table = item['source_table']
+                    key = (schema.upper(), table.upper())
+                    ignored_tables.add(key)
+                    print(f"Will ignore source table: {schema}.{table} (preserved model: {item['model']})")
+    
+    return ignored_tables
 
 def load_source_mappings():
     """Load source mappings from YAML file"""
@@ -54,9 +76,13 @@ def find_source_mapping(database, schema, mappings):
     return None
 
 def main():
-    # Load mappings
+    # Load mappings and ignore list
     mappings = load_source_mappings()
     print(f"Loaded {len(mappings)} source mappings from {MAPPINGS_FILE}")
+    
+    ignored_tables = load_ignore_list()
+    if ignored_tables:
+        print(f"Loaded {len(ignored_tables)} tables to ignore")
     
     # Try comma first, fallback to tab if error
     try:
@@ -95,6 +121,11 @@ def main():
             
             # Get all tables for this source
             for table_name, table_group in group.groupby('TABLE_NAME'):
+                # Check if table is in ignore list
+                if (schema.upper(), table_name.upper()) in ignored_tables:
+                    print(f"  Skipping ignored table: {schema}.{table_name}")
+                    continue
+                
                 # Check if specific tables are configured
                 if 'tables' in mapping and table_name not in mapping['tables']:
                     continue

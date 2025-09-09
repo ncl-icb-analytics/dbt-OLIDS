@@ -25,6 +25,9 @@ WHERE
     -- Filter for individuals NOT identified as Male
     -- This approach ('Not male') is often used for clinical safety to be more inclusive than specifically selecting 'Female'
     sex.sex != 'Male'
+    -- Exclude NULL or invalid ages first
+    AND age.age IS NOT NULL
+    AND age.age >= 0
     -- Further filter to include only these non-males who are aged 55 or younger
     -- ensuring they fall into at least the broader 0-55 child-bearing age definition used in this table
     AND age.age <= 55

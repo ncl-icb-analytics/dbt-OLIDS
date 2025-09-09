@@ -1,0 +1,18 @@
+# Preserved Models Configuration
+# Models listed here will be preserved during the sources regeneration process
+# These are staging models that have been manually modified and should not be overwritten
+
+preserved_models:
+  # Manually modified staging models
+  - model: stg_olids_patient_person
+    reason: "Manually modified to generate from PATIENT table instead of PATIENT_PERSON (issue #192)"
+    source_table: PATIENT_PERSON  # Original source table that would normally generate this model
+  
+  - model: stg_olids_person
+    reason: "Manually modified to use DISTINCT to handle duplicate person_id values (issue #192)"
+    source_table: PERSON
+  
+  # Add more preserved models as needed
+  # - model: stg_model_name
+  #   reason: "Why this model is preserved"
+  #   source_table: ORIGINAL_TABLE_NAME
