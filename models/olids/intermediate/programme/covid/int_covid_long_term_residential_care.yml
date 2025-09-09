@@ -1,0 +1,85 @@
+version: 2
+models:
+  - name: int_covid_long_term_residential_care
+    description: 'COVID vaccination eligibility for people in long-term residential care.
+
+      Key Features:
+
+      • Single diagnosis pathway using LTRC_COV_COD codes
+
+      • Recent occurrence qualifying (lookback period from campaign)
+
+      • Age restriction: minimum 5 years for COVID vaccination
+
+      • Includes residential care and nursing home status
+
+      • Generates data for current and previous COVID campaigns automatically
+
+      Purpose: Identify people eligible for COVID vaccination due to residential care status requiring immunisation.'
+    
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: LONGRES_COD,RESIDE_COD
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_LONG_TERM_RESIDENTIAL_CARE"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Social Care"
+          name_short: "COVID Eligible Residential Care"
+          description_short: "People in long-term residential care eligible for COVID vaccination"
+          description_long: >
+            COVID vaccination eligibility for people in long-term residential care using LTRC_COV_COD
+            cluster codes with recent occurrence qualifying. Includes residential care and
+            nursing home status that increase COVID risk requiring immunisation
+            protection. Minimum age requirement of 5 years for COVID vaccination.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "COVID_12_RESIDENTIAL_CARE"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "COVID_REPORTING"
+          code_clusters:
+            - cluster_id: "LONGRES_COD"
+              category: "INCLUSION"
+            - cluster_id: "RESIDE_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "5"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for COVID vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'COVID campaign identifier (e.g., covid_2025_autumn, covid_2024_autumn)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "CLINICAL_CONDITION")'
+      - name: risk_group
+        description: 'Risk group classification (always "Long-term Residential Care")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date of qualifying diagnosis (recent residential care record)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date (minimum 5 years required)'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

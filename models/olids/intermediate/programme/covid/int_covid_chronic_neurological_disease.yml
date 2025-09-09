@@ -1,0 +1,83 @@
+version: 2
+models:
+  - name: int_covid_chronic_neurological_disease
+    description: 'COVID vaccination eligibility for people with chronic neurological disease.
+
+      Key Features:
+
+      • Single diagnosis pathway using CND_COV_COD codes
+
+      • Earliest occurrence in medical history qualifies
+
+      • Age restriction: minimum 5 years for COVID vaccination
+
+      • Includes chronic neurological conditions and nervous system dysfunction
+
+      • Generates data for current and previous COVID campaigns automatically
+
+      Purpose: Identify people eligible for COVID vaccination due to chronic neurological disease requiring immunisation.'
+    
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: CNS_COV_COD
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_CHRONIC_NEUROLOGICAL_DISEASE"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Neurology"
+          name_short: "COVID Eligible Neurological Disease"
+          description_short: "People with chronic neurological disease eligible for COVID vaccination"
+          description_long: >
+            COVID vaccination eligibility for people with chronic neurological disease using CND_COV_COD
+            cluster codes with earliest occurrence qualifying. Includes chronic neurological conditions
+            and nervous system dysfunction that increase COVID risk requiring immunisation
+            protection. Minimum age requirement of 5 years for COVID vaccination.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "COVID_9_NEUROLOGICAL_DISEASE"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "COVID_REPORTING"
+          code_clusters:
+            - cluster_id: "CNS_COV_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "5"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for COVID vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'COVID campaign identifier (e.g., covid_2025_autumn, covid_2024_autumn)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "CLINICAL_CONDITION")'
+      - name: risk_group
+        description: 'Risk group classification (always "Chronic Neurological Disease")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date of qualifying diagnosis (earliest chronic neurological disease diagnosis)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date (minimum 5 years required)'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'
