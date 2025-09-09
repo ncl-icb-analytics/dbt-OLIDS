@@ -1,9 +1,8 @@
--- Staging model for olids_core.PERSON
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
--- Description: Core OLIDS patient and clinical data
---
--- INTERIM FIX: Generate reliable person_id (id field) from sk_patient_id_matched due to duplicate person_id in source
+-- Staging model for person dimension
+-- Generated from stg_olids_patient_person to ensure one record per unique person
 -- See issue #192: https://github.com/ncl-icb-analytics/dbt-OLIDS/issues/192
+--
+-- Creates one record per unique person_id from the patient_person bridge
 
 {{
     config(
@@ -11,25 +10,28 @@
     )
 }}
 
-select distinct
-    "lds_id" as lds_id,
-    -- Generate deterministic id from sk_patient_id_matched hash to match patient_person bridge
-    'person-' || MD5("sk_patient_id_matched") as id,
-    "lds_dataset_id" as lds_dataset_id,
-    "lds_datetime_data_acquired" as lds_datetime_data_acquired,
-    "lds_start_date_time" as lds_start_date_time,
-    "lds_end_date_time" as lds_end_date_time,
-    "requesting_patient_record_id" as requesting_patient_record_id,
-    "unique_reference" as unique_reference,
-    "requesting_nhs_number_hash" as requesting_nhs_number_hash,
-    "sk_patient_id_request" as sk_patient_id_request,
-    "error_success_code" as error_success_code,
-    "matched_nhs_numberhash" as matched_nhs_numberhash,
-    "sk_patient_id_matched" as sk_patient_id_matched,
-    "sensitivity_flag" as sensitivity_flag,
-    "matched_algorithm_indicator" as matched_algorithm_indicator,
-    "requesting_patient_id" as requesting_patient_id,
-    -- Keep original id for rollback when source is fixed
-    "id" as original_id
-from {{ source('olids_core', 'PERSON') }}
-where "sk_patient_id_matched" is not null
+with unique_persons as (
+    select distinct
+        person_id
+    from {{ ref('stg_olids_patient_person') }}
+)
+
+select
+    -- Generate deterministic lds_id for person records
+    'person-lds-' || MD5(person_id) as lds_id,
+    person_id as id,
+    null::text as lds_dataset_id,
+    null::timestamp_ntz as lds_datetime_data_acquired,
+    null::timestamp_ntz as lds_start_date_time,
+    null::timestamp_ntz as lds_end_date_time,
+    null::text as requesting_patient_record_id,
+    null::text as unique_reference,
+    null::text as requesting_nhs_number_hash,
+    null::text as sk_patient_id_request,
+    null::text as error_success_code,
+    null::text as matched_nhs_numberhash,
+    null::text as sk_patient_id_matched,
+    null::text as sensitivity_flag,
+    null::text as matched_algorithm_indicator,
+    null::text as requesting_patient_id
+from unique_persons

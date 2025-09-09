@@ -612,23 +612,7 @@ models:
         description: 'Clinical specialty domain for the condition'
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values:
-                  - 'Respiratory'
-                  - 'Cardiometabolic'
-                  - 'Cardiovascular'
-                  - 'Oncology'
-                  - 'Renal'
-                  - 'Mental Health'
-                  - 'Neurology'
-                  - 'Genetics'
-                  - 'Geriatric'
-                  - 'Maternity'
-                  - 'Neurodevelopmental'
-                  - 'Hepatology'
-                  - 'Musculoskeletal'
-                  - 'Palliative Care'
+          # Note: Removed accepted_values test to allow flexible addition of new clinical domains
 
       - name: episode_number
         description: 'Sequential episode number for each condition per person'

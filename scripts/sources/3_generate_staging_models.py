@@ -12,6 +12,7 @@ SOURCES_YML = os.path.join(PROJECT_DIR, 'models', 'sources.yml')
 # Note: Staging directory will be determined based on source mapping
 MAPPINGS_FILE = os.path.join(CURRENT_DIR, 'source_mappings.yml')
 MODEL_TESTS_FILE = os.path.join(CURRENT_DIR, 'default_model_tests.yml')
+PRESERVED_MODELS_FILE = os.path.join(CURRENT_DIR, 'sources_ignore_list.yml')
 
 def load_source_mappings():
     """Load source mappings from YAML file"""
@@ -28,6 +29,25 @@ def load_source_mappings():
         mappings_by_name[source['source_name']] = source
     
     return mappings_by_name
+
+def load_preserved_models():
+    """Load list of models to preserve from YAML file"""
+    preserved = set()
+    preserved_tables = {}  # Map source table to preserved model name
+    
+    if os.path.exists(PRESERVED_MODELS_FILE):
+        with open(PRESERVED_MODELS_FILE, 'r') as f:
+            data = yaml.safe_load(f)
+            
+        if data and 'preserved_models' in data:
+            for item in data['preserved_models']:
+                model_name = item['model']
+                preserved.add(model_name)
+                if 'source_table' in item:
+                    preserved_tables[item['source_table'].upper()] = model_name
+                print(f"Will preserve: {model_name} - {item.get('reason', 'No reason provided')}")
+    
+    return preserved, preserved_tables
 
 def load_model_tests():
     """Load default model tests configuration from YAML file"""
@@ -137,6 +157,11 @@ def main():
     # Load source mappings
     mappings = load_source_mappings()
     
+    # Load preserved models
+    preserved_models, preserved_tables = load_preserved_models()
+    if preserved_models:
+        print(f"Loaded {len(preserved_models)} models to preserve")
+    
     # Load sources.yml
     if not os.path.exists(SOURCES_YML):
         print(f"Error: sources.yml not found at {SOURCES_YML}", file=sys.stderr)
@@ -147,6 +172,7 @@ def main():
         sources = yaml.safe_load(f)
 
     total_models = 0
+    skipped_models = 0
     models_by_domain = {'commissioning': 0, 'olids': 0, 'shared': 0}
     
     for source in sources['sources']:
@@ -202,6 +228,12 @@ from {{{{ source('{source_name}', '{table_name}') }}}}"""
             # Create model name with prefix and safe table name
             model_name = f"{prefix}_{table_name_safe}"
             out_path = os.path.join(staging_dir, f'{model_name}.sql')
+            
+            # Check if this model should be preserved
+            if model_name in preserved_models or table_name.upper() in preserved_tables:
+                skipped_models += 1
+                print(f"  Preserving manually modified model: {model_name}.sql")
+                continue
 
             with open(out_path, 'w') as out_f:
                 out_f.write(model_sql + '\n')
@@ -211,6 +243,8 @@ from {{{{ source('{source_name}', '{table_name}') }}}}"""
             print(f"Created {domain} staging model: {model_name}.sql")
 
     print(f"\nTotal staging models created: {total_models}")
+    if skipped_models > 0:
+        print(f"Preserved models skipped: {skipped_models}")
     print(f"Models by domain:")
     for domain, count in models_by_domain.items():
         if count > 0:

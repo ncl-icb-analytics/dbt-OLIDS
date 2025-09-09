@@ -63,13 +63,15 @@ persons_with_ethnicity AS (
 
 -- Then get all persons to ensure complete coverage
 all_persons AS (
-    SELECT person_id
+    SELECT 
+        person_id,
+        sk_patient_ids[0] AS sk_patient_id  -- Get first sk_patient_id from array
     FROM {{ ref('dim_person') }}
 )
 
 SELECT
     ap.person_id,
-    COALESCE(pwe.sk_patient_id, NULL) AS sk_patient_id,
+    COALESCE(pwe.sk_patient_id, ap.sk_patient_id) AS sk_patient_id,
     pwe.latest_ethnicity_date,
     COALESCE(pwe.concept_id, 'Not Recorded') AS concept_id,
     COALESCE(pwe.snomed_code, 'Not Recorded') AS snomed_code,

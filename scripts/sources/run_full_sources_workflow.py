@@ -86,8 +86,26 @@ def run_script(script_name, args=None, description="", step_num=1, total_steps=5
         print_error(f"Unexpected error running {script_name}: {e}")
         return False
 
+def load_preserved_models():
+    """Load list of models to preserve from the ignore list file."""
+    preserved_models_file = Path(CURRENT_DIR) / 'sources_ignore_list.yml'
+    preserved = set()
+    
+    if preserved_models_file.exists():
+        import yaml
+        with open(preserved_models_file, 'r') as f:
+            data = yaml.safe_load(f)
+            
+        if data and 'preserved_models' in data:
+            for item in data['preserved_models']:
+                preserved.add(item['model'])
+    
+    return preserved
+
 def cleanup_legacy_files():
     """Remove legacy sources.yml and schema.yml files before regeneration."""
+    # Note: We only clean up schema and sources files, not staging models
+    # Staging models are handled by the generation script which respects preserved models
     legacy_files = [
         PROJECT_DIR / 'models' / 'sources.yml',
         PROJECT_DIR / 'models' / 'staging' / 'schema.yml',
