@@ -13,3 +13,35 @@ models:
       • Supports age-appropriate cardiovascular risk management and statin review decisions
 
       • One row per eligible elderly person requiring cardiovascular risk assessment'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CVD_66"
+          type: "CASE_FINDING"
+          category: "CVD"
+          clinical_domain: "Cardiovascular Disease Case Finding"
+          name_short: "Elderly CVD screen"
+          description_short: "Patients aged 75-83 requiring QRISK2 cardiovascular risk assessment"
+          description_long: >
+            Age 75-83y, requiring QRISK2 assessment for age-appropriate
+            CVD risk management and statin decisions.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CVD_66"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "QRISK2_RESULTS"
+              category: "MONITORING"
+            - cluster_id: "CVD_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "ELDERLY_75_83"
+              threshold_type: "AGE_RANGE"
+              threshold_value: "75-83"
+              threshold_operator: "WITHIN"
+              threshold_unit: "years"
+              description: "Patients aged 75-83 years requiring assessment"
+              sort_order: 1

@@ -2,19 +2,17 @@ version: 2
 
 models:
   - name: fct_flu_eligibility
-    description: 'Flu vaccination eligibility determination using clear business rules.
+    description: 'Flu vaccination eligibility determination across all eligibility pathways.
 
-      Eligibility Categories:
+      Grain: One row per person per campaign per risk group they qualify for
 
-      • Age-based: ≥65 years, 6 months-2 years, 2-3 years
+      Contains:
+      • Person demographics and age calculations
+      • Eligibility category and specific risk group
+      • Qualifying event dates and priority ranking
+      • Campaign-specific eligibility rules
 
-      • Clinical conditions: Chronic conditions increasing flu risk
-
-      • At-risk groups: Pregnancy, immunosuppression, care home residents
-
-      • Healthcare workers: Direct patient contact roles
-
-      Purpose: Supports flu campaign planning and vaccination programme management with clear eligibility tracking by campaign year.'
+      Note: People eligible for multiple risk groups appear in multiple rows'
     
     config:
       meta:

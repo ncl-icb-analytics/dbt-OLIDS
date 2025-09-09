@@ -1,23 +1,17 @@
 version: 2
 models:
   - name: int_covid_asthma
-    description: 'COVID vaccination eligibility for people with asthma using complex UKHSA logic.
+    description: 'COVID asthma eligibility determination.
 
-      Key Features:
+      Grain: One row per person per campaign who meets active asthma criteria
 
-      • Multiple eligibility pathways: diagnosis (AST_COD), recent inhaled medications (ASTRXM1_COD), and oral steroids (ASTRXM2_COD), or hospital admissions (ASTADM_COD)
+      Identifies people:
+      • Diagnosed with asthma and recent inhaled medication (12 months)
+      • 2+ oral steroid prescriptions within any 2-year window
+      • OR recent asthma hospital admission (2 years)
+      • Minimum age 5 years
 
-      • Complex steroid window logic with 3 overlapping 2-year periods for steroid qualification
-
-      • Hospital admission pathway sufficient alone (2 years lookback)
-
-      • Age restriction: minimum 5 years for COVID vaccination
-
-      • Combines historical diagnoses with recent treatment indicators and emergency admissions
-
-      • Generates data for current and previous COVID campaigns automatically
-
-      Purpose: Identify people eligible for COVID vaccination due to active asthma requiring immunisation.'
+      Used by: Mart models for eligibility determination'
     
     tests:
       - cluster_ids_exist:

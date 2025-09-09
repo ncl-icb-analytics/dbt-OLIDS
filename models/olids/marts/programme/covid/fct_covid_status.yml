@@ -1,0 +1,99 @@
+version: 2
+
+models:
+  - name: fct_covid_status
+    description: 'COVID vaccination status combining eligibility with vaccination records.
+
+      Grain: One row per person per campaign per status event (vaccination given, declined, or eligible with no record)
+
+      Contains:
+      • Eligibility determination and risk group classification
+      • Vaccination status (given, declined, no record)
+      • Status dates and detailed reasoning
+      • Campaign timing and priority information
+
+      Business use: Coverage monitoring and identifying unvaccinated eligible patients'
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_STATUS_TRACKING"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Programme Management"
+          name_short: "COVID Status Tracking"
+          description_short: "COVID vaccination status combining eligibility and vaccination records"
+          description_long: >
+            COVID vaccination status tracking combining eligibility determination
+            with vaccination records to create status categories: eligible and vaccinated,
+            eligible but not vaccinated, not eligible, and vaccination outside campaign period.
+            Supports vaccination monitoring, coverage reporting, and identification of unvaccinated
+            eligible patients for interventions across campaign periods.
+          is_qof: false
+          source_column: "vaccination_status"
+          sort_order: "COVID_101_STATUS_TRACKING"
+          usage_contexts:
+            - "COVID_REPORTING"
+            - "COVID_AND_FLU_DASHBOARD"
+          code_clusters:
+            - cluster_id: "COVADM_COD"
+              category: "INCLUSION"
+            - cluster_id: "COVRX_COD"
+              category: "INCLUSION"
+            - cluster_id: "COVDECL_COD"
+              category: "REFINEMENT"
+          thresholds:
+            - population_group: "CAMPAIGN"
+              threshold_type: "DATE_RANGE"
+              threshold_value: "campaign_date_range"
+              threshold_operator: "BETWEEN"
+              threshold_unit: "dates"
+              description: "Campaign period for vaccination timing"
+              sort_order: 1
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        tests:
+          - not_null
+        
+      - name: campaign_id
+        description: COVID campaign identifier
+        tests:
+          - not_null
+        
+      - name: campaign_category
+        description: Status category for tracking
+        
+      - name: risk_group
+        description: Risk group classification
+        
+      - name: is_eligible
+        description: Whether person is eligible for vaccination
+        
+      - name: vaccination_status
+        description: Combined eligibility and vaccination status
+        
+      - name: status_date
+        description: Date of vaccination or declination (if applicable)
+        
+      - name: status_reason
+        description: Detailed reason for vaccination status
+        
+      - name: status_type
+        description: Type of status (VACCINATION_ADMINISTERED, VACCINATION_DECLINED, NO_VACCINATION_RECORD)
+        
+      - name: status_priority
+        description: Priority for status determination (1=highest)
+        
+      - name: eligibility_status
+        description: Text description of eligibility status
+        
+      - name: vaccinated_despite_ineligible
+        description: Whether person received vaccination despite being ineligible
+        
+      - name: age_months
+        description: Age in months at campaign reference date
+        
+      - name: age_years
+        description: Age in years at campaign reference date

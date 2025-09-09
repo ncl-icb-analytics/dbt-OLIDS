@@ -95,7 +95,7 @@ eligible_patients AS (
 
 latest_qrisk2 AS (
 -- Get latest QRISK2 readings for eligible patients (if any)
-    SELECT
+    SELECT DISTINCT
         obs.person_id,
         obs.clinical_effective_date AS latest_qrisk2_date,
         obs.result_value AS latest_qrisk2_value
@@ -139,7 +139,7 @@ all_qrisk2_codes AS (
     GROUP BY person_id
 )
 
--- Final selection: patients aged 75-83 who need QRISK2 assessment
+-- Final selection: patients aged 75-83 who need QRISK2 assessment (ensure one row per person)
 SELECT
     ep.person_id,
     ep.age,
@@ -151,3 +151,4 @@ SELECT
 FROM eligible_patients AS ep
 LEFT JOIN latest_qrisk2 AS lq ON ep.person_id = lq.person_id
 LEFT JOIN all_qrisk2_codes AS aqc ON ep.person_id = aqc.person_id
+QUALIFY ROW_NUMBER() OVER (PARTITION BY ep.person_id ORDER BY lq.latest_qrisk2_date DESC, lq.latest_qrisk2_value DESC) = 1

@@ -20,3 +20,39 @@ models:
       • HbA1c surveillance gap detection
 
       • Evidence-based case finding for post-pregnancy diabetes risk management'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_DM_62"
+          type: "CASE_FINDING"
+          category: "DM"
+          clinical_domain: "Diabetes Mellitus Case Finding"
+          name_short: "Post-GDM screen"
+          description_short: "Gestational diabetes patients without HbA1c monitoring in 12 months"
+          description_long: >
+            Age 17+, gestational diabetes history, no HbA1c in 12m.
+            High T2DM risk requires monitoring.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_DM_62"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "GESTATIONAL_DIABETES"
+              category: "INCLUSION"
+            - cluster_id: "PREGNANCY_RISK_FACTORS"
+              category: "INCLUSION"
+            - cluster_id: "HBA1C_RESULTS"
+              category: "MONITORING"
+            - cluster_id: "DIABETES_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "ADULTS_17_PLUS"
+              threshold_type: "MONITORING_WINDOW"
+              threshold_value: "12"
+              threshold_operator: "GREATER_THAN"
+              threshold_unit: "months"
+              description: "No HbA1c assessment within 12 months"
+              sort_order: 1

@@ -1,23 +1,16 @@
 version: 2
 models:
   - name: int_covid_vaccination_declined
-    description: 'COVID vaccination declined tracking for people who refused vaccination.
+    description: 'COVID vaccination decline tracking.
 
-      Key Features:
+      Grain: One row per person per campaign who declined vaccination
 
-      • Single pathway using COVID vaccination decline codes (COVDEC_COD)
+      Identifies people:
+      • Vaccination decline codes (COVDECL_COD)
+      • Within campaign tracking period
+      • All ages eligible
 
-      • Recent occurrence qualifying (within campaign tracking period)
-
-      • No age restrictions (applies to all ages)
-
-      • Tracks vaccination refusal by campaign period
-
-      • Used for tracking/reporting vaccination uptake, not eligibility determination
-
-      • Generates data for current and previous COVID campaigns automatically
-
-      Purpose: Track people who declined COVID vaccination for uptake monitoring and outreach.'
+      Used by: Mart models for uptake and status determination'
     
     tests:
       - cluster_ids_exist:

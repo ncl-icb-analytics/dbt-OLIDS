@@ -13,3 +13,37 @@ models:
       • Takes maximum UACR value per day to handle multiple readings on same date
 
       • One row per person with clinically significant single elevated UACR reading'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CKD_63"
+          type: "CASE_FINDING"
+          category: "CKD"
+          clinical_domain: "Chronic Kidney Disease Case Finding"
+          name_short: "Severe proteinuria"
+          description_short: "Patients with single UACR reading >70 mg/mmol"
+          description_long: >
+            Age 17+, latest UACR >70 mg/mmol. Excludes CKD_62 patients
+            and existing registers. Requires immediate clinical attention.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CKD_63"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "UACR_RESULTS"
+              category: "INCLUSION"
+            - cluster_id: "CKD_REGISTER_CODES"
+              category: "EXCLUSION"
+            - cluster_id: "DIABETES_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "ADULTS_17_PLUS"
+              threshold_type: "UACR_VALUE"
+              threshold_value: "70"
+              threshold_operator: "GREATER_THAN"
+              threshold_unit: "mg/mmol"
+              description: "Single UACR above 70 mg/mmol (severe proteinuria)"
+              sort_order: 1

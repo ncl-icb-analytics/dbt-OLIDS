@@ -1,23 +1,17 @@
 version: 2
 models:
   - name: int_covid_immunosuppression
-    description: 'COVID vaccination eligibility for people with immunosuppression using complex pathway logic.
+    description: 'COVID immunosuppression eligibility determination.
 
-      Key Features:
+      Grain: One row per person per campaign who meets immunosuppression criteria
 
-      • Four eligibility pathways: diagnosis (IMMDX_COV_COD), medication (IMMRX_COD), admin codes (IMMADM_COD), or chemotherapy/radiotherapy (DXT_CHEMO_COD)
+      Identifies people:
+      • Diagnosed with immunosuppression (any time)
+      • Recent immunosuppressant medication (6 months)
+      • Recent chemotherapy/radiotherapy (6 months)
+      • Age varies by campaign (any age 2024/25, 6 months-74 years 2025/26)
 
-      • Time-limited medication and treatment pathways with different lookback periods
-
-      • Age restrictions vary by campaign: any age (2024/25) or 6 months to 74 years (2025/26)
-
-      • Complex logic combining historical diagnoses with recent treatment indicators
-
-      • Key eligibility group for restricted 2025/26 campaigns
-
-      • Generates data for current and previous COVID campaigns automatically
-
-      Purpose: Identify people eligible for COVID vaccination due to immunosuppression from any cause.'
+      Used by: Mart models for eligibility determination'
     
     tests:
       - cluster_ids_exist:

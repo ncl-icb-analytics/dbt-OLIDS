@@ -2,19 +2,17 @@ version: 2
 
 models:
   - name: fct_flu_status
-    description: 'Flu vaccination status tracking combining eligibility with vaccination records.
+    description: 'Flu vaccination status combining eligibility with vaccination records.
 
-      Status Categories:
+      Grain: One row per person per campaign per status event (vaccination given, LAIV given, declined, or eligible with no record)
 
-      • Eligible and vaccinated
+      Contains:
+      • Eligibility determination and risk group classification
+      • Vaccination status (given, LAIV given, declined, no record)
+      • Status dates and reasoning
+      • Eligibility flags and timing
 
-      • Eligible but not vaccinated
-
-      • Not eligible
-
-      • Vaccination outside campaign period
-
-      Purpose: Supports flu vaccination monitoring, coverage reporting, and identification of unvaccinated eligible patients.'
+      Note: Includes both TIV and LAIV vaccination tracking'
     
     config:
       meta:

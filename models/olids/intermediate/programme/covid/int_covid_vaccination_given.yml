@@ -1,25 +1,17 @@
 version: 2
 models:
   - name: int_covid_vaccination_given
-    description: 'COVID vaccination given tracking for people who received vaccination.
+    description: 'COVID vaccination administration tracking.
 
-      Key Features:
+      Grain: One row per person per campaign who received vaccination
 
-      • Two pathways: administration codes (COVADM_COD) or medication orders (COVRX_COD)
+      Identifies people:
+      • Vaccination administration codes (COVADM_COD)
+      • OR medication orders (COVRX_COD)
+      • Within campaign tracking period
+      • All ages eligible
 
-      • Recent occurrence qualifying (within campaign tracking period)
-
-      • No age restrictions (applies to all ages)
-
-      • Tracks vaccination administration by campaign period
-
-      • Used for tracking/reporting vaccination uptake, not eligibility determination
-
-      • Combines multiple evidence sources for comprehensive tracking
-
-      • Generates data for current and previous COVID campaigns automatically
-
-      Purpose: Track people who received COVID vaccination for uptake monitoring and reporting.'
+      Used by: Mart models for uptake and status determination'
     
     tests:
       - cluster_ids_exist:

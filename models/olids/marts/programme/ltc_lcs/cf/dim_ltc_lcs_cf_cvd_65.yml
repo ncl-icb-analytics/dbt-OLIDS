@@ -13,3 +13,37 @@ models:
       • Uses QRISK2-based cardiovascular risk stratification for statin eligibility decisions
 
       • One row per person meeting moderate cardiovascular risk intervention thresholds'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CVD_65"
+          type: "CASE_FINDING"
+          category: "CVD"
+          clinical_domain: "Cardiovascular Disease Case Finding"
+          name_short: "Statin indicated"
+          description_short: "Patients with QRISK2 ≥10% requiring moderate-dose statins"
+          description_long: >
+            QRISK2 ≥10%, moderate-dose statin for primary prevention
+            per NICE guidance.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CVD_65"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "QRISK2_RESULTS"
+              category: "INCLUSION"
+            - cluster_id: "MODERATE_DOSE_STATIN_MEDICATIONS"
+              category: "MONITORING"
+            - cluster_id: "CVD_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "PRIMARY_PREVENTION"
+              threshold_type: "QRISK2_SCORE"
+              threshold_value: "10"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "percentage"
+              description: "QRISK2 score ≥10% qualifying for statin therapy"
+              sort_order: 1

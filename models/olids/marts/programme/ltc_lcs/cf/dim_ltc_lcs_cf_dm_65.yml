@@ -13,3 +13,53 @@ models:
       • Uses ethnicity-specific BMI thresholds recognising different diabetes risk profiles
 
       • One row per eligible person with BMI, ethnicity data, and HbA1c monitoring gap'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_DM_65"
+          type: "CASE_FINDING"
+          category: "DM"
+          clinical_domain: "Diabetes Mellitus Case Finding"
+          name_short: "BMI diabetes screen"
+          description_short: "Moderate-high BMI patients requiring diabetes screening (ethnicity-specific)"
+          description_long: >
+            Moderate BMI, ethnicity-specific thresholds (BAME: 27.5-32.5 kg/m²,
+            non-BAME: 30-35 kg/m²), no HbA1c 24m.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_DM_65"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "BMI_RESULTS"
+              category: "INCLUSION"
+            - cluster_id: "ETHNICITY_CODES"
+              category: "STRATIFICATION"
+            - cluster_id: "HBA1C_RESULTS"
+              category: "MONITORING"
+            - cluster_id: "DIABETES_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "BAME_ADULTS"
+              threshold_type: "BMI_RANGE"
+              threshold_value: "27.5-32.5"
+              threshold_operator: "WITHIN"
+              threshold_unit: "kg/m2"
+              description: "BMI 27.5-32.5 kg/m² for BAME patients"
+              sort_order: 1
+            - population_group: "NON_BAME_ADULTS"
+              threshold_type: "BMI_RANGE"
+              threshold_value: "30-35"
+              threshold_operator: "WITHIN"
+              threshold_unit: "kg/m2"
+              description: "BMI 30-35 kg/m² for non-BAME patients"
+              sort_order: 2
+            - population_group: "ALL_ADULTS"
+              threshold_type: "MONITORING_WINDOW"
+              threshold_value: "24"
+              threshold_operator: "GREATER_THAN"
+              threshold_unit: "months"
+              description: "No HbA1c assessment in last 24 months"
+              sort_order: 3

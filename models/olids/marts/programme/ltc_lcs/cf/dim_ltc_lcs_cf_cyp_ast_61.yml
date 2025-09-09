@@ -13,3 +13,39 @@ models:
       • Supports early asthma diagnosis and management to prevent complications
 
       • One row per eligible child/young person requiring asthma evaluation and formal diagnosis'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CYP_AST_61"
+          type: "CASE_FINDING"
+          category: "CYP_AST"
+          clinical_domain: "Children and Young People Asthma Case Finding"
+          name_short: "Asthma symptoms"
+          description_short: "Children 18 months-18 years with asthma symptoms but no formal diagnosis"
+          description_long: >
+            Age 18m-<18y, asthma symptoms, no formal diagnosis.
+            Requires assessment for early diagnosis and management.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CYP_AST_61"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "ASTHMA_SYMPTOMS"
+              category: "INCLUSION"
+            - cluster_id: "RESPIRATORY_SYMPTOMS_PAEDIATRIC"
+              category: "INCLUSION"
+            - cluster_id: "ASTHMA_REGISTER_CODES"
+              category: "EXCLUSION"
+            - cluster_id: "ASTHMA_DIAGNOSIS_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "CHILDREN_18_MONTHS_TO_18_YEARS"
+              threshold_type: "AGE_RANGE"
+              threshold_value: "18 months to <18 years"
+              threshold_operator: "WITHIN"
+              threshold_unit: "age"
+              description: "Children aged 18 months to under 18 years"
+              sort_order: 1

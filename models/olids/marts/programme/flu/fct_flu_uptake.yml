@@ -2,19 +2,18 @@ version: 2
 
 models:
   - name: fct_flu_uptake
-    description: 'Flu vaccination uptake rates aggregated by demographics and geography.
+    description: 'Flu vaccination uptake fact table focused on core uptake metrics.
 
-      Uptake Metrics:
+      Grain: One row per person per campaign per risk group they qualify for
 
-      • Total eligible population
+      Contains:
+      • Eligibility status and reasons
+      • Vaccination status (vaccinated, declined, no record)
+      • Uptake category and timing metrics
+      • Campaign reference dates
+      • LAIV administration tracking
 
-      • Total vaccinated population
-
-      • Vaccination coverage percentage
-
-      • Uptake by age bands, ethnicity, deprivation
-
-      Purpose: Supports flu programme monitoring and identification of uptake gaps for targeted interventions.'
+      Purpose: Core uptake facts for flu programme monitoring. Join with dim_person_demographics for demographic analysis.'
     
     config:
       meta:
@@ -24,13 +23,13 @@ models:
           category: "FLU"
           clinical_domain: "Programme Management"
           name_short: "Flu Uptake Coverage"
-          description_short: "Flu vaccination uptake rates by demographics and geography"
+          description_short: "Flu vaccination uptake facts without demographics"
           description_long: >
-            Flu vaccination uptake rates aggregated by demographics (age bands,
-            ethnicity, deprivation) and geography (practice, PCN, borough). Calculates eligible
-            population, vaccinated population, coverage percentages, and unvaccinated populations.
-            Supports programme monitoring, performance assessment, and identification of uptake
-            gaps for targeted interventions and health equity analysis.
+            Flu vaccination uptake fact table combining eligibility determination
+            with vaccination status to provide core uptake metrics including LAIV tracking.
+            Focused on uptake business process without demographics. Supports programme monitoring
+            and performance assessment. Join with dim_person_demographics for demographic analysis
+            and published_reporting_direct_care.covid_flu_dashboard_base for dashboard consumption.
           is_qof: false
           source_column: "uptake_rate"
           sort_order: "FLU_102_UPTAKE_COVERAGE"

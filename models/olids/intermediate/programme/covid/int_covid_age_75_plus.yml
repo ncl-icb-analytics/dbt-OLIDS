@@ -1,21 +1,16 @@
 version: 2
 models:
   - name: int_covid_age_75_plus
-    description: 'COVID vaccination eligibility for people aged 75 years or over.
+    description: 'COVID age-based eligibility determination.
 
-      Key Features:
+      Grain: One row per person per campaign who meets age criteria
 
-      • Age-based eligibility with 75 years minimum threshold
+      Identifies people:
+      • Aged 75 years or over at campaign reference date
+      • No clinical requirements - purely demographic
+      • Universal eligibility across all campaigns
 
-      • Universal eligibility across all COVID campaigns (2024-2026)
-
-      • Simple age calculation using campaign reference date
-
-      • No diagnosis requirements - pure demographic eligibility
-
-      • Generates data for current and previous COVID campaigns automatically
-
-      Purpose: Identify people eligible for COVID vaccination based on age 75+ requiring immunisation protection.'
+      Used by: Mart models for eligibility determination'
     
     config:
       meta:

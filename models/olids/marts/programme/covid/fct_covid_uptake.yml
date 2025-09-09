@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: fct_covid_uptake
+    description: 'COVID vaccination uptake fact table focused on core uptake metrics.
+
+      Grain: One row per person per campaign per risk group they qualify for
+
+      Contains:
+      • Eligibility status and reasons
+      • Vaccination status (vaccinated, declined, no record)
+      • Uptake category and timing metrics
+      • Campaign reference dates
+
+      Purpose: Core uptake facts for COVID programme monitoring. Join with dim_person_demographics for demographic analysis.'
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_UPTAKE_COVERAGE"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Programme Management"
+          name_short: "COVID Uptake Coverage"
+          description_short: "COVID vaccination uptake facts without demographics"
+          description_long: >
+            COVID vaccination uptake fact table combining eligibility determination
+            with vaccination status to provide core uptake metrics. Focused on uptake business
+            process without demographics. Supports programme monitoring and performance
+            assessment. Join with dim_person_demographics for demographic analysis and
+            published_reporting_direct_care.covid_flu_dashboard_base for dashboard consumption.
+          is_qof: false
+          source_column: "uptake_category"
+          sort_order: "COVID_102_UPTAKE_COVERAGE"
+          usage_contexts:
+            - "COVID_REPORTING"
+            - "COVID_AND_FLU_DASHBOARD"
+          code_clusters:
+            - cluster_id: "COVADM_COD"
+              category: "INCLUSION"
+            - cluster_id: "COVRX_COD"
+              category: "INCLUSION"
+            - cluster_id: "COVDECL_COD"
+              category: "REFINEMENT"
+          thresholds:
+            - population_group: "NATIONAL_TARGET"
+              threshold_type: "COVERAGE_RATE"
+              threshold_value: "75"
+              threshold_operator: "TARGET"
+              threshold_unit: "percentage"
+              description: "National COVID vaccination coverage target"
+              sort_order: 1
+            - population_group: "HIGH_RISK_GROUPS"
+              threshold_type: "COVERAGE_RATE"
+              threshold_value: "85"
+              threshold_operator: "TARGET"
+              threshold_unit: "percentage"
+              description: "High-risk group coverage target"
+              sort_order: 2
+    
+    columns:
+      - name: campaign_id
+        description: COVID campaign identifier
+        tests:
+          - not_null
+        
+      - name: person_id
+        description: Unique person identifier
+        tests:
+          - not_null
+        
+      - name: is_eligible
+        description: Whether person is eligible for COVID vaccination
+        
+      - name: campaign_category
+        description: Category of eligibility
+        
+      - name: risk_group
+        description: Specific risk group classification
+        
+      - name: eligibility_reason
+        description: Reason for eligibility
+        
+      - name: rule_type
+        description: Type of eligibility rule
+        
+      - name: vaccination_status
+        description: Vaccination status
+        
+      - name: vaccination_date
+        description: Date of vaccination (if vaccinated)
+        
+      - name: vaccinated
+        description: Whether person received COVID vaccination
+        
+      - name: declined
+        description: Whether person declined COVID vaccination
+        
+      - name: eligible_no_record
+        description: Whether eligible person has no vaccination record
+        
+      - name: uptake_category
+        description: Categorised uptake status
+        
+      - name: days_to_vaccination
+        description: Days from campaign start to vaccination
+        
+      - name: campaign_start_date
+        description: Campaign start date
+        
+      - name: campaign_reference_date
+        description: Campaign reference date for age calculations

@@ -1,5 +1,5 @@
 /*
-Flu Vaccination Uptake Fact Table (Row-Level)
+COVID Vaccination Uptake Fact Table (Row-Level)
 
 This model combines eligibility and vaccination status at the person level
 to provide core uptake analysis capabilities.
@@ -8,7 +8,12 @@ Key features:
 - Combines eligibility information with vaccination status
 - Focused on uptake business process without demographics
 - Supports analysis of coverage gaps and vaccination patterns
-- Works automatically with both current and previous campaigns
+- Works automatically with multiple COVID campaigns
+
+Multi-Campaign Support:
+- covid_2024_autumn: September 2024 - March 2025 (broader eligibility)
+- covid_2025_spring: April 2025 - June 2025 (broader eligibility)  
+- covid_2025_autumn: September 2025 - March 2026 (restricted eligibility)
 
 Usage:
 - Filter by campaign_id to analyze specific campaigns
@@ -31,12 +36,13 @@ WITH eligible_people AS (
         eligibility_reason,
         rule_type,
         eligibility_priority
-    FROM {{ ref('fct_flu_eligibility') }}
+    FROM {{ ref('fct_covid_eligibility') }}
 ),
 
 vaccination_status AS (
     -- Get vaccination status with priority (administered > declined > no record)
-    SELECT 
+    -- Keep one row per person per campaign (vaccination status same for all risk groups)
+    SELECT DISTINCT
         campaign_id,
         person_id,
         FIRST_VALUE(status_type) OVER (
@@ -51,14 +57,10 @@ vaccination_status AS (
             PARTITION BY campaign_id, person_id 
             ORDER BY status_priority, status_type
         ) AS vaccination_status_reason,
-        -- Check if LAIV was given
-        MAX(CASE WHEN status_type = 'LAIV_ADMINISTERED' THEN 1 ELSE 0 END) OVER (
-            PARTITION BY campaign_id, person_id
-        ) AS laiv_given,
         is_eligible,
         eligibility_status,
         vaccinated_despite_ineligible
-    FROM {{ ref('fct_flu_status') }}
+    FROM {{ ref('fct_covid_status') }}
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY campaign_id, person_id 
         ORDER BY status_priority, status_type
@@ -85,12 +87,11 @@ combined_data AS (
         v.vaccination_status,
         v.vaccination_date,
         v.vaccination_status_reason,
-        v.laiv_given,
         v.vaccinated_despite_ineligible,
         
         -- Uptake flags
         CASE 
-            WHEN v.vaccination_status IN ('VACCINATION_ADMINISTERED', 'LAIV_ADMINISTERED') THEN TRUE
+            WHEN v.vaccination_status = 'VACCINATION_ADMINISTERED' THEN TRUE
             ELSE FALSE
         END AS vaccinated,
         CASE 
@@ -108,7 +109,7 @@ combined_data AS (
         ON e.campaign_id = v.campaign_id 
         AND e.person_id = v.person_id
     WHERE e.person_id IS NOT NULL  -- Keep all eligible people
-        OR v.vaccination_status IN ('VACCINATION_ADMINISTERED', 'LAIV_ADMINISTERED')  -- Keep only vaccinated non-eligible people
+        OR v.vaccination_status = 'VACCINATION_ADMINISTERED'  -- Keep only vaccinated non-eligible people
 ),
 
 -- Add campaign information and calculate uptake metrics
@@ -128,7 +129,6 @@ final_uptake AS (
         cd.vaccination_status,
         cd.vaccination_date,
         cd.vaccination_status_reason,
-        cd.laiv_given,
         cd.vaccinated_despite_ineligible,
         
         -- Uptake flags
@@ -167,11 +167,15 @@ final_uptake AS (
         
     FROM combined_data cd
     LEFT JOIN (
+        -- Include all defined COVID campaigns using variables like flu models
         SELECT DISTINCT campaign_id, campaign_start_date, campaign_end_date, campaign_reference_date, audit_end_date
-        FROM ({{ flu_campaign_config(var('flu_current_campaign', 'flu_2024_25')) }})
+        FROM ({{ covid_campaign_config(var('covid_current_autumn', 'covid_2025_autumn')) }})
         UNION ALL
         SELECT DISTINCT campaign_id, campaign_start_date, campaign_end_date, campaign_reference_date, audit_end_date  
-        FROM ({{ flu_campaign_config(var('flu_previous_campaign', 'flu_2023_24')) }})
+        FROM ({{ covid_campaign_config(var('covid_current_spring', 'covid_2025_spring')) }})
+        UNION ALL
+        SELECT DISTINCT campaign_id, campaign_start_date, campaign_end_date, campaign_reference_date, audit_end_date
+        FROM ({{ covid_campaign_config(var('covid_previous_autumn', 'covid_2024_autumn')) }})
     ) cc
         ON cd.campaign_id = cc.campaign_id
 )

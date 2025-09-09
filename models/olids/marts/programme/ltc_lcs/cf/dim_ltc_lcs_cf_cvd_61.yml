@@ -18,3 +18,35 @@ models:
       • Complete cardiovascular risk assessment history
 
       • Evidence-based case finding aligned with NICE guidelines'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CVD_61"
+          type: "CASE_FINDING"
+          category: "CVD"
+          clinical_domain: "Cardiovascular Disease Case Finding"
+          name_short: "High CVD risk"
+          description_short: "Patients with QRISK2 score ≥20% requiring primary prevention"
+          description_long: >
+            Age 40-83, QRISK2 ≥20%. Consider statin therapy and CVD risk
+            management per NICE guidelines.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CVD_61"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "QRISK2_RESULTS"
+              category: "INCLUSION"
+            - cluster_id: "CVD_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "ADULTS_40_83"
+              threshold_type: "QRISK2_SCORE"
+              threshold_value: "20"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "percentage"
+              description: "QRISK2 score ≥20% (high risk)"
+              sort_order: 1
