@@ -13,3 +13,35 @@ models:
       • Supports cardiovascular medication optimisation for secondary prevention
 
       • One row per person in CVD base population requiring intensive lipid management'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CVD_64"
+          type: "CASE_FINDING"
+          category: "CVD"
+          clinical_domain: "Cardiovascular Disease Case Finding"
+          name_short: "High-dose statin"
+          description_short: "CVD base population requiring high-dose statin therapy"
+          description_long: >
+            CVD base population requiring high-dose statins for secondary
+            prevention. Intensive lipid management.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CVD_64"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "CVD_REGISTER_CODES"
+              category: "INCLUSION"
+            - cluster_id: "HIGH_DOSE_STATIN_MEDICATIONS"
+              category: "MONITORING"
+          thresholds:
+            - population_group: "CVD_BASE_POPULATION"
+              threshold_type: "STATIN_INTENSITY"
+              threshold_value: "HIGH_DOSE"
+              threshold_operator: "EQUALS"
+              threshold_unit: "categorical"
+              description: "High-dose statin therapy indication for secondary prevention"
+              sort_order: 1

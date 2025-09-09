@@ -21,6 +21,13 @@ vars:
   flu_previous_campaign: "flu_2024_25"    # Previous flu campaign (for year-over-year comparison)
   flu_audit_end_date: "CURRENT_DATE"      # Default audit end date
 
+  # COVID campaign configuration - Multi-campaign support
+  covid_current_autumn: "covid_2025_autumn"    # Current autumn campaign
+  covid_current_spring: "covid_2025_spring"    # Current spring campaign  
+  covid_previous_autumn: "covid_2024_autumn"   # Previous autumn campaign
+  covid_previous_spring: "covid_2025_spring"   # Previous spring campaign (for comparison)
+  covid_audit_end_date: "2025-06-30"           # End of last completed campaign (spring 2025)
+
 # Configure test failure storage (only for failures)
 # Note: This creates tables for all tests, populated only on failure
 # Consider removing if too many empty tables are created

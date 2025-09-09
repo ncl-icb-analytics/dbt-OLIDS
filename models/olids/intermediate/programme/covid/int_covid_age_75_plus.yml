@@ -1,0 +1,69 @@
+version: 2
+models:
+  - name: int_covid_age_75_plus
+    description: 'COVID age-based eligibility determination.
+
+      Grain: One row per person per campaign who meets age criteria
+
+      Identifies people:
+      • Aged 75 years or over at campaign reference date
+      • No clinical requirements - purely demographic
+      • Universal eligibility across all campaigns
+
+      Used by: Mart models for eligibility determination'
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_AGE_75_PLUS"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Demographics"
+          name_short: "COVID Eligible Age 75+"
+          description_short: "People aged 75 years or over eligible for COVID vaccination"
+          description_long: >
+            COVID vaccination eligibility for people aged 75 years or over at campaign reference date.
+            Universal eligibility across all COVID campaigns providing age-based protection for high-risk
+            older adults. Simple demographic threshold with no additional clinical requirements.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "COVID_1_AGE75"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "COVID_REPORTING"
+          thresholds:
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "75"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for COVID vaccination"
+              sort_order: 1
+    
+    columns:
+      - name: campaign_id
+        description: 'COVID campaign identifier (e.g., covid_2025_autumn, covid_2024_autumn)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "AGE_BASED")'
+      - name: risk_group
+        description: 'Risk group classification (always "Age 75+")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date qualifying for eligibility (campaign reference date)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date (minimum 75 years required)'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

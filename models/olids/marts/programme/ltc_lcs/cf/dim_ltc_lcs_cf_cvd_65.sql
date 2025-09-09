@@ -6,7 +6,7 @@
 
 WITH qrisk2_patients AS (
     -- Get patients with latest QRISK2 ≥ 10
-    SELECT
+    SELECT DISTINCT
         obs.person_id,
         bp.age,
         obs.clinical_effective_date AS latest_qrisk2_date,
@@ -122,7 +122,7 @@ all_qrisk2_codes AS (
     GROUP BY person_id
 )
 
--- Final selection: patients who need moderate-dose statins
+-- Final selection: patients who need moderate-dose statins (ensure one row per person)
 SELECT
     ep.person_id,
     ep.age,
@@ -133,3 +133,4 @@ SELECT
     aqc.all_qrisk2_displays
 FROM eligible_patients AS ep
 LEFT JOIN all_qrisk2_codes AS aqc ON ep.person_id = aqc.person_id
+QUALIFY ROW_NUMBER() OVER (PARTITION BY ep.person_id ORDER BY ep.latest_qrisk2_date DESC, ep.latest_qrisk2_value DESC) = 1

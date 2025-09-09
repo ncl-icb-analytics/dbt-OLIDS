@@ -1,0 +1,113 @@
+version: 2
+
+models:
+  - name: fct_covid_eligibility
+    description: 'COVID vaccination eligibility determination across all eligibility pathways.
+
+      Grain: One row per person per campaign per risk group they qualify for
+
+      Contains:
+      • Person demographics and age calculations
+      • Eligibility category and specific risk group
+      • Qualifying event dates and priority ranking
+      • Campaign-specific eligibility rules
+
+      Note: People eligible for multiple risk groups appear in multiple rows'
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_ELIGIBILITY_OVERALL"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Programme Management"
+          name_short: "COVID Eligibility Overall"
+          description_short: "Overall COVID vaccination eligibility across all pathways"
+          description_long: >
+            COVID vaccination eligibility determination combining all eligibility
+            pathways including age-based criteria (≥75 years), clinical conditions
+            (respiratory, cardiovascular, diabetes, etc.), at-risk groups (pregnancy, immunosuppression,
+            care home residents), and social factors (homelessness, learning disability).
+            Provides source of truth for COVID programme planning and vaccination delivery
+            across campaign periods with campaign-specific eligibility switches.
+          is_qof: false
+          source_column: "is_eligible"
+          sort_order: "COVID_100_ELIGIBILITY_OVERALL"
+          usage_contexts:
+            - "COVID_REPORTING"
+            - "COVID_AND_FLU_DASHBOARD"
+          code_clusters:
+            - cluster_id: "COVADM_COD"
+              category: "INCLUSION"
+            - cluster_id: "COVRX_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "UNIVERSAL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "75"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Universal age eligibility threshold"
+              sort_order: 1
+            - population_group: "CARE_HOME"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "65"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Care home resident age eligibility"
+              sort_order: 2
+            - population_group: "IMMUNOSUPPRESSED"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for immunosuppressed eligibility"
+              sort_order: 3
+            - population_group: "ALL"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "5"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for COVID vaccination"
+              sort_order: 4
+    
+    columns:
+      - name: person_id
+        description: Unique person identifier
+        tests:
+          - not_null
+        
+      - name: campaign_id
+        description: COVID campaign identifier (covid_2024_autumn, covid_2025_spring, covid_2025_autumn)
+        tests:
+          - not_null
+        
+      - name: campaign_category
+        description: Eligibility category for this person
+        
+      - name: risk_group
+        description: Specific risk group classification
+        
+      - name: is_eligible
+        description: Whether person is eligible for COVID vaccination
+        
+      - name: eligibility_reason
+        description: Primary reason for eligibility
+        
+      - name: rule_type
+        description: Type of eligibility rule (AGE_BASED, CLINICAL_CONDITION, COMBINATION, etc.)
+        
+      - name: eligibility_priority
+        description: Priority ranking for eligibility (1=highest)
+        
+      - name: qualifying_event_date
+        description: Date of qualifying diagnosis or event
+        
+      - name: reference_date
+        description: Campaign reference date used for age calculations
+        
+      - name: age_months
+        description: Age in months at campaign reference date
+        
+      - name: age_years
+        description: Age in years at campaign reference date

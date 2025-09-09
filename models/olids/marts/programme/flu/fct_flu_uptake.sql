@@ -2,23 +2,23 @@
 Flu Vaccination Uptake Fact Table (Row-Level)
 
 This model combines eligibility and vaccination status at the person level
-to provide comprehensive uptake analysis capabilities.
+to provide core uptake analysis capabilities.
 
 Key features:
 - Combines eligibility information with vaccination status
-- Includes practice and demographic information for segmentation
+- Focused on uptake business process without demographics
 - Supports analysis of coverage gaps and vaccination patterns
 - Works automatically with both current and previous campaigns
 
 Usage:
 - Filter by campaign_id to analyze specific campaigns
 - Use vaccination_status to segment by outcome (administered, declined, no record)
-- Analyze by practice, PCN, borough, or demographic characteristics
+- Join with dim_person_demographics for demographic analysis
 */
 
 {{ config(
     materialized='table',
-    cluster_by=['campaign_id', 'practice_code', 'person_id']
+    cluster_by=['campaign_id', 'person_id']
 ) }}
 
 WITH eligible_people AS (
@@ -111,39 +111,11 @@ combined_data AS (
         OR v.vaccination_status IN ('VACCINATION_ADMINISTERED', 'LAIV_ADMINISTERED')  -- Keep only vaccinated non-eligible people
 ),
 
--- Add demographics and practice information
+-- Add campaign information and calculate uptake metrics
 final_uptake AS (
     SELECT 
         cd.campaign_id,
         cd.person_id,
-        
-        -- Demographics
-        demo.is_active,
-        demo.sex,
-        demo.age,
-        demo.age_band_5y,
-        demo.age_band_10y,
-        demo.age_band_nhs,
-        demo.ethnicity_category,
-        demo.ethnicity_subcategory,
-        demo.ethnicity_granular,
-        demo.main_language,
-        demo.language_type,
-        demo.interpreter_needed,
-        demo.interpreter_type,
-        -- Geographic and deprivation (currently NULL placeholders)
-        demo.imd_quintile_19,
-        demo.imd_decile_19,
-        demo.lsoa_code_21 as lsoa_code,
-        
-        -- Practice information
-        demo.practice_code,
-        demo.practice_name,
-        demo.pcn_code,
-        demo.pcn_name,
-        demo.practice_borough,
-        demo.practice_neighbourhood,
-        -- removed local_authority; practice_borough is available
         
         -- Eligibility information
         cd.is_eligible,
@@ -194,8 +166,6 @@ final_uptake AS (
         CURRENT_TIMESTAMP() AS created_at
         
     FROM combined_data cd
-    LEFT JOIN {{ ref('dim_person_demographics') }} demo
-        ON cd.person_id = demo.person_id
     LEFT JOIN (
         SELECT DISTINCT campaign_id, campaign_start_date, campaign_end_date, campaign_reference_date, audit_end_date
         FROM ({{ flu_campaign_config(var('flu_current_campaign', 'flu_2024_25')) }})
@@ -207,4 +177,4 @@ final_uptake AS (
 )
 
 SELECT * FROM final_uptake
-ORDER BY campaign_id, practice_code, person_id
+ORDER BY campaign_id, person_id

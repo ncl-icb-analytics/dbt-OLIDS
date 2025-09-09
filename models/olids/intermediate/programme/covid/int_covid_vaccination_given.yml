@@ -1,0 +1,74 @@
+version: 2
+models:
+  - name: int_covid_vaccination_given
+    description: 'COVID vaccination administration tracking.
+
+      Grain: One row per person per campaign who received vaccination
+
+      Identifies people:
+      • Vaccination administration codes (COVADM_COD)
+      • OR medication orders (COVRX_COD)
+      • Within campaign tracking period
+      • All ages eligible
+
+      Used by: Mart models for uptake and status determination'
+    
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: COVADM_COD,COVRX_COD
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_VACCINATION_GIVEN"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Vaccination"
+          name_short: "COVID Vaccination Given"
+          description_short: "People who received COVID vaccination"
+          description_long: >
+            COVID vaccination administration tracking for people who received vaccination using
+            COVADM_COD administration codes or COVRX_COD medication orders within campaign
+            tracking period. Used for monitoring vaccination uptake and coverage analysis.
+            No age restrictions as vaccination can occur at any age. Combines multiple
+            evidence sources for comprehensive vaccination tracking by campaign period.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "COVID_19_VACCINATION_GIVEN"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "COVID_REPORTING"
+          code_clusters:
+            - cluster_id: "COVADM_COD"
+              category: "INCLUSION"
+            - cluster_id: "COVRX_COD"
+              category: "INCLUSION"
+    
+    columns:
+      - name: campaign_id
+        description: 'COVID campaign identifier (e.g., covid_2025_autumn, covid_2024_autumn)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "VACCINATION_ADMINISTERED")'
+      - name: risk_group
+        description: 'Risk group classification (always "COVID Vaccination Given")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date of vaccination administration (latest vaccination date)'
+      - name: reference_date
+        description: 'Campaign reference date used for assessment'
+      - name: description
+        description: 'Description of vaccination administration including types'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

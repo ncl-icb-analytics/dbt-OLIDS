@@ -1,0 +1,70 @@
+version: 2
+models:
+  - name: int_covid_vaccination_declined
+    description: 'COVID vaccination decline tracking.
+
+      Grain: One row per person per campaign who declined vaccination
+
+      Identifies people:
+      • Vaccination decline codes (COVDECL_COD)
+      • Within campaign tracking period
+      • All ages eligible
+
+      Used by: Mart models for uptake and status determination'
+    
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: COVDECL_COD
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_VACCINATION_DECLINED"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Vaccination"
+          name_short: "COVID Vaccination Declined"
+          description_short: "People who declined COVID vaccination"
+          description_long: >
+            COVID vaccination decline tracking for people who refused vaccination using COVDEC_COD
+            cluster codes within campaign tracking period. Used for monitoring vaccination
+            uptake and identifying populations requiring outreach. No age restrictions
+            as refusal can occur at any age. Tracks by campaign period for reporting.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "COVID_20_VACCINATION_DECLINED"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "COVID_REPORTING"
+          code_clusters:
+            - cluster_id: "COVDECL_COD"
+              category: "INCLUSION"
+    
+    columns:
+      - name: campaign_id
+        description: 'COVID campaign identifier (e.g., covid_2025_autumn, covid_2024_autumn)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "VACCINATION_DECLINED")'
+      - name: risk_group
+        description: 'Risk group classification (always "COVID Vaccination Declined")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date of vaccination decline record'
+      - name: reference_date
+        description: 'Campaign reference date used for assessment'
+      - name: description
+        description: 'Description of vaccination decline'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

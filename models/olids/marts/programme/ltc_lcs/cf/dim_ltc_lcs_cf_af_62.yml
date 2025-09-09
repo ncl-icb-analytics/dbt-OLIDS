@@ -18,3 +18,46 @@ models:
       • Pulse check compliance monitoring
 
       • Clinical exclusion criteria assessment'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_AF_62"
+          type: "CASE_FINDING"
+          category: "AF"
+          clinical_domain: "Cardiovascular Case Finding"
+          name_short: "Missing pulse check"
+          description_short: "Patients 65+ without pulse check in 36 months"
+          description_long: >
+            Age 65+, no pulse rate/rhythm check in 36m. Excludes existing AF,
+            atrial flutter, recent NHS health checks.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_AF_62"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "PULSE_RATE"
+              category: "MONITORING"
+            - cluster_id: "PULSE_RHYTHM"
+              category: "MONITORING"
+            - cluster_id: "ATRIAL_FIBRILLATION"
+              category: "EXCLUSION"
+            - cluster_id: "ATRIAL_FLUTTER"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "OLDER_ADULTS"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "65"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Minimum age for pulse checking recommendation"
+              sort_order: 1
+            - population_group: "OLDER_ADULTS"
+              threshold_type: "TIME_SINCE_CHECK"
+              threshold_value: "36"
+              threshold_operator: "GREATER_THAN"
+              threshold_unit: "months"
+              description: "Time window for pulse check monitoring"
+              sort_order: 2

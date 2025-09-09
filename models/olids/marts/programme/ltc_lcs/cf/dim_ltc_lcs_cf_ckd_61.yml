@@ -18,3 +18,44 @@ models:
       • Complete eGFR testing history with latest and previous readings
 
       • Evidence-based case finding criteria for early CKD detection'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_CKD_61"
+          type: "CASE_FINDING"
+          category: "CKD"
+          clinical_domain: "Chronic Kidney Disease Case Finding"
+          name_short: "Consecutive low eGFR"
+          description_short: "Patients with two consecutive eGFR readings <60"
+          description_long: >
+            Age 17+, two consecutive eGFR <60 ml/min/1.73m². Excludes existing
+            CKD or diabetes registers.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_CKD_61"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "EGFR_RESULTS"
+              category: "INCLUSION"
+            - cluster_id: "CKD_REGISTER_CODES"
+              category: "EXCLUSION"
+            - cluster_id: "DIABETES_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "ADULTS_17_PLUS"
+              threshold_type: "EGFR_VALUE"
+              threshold_value: "60"
+              threshold_operator: "LESS_THAN"
+              threshold_unit: "ml/min/1.73m2"
+              description: "eGFR below 60 ml/min/1.73m²"
+              sort_order: 1
+            - population_group: "ADULTS_17_PLUS"
+              threshold_type: "CONSECUTIVE_READINGS"
+              threshold_value: "2"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "count"
+              description: "Two consecutive low eGFR readings required"
+              sort_order: 2

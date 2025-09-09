@@ -1,0 +1,115 @@
+version: 2
+models:
+  - name: int_covid_immunosuppression
+    description: 'COVID immunosuppression eligibility determination.
+
+      Grain: One row per person per campaign who meets immunosuppression criteria
+
+      Identifies people:
+      • Diagnosed with immunosuppression (any time)
+      • Recent immunosuppressant medication (6 months)
+      • Recent chemotherapy/radiotherapy (6 months)
+      • Age varies by campaign (any age 2024/25, 6 months-74 years 2025/26)
+
+      Used by: Mart models for eligibility determination'
+    
+    tests:
+      - cluster_ids_exist:
+          arguments:
+            cluster_ids: IMMDX_COV_COD,IMMRX_COD,IMM_ADM_COD,DXT_CHEMO_COD
+    
+    config:
+      meta:
+        indicator:
+          id: "COVID_IMMUNOSUPPRESSION"
+          type: "PROGRAMME"
+          category: "COVID"
+          clinical_domain: "Immunology"
+          name_short: "COVID Eligible Immunosuppression"
+          description_short: "People with immunosuppression eligible for COVID vaccination"
+          description_long: >
+            COVID vaccination eligibility for people with immunosuppression from any cause including
+            diagnosis codes (IMMDX_COV_COD), recent immunosuppressant medications (IMMRX_COD within 6 months),
+            recent admin codes indicating immunosuppression (IMMADM_COD within 3 years), or
+            recent chemotherapy/radiotherapy (DXT_CHEMO_COD within 6 months). Uses different
+            lookback periods for medication/treatment pathways to capture currently immunosuppressed patients.
+            Age eligibility varies by campaign type.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "COVID_5_IMMUNOSUPPRESSION"
+          usage_contexts:
+            - "COVID_AND_FLU_DASHBOARD"
+            - "COVID_REPORTING"
+          code_clusters:
+            - cluster_id: "IMMDX_COV_COD"
+              category: "INCLUSION"
+            - cluster_id: "IMMRX_COD"
+              category: "INCLUSION"
+            - cluster_id: "IMM_ADM_COD"
+              category: "INCLUSION"
+            - cluster_id: "DXT_CHEMO_COD"
+              category: "INCLUSION"
+          thresholds:
+            - population_group: "BROADER_ELIGIBILITY"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "0"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "years"
+              description: "Any age eligible for 2024/25 campaigns"
+              sort_order: 1
+            - population_group: "RESTRICTED_ELIGIBILITY"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "6"
+              threshold_operator: "AT_OR_ABOVE"
+              threshold_unit: "months"
+              description: "Minimum age for 2025/26 campaigns"
+              sort_order: 2
+            - population_group: "RESTRICTED_ELIGIBILITY"
+              threshold_type: "AGE_ELIGIBILITY"
+              threshold_value: "74"
+              threshold_operator: "BELOW"
+              threshold_unit: "years"
+              description: "Maximum age for 2025/26 campaigns"
+              sort_order: 3
+            - population_group: "MEDICATION_TREATMENT"
+              threshold_type: "RECENCY_PERIOD"
+              threshold_value: "6"
+              threshold_operator: "WITHIN"
+              threshold_unit: "months"
+              description: "Lookback period for medication and chemotherapy codes"
+              sort_order: 4
+            - population_group: "ADMINISTRATION"
+              threshold_type: "RECENCY_PERIOD"
+              threshold_value: "3"
+              threshold_operator: "WITHIN"
+              threshold_unit: "years"
+              description: "Lookback period for administration codes"
+              sort_order: 5
+    
+    columns:
+      - name: campaign_id
+        description: 'COVID campaign identifier (e.g., covid_2025_autumn, covid_2024_autumn)'
+        tests:
+          - not_null
+      - name: campaign_category
+        description: 'Category of eligibility criteria (always "CLINICAL_CONDITION")'
+      - name: risk_group
+        description: 'Risk group classification (always "Immunosuppression")'
+      - name: person_id
+        description: 'Unique identifier for the person'
+        tests:
+          - not_null
+      - name: qualifying_event_date
+        description: 'Date of qualifying immunosuppression event (diagnosis, medication, admin, or treatment)'
+      - name: reference_date
+        description: 'Campaign reference date used for eligibility assessment'
+      - name: description
+        description: 'Description of eligibility criteria including evidence types'
+      - name: birth_date_approx
+        description: 'Approximate birth date used for age calculation'
+      - name: age_months_at_ref_date
+        description: 'Age in months at campaign reference date'
+      - name: age_years_at_ref_date
+        description: 'Age in years at campaign reference date (eligibility varies by campaign)'
+      - name: created_at
+        description: 'Audit timestamp for record creation (campaign audit end date)'

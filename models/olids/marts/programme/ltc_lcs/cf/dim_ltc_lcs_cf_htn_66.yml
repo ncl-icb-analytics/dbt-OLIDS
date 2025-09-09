@@ -13,3 +13,60 @@ models:
       • Targets patients suitable for lifestyle intervention rather than immediate drug treatment
 
       • One row per eligible person with latest blood pressure readings and risk factor status'
+    
+    config:
+      meta:
+        indicator:
+          id: "LTC_LCS_CF_HTN_66"
+          type: "CASE_FINDING"
+          category: "HTN"
+          clinical_domain: "Hypertension Case Finding"
+          name_short: "Stage 1 low risk"
+          description_short: "Patients with stage 1 hypertension without cardiovascular risk factors"
+          description_long: >
+            Stage 1 HTN: clinic 140-159/90-99 mmHg, home/ABPM
+            135-149/85-94 mmHg. No CVD risk factors - lifestyle intervention.
+          is_qof: false
+          source_column: "person_id"
+          sort_order: "LTC_LCS_HTN_66"
+          usage_contexts:
+            - "LTC_LCS_DASHBOARD"
+            - "CASE_FINDING_PROGRAMME"
+          code_clusters:
+            - cluster_id: "BLOOD_PRESSURE_CLINIC"
+              category: "INCLUSION"
+            - cluster_id: "BLOOD_PRESSURE_HOME_ABPM"
+              category: "INCLUSION"
+            - cluster_id: "CVD_RISK_FACTORS"
+              category: "EXCLUSION"
+            - cluster_id: "HYPERTENSION_REGISTER_CODES"
+              category: "EXCLUSION"
+          thresholds:
+            - population_group: "ALL_ADULTS"
+              threshold_type: "CLINIC_SYSTOLIC_BP"
+              threshold_value: "140-159"
+              threshold_operator: "WITHIN"
+              threshold_unit: "mmHg"
+              description: "Clinic systolic BP 140-159 mmHg (stage 1) without CVD risk"
+              sort_order: 1
+            - population_group: "ALL_ADULTS"
+              threshold_type: "CLINIC_DIASTOLIC_BP"
+              threshold_value: "90-99"
+              threshold_operator: "WITHIN"
+              threshold_unit: "mmHg"
+              description: "Clinic diastolic BP 90-99 mmHg (stage 1) without CVD risk"
+              sort_order: 2
+            - population_group: "ALL_ADULTS"
+              threshold_type: "HOME_ABPM_SYSTOLIC_BP"
+              threshold_value: "135-149"
+              threshold_operator: "WITHIN"
+              threshold_unit: "mmHg"
+              description: "Home/ABPM systolic BP 135-149 mmHg (stage 1) without CVD risk"
+              sort_order: 3
+            - population_group: "ALL_ADULTS"
+              threshold_type: "HOME_ABPM_DIASTOLIC_BP"
+              threshold_value: "85-94"
+              threshold_operator: "WITHIN"
+              threshold_unit: "mmHg"
+              description: "Home/ABPM diastolic BP 85-94 mmHg (stage 1) without CVD risk"
+              sort_order: 4
