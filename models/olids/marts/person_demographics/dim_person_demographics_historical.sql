@@ -64,25 +64,16 @@ WITH person_months AS (
 ),
 
 monthly_addresses AS (
-    -- Get address valid for each person-month
+    -- Get address valid for each person-month using intermediate model with SCD2 logic
     SELECT DISTINCT
         pm.analysis_month,
         pm.person_id,
-        pa.postcode_hash
+        pc.postcode_hash
     FROM person_months pm
-    INNER JOIN {{ ref('int_patient_registrations') }} ipr
-        ON pm.person_id = ipr.person_id
-    INNER JOIN {{ ref('stg_olids_patient_address') }} pa
-        ON ipr.patient_id = pa.patient_id
-        AND pa.start_date <= pm.analysis_month
-        AND (pa.end_date IS NULL OR pa.end_date >= DATE_TRUNC('month', pm.analysis_month))
-    QUALIFY ROW_NUMBER() OVER (
-        PARTITION BY pm.analysis_month, pm.person_id
-        ORDER BY 
-            CASE WHEN pa.end_date IS NULL THEN 0 ELSE 1 END,
-            pa.start_date DESC,
-            pa.lds_datetime_data_acquired DESC
-    ) = 1
+    LEFT JOIN {{ ref('int_person_postcode_hash') }} pc
+        ON pm.person_id = pc.person_id
+        AND pc.address_start_date <= pm.analysis_month
+        AND (pc.address_end_date IS NULL OR pc.address_end_date >= DATE_TRUNC('month', pm.analysis_month))
 ),
 
 monthly_ethnicity AS (
