@@ -35,7 +35,7 @@ SELECT
     demo.interpreter_type,
     
     -- Geographic and deprivation context
-    demo.post_code_hash,
+    demo.postcode_hash,
     demo.uprn_hash,
     demo.lsoa_code_21,
     demo.lsoa_name_21,

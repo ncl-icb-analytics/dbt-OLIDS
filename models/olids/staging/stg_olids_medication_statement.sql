@@ -1,8 +1,11 @@
 -- Staging model for olids_core.MEDICATION_STATEMENT
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
 -- Description: Core OLIDS patient and clinical data
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
+    "lds_record_id" as lds_record_id,
     "lds_id" as lds_id,
     "id" as id,
     "lds_business_key" as lds_business_key,
@@ -21,7 +24,7 @@ select
     "referral_request_id" as referral_request_id,
     "authorisation_type_concept_id" as authorisation_type_concept_id,
     "date_precision_concept_id" as date_precision_concept_id,
-    "medication_statement_core_concept_id" as medication_statement_core_concept_id,
+    "medication_statement_source_concept_id" as medication_statement_source_concept_id,
     "clinical_effective_date" as clinical_effective_date,
     "cancellation_date" as cancellation_date,
     "dose" as dose,

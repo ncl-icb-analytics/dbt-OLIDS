@@ -9,9 +9,11 @@
 Practice Dimension
 Contains comprehensive practice details including organisational hierarchy.
 Sources from Dictionary.dbo.OrganisationMatrixPracticeView and OLIDS organisation data.
+Note: Deduplicates by organisation_id to ensure uniqueness when multiple practice codes map to same organisation.
 */
 
-SELECT
+WITH practice_org_joined AS (
+    SELECT
     -- OLIDS identifiers
     org.id AS organisation_id,
     
@@ -75,8 +77,38 @@ SELECT
     dict.sk_organisationid_practice AS sk_practice_id,
     dict_org.sk_organisationid AS sk_practice_dict_id
 
-FROM {{ ref('stg_dictionary_organisationmatrixpracticeview') }} AS dict
-INNER JOIN {{ ref('stg_olids_organisation') }} AS org
+FROM (
+    -- Deduplicate dictionary practices in case of multiple rows per practice code
+    SELECT *
+    FROM (
+        SELECT *,
+            ROW_NUMBER() OVER (
+                PARTITION BY practicecode 
+                ORDER BY 
+                    sk_organisationid_practice DESC  -- Use SK as tiebreaker for consistent results
+            ) AS dict_rn
+        FROM {{ ref('stg_dictionary_organisationmatrixpracticeview') }}
+        WHERE practicecode IS NOT NULL
+    ) AS dict_ranked
+    WHERE dict_rn = 1
+) AS dict
+INNER JOIN (
+    -- Deduplicate organisations by taking the most recent record per organisation_code
+    SELECT *
+    FROM (
+        SELECT *,
+            ROW_NUMBER() OVER (
+                PARTITION BY organisation_code 
+                ORDER BY 
+                    CASE WHEN is_obsolete = FALSE THEN 0 ELSE 1 END,  -- Prefer active records
+                    lds_datetime_data_acquired DESC,  -- Then most recent data
+                    id DESC  -- Finally by ID as tiebreaker
+            ) AS rn
+        FROM {{ ref('stg_olids_organisation') }}
+        WHERE organisation_code IS NOT NULL
+    ) AS org_ranked
+    WHERE rn = 1
+) AS org
     ON dict.practicecode = org.organisation_code
 LEFT JOIN {{ ref('stg_dictionary_organisation') }} AS dict_org
     ON dict.practicecode = dict_org.organisation_code
@@ -92,3 +124,17 @@ WHERE dict.practicecode IS NOT NULL
         'QWE',  -- NHS SOUTH WEST LONDON INTEGRATED CARE BOARD
         'QKK'   -- NHS SOUTH EAST LONDON INTEGRATED CARE BOARD
     )
+)
+
+-- Final deduplication by organisation_id to ensure uniqueness
+SELECT *
+FROM (
+    SELECT *,
+        ROW_NUMBER() OVER (
+            PARTITION BY organisation_id 
+            ORDER BY 
+                practice_code  -- Take the first practice code alphabetically for consistency
+        ) AS final_rn
+    FROM practice_org_joined
+) AS deduplicated
+WHERE final_rn = 1

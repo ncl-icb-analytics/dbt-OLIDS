@@ -93,7 +93,7 @@ SELECT
     END AS practice_imd_quintile_19,
     
     d.patient_neighbourhood,
-    d.post_code_hash,
+    d.postcode_hash,
     d.uprn_hash,
     d.registration_start_date,
     

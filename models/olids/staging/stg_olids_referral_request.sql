@@ -1,8 +1,11 @@
 -- Staging model for olids_core.REFERRAL_REQUEST
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
 -- Description: Core OLIDS patient and clinical data
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
+    "lds_record_id" as lds_record_id,
     "lds_id" as lds_id,
     "id" as id,
     "lds_business_key" as lds_business_key,
@@ -23,7 +26,7 @@ select
     "requester_organisation_id" as requester_organisation_id,
     "recipient_organisation_id" as recipient_organisation_id,
     "referral_request_priority_concept_id" as referral_request_priority_concept_id,
-    "referal_request_type_concept_id" as referal_request_type_concept_id,
+    "referral_request_type_concept_id" as referral_request_type_concept_id,
     "referral_request_specialty_concept_id" as referral_request_specialty_concept_id,
     "mode" as mode,
     "is_outgoing_referral" as is_outgoing_referral,

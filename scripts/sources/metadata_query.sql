@@ -36,26 +36,26 @@ WITH schema_metadata AS (
   
     -- olids_core: Core OLIDS patient and clinical data
   SELECT 
-    'Data_Store_OLIDS_UAT' as database_name,
+    'Data_Store_OLIDS_Alpha' as database_name,
     'OLIDS_MASKED' as schema_name,
     table_name,
     column_name,
     data_type,
     ordinal_position
-  FROM "Data_Store_OLIDS_UAT".INFORMATION_SCHEMA.COLUMNS
+  FROM "Data_Store_OLIDS_Alpha".INFORMATION_SCHEMA.COLUMNS
   WHERE table_schema = 'OLIDS_MASKED'
   
   UNION ALL
   
     -- olids_terminology: OLIDS-specific terminology and code mappings
   SELECT 
-    'Data_Store_OLIDS_UAT' as database_name,
+    'Data_Store_OLIDS_Alpha' as database_name,
     'OLIDS_TERMINOLOGY' as schema_name,
     table_name,
     column_name,
     data_type,
     ordinal_position
-  FROM "Data_Store_OLIDS_UAT".INFORMATION_SCHEMA.COLUMNS
+  FROM "Data_Store_OLIDS_Alpha".INFORMATION_SCHEMA.COLUMNS
   WHERE table_schema = 'OLIDS_TERMINOLOGY'
 )
 

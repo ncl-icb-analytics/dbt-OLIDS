@@ -56,7 +56,7 @@ current_addresses AS (
     -- Get the latest address for each person
     SELECT DISTINCT
         ipr.person_id,
-        pa.post_code_hash,
+        pa.postcode_hash,
         pa.start_date as address_start_date
     FROM {{ ref('int_patient_registrations') }} ipr
     INNER JOIN {{ ref('stg_olids_patient_address') }} pa
@@ -207,7 +207,7 @@ SELECT
     nbhd.practice_neighbourhood,
     
     -- Address Information
-    ca.post_code_hash,
+    ca.postcode_hash,
     NULL AS uprn_hash,  -- Placeholder for future
     NULL::VARCHAR AS household_id,  -- Placeholder for future
 

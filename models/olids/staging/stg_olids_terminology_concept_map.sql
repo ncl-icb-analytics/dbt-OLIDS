@@ -1,8 +1,10 @@
 -- Staging model for olids_terminology.CONCEPT_MAP
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_TERMINOLOGY"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_TERMINOLOGY"
 -- Description: OLIDS-specific terminology and code mappings
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
     "id" as id,
     "lds_id" as lds_id,
     "lds_business_key" as lds_business_key,

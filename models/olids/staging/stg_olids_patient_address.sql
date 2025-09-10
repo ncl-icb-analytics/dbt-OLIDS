@@ -1,8 +1,11 @@
 -- Staging model for olids_core.PATIENT_ADDRESS
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
 -- Description: Core OLIDS patient and clinical data
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
+    "lds_record_id" as lds_record_id,
     "lds_id" as lds_id,
     "id" as id,
     "lds_business_key" as lds_business_key,
@@ -12,7 +15,7 @@ select
     "record_owner_organisation_code" as record_owner_organisation_code,
     "patient_id" as patient_id,
     "address_type_concept_id" as address_type_concept_id,
-    "post_code_hash" as post_code_hash,
+    "postcode_hash" as postcode_hash,
     "start_date" as start_date,
     "end_date" as end_date,
     "lds_end_date_time" as lds_end_date_time,

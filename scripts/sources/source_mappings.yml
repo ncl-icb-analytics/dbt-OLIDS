@@ -39,7 +39,7 @@ sources:
   
   # OLIDS Core Data
   - source_name: olids_core
-    database: Data_Store_OLIDS_UAT
+    database: Data_Store_OLIDS_Alpha
     schema: OLIDS_MASKED
     description: Core OLIDS patient and clinical data
     staging_prefix: stg_olids
@@ -47,7 +47,7 @@ sources:
     
   # OLIDS Terminology
   - source_name: olids_terminology
-    database: Data_Store_OLIDS_UAT
+    database: Data_Store_OLIDS_Alpha
     schema: OLIDS_TERMINOLOGY
     description: OLIDS-specific terminology and code mappings
     staging_prefix: stg_olids_terminology

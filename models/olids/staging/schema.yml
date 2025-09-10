@@ -4,10 +4,6 @@ models:
   description: Staging model for olids allergy intolerance
   tests:
   - all_source_columns_in_staging
-- name: stg_olids_allergy_intolerance_backup
-  description: Staging model for olids allergy intolerance backup
-  tests:
-  - all_source_columns_in_staging
 - name: stg_olids_appointment
   description: Staging model for olids appointment
   tests:
@@ -18,10 +14,6 @@ models:
   - all_source_columns_in_staging
 - name: stg_olids_diagnostic_order
   description: Staging model for olids diagnostic order
-  tests:
-  - all_source_columns_in_staging
-- name: stg_olids_diagnostic_order_backup
-  description: Staging model for olids diagnostic order backup
   tests:
   - all_source_columns_in_staging
 - name: stg_olids_encounter
@@ -56,10 +48,6 @@ models:
   description: Staging model for olids observation
   tests:
   - all_source_columns_in_staging
-- name: stg_olids_observation_backup
-  description: Staging model for olids observation backup
-  tests:
-  - all_source_columns_in_staging
 - name: stg_olids_organisation
   description: Staging model for olids organisation
   tests:
@@ -88,20 +76,8 @@ models:
   description: Staging model for olids patient uprn
   tests:
   - all_source_columns_in_staging
-- name: stg_olids_patient_uprn_backup
-  description: Staging model for olids patient uprn backup
-  tests:
-  - all_source_columns_in_staging
-- name: stg_olids_patient_uprn_old
-  description: Staging model for olids patient uprn old
-  tests:
-  - all_source_columns_in_staging
 - name: stg_olids_person
   description: Staging model for olids person
-  tests:
-  - all_source_columns_in_staging
-- name: stg_olids_person_backup
-  description: Staging model for olids person backup
   tests:
   - all_source_columns_in_staging
 - name: stg_olids_practitioner
@@ -118,10 +94,6 @@ models:
   - all_source_columns_in_staging
 - name: stg_olids_referral_request
   description: Staging model for olids referral request
-  tests:
-  - all_source_columns_in_staging
-- name: stg_olids_referral_request_backup
-  description: Staging model for olids referral request backup
   tests:
   - all_source_columns_in_staging
 - name: stg_olids_schedule

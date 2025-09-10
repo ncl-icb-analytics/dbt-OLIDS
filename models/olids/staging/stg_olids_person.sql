@@ -17,6 +17,10 @@ with unique_persons as (
 )
 
 select
+    -- New Alpha columns first (following PERSON structure order)
+    null::text as lakehousedateprocessed,
+    null::timestamp_ntz as lakehousedatetimeupdated,
+    null::text as lds_record_id,
     -- Generate deterministic lds_id for person records
     'person-lds-' || MD5(person_id) as lds_id,
     person_id as id,
@@ -29,7 +33,7 @@ select
     null::text as requesting_nhs_number_hash,
     null::text as sk_patient_id_request,
     null::text as error_success_code,
-    null::text as matched_nhs_numberhash,
+    null::text as matched_nhs_number_hash,  -- Fixed: underscore added
     null::text as sk_patient_id_matched,
     null::text as sensitivity_flag,
     null::text as matched_algorithm_indicator,

@@ -15,7 +15,13 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        CAST(obs.result_value AS NUMBER(6,2)) AS acr_value,
+        -- Handle potential large/invalid values and cap at 9999.99 for valid range
+        CASE 
+            WHEN TRY_CAST(obs.result_value AS FLOAT) > 9999.99 THEN 9999.99
+            WHEN TRY_CAST(obs.result_value AS FLOAT) < 0 THEN 0
+            WHEN TRY_CAST(obs.result_value AS FLOAT) IS NULL THEN NULL
+            ELSE TRY_CAST(obs.result_value AS FLOAT)
+        END AS acr_value,
         obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
@@ -38,15 +44,15 @@ SELECT
     source_cluster_id,
     original_result_value,
 
-    -- Data quality validation (ACR typically 0-300+ mg/mmol)
+    -- Data quality validation (ACR typically 0-300+ mg/mmol, extreme values capped)
     CASE
-        WHEN acr_value BETWEEN 0 AND 1000 THEN TRUE
+        WHEN acr_value BETWEEN 0 AND 9999.99 THEN TRUE
         ELSE FALSE
     END AS is_valid_acr,
 
     -- Clinical categorisation (mg/mmol) - CKD risk assessment
     CASE
-        WHEN acr_value NOT BETWEEN 0 AND 1000 THEN 'Invalid'
+        WHEN acr_value NOT BETWEEN 0 AND 9999.99 THEN 'Invalid'
         WHEN acr_value < 3 THEN 'Normal (<3)'
         WHEN acr_value < 30 THEN 'Mildly Increased (3-30)'
         WHEN acr_value < 300 THEN 'Moderately Increased (30-300)'
@@ -56,7 +62,7 @@ SELECT
 
     -- CKD indicator based on ACR (≥3 mg/mmol suggests possible kidney damage)
     CASE
-        WHEN acr_value >= 3 AND acr_value <= 1000 THEN TRUE
+        WHEN acr_value >= 3 AND acr_value <= 9999.99 THEN TRUE
         ELSE FALSE
     END AS is_acr_elevated,
 
@@ -68,7 +74,7 @@ SELECT
 
     -- Macroalbuminuria indicator (≥30 mg/mmol)
     CASE
-        WHEN acr_value >= 30 AND acr_value <= 1000 THEN TRUE
+        WHEN acr_value >= 30 AND acr_value <= 9999.99 THEN TRUE
         ELSE FALSE
     END AS is_macroalbuminuria
 
