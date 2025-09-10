@@ -52,24 +52,6 @@ WITH current_registrations AS (
     ) = 1
 ),
 
-current_addresses AS (
-    -- Get the latest address for each person
-    SELECT DISTINCT
-        ipr.person_id,
-        pa.postcode_hash,
-        pa.start_date as address_start_date
-    FROM {{ ref('int_patient_registrations') }} ipr
-    INNER JOIN {{ ref('stg_olids_patient_address') }} pa
-        ON ipr.patient_id = pa.patient_id
-    WHERE pa.start_date IS NOT NULL
-    QUALIFY ROW_NUMBER() OVER (
-        PARTITION BY ipr.person_id 
-        ORDER BY 
-            CASE WHEN pa.end_date IS NULL THEN 0 ELSE 1 END,  -- Active addresses first
-            pa.start_date DESC,
-            pa.lds_datetime_data_acquired DESC
-    ) = 1
-),
 
 latest_ethnicity AS (
     -- Get the most recent ethnicity recording
@@ -243,7 +225,7 @@ LEFT JOIN latest_ethnicity le
     ON bd.person_id = le.person_id
 
 -- Join current address
-LEFT JOIN current_addresses ca
+LEFT JOIN {{ ref('int_person_postcode_hash') }} ca
     ON bd.person_id = ca.person_id
 
 -- Join practice details
