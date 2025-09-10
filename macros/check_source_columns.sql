@@ -1,7 +1,7 @@
 {% macro check_source_columns() %}
   {% set query %}
     SELECT table_name
-    FROM "Data_Store_OLIDS_UAT".INFORMATION_SCHEMA.TABLES
+    FROM "Data_Store_OLIDS_Alpha".INFORMATION_SCHEMA.TABLES
     WHERE table_schema = 'OLIDS_MASKED'
     ORDER BY table_name
   {% endset %}
@@ -13,7 +13,7 @@
       {% set table_name = table_row[0] %}
       {% set column_query %}
         SELECT column_name
-        FROM "Data_Store_OLIDS_UAT".INFORMATION_SCHEMA.COLUMNS
+        FROM "Data_Store_OLIDS_Alpha".INFORMATION_SCHEMA.COLUMNS
         WHERE table_schema = 'OLIDS_MASKED'
           AND table_name = '{{ table_name }}'
         ORDER BY ordinal_position

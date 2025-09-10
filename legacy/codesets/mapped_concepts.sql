@@ -27,14 +27,14 @@ SELECT
     CCS.CODE_DESCRIPTION        AS CODE_DESCRIPTION,
     CCS.SOURCE                  AS SOURCE
 FROM
-    "Data_Store_OLIDS_UAT".OLIDS_TERMINOLOGY.CONCEPT_MAP AS MAP
+    "Data_Store_OLIDS_Alpha".OLIDS_TERMINOLOGY.CONCEPT_MAP AS MAP
 -- Left join to the new intermediate table to find the originating table(s)
 LEFT JOIN
     DATA_LAB_OLIDS_UAT.REFERENCE.SOURCE_CONCEPT_ORIGINS AS SCO
     ON MAP."source_code_id" = SCO.SOURCE_CODE_ID_VALUE -- Ensure datatypes are compatible for this join
 -- Join to get the target concept details
 JOIN
-    "Data_Store_OLIDS_UAT".OLIDS_TERMINOLOGY.CONCEPT AS CON
+    "Data_Store_OLIDS_Alpha".OLIDS_TERMINOLOGY.CONCEPT AS CON
     ON MAP."target_code_id" = CON."id"
 -- Left join to enrich with combined codeset details
 LEFT JOIN
@@ -53,34 +53,34 @@ create or replace view DATA_LAB_OLIDS_UAT.TESTS.AGG_TEST_CONCEPT_MAPPING_FAILURE
 WITH
 -- Step 1: Calculate the total number of records being tested for each concept.
 TotalRecords AS (
-    SELECT 'PROCEDURE_REQUEST' AS SourceTable, 'status_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."PROCEDURE_REQUEST" WHERE "status_concept_id" IS NOT NULL UNION ALL
-    SELECT 'PATIENT_ADDRESS' AS SourceTable, 'address_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."PATIENT_ADDRESS" WHERE "address_type_concept_id" IS NOT NULL UNION ALL
-    SELECT 'OBSERVATION' AS SourceTable, 'result_value_unit_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."OBSERVATION" WHERE "result_value_unit_concept_id" IS NOT NULL UNION ALL
-    SELECT 'DIAGNOSTIC_ORDER' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."DIAGNOSTIC_ORDER" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'MEDICATION_STATEMENT' AS SourceTable, 'medication_statement_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."MEDICATION_STATEMENT" WHERE "medication_statement_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'ALLERGY_INTOLERANCE' AS SourceTable, 'allergy_intolerance_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."ALLERGY_INTOLERANCE" WHERE "allergy_intolerance_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'APPOINTMENT' AS SourceTable, 'contact_mode_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."APPOINTMENT" WHERE "contact_mode_concept_id" IS NOT NULL UNION ALL
-    SELECT 'PATIENT' AS SourceTable, 'gender_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."PATIENT" WHERE "gender_concept_id" IS NOT NULL UNION ALL
-    SELECT 'MEDICATION_ORDER' AS SourceTable, 'medication_order_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."MEDICATION_ORDER" WHERE "medication_order_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'PROCEDURE_REQUEST' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."PROCEDURE_REQUEST" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'APPOINTMENT' AS SourceTable, 'booking_method_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."APPOINTMENT" WHERE "booking_method_concept_id" IS NOT NULL UNION ALL
-    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'referal_request_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "referal_request_type_concept_id" IS NOT NULL UNION ALL
-    SELECT 'ENCOUNTER' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."ENCOUNTER" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'ENCOUNTER' AS SourceTable, 'encounter_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."ENCOUNTER" WHERE "encounter_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'LOCATION_CONTACT' AS SourceTable, 'contact_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."LOCATION_CONTACT" WHERE "contact_type_concept_id" IS NOT NULL UNION ALL
-    SELECT 'MEDICATION_ORDER' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."MEDICATION_ORDER" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'PROCEDURE_REQUEST' AS SourceTable, 'procedure_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."PROCEDURE_REQUEST" WHERE "procedure_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'PATIENT_CONTACT' AS SourceTable, 'contact_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."PATIENT_CONTACT" WHERE "contact_type_concept_id" IS NOT NULL UNION ALL
-    SELECT 'OBSERVATION' AS SourceTable, 'observation_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."OBSERVATION" WHERE "observation_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'OBSERVATION' AS SourceTable, 'episodicity_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."OBSERVATION" WHERE "episodicity_concept_id" IS NOT NULL UNION ALL
-    SELECT 'DIAGNOSTIC_ORDER' AS SourceTable, 'episodicity_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."DIAGNOSTIC_ORDER" WHERE "episodicity_concept_id" IS NOT NULL UNION ALL
-    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'OBSERVATION' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."OBSERVATION" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'referral_request_priority_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "referral_request_priority_concept_id" IS NOT NULL UNION ALL
-    SELECT 'ALLERGY_INTOLERANCE' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."ALLERGY_INTOLERANCE" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
-    SELECT 'DIAGNOSTIC_ORDER' AS SourceTable, 'diagnostic_order_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."DIAGNOSTIC_ORDER" WHERE "diagnostic_order_core_concept_id" IS NOT NULL UNION ALL
-    SELECT 'APPOINTMENT' AS SourceTable, 'appointment_status_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."APPOINTMENT" WHERE "appointment_status_concept_id" IS NOT NULL UNION ALL
-    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'referral_request_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_UAT"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "referral_request_core_concept_id" IS NOT NULL
+    SELECT 'PROCEDURE_REQUEST' AS SourceTable, 'status_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."PROCEDURE_REQUEST" WHERE "status_concept_id" IS NOT NULL UNION ALL
+    SELECT 'PATIENT_ADDRESS' AS SourceTable, 'address_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."PATIENT_ADDRESS" WHERE "address_type_concept_id" IS NOT NULL UNION ALL
+    SELECT 'OBSERVATION' AS SourceTable, 'result_value_unit_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."OBSERVATION" WHERE "result_value_unit_concept_id" IS NOT NULL UNION ALL
+    SELECT 'DIAGNOSTIC_ORDER' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."DIAGNOSTIC_ORDER" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'MEDICATION_STATEMENT' AS SourceTable, 'medication_statement_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."MEDICATION_STATEMENT" WHERE "medication_statement_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'ALLERGY_INTOLERANCE' AS SourceTable, 'allergy_intolerance_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."ALLERGY_INTOLERANCE" WHERE "allergy_intolerance_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'APPOINTMENT' AS SourceTable, 'contact_mode_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."APPOINTMENT" WHERE "contact_mode_concept_id" IS NOT NULL UNION ALL
+    SELECT 'PATIENT' AS SourceTable, 'gender_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."PATIENT" WHERE "gender_concept_id" IS NOT NULL UNION ALL
+    SELECT 'MEDICATION_ORDER' AS SourceTable, 'medication_order_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."MEDICATION_ORDER" WHERE "medication_order_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'PROCEDURE_REQUEST' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."PROCEDURE_REQUEST" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'APPOINTMENT' AS SourceTable, 'booking_method_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."APPOINTMENT" WHERE "booking_method_concept_id" IS NOT NULL UNION ALL
+    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'referal_request_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "referal_request_type_concept_id" IS NOT NULL UNION ALL
+    SELECT 'ENCOUNTER' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."ENCOUNTER" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'ENCOUNTER' AS SourceTable, 'encounter_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."ENCOUNTER" WHERE "encounter_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'LOCATION_CONTACT' AS SourceTable, 'contact_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."LOCATION_CONTACT" WHERE "contact_type_concept_id" IS NOT NULL UNION ALL
+    SELECT 'MEDICATION_ORDER' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."MEDICATION_ORDER" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'PROCEDURE_REQUEST' AS SourceTable, 'procedure_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."PROCEDURE_REQUEST" WHERE "procedure_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'PATIENT_CONTACT' AS SourceTable, 'contact_type_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."PATIENT_CONTACT" WHERE "contact_type_concept_id" IS NOT NULL UNION ALL
+    SELECT 'OBSERVATION' AS SourceTable, 'observation_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."OBSERVATION" WHERE "observation_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'OBSERVATION' AS SourceTable, 'episodicity_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."OBSERVATION" WHERE "episodicity_concept_id" IS NOT NULL UNION ALL
+    SELECT 'DIAGNOSTIC_ORDER' AS SourceTable, 'episodicity_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."DIAGNOSTIC_ORDER" WHERE "episodicity_concept_id" IS NOT NULL UNION ALL
+    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'OBSERVATION' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."OBSERVATION" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'referral_request_priority_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "referral_request_priority_concept_id" IS NOT NULL UNION ALL
+    SELECT 'ALLERGY_INTOLERANCE' AS SourceTable, 'date_precision_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."ALLERGY_INTOLERANCE" WHERE "date_precision_concept_id" IS NOT NULL UNION ALL
+    SELECT 'DIAGNOSTIC_ORDER' AS SourceTable, 'diagnostic_order_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."DIAGNOSTIC_ORDER" WHERE "diagnostic_order_core_concept_id" IS NOT NULL UNION ALL
+    SELECT 'APPOINTMENT' AS SourceTable, 'appointment_status_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."APPOINTMENT" WHERE "appointment_status_concept_id" IS NOT NULL UNION ALL
+    SELECT 'REFERRAL_REQUEST' AS SourceTable, 'referral_request_core_concept_id' AS SourceColumn, COUNT(*) AS TotalCount FROM "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"."REFERRAL_REQUEST" WHERE "referral_request_core_concept_id" IS NOT NULL
 ),
 -- Step 2: Aggregate failures by type.
 FailuresByType AS (

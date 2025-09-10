@@ -100,7 +100,7 @@ SELECT
     d.pcn_name_with_borough,
     
     -- Address and household
-    d.post_code_hash,
+    d.postcode_hash,
     d.uprn_hash,
     d.household_id,
     d.lsoa_code_21,

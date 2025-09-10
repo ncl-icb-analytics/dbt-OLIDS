@@ -68,7 +68,7 @@ monthly_addresses AS (
     SELECT DISTINCT
         pm.analysis_month,
         pm.person_id,
-        pa.post_code_hash
+        pa.postcode_hash
     FROM person_months pm
     INNER JOIN {{ ref('int_patient_registrations') }} ipr
         ON pm.person_id = ipr.person_id
@@ -368,7 +368,7 @@ SELECT
     nbhd.practice_neighbourhood,
     
     -- Address for this month
-    ma.post_code_hash,
+    ma.postcode_hash,
     NULL AS uprn_hash,  -- Placeholder
     NULL::VARCHAR AS household_id,  -- Placeholder
 

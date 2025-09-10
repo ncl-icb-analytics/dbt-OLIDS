@@ -1,8 +1,11 @@
 -- Staging model for olids_core.MEDICATION_ORDER
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
 -- Description: Core OLIDS patient and clinical data
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
+    "lds_record_id" as lds_record_id,
     "lds_id" as lds_id,
     "id" as id,
     "lds_business_key" as lds_business_key,
@@ -28,7 +31,7 @@ select
     "duration_days" as duration_days,
     "estimated_cost" as estimated_cost,
     "medication_name" as medication_name,
-    "medication_order_core_concept_id" as medication_order_core_concept_id,
+    "medication_order_source_concept_id" as medication_order_source_concept_id,
     "bnf_reference" as bnf_reference,
     "age_at_event" as age_at_event,
     "age_at_event_baby" as age_at_event_baby,

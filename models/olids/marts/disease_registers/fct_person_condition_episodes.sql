@@ -460,19 +460,39 @@ episode_summary AS (
             MIN(CASE WHEN event_type IN ('onset', 'diagnosis') THEN event_date END),
             MIN(event_date)
         ) as episode_start_date,
-        MAX(CASE WHEN event_type = 'resolved' THEN event_date END) as episode_end_date,
-        MAX(event_date) as episode_last_event_date,
-        
-        -- Episode status
-        CASE 
-            WHEN MAX(CASE WHEN event_type = 'resolved' THEN event_date END) IS NULL 
-                THEN 'active'
-            ELSE 'resolved'
-        END as episode_status,
-        
-        -- Episode duration (days)
+        -- Ensure episode end date is not before start date (data quality check)
         CASE 
             WHEN MAX(CASE WHEN event_type = 'resolved' THEN event_date END) IS NOT NULL
+                AND MAX(CASE WHEN event_type = 'resolved' THEN event_date END) >= 
+                    COALESCE(
+                        MIN(CASE WHEN event_type IN ('onset', 'diagnosis') THEN event_date END),
+                        MIN(event_date)
+                    )
+                THEN MAX(CASE WHEN event_type = 'resolved' THEN event_date END)
+            ELSE NULL
+        END as episode_end_date,
+        MAX(event_date) as episode_last_event_date,
+        
+        -- Episode status (only resolved if valid end date exists)
+        CASE 
+            WHEN MAX(CASE WHEN event_type = 'resolved' THEN event_date END) IS NOT NULL
+                AND MAX(CASE WHEN event_type = 'resolved' THEN event_date END) >= 
+                    COALESCE(
+                        MIN(CASE WHEN event_type IN ('onset', 'diagnosis') THEN event_date END),
+                        MIN(event_date)
+                    )
+                THEN 'resolved'
+            ELSE 'active'
+        END as episode_status,
+        
+        -- Episode duration (days) - only when resolved and end >= start
+        CASE 
+            WHEN MAX(CASE WHEN event_type = 'resolved' THEN event_date END) IS NOT NULL
+                AND MAX(CASE WHEN event_type = 'resolved' THEN event_date END) >= 
+                    COALESCE(
+                        MIN(CASE WHEN event_type IN ('onset', 'diagnosis') THEN event_date END),
+                        MIN(event_date)
+                    )
                 THEN DATEDIFF('day', 
                     COALESCE(
                         MIN(CASE WHEN event_type IN ('onset', 'diagnosis') THEN event_date END),
@@ -480,6 +500,7 @@ episode_summary AS (
                     ),
                     MAX(CASE WHEN event_type = 'resolved' THEN event_date END)
                 )
+            ELSE NULL
         END as episode_duration_days,
         
         -- Event counts

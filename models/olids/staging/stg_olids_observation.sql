@@ -1,8 +1,11 @@
 -- Staging model for olids_core.OBSERVATION
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
 -- Description: Core OLIDS patient and clinical data
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
+    "lds_record_id" as lds_record_id,
     "lds_id" as lds_id,
     "id" as id,
     "lds_business_key" as lds_business_key,
@@ -14,8 +17,8 @@ select
     "patient_id" as patient_id,
     "person_id" as person_id,
     "encounter_id" as encounter_id,
-    "practioner_id" as practioner_id,
-    "parent_obervation_id" as parent_obervation_id,
+    "practitioner_id" as practitioner_id,
+    "parent_observation_id" as parent_observation_id,
     "clinical_effective_date" as clinical_effective_date,
     "date_precision_concept_id" as date_precision_concept_id,
     "result_value" as result_value,

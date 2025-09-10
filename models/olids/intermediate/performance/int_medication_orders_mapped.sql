@@ -1,6 +1,6 @@
 {{ config(
     materialized='incremental',
-    cluster_by=['medication_statement_core_concept_id', 'order_date', 'patient_id'],
+    cluster_by=['medication_statement_source_concept_id', 'order_date', 'patient_id'],
     incremental_strategy='append',
     on_schema_change='sync_all_columns',
     tags=['intermediate', 'performance']
@@ -41,7 +41,7 @@ SELECT
     mo.medication_name as order_medication_name,
     
     -- Statement details
-    ms.medication_statement_core_concept_id,
+    ms.medication_statement_source_concept_id,
     ms.medication_name as statement_medication_name,
     
     -- Pre-mapped concept details
@@ -56,7 +56,7 @@ FROM {{ ref('stg_olids_medication_order') }} mo
 JOIN {{ ref('stg_olids_medication_statement') }} ms
     ON mo.medication_statement_id = ms.id
 INNER JOIN {{ ref('stg_olids_terminology_concept_map') }} cm
-    ON ms.medication_statement_core_concept_id = cm.source_code_id
+    ON ms.medication_statement_source_concept_id = cm.source_code_id
 INNER JOIN {{ ref('stg_olids_terminology_concept') }} c
     ON cm.target_code_id = c.id
 WHERE mo.clinical_effective_date IS NOT NULL

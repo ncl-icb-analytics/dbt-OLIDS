@@ -1,8 +1,11 @@
 -- Staging model for olids_core.ENCOUNTER
--- Source: "Data_Store_OLIDS_UAT"."OLIDS_MASKED"
+-- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
 -- Description: Core OLIDS patient and clinical data
 
 select
+    "LakehouseDateProcessed" as lakehousedateprocessed,
+    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
+    "lds_record_id" as lds_record_id,
     "lds_id" as lds_id,
     "id" as id,
     "lds_business_key" as lds_business_key,
@@ -19,7 +22,7 @@ select
     "clinical_effective_date" as clinical_effective_date,
     "date_precision_concept_id" as date_precision_concept_id,
     "location" as location,
-    "encounter_core_concept_id" as encounter_core_concept_id,
+    "encounter_source_concept_id" as encounter_source_concept_id,
     "age_at_event" as age_at_event,
     "age_at_event_baby" as age_at_event_baby,
     "age_at_event_neonate" as age_at_event_neonate,

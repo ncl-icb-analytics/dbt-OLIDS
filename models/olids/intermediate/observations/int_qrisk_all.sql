@@ -14,7 +14,13 @@ WITH base_observations AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        CAST(obs.result_value AS NUMBER(6,2)) AS qrisk_score,
+        -- Handle potential large/invalid values and cap at 999.99 for valid range
+        CASE 
+            WHEN TRY_CAST(obs.result_value AS FLOAT) > 999.99 THEN 999.99
+            WHEN TRY_CAST(obs.result_value AS FLOAT) < 0 THEN 0
+            WHEN TRY_CAST(obs.result_value AS FLOAT) IS NULL THEN NULL
+            ELSE TRY_CAST(obs.result_value AS FLOAT)
+        END AS qrisk_score,
         obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,

@@ -479,13 +479,19 @@ sources:
     - name: VALPROATE_PRODUCT_TERM
       data_type: TEXT
 - name: olids_core
-  database: '"Data_Store_OLIDS_UAT"'
+  database: '"Data_Store_OLIDS_Alpha"'
   schema: '"OLIDS_MASKED"'
   description: Core OLIDS patient and clinical data
   tables:
   - name: ALLERGY_INTOLERANCE
     identifier: '"ALLERGY_INTOLERANCE"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -538,66 +544,15 @@ sources:
       data_type: BOOLEAN
     - name: person_id
       data_type: TEXT
-  - name: ALLERGY_INTOLERANCE_BACKUP
-    identifier: '"ALLERGY_INTOLERANCE_BACKUP"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: patient_id
-      data_type: TEXT
-    - name: practitioner_id
-      data_type: TEXT
-    - name: encounter_id
-      data_type: TEXT
-    - name: clinical_status
-      data_type: TEXT
-    - name: verification_status
-      data_type: TEXT
-    - name: category
-      data_type: TEXT
-    - name: clinical_effective_date
-      data_type: TIMESTAMP_NTZ
-    - name: date_precision_concept_id
-      data_type: TEXT
-    - name: is_review
-      data_type: BOOLEAN
-    - name: medication_name
-      data_type: TEXT
-    - name: multi_lex_action
-      data_type: TEXT
-    - name: allergy_intolerance_core_concept_id
-      data_type: TEXT
-    - name: allergy_intolerance_raw_concept_id
-      data_type: TEXT
-    - name: age_at_event
-      data_type: NUMBER
-    - name: age_at_event_baby
-      data_type: NUMBER
-    - name: age_at_event_neonate
-      data_type: NUMBER
-    - name: date_recorded
-      data_type: TIMESTAMP_NTZ
-    - name: is_confidential
-      data_type: BOOLEAN
-    - name: person_id
-      data_type: TEXT
   - name: APPOINTMENT
     identifier: '"APPOINTMENT"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -671,6 +626,12 @@ sources:
   - name: APPOINTMENT_PRACTITIONER
     identifier: '"APPOINTMENT_PRACTITIONER"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -698,6 +659,12 @@ sources:
   - name: DIAGNOSTIC_ORDER
     identifier: '"DIAGNOSTIC_ORDER"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -756,72 +723,15 @@ sources:
       data_type: TIMESTAMP_NTZ
     - name: person_id
       data_type: TEXT
-  - name: DIAGNOSTIC_ORDER_BACKUP
-    identifier: '"DIAGNOSTIC_ORDER_BACKUP"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: patient_id
-      data_type: TEXT
-    - name: encounter_id
-      data_type: TEXT
-    - name: practitioner_id
-      data_type: TEXT
-    - name: parent_observation_id
-      data_type: TEXT
-    - name: clinical_effective_date
-      data_type: TIMESTAMP_NTZ
-    - name: date_precision_concept_id
-      data_type: TEXT
-    - name: result_value
-      data_type: FLOAT
-    - name: result_value_units
-      data_type: TEXT
-    - name: result_date
-      data_type: DATE
-    - name: result_text
-      data_type: TEXT
-    - name: is_problem
-      data_type: BOOLEAN
-    - name: is_review
-      data_type: BOOLEAN
-    - name: problem_end_date
-      data_type: TIMESTAMP_NTZ
-    - name: diagnostic_order_core_concept_id
-      data_type: TEXT
-    - name: diagnostic_order_raw_concept_id
-      data_type: TEXT
-    - name: age_at_event
-      data_type: NUMBER
-    - name: age_at_event_baby
-      data_type: NUMBER
-    - name: age_at_event_neonate
-      data_type: NUMBER
-    - name: episodicity_concept_id
-      data_type: TEXT
-    - name: is_primary
-      data_type: BOOLEAN
-    - name: date_recorded
-      data_type: TIMESTAMP_NTZ
-    - name: person_id
-      data_type: TEXT
   - name: ENCOUNTER
     identifier: '"ENCOUNTER"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -854,7 +764,7 @@ sources:
       data_type: TEXT
     - name: location
       data_type: TEXT
-    - name: encounter_core_concept_id
+    - name: encounter_source_concept_id
       data_type: TEXT
     - name: age_at_event
       data_type: NUMBER
@@ -879,6 +789,12 @@ sources:
   - name: EPISODE_OF_CARE
     identifier: '"EPISODE_OF_CARE"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -901,9 +817,9 @@ sources:
       data_type: TEXT
     - name: person_id
       data_type: TEXT
-    - name: episode_type_raw_concept_id
+    - name: episode_type_source_concept_id
       data_type: TEXT
-    - name: episode_status_raw_concept_id
+    - name: episode_status_source_concept_id
       data_type: TEXT
     - name: episode_of_care_start_date
       data_type: TIMESTAMP_NTZ
@@ -914,6 +830,12 @@ sources:
   - name: FLAG
     identifier: '"FLAG"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -945,6 +867,12 @@ sources:
   - name: LOCATION
     identifier: '"LOCATION"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -996,6 +924,12 @@ sources:
   - name: LOCATION_CONTACT
     identifier: '"LOCATION_CONTACT"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1025,6 +959,12 @@ sources:
   - name: MEDICATION_ORDER
     identifier: '"MEDICATION_ORDER"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1075,7 +1015,7 @@ sources:
       data_type: FLOAT
     - name: medication_name
       data_type: TEXT
-    - name: medication_order_core_concept_id
+    - name: medication_order_source_concept_id
       data_type: TEXT
     - name: bnf_reference
       data_type: TEXT
@@ -1100,6 +1040,12 @@ sources:
   - name: MEDICATION_STATEMENT
     identifier: '"MEDICATION_STATEMENT"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1136,7 +1082,7 @@ sources:
       data_type: TEXT
     - name: date_precision_concept_id
       data_type: TEXT
-    - name: medication_statement_core_concept_id
+    - name: medication_statement_source_concept_id
       data_type: TEXT
     - name: clinical_effective_date
       data_type: TIMESTAMP_NTZ
@@ -1175,6 +1121,12 @@ sources:
   - name: OBSERVATION
     identifier: '"OBSERVATION"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1197,9 +1149,9 @@ sources:
       data_type: TEXT
     - name: encounter_id
       data_type: TEXT
-    - name: practioner_id
+    - name: practitioner_id
       data_type: TEXT
-    - name: parent_obervation_id
+    - name: parent_observation_id
       data_type: TEXT
     - name: clinical_effective_date
       data_type: TIMESTAMP_NTZ
@@ -1237,76 +1189,15 @@ sources:
       data_type: BOOLEAN
     - name: is_confidential
       data_type: BOOLEAN
-  - name: OBSERVATION_BACKUP
-    identifier: '"OBSERVATION_BACKUP"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: patient_id
-      data_type: TEXT
-    - name: person_id
-      data_type: TEXT
-    - name: encounter_id
-      data_type: TEXT
-    - name: practioner_id
-      data_type: TEXT
-    - name: parent_obervation_id
-      data_type: TEXT
-    - name: clinical_effective_date
-      data_type: TIMESTAMP_NTZ
-    - name: date_precision_concept_id
-      data_type: TEXT
-    - name: result_value
-      data_type: FLOAT
-    - name: result_value_unit_concept_id
-      data_type: TEXT
-    - name: result_date
-      data_type: DATE
-    - name: result_text
-      data_type: TEXT
-    - name: is_problem
-      data_type: BOOLEAN
-    - name: is_review
-      data_type: BOOLEAN
-    - name: problem_end_date
-      data_type: TIMESTAMP_NTZ
-    - name: observation_raw_concept_id
-      data_type: TEXT
-    - name: observation_core_concept_id
-      data_type: TEXT
-    - name: age_at_event
-      data_type: NUMBER
-    - name: age_at_event_baby
-      data_type: NUMBER
-    - name: age_at_event_neonate
-      data_type: NUMBER
-    - name: episodicity_concept_id
-      data_type: TEXT
-    - name: is_primary
-      data_type: BOOLEAN
-    - name: date_recorded
-      data_type: TIMESTAMP_NTZ
-    - name: is_problem_deleted
-      data_type: BOOLEAN
-    - name: is_confidential
-      data_type: BOOLEAN
   - name: ORGANISATION
     identifier: '"ORGANISATION"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1344,6 +1235,12 @@ sources:
   - name: PATIENT
     identifier: '"PATIENT"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1387,6 +1284,12 @@ sources:
   - name: PATIENT_ADDRESS
     identifier: '"PATIENT_ADDRESS"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1405,7 +1308,7 @@ sources:
       data_type: TEXT
     - name: address_type_concept_id
       data_type: TEXT
-    - name: post_code_hash
+    - name: postcode_hash
       data_type: BINARY
     - name: start_date
       data_type: TIMESTAMP_NTZ
@@ -1418,6 +1321,12 @@ sources:
   - name: PATIENT_CONTACT
     identifier: '"PATIENT_CONTACT"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1447,11 +1356,15 @@ sources:
   - name: PATIENT_PERSON
     identifier: '"PATIENT_PERSON"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
-      data_type: TEXT
-    - name: lds_business_key
       data_type: TEXT
     - name: lds_datetime_data_acquired
       data_type: TIMESTAMP_NTZ
@@ -1468,6 +1381,12 @@ sources:
   - name: PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
     identifier: '"PATIENT_REGISTERED_PRACTITIONER_IN_ROLE"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1499,6 +1418,12 @@ sources:
   - name: PATIENT_UPRN
     identifier: '"PATIENT_UPRN"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1533,83 +1458,15 @@ sources:
       data_type: TEXT
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ
-  - name: PATIENT_UPRN_BACKUP
-    identifier: '"PATIENT_UPRN_BACKUP"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: registrar_event_id
-      data_type: TEXT
-    - name: masked_uprn
-      data_type: TEXT
-    - name: masked_upsn
-      data_type: TEXT
-    - name: masked_postcode
-      data_type: TEXT
-    - name: address_format_quality
-      data_type: TEXT
-    - name: post_code_quality
-      data_type: TEXT
-    - name: matched_with_assign
-      data_type: TEXT
-    - name: qualifier
-      data_type: TEXT
-    - name: classification
-      data_type: TEXT
-    - name: algorithm
-      data_type: TEXT
-    - name: match_pattern
-      data_type: TEXT
-    - name: lds_end_date_time
-      data_type: TIMESTAMP_NTZ
-  - name: PATIENT_UPRN_OLD
-    identifier: '"PATIENT_UPRN_OLD"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: registrar_event_id
-      data_type: TEXT
-    - name: masked_uprn
-      data_type: TEXT
-    - name: masked_upsn
-      data_type: TEXT
-    - name: masked_postcode
-      data_type: TEXT
-    - name: address_format_quality
-      data_type: TEXT
-    - name: post_code_quality
-      data_type: TEXT
-    - name: matched_with_assign
-      data_type: TEXT
-    - name: qualifier
-      data_type: TEXT
-    - name: uprn_property_classification
-      data_type: TEXT
-    - name: algorithm
-      data_type: TEXT
-    - name: match_pattern
-      data_type: TEXT
-    - name: lds_end_date_time
-      data_type: TIMESTAMP_NTZ
   - name: PERSON
     identifier: '"PERSON"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1632,7 +1489,7 @@ sources:
       data_type: NUMBER
     - name: error_success_code
       data_type: TEXT
-    - name: matched_nhs_numberhash
+    - name: matched_nhs_number_hash
       data_type: BINARY
     - name: sk_patient_id_matched
       data_type: NUMBER
@@ -1642,40 +1499,15 @@ sources:
       data_type: TEXT
     - name: requesting_patient_id
       data_type: TEXT
-  - name: PERSON_BACKUP
-    identifier: '"PERSON_BACKUP"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_end_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: requesting_patient_record_id
-      data_type: TEXT
-    - name: unique_reference
-      data_type: TEXT
-    - name: requesting_nhs_numberhash
-      data_type: BINARY
-    - name: errror_success_code
-      data_type: TEXT
-    - name: matched_nhs_numberhash
-      data_type: BINARY
-    - name: sensitivity_flag
-      data_type: TEXT
-    - name: matched_algorithm_indicator
-      data_type: TEXT
-    - name: requesting_patient_id
-      data_type: TEXT
   - name: PRACTITIONER
     identifier: '"PRACTITIONER"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1707,6 +1539,12 @@ sources:
   - name: PRACTITIONER_IN_ROLE
     identifier: '"PRACTITIONER_IN_ROLE"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1736,6 +1574,12 @@ sources:
   - name: PROCEDURE_REQUEST
     identifier: '"PROCEDURE_REQUEST"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1766,7 +1610,7 @@ sources:
       data_type: TIMESTAMP_NTZ
     - name: description
       data_type: TEXT
-    - name: procedure_core_concept_id
+    - name: procedure_source_concept_id
       data_type: TEXT
     - name: status_concept_id
       data_type: TEXT
@@ -1783,6 +1627,12 @@ sources:
   - name: REFERRAL_REQUEST
     identifier: '"REFERRAL_REQUEST"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1823,7 +1673,7 @@ sources:
       data_type: TEXT
     - name: referral_request_priority_concept_id
       data_type: TEXT
-    - name: referal_request_type_concept_id
+    - name: referral_request_type_concept_id
       data_type: TEXT
     - name: referral_request_specialty_concept_id
       data_type: TEXT
@@ -1843,74 +1693,15 @@ sources:
       data_type: NUMBER
     - name: date_recorded
       data_type: TIMESTAMP_NTZ
-  - name: REFERRAL_REQUEST_BACKUP
-    identifier: '"REFERRAL_REQUEST_BACKUP"'
-    columns:
-    - name: lds_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_data_initial_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_end_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: organisation_id
-      data_type: TEXT
-    - name: person_id
-      data_type: TEXT
-    - name: patient_id
-      data_type: TEXT
-    - name: encounter_id
-      data_type: TEXT
-    - name: practitioner_id
-      data_type: TEXT
-    - name: unique_booking_reference_number
-      data_type: TEXT
-    - name: clinical_effective_date
-      data_type: TIMESTAMP_NTZ
-    - name: date_precision_concept_id
-      data_type: TEXT
-    - name: requester_organisation_id
-      data_type: TEXT
-    - name: recipient_organisation_id
-      data_type: TEXT
-    - name: referral_request_priority_concept_id
-      data_type: TEXT
-    - name: referal_request_type_concept_id
-      data_type: TEXT
-    - name: referral_request_specialty_concept_id
-      data_type: TEXT
-    - name: mode
-      data_type: TEXT
-    - name: is_outgoing_referral
-      data_type: BOOLEAN
-    - name: is_review
-      data_type: BOOLEAN
-    - name: referral_request_core_concept_id
-      data_type: TEXT
-    - name: referral_request_raw_concept_id
-      data_type: TEXT
-    - name: age_at_event
-      data_type: NUMBER
-    - name: age_at_event_baby
-      data_type: NUMBER
-    - name: age_at_event_neonate
-      data_type: NUMBER
-    - name: date_recorded
-      data_type: TIMESTAMP_NTZ
   - name: SCHEDULE
     identifier: '"SCHEDULE"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1944,6 +1735,12 @@ sources:
   - name: SCHEDULE_PRACTITIONER
     identifier: '"SCHEDULE_PRACTITIONER"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
+    - name: lds_record_id
+      data_type: TEXT
     - name: lds_id
       data_type: TEXT
     - name: id
@@ -1963,13 +1760,17 @@ sources:
     - name: practitioner_id
       data_type: TEXT
 - name: olids_terminology
-  database: '"Data_Store_OLIDS_UAT"'
+  database: '"Data_Store_OLIDS_Alpha"'
   schema: '"OLIDS_TERMINOLOGY"'
   description: OLIDS-specific terminology and code mappings
   tables:
   - name: CONCEPT
     identifier: '"CONCEPT"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
     - name: id
       data_type: TEXT
     - name: lds_id
@@ -1993,6 +1794,10 @@ sources:
   - name: CONCEPT_MAP
     identifier: '"CONCEPT_MAP"'
     columns:
+    - name: LakehouseDateProcessed
+      data_type: TEXT
+    - name: LakehouseDateTimeUpdated
+      data_type: TIMESTAMP_NTZ
     - name: id
       data_type: TEXT
     - name: lds_id
