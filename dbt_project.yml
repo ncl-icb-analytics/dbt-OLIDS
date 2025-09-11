@@ -42,6 +42,11 @@ models:
     +persist_docs:
       columns: true
     olids:
+      base:
+        +materialized: view
+        +schema: "dbt_base"
+        +post-hook: ["{{ add_model_comment() }}"]
+        +tags: ["base"]
       staging:
         +materialized: view
         +post-hook: ["{{ add_model_comment() }}"]

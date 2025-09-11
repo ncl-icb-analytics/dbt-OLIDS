@@ -1,5 +1,5 @@
 -- Staging model for olids_core.ALLERGY_INTOLERANCE
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_allergy_intolerance (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -32,4 +32,4 @@ select
     "date_recorded" as date_recorded,
     "is_confidential" as is_confidential,
     "person_id" as person_id
-from {{ source('olids_core', 'ALLERGY_INTOLERANCE') }}
+from {{ ref('base_olids_allergy_intolerance') }}

@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PRACTITIONER_IN_ROLE
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_practitioner_in_role (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -19,4 +19,4 @@ select
     "role" as role,
     "date_employment_start" as date_employment_start,
     "date_employment_end" as date_employment_end
-from {{ source('olids_core', 'PRACTITIONER_IN_ROLE') }}
+from {{ ref('base_olids_practitioner_in_role') }}

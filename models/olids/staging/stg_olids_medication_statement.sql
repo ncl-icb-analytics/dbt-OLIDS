@@ -1,5 +1,5 @@
 -- Staging model for olids_core.MEDICATION_STATEMENT
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_medication_statement (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -42,4 +42,4 @@ select
     "is_confidential" as is_confidential,
     "expiry_date" as expiry_date,
     "lds_start_date_time" as lds_start_date_time
-from {{ source('olids_core', 'MEDICATION_STATEMENT') }}
+from {{ ref('base_olids_medication_statement') }}

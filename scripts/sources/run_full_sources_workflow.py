@@ -103,14 +103,15 @@ def load_preserved_models():
     return preserved
 
 def cleanup_legacy_files():
-    """Remove legacy sources.yml and schema.yml files before regeneration."""
-    # Note: We only clean up schema and sources files, not staging models
+    """Remove legacy sources.yml, schema.yml, and base layer files before regeneration."""
+    # Note: We only clean up schema, sources, and base layer files, not staging models
     # Staging models are handled by the generation script which respects preserved models
     legacy_files = [
         PROJECT_DIR / 'models' / 'sources.yml',
         PROJECT_DIR / 'models' / 'staging' / 'schema.yml',
         PROJECT_DIR / 'models' / 'olids' / 'staging' / 'schema.yml',
         PROJECT_DIR / 'models' / 'shared' / 'staging' / 'schema.yml',
+        PROJECT_DIR / 'models' / 'olids' / 'base' / 'schema.yml',
         PROJECT_DIR / 'sources.yml',
         PROJECT_DIR / 'schema.yml'
     ]
@@ -121,6 +122,16 @@ def cleanup_legacy_files():
             print_info(f"  Removing legacy file: {file_path.relative_to(PROJECT_DIR)}")
             file_path.unlink()
             removed_count += 1
+    
+    # Clean up base layer SQL files (except base_olids_patient_filtered.sql and int_ncl_practices.sql)
+    base_layer_dir = PROJECT_DIR / 'models' / 'olids' / 'base'
+    if base_layer_dir.exists():
+        preserved_base_models = {'base_olids_patient_filtered.sql'}  # Keep manually created helper
+        for sql_file in base_layer_dir.glob('base_olids_*.sql'):
+            if sql_file.name not in preserved_base_models:
+                print_info(f"  Removing generated base model: {sql_file.relative_to(PROJECT_DIR)}")
+                sql_file.unlink()
+                removed_count += 1
     
     return removed_count
 
@@ -147,11 +158,13 @@ def main():
     else:
         print_warning("  1-2. SKIPPED: Using existing metadata")
     print_info("  3. Generate sources.yml from metadata")
-    print_info("  4. Generate staging models from sources")
+    print_info("  4. Generate base layer views (filtered OLIDS data)")
+    print_info("  5. Generate base layer schema.yml")
+    print_info("  6. Generate staging models from sources")
     if not args.no_schema:
-        print_info("  5. Generate schema.yml files with tests")
+        print_info("  7. Generate staging schema.yml files with tests")
     else:
-        print_warning("  5. SKIPPED: Schema generation disabled")
+        print_warning("  7. SKIPPED: Schema generation disabled")
     print()
     
     if args.dry_run:
@@ -160,8 +173,8 @@ def main():
     
     # Calculate total steps first
     success_count = 0
-    # Core steps: Generate Sources + Generate Models (with auto-schema by default)
-    total_steps = 2  
+    # Core steps: Generate Sources + Generate Base Layer + Generate Base Schema + Generate Models (with auto-schema by default)
+    total_steps = 4  
     if not args.skip_extract:
         total_steps += 2  # Add: Generate Query + Extract Metadata
     if args.no_schema:
@@ -214,14 +227,9 @@ def main():
         print_error("Workflow stopped due to error in step 3")
         sys.exit(1)
     
-    # Step 4: Generate staging models
-    staging_args = []
-    if not args.no_schema:
-        staging_args.append("--auto-schema")
-    
-    if run_script("3_generate_staging_models.py", 
-                 args=staging_args,
-                 description="Generate staging models from sources.yml",
+    # Step 4: Generate base layer views
+    if run_script("3_generate_base_layer.py", 
+                 description="Generate filtered base layer views for OLIDS data",
                  step_num=step_num, total_steps=total_steps):
         success_count += 1
         step_num += 1
@@ -229,14 +237,39 @@ def main():
         print_error("Workflow stopped due to error in step 4")
         sys.exit(1)
     
-    # Step 5: Generate schema files (if not done automatically in step 4)
+    # Step 5: Generate base layer schema
+    if run_script("3b_generate_base_schema.py", 
+                 description="Generate schema.yml for base layer models",
+                 step_num=step_num, total_steps=total_steps):
+        success_count += 1
+        step_num += 1
+    else:
+        print_error("Workflow stopped due to error in step 5")
+        sys.exit(1)
+    
+    # Step 6: Generate staging models
+    staging_args = []
+    if not args.no_schema:
+        staging_args.append("--auto-schema")
+    
+    if run_script("4_generate_staging_models.py", 
+                 args=staging_args,
+                 description="Generate staging models from sources.yml",
+                 step_num=step_num, total_steps=total_steps):
+        success_count += 1
+        step_num += 1
+    else:
+        print_error("Workflow stopped due to error in step 6")
+        sys.exit(1)
+    
+    # Step 7: Generate schema files (if not done automatically in step 6)
     if args.no_schema:
-        if run_script("4_generate_staging_schema.py", 
+        if run_script("5_generate_staging_schema.py", 
                      description="Generate schema.yml files with default tests",
                      step_num=step_num, total_steps=total_steps):
             success_count += 1
         else:
-            print_error("Workflow stopped due to error in step 5")
+            print_error("Workflow stopped due to error in step 7")
             sys.exit(1)
     
     # Summary

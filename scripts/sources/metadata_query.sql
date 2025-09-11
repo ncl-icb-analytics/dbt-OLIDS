@@ -57,6 +57,19 @@ WITH schema_metadata AS (
     ordinal_position
   FROM "Data_Store_OLIDS_Alpha".INFORMATION_SCHEMA.COLUMNS
   WHERE table_schema = 'OLIDS_TERMINOLOGY'
+  
+  UNION ALL
+  
+    -- olids_base: Filtered OLIDS base layer - excludes sensitive patients and restricts to NCL practices
+  SELECT 
+    'Data_Store_OLIDS_Alpha' as database_name,
+    'OLIDS_FILTERED' as schema_name,
+    table_name,
+    column_name,
+    data_type,
+    ordinal_position
+  FROM "Data_Store_OLIDS_Alpha".INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = 'OLIDS_FILTERED'
 )
 
 SELECT 

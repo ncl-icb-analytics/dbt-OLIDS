@@ -1,5 +1,5 @@
 -- Staging model for olids_core.LOCATION
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_location (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -30,4 +30,4 @@ select
     "open_date" as open_date,
     "close_date" as close_date,
     "is_obsolete" as is_obsolete
-from {{ source('olids_core', 'LOCATION') }}
+from {{ ref('base_olids_location') }}

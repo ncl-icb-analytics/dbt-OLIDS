@@ -1,5 +1,5 @@
 -- Staging model for olids_core.MEDICATION_ORDER
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_medication_order (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -42,4 +42,4 @@ select
     "issue_method_description" as issue_method_description,
     "lds_start_date_time" as lds_start_date_time,
     "lds_end_date_time" as lds_end_date_time
-from {{ source('olids_core', 'MEDICATION_ORDER') }}
+from {{ ref('base_olids_medication_order') }}

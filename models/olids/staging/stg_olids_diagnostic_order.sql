@@ -1,5 +1,5 @@
 -- Staging model for olids_core.DIAGNOSTIC_ORDER
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_diagnostic_order (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -35,4 +35,4 @@ select
     "is_primary" as is_primary,
     "date_recorded" as date_recorded,
     "person_id" as person_id
-from {{ source('olids_core', 'DIAGNOSTIC_ORDER') }}
+from {{ ref('base_olids_diagnostic_order') }}
