@@ -44,7 +44,7 @@ SELECT
         ELSE 'Unknown'
     END AS osteoporosis_observation_type
 
-FROM ({{ get_observations("'OSTEO_COD'") }}) obs
+FROM ({{ get_observations("'OSTEO_COD'", source='PCD') }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id
