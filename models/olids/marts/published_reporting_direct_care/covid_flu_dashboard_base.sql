@@ -68,6 +68,14 @@ WITH uptake_with_demographics AS (
         d.practice_borough,
         d.practice_neighbourhood,
         
+        -- School information from dim_person_age
+        pa.age_school_stage AS school_year,
+        pa.is_primary_school_age,
+        pa.is_secondary_school_age,
+        
+        -- Housebound status from dim_person_housebound_status
+        COALESCE(hs.is_housebound, FALSE) AS is_housebound,
+        
         -- Eligibility information from uptake facts
         u.is_eligible,
         u.campaign_category,
@@ -100,6 +108,10 @@ WITH uptake_with_demographics AS (
     FROM {{ ref('fct_covid_flu_uptake') }} u
     LEFT JOIN {{ ref('dim_person_demographics') }} d
         ON u.person_id = d.person_id
+    LEFT JOIN {{ ref('dim_person_age') }} pa
+        ON u.person_id = pa.person_id
+    LEFT JOIN {{ ref('dim_person_housebound_status') }} hs
+        ON u.person_id = hs.person_id
 )
 
 SELECT * FROM uptake_with_demographics
