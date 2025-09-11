@@ -40,6 +40,6 @@ SELECT
         ELSE 'Unknown'
     END AS hypertension_observation_type
 
-FROM ({{ get_observations("'HYP_COD', 'HYPRES_COD'") }}) obs
+FROM ({{ get_observations("'HYP_COD', 'HYPRES_COD'", source='PCD') }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 ORDER BY person_id, clinical_effective_date, observation_id

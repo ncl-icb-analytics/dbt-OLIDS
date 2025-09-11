@@ -34,7 +34,7 @@ SELECT
     CASE WHEN obs.cluster_id = 'AST_COD' THEN TRUE ELSE FALSE END AS is_diagnosis_code,
     CASE WHEN obs.cluster_id = 'ASTRES_COD' THEN TRUE ELSE FALSE END AS is_resolved_code
 
-FROM ({{ get_observations("'AST_COD', 'ASTRES_COD'") }}) obs
+FROM ({{ get_observations("'AST_COD', 'ASTRES_COD'", source='PCD') }}) obs
 WHERE obs.clinical_effective_date IS NOT NULL
 
 ORDER BY person_id, clinical_effective_date, observation_id
