@@ -1,0 +1,29 @@
+version: 2
+models:
+  - name: dim_person_housebound_status
+    description: 'Latest housebound status for persons.
+
+      One row per person with their most recent housebound status from HOUSEBOUND or NO_LONGER_HOUSEBOUND clusters.'
+    columns:
+      - name: person_id
+        description: Person identifier
+        tests:
+          - unique
+          - not_null
+      - name: sk_patient_id
+        description: Surrogate key for patient
+      - name: latest_housebound_status_date
+        description: Date of most recent housebound status observation
+        tests:
+          - not_null
+      - name: is_housebound
+        description: Boolean flag indicating if person is currently housebound
+        tests:
+          - not_null
+      - name: housebound_status
+        description: Text description of housebound status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Housebound', 'Not Housebound']
