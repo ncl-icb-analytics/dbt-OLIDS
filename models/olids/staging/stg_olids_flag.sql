@@ -1,5 +1,5 @@
 -- Staging model for olids_core.FLAG
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_flag (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -20,4 +20,4 @@ select
     "expired_date" as expired_date,
     "is_active" as is_active,
     "flag_text" as flag_text
-from {{ source('olids_core', 'FLAG') }}
+from {{ ref('base_olids_flag') }}

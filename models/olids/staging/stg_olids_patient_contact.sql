@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PATIENT_CONTACT
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_patient_contact (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -19,4 +19,4 @@ select
     "contact_type_concept_id" as contact_type_concept_id,
     "start_date" as start_date,
     "end_date" as end_date
-from {{ source('olids_core', 'PATIENT_CONTACT') }}
+from {{ ref('base_olids_patient_contact') }}

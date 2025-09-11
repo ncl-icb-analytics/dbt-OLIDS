@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PATIENT_UPRN
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_patient_uprn (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -23,4 +23,4 @@ select
     "algorithm" as algorithm,
     "match_pattern" as match_pattern,
     "lds_end_date_time" as lds_end_date_time
-from {{ source('olids_core', 'PATIENT_UPRN') }}
+from {{ ref('base_olids_patient_uprn') }}

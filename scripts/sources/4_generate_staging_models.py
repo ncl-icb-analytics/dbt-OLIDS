@@ -218,12 +218,28 @@ def main():
             if source.get('description'):
                 description_comment = f"-- Description: {source.get('description')}\n"
             
+            # Determine if we should use base layer or source
+            if source_name == 'olids_core':
+                # Special handling for PATIENT table - use base_olids_patient
+                if table_name.upper() == 'PATIENT':
+                    base_model_name = 'base_olids_patient'
+                else:
+                    base_model_name = f'base_olids_{table_name_safe}'
+                
+                # Use base layer for OLIDS core tables
+                from_clause = f"{{{{ ref('{base_model_name}') }}}}"
+                source_comment = f"-- Base layer: {base_model_name} (filtered for NCL practices, excludes sensitive patients)"
+            else:
+                # Use source for all other tables
+                from_clause = f"{{{{ source('{source_name}', '{table_name}') }}}}"
+                source_comment = f"-- Source: {source['database']}.{source['schema']}"
+            
             model_sql = f"""-- Staging model for {source_name}.{table_name}
--- Source: {source['database']}.{source['schema']}
+{source_comment}
 {description_comment}
 select
     {column_list}
-from {{{{ source('{source_name}', '{table_name}') }}}}"""
+from {from_clause}"""
 
             # Create model name with prefix and safe table name
             model_name = f"{prefix}_{table_name_safe}"

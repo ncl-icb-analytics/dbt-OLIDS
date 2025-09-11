@@ -1,5 +1,5 @@
 -- Staging model for olids_core.EPISODE_OF_CARE
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_episode_of_care (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -22,4 +22,4 @@ select
     "episode_of_care_start_date" as episode_of_care_start_date,
     "episode_of_care_end_date" as episode_of_care_end_date,
     "care_manager_practitioner_id" as care_manager_practitioner_id
-from {{ source('olids_core', 'EPISODE_OF_CARE') }}
+from {{ ref('base_olids_episode_of_care') }}

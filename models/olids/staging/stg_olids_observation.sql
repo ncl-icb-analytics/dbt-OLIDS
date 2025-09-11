@@ -1,5 +1,5 @@
 -- Staging model for olids_core.OBSERVATION
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_observation (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -37,4 +37,4 @@ select
     "date_recorded" as date_recorded,
     "is_problem_deleted" as is_problem_deleted,
     "is_confidential" as is_confidential
-from {{ source('olids_core', 'OBSERVATION') }}
+from {{ ref('base_olids_observation') }}

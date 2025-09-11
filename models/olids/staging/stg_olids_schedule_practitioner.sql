@@ -1,5 +1,5 @@
 -- Staging model for olids_core.SCHEDULE_PRACTITIONER
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_schedule_practitioner (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -15,4 +15,4 @@ select
     "lds_start_date_time" as lds_start_date_time,
     "schedule_id" as schedule_id,
     "practitioner_id" as practitioner_id
-from {{ source('olids_core', 'SCHEDULE_PRACTITIONER') }}
+from {{ ref('base_olids_schedule_practitioner') }}

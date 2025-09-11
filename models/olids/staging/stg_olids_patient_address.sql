@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PATIENT_ADDRESS
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_patient_address (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -20,4 +20,4 @@ select
     "end_date" as end_date,
     "lds_end_date_time" as lds_end_date_time,
     "person_id" as person_id
-from {{ source('olids_core', 'PATIENT_ADDRESS') }}
+from {{ ref('base_olids_patient_address') }}

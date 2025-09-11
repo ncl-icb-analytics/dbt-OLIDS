@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PROCEDURE_REQUEST
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_procedure_request (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -28,4 +28,4 @@ select
     "age_at_event_neonate" as age_at_event_neonate,
     "is_confidential" as is_confidential,
     "lds_end_date_time" as lds_end_date_time
-from {{ source('olids_core', 'PROCEDURE_REQUEST') }}
+from {{ ref('base_olids_procedure_request') }}

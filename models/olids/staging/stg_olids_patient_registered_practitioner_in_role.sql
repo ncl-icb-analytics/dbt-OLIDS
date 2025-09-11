@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_patient_registered_practitioner_in_role (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -20,4 +20,4 @@ select
     "episode_of_care_id" as episode_of_care_id,
     "start_date" as start_date,
     "end_date" as end_date
-from {{ source('olids_core', 'PATIENT_REGISTERED_PRACTITIONER_IN_ROLE') }}
+from {{ ref('base_olids_patient_registered_practitioner_in_role') }}

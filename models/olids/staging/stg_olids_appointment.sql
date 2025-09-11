@@ -1,5 +1,5 @@
 -- Staging model for olids_core.APPOINTMENT
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_appointment (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -41,4 +41,4 @@ select
     "national_slot_category_description" as national_slot_category_description,
     "csds_care_contact_identifier" as csds_care_contact_identifier,
     "person_id" as person_id
-from {{ source('olids_core', 'APPOINTMENT') }}
+from {{ ref('base_olids_appointment') }}

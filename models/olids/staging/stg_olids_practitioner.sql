@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PRACTITIONER
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_practitioner (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -20,4 +20,4 @@ select
     "name" as name,
     "is_obsolete" as is_obsolete,
     "lds_end_date_time" as lds_end_date_time
-from {{ source('olids_core', 'PRACTITIONER') }}
+from {{ ref('base_olids_practitioner') }}

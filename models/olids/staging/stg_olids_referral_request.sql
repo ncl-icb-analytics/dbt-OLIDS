@@ -1,5 +1,5 @@
 -- Staging model for olids_core.REFERRAL_REQUEST
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_referral_request (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -36,4 +36,4 @@ select
     "age_at_event_baby" as age_at_event_baby,
     "age_at_event_neonate" as age_at_event_neonate,
     "date_recorded" as date_recorded
-from {{ source('olids_core', 'REFERRAL_REQUEST') }}
+from {{ ref('base_olids_referral_request') }}

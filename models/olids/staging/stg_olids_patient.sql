@@ -1,5 +1,5 @@
 -- Staging model for olids_core.PATIENT
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_patient (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -26,4 +26,4 @@ select
     "is_dummy_patient" as is_dummy_patient,
     "is_spine_sensitive" as is_spine_sensitive,
     "lds_end_date_time" as lds_end_date_time
-from {{ source('olids_core', 'PATIENT') }}
+from {{ ref('base_olids_patient') }}

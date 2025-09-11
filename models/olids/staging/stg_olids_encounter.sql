@@ -1,5 +1,5 @@
 -- Staging model for olids_core.ENCOUNTER
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_encounter (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -33,4 +33,4 @@ select
     "date_recorded" as date_recorded,
     "lds_start_date_time" as lds_start_date_time,
     "lds_end_date_time" as lds_end_date_time
-from {{ source('olids_core', 'ENCOUNTER') }}
+from {{ ref('base_olids_encounter') }}

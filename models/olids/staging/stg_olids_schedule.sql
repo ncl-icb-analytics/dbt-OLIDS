@@ -1,5 +1,5 @@
 -- Staging model for olids_core.SCHEDULE
--- Source: "Data_Store_OLIDS_Alpha"."OLIDS_MASKED"
+-- Base layer: base_olids_schedule (filtered for NCL practices, excludes sensitive patients)
 -- Description: Core OLIDS patient and clinical data
 
 select
@@ -21,4 +21,4 @@ select
     "type" as type,
     "name" as name,
     "is_private" as is_private
-from {{ source('olids_core', 'SCHEDULE') }}
+from {{ ref('base_olids_schedule') }}
