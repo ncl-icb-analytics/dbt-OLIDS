@@ -10,7 +10,7 @@ Business Logic:
    - Patients aged 17+ from base population (excludes those on CKD and Diabetes registers)
 
 2. Condition Criteria (must have at least one):
-   - AKI in last 3 years ('CKD_ACUTE_KIDNEY_INJURY')
+   - AKI in last 3 years ('CKD_AKI')
    - BPH or Gout ('CKD_BPH_GOUT')
    - Lithium/Sulfasalazine/Tacrolimus medications in last 6 months
    - Valid microhaematuria (complex logic with UACR and urine tests)
@@ -19,7 +19,7 @@ Business Logic:
    - Must NOT have had eGFR test in last 12 months
 
 4. Microhaematuria Validation:
-   - Has microhaematuria ('HAEMATURIA')
+   - Has microhaematuria ('Hematuria')
    - AND either: no negative urine test after haematuria OR has UACR > 30 after haematuria
 
 Implementation Notes:
@@ -57,7 +57,7 @@ clinical_events AS (
         mapped_concept_display AS concept_display,
         -- Flag each type of event
         coalesce(
-            cluster_id = 'CKD_ACUTE_KIDNEY_INJURY'
+            cluster_id = 'CKD_AKI'
             AND clinical_effective_date >= dateadd(MONTH, -36, current_date()),
             FALSE
         ) AS is_aki,
@@ -69,26 +69,26 @@ clinical_events AS (
         )
         AND clinical_effective_date >= dateadd(MONTH, -6, current_date()),
         FALSE) AS is_lithium,
-        coalesce(cluster_id = 'HAEMATURIA', FALSE) AS is_microhaematuria,
+        coalesce(cluster_id = 'Hematuria', FALSE) AS is_microhaematuria,
         coalesce(
             cluster_id = 'UACR_TESTING' AND result_value > 30,
             FALSE
         ) AS is_uacr_high,
         coalesce(cluster_id IN (
-            'URINE_BLOOD_NEGATIVE', 'PROTEINURIA_FINDINGS'
+            'Urine_Blood_Neg', 'Proteinuria'
         ),
         FALSE) AS is_urine_test
     FROM {{ ref('int_ltc_lcs_ckd_observations') }}
     WHERE cluster_id IN (
-        'CKD_ACUTE_KIDNEY_INJURY',
+        'CKD_AKI',
         'CKD_BPH_GOUT',
         'LITHIUM_MEDICATIONS',
         'SULFASALAZINE_MEDICATIONS',
         'TACROLIMUS_MEDICATIONS',
-        'HAEMATURIA',
+        'Hematuria',
         'UACR_TESTING',
-        'URINE_BLOOD_NEGATIVE',
-        'PROTEINURIA_FINDINGS'
+        'Urine_Blood_Neg',
+        'Proteinuria'
     )
 ),
 
@@ -134,7 +134,7 @@ egfr_in_last_year AS (
     SELECT DISTINCT person_id
     FROM {{ ref('int_ltc_lcs_ckd_observations') }}
     WHERE
-        cluster_id = 'EGFR_TESTING'
+        cluster_id IN ('EGFR_COD_LCS', 'EGFR_COD')
         AND result_value IS NOT NULL
         AND cast(result_value AS number) > 0
         AND clinical_effective_date >= dateadd(MONTH, -12, current_date())

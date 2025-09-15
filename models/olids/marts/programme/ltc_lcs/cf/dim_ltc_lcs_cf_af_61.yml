@@ -3,7 +3,7 @@ models:
   - name: dim_ltc_lcs_cf_af_61
     description: 'Atrial fibrillation case finding for patients on cardiac medications who may have undiagnosed AF.
 
-      One row per person on anticoagulants, digoxin, or cardiac glycosides (excludes DVT and existing AF/flutter diagnoses).'
+      One row per person on anticoagulants, AF drugs, digoxin, cardiac glycosides, or protamine drugs (excludes DVT and existing AF/flutter diagnoses).'
     
     config:
       meta:
@@ -13,9 +13,10 @@ models:
           category: "AF"
           clinical_domain: "Cardiovascular Case Finding"
           name_short: "On cardiac medication"
-          description_short: "Patients on anticoagulants/digoxin without AF diagnosis"
+          description_short: "Patients on cardiac medications without AF diagnosis"
           description_long: >
-            On anticoagulants, digoxin, or cardiac glycosides without AF diagnosis.
+            On anticoagulants, AF drugs, digoxin, cardiac glycosides, or protamine drugs without AF diagnosis.
+            Uses differential time windows: 6 months for anticoagulants/protamine, 3 months for other medications.
             Excludes DVT, atrial flutter, existing AF/flutter diagnoses.
           is_qof: false
           source_column: "person_id"
@@ -24,15 +25,24 @@ models:
             - "LTC_LCS_DASHBOARD"
             - "CASE_FINDING_PROGRAMME"
           code_clusters:
-            - cluster_id: "ORAL_ANTICOAGULANT_2_8_2"
+            - cluster_id: "ORANTICOAG_2.8.2"
               category: "INCLUSION"
-            - cluster_id: "DIGOXIN_MEDICATIONS"
+              time_window: "6_MONTHS"
+            - cluster_id: "DRUGS_USED_IN_AF"
               category: "INCLUSION"
+              time_window: "3_MONTHS"
+            - cluster_id: "DIGOXIN"
+              category: "INCLUSION"
+              time_window: "3_MONTHS"
             - cluster_id: "CARDIAC_GLYCOSIDES"
               category: "INCLUSION"
-            - cluster_id: "DEEP_VEIN_THROMBOSIS"
+              time_window: "3_MONTHS"
+            - cluster_id: "PROTAMINE_DRUGS"
+              category: "INCLUSION"
+              time_window: "6_MONTHS"
+            - cluster_id: "DVT"
               category: "EXCLUSION"
-            - cluster_id: "ATRIAL_FLUTTER"
+            - cluster_id: "AF_FLUTTER"
               category: "EXCLUSION"
             - cluster_id: "ATRIAL_FIBRILLATION_61_EXCLUSIONS"
               category: "EXCLUSION"

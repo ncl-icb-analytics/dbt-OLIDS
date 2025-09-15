@@ -26,7 +26,7 @@ gestational_diabetes_risk AS (
             ORDER BY mapped_concept_display
         ) AS all_gestational_diabetes_displays
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
-    WHERE cluster_id = 'GESTATIONAL_DIABETES_PREGNANCY_RISK'
+    WHERE cluster_id = 'DM_GESTDIAB_AND_PREG_RISK'
     GROUP BY person_id
 ),
 

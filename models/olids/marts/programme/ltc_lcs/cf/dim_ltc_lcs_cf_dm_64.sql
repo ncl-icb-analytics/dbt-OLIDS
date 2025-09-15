@@ -21,14 +21,14 @@ bame_population AS (
         person_id,
         TRUE AS is_bame
     FROM {{ ref('int_ltc_lcs_ethnicity_observations') }}
-    WHERE cluster_id = 'ETHNICITY_BAME'
+    WHERE cluster_id = 'BAME_ETHNICITY'
     EXCEPT
     SELECT DISTINCT
         person_id,
         TRUE AS is_bame
     FROM {{ ref('int_ltc_lcs_ethnicity_observations') }}
     WHERE
-        cluster_id IN ('ETHNICITY_WHITE_BRITISH', 'DIABETES_EXCLUDED_ETHNICITY')
+        cluster_id IN ('WHITE_BRITISH', 'DM_EXCL_ETHNICITY')
 ),
 
 bmi_measurements AS (
@@ -41,7 +41,7 @@ bmi_measurements AS (
         mapped_concept_display
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
     WHERE
-        cluster_id = 'BMI_MEASUREMENT'
+        cluster_id = 'BMI_CODES'
         AND result_value > 0
 ),
 

@@ -21,14 +21,14 @@ bame_population AS (
         person_id,
         TRUE AS is_bame
     FROM {{ ref('int_ltc_lcs_ethnicity_observations') }}
-    WHERE cluster_id = 'ETHNICITY_BAME'
+    WHERE cluster_id = 'BAME_ETHNICITY'
     EXCEPT
     SELECT DISTINCT
         person_id,
         TRUE AS is_bame
     FROM {{ ref('int_ltc_lcs_ethnicity_observations') }}
     WHERE
-        cluster_id IN ('ETHNICITY_WHITE_BRITISH', 'DIABETES_EXCLUDED_ETHNICITY')
+        cluster_id IN ('WHITE_BRITISH', 'DM_EXCL_ETHNICITY')
 ),
 
 bmi_measurements AS (
@@ -41,7 +41,7 @@ bmi_measurements AS (
         mapped_concept_display
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
     WHERE
-        cluster_id = 'BMI_MEASUREMENT'
+        cluster_id = 'BMI_CODES'
         AND result_value > 0
 ),
 
@@ -80,6 +80,12 @@ recent_hba1c AS (
         ROW_NUMBER()
             OVER (PARTITION BY person_id ORDER BY clinical_effective_date DESC)
         = 1
+),
+
+dm_64_exclusions AS (
+    -- Get patients already identified in DM_64 (for exclusion)
+    SELECT DISTINCT person_id
+    FROM {{ ref('dim_ltc_lcs_cf_dm_64') }}
 )
 
 -- Final selection with moderate BMI assessment
@@ -109,6 +115,7 @@ FROM base_population AS bp
 LEFT JOIN bame_population AS bame ON bp.person_id = bame.person_id
 LEFT JOIN latest_bmi AS bmi ON bp.person_id = bmi.person_id
 LEFT JOIN recent_hba1c AS hba1c ON bp.person_id = hba1c.person_id
+LEFT JOIN dm_64_exclusions AS dm64 ON bp.person_id = dm64.person_id
 WHERE (
     (
         bame.is_bame = TRUE
@@ -122,3 +129,4 @@ WHERE (
     )
 )
 AND hba1c.person_id IS NULL
+AND dm64.person_id IS NULL

@@ -20,12 +20,7 @@ statin_medications AS (
         MAX(order_date) AS latest_statin_date
     FROM {{ ref('int_ltc_lcs_cvd_medications') }}
     WHERE
-        cluster_id IN (
-            'STATIN_CVD_MEDICATIONS',
-            'STATIN_CVD_63_MEDICATIONS',
-            'STATIN_CVD_64_MEDICATIONS',
-            'STATIN_CVD_65_MEDICATIONS'
-        )
+        cluster_id = 'STAT_COD'
         AND order_date >= DATEADD('month', -12, CURRENT_DATE())
     GROUP BY person_id
 ),
@@ -83,6 +78,6 @@ FROM base_population AS bp
 LEFT JOIN statin_medications AS sm ON bp.person_id = sm.person_id
 LEFT JOIN statin_exclusions AS se ON bp.person_id = se.person_id
 WHERE
-    NOT COALESCE(sm.person_id IS NOT NULL, FALSE)  -- Not on statins
-    AND NOT COALESCE(se.latest_statin_allergy_date IS NOT NULL, FALSE)  -- No statin allergies
-    AND NOT COALESCE(se.latest_statin_decision_date IS NOT NULL, FALSE)  -- No statin decisions
+    sm.person_id IS NULL  -- Not on statins
+    AND se.latest_statin_allergy_date IS NULL  -- No statin allergies
+    AND se.latest_statin_decision_date IS NULL  -- No statin decisions

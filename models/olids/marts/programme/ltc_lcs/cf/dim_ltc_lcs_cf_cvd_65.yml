@@ -35,7 +35,7 @@ models:
           code_clusters:
             - cluster_id: "QRISK2_RESULTS"
               category: "INCLUSION"
-            - cluster_id: "MODERATE_DOSE_STATIN_MEDICATIONS"
+            - cluster_id: "STAT_COD"
               category: "MONITORING"
             - cluster_id: "CVD_REGISTER_CODES"
               category: "EXCLUSION"

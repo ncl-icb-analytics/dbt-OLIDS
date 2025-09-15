@@ -27,7 +27,7 @@ hba1c_readings AS (
         mapped_concept_display
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
     WHERE
-        cluster_id = 'HBA1C_LEVEL'
+        cluster_id = 'HBA1C'
         AND result_value > 0
         AND clinical_effective_date >= DATEADD(YEAR, -5, CURRENT_DATE())
 ),
@@ -86,7 +86,7 @@ gestational_diabetes AS (
         person_id,
         TRUE AS has_gestational_diabetes
     FROM {{ ref('int_ltc_lcs_dm_observations') }}
-    WHERE cluster_id = 'HISTORY_GESTATIONAL_DIABETES'
+    WHERE cluster_id = 'GESTDIAB_COD'
 )
 
 -- Final selection with risk assessment

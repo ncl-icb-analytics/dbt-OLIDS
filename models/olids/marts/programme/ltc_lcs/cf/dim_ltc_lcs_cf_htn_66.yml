@@ -6,11 +6,11 @@ models:
 
       Business Logic:
 
-      • Identifies patients with stage 1 hypertension (clinic BP 140-159/90-99, home/ABPM 135-149/85-94)
+      • Identifies patients with stage 1 hypertension without cardiovascular risk factors
 
-      • Excludes patients with existing cardiovascular risk factors or complications
+      • Age-based thresholds: <80 years (clinic ≥140/90, home ≥135/85), ≥80 years (clinic ≥150/90, home ≥145/85)
 
-      • Targets patients suitable for lifestyle intervention rather than immediate drug treatment
+      • Excludes patients with CVD risk factors and higher priority HTN categories
 
       • One row per eligible person with latest blood pressure readings and risk factor status'
     
@@ -24,8 +24,8 @@ models:
           name_short: "Stage 1 low risk"
           description_short: "Patients with stage 1 hypertension without cardiovascular risk factors"
           description_long: >
-            Stage 1 HTN: clinic 140-159/90-99 mmHg, home/ABPM
-            135-149/85-94 mmHg. No CVD risk factors - lifestyle intervention.
+            Stage 1 HTN without CVD risk factors. Age-specific thresholds:
+            <80y: clinic ≥140/90, home ≥135/85; ≥80y: clinic ≥150/90, home ≥145/85.
           is_qof: false
           source_column: "person_id"
           sort_order: "LTC_LCS_HTN_66"
@@ -42,31 +42,59 @@ models:
             - cluster_id: "HYPERTENSION_REGISTER_CODES"
               category: "EXCLUSION"
           thresholds:
-            - population_group: "ALL_ADULTS"
+            - population_group: "ADULTS_UNDER_80"
               threshold_type: "CLINIC_SYSTOLIC_BP"
-              threshold_value: "140-159"
-              threshold_operator: "WITHIN"
+              threshold_value: "140"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
               threshold_unit: "mmHg"
-              description: "Clinic systolic BP 140-159 mmHg (stage 1) without CVD risk"
+              description: "Clinic systolic BP ≥140 mmHg (age <80)"
               sort_order: 1
-            - population_group: "ALL_ADULTS"
+            - population_group: "ADULTS_UNDER_80"
               threshold_type: "CLINIC_DIASTOLIC_BP"
-              threshold_value: "90-99"
-              threshold_operator: "WITHIN"
+              threshold_value: "90"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
               threshold_unit: "mmHg"
-              description: "Clinic diastolic BP 90-99 mmHg (stage 1) without CVD risk"
+              description: "Clinic diastolic BP ≥90 mmHg (age <80)"
               sort_order: 2
-            - population_group: "ALL_ADULTS"
-              threshold_type: "HOME_ABPM_SYSTOLIC_BP"
-              threshold_value: "135-149"
-              threshold_operator: "WITHIN"
+            - population_group: "ADULTS_80_PLUS"
+              threshold_type: "CLINIC_SYSTOLIC_BP"
+              threshold_value: "150"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
               threshold_unit: "mmHg"
-              description: "Home/ABPM systolic BP 135-149 mmHg (stage 1) without CVD risk"
+              description: "Clinic systolic BP ≥150 mmHg (age ≥80)"
               sort_order: 3
-            - population_group: "ALL_ADULTS"
-              threshold_type: "HOME_ABPM_DIASTOLIC_BP"
-              threshold_value: "85-94"
-              threshold_operator: "WITHIN"
+            - population_group: "ADULTS_80_PLUS"
+              threshold_type: "CLINIC_DIASTOLIC_BP"
+              threshold_value: "90"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
               threshold_unit: "mmHg"
-              description: "Home/ABPM diastolic BP 85-94 mmHg (stage 1) without CVD risk"
+              description: "Clinic diastolic BP ≥90 mmHg (age ≥80)"
               sort_order: 4
+            - population_group: "ADULTS_UNDER_80"
+              threshold_type: "HOME_ABPM_SYSTOLIC_BP"
+              threshold_value: "135"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "mmHg"
+              description: "Home/ABPM systolic BP ≥135 mmHg (age <80)"
+              sort_order: 5
+            - population_group: "ADULTS_UNDER_80"
+              threshold_type: "HOME_ABPM_DIASTOLIC_BP"
+              threshold_value: "85"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "mmHg"
+              description: "Home/ABPM diastolic BP ≥85 mmHg (age <80)"
+              sort_order: 6
+            - population_group: "ADULTS_80_PLUS"
+              threshold_type: "HOME_ABPM_SYSTOLIC_BP"
+              threshold_value: "145"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "mmHg"
+              description: "Home/ABPM systolic BP ≥145 mmHg (age ≥80)"
+              sort_order: 7
+            - population_group: "ADULTS_80_PLUS"
+              threshold_type: "HOME_ABPM_DIASTOLIC_BP"
+              threshold_value: "85"
+              threshold_operator: "GREATER_THAN_OR_EQUAL"
+              threshold_unit: "mmHg"
+              description: "Home/ABPM diastolic BP ≥85 mmHg (age ≥80)"
+              sort_order: 8

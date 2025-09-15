@@ -3,11 +3,13 @@
 
 -- HTN_66 case finding: Stage 1 hypertension without cardiovascular risk factors
 -- Identifies patients with stage 1 hypertension but NO cardiovascular risk factors
+-- Implements age-based exclusion logic for patients aged ≥80
 
 WITH latest_bp AS (
     -- Get latest blood pressure reading for each person
     SELECT
         bp.person_id,
+        base.age,
         bp.clinical_effective_date AS latest_bp_date,
         bp.systolic_value,
         bp.diastolic_value,
@@ -27,7 +29,8 @@ WITH latest_bp AS (
             FALSE
         ) AS is_home_bp
     FROM {{ ref('int_blood_pressure_all') }} AS bp
-    INNER JOIN {{ ref('int_ltc_lcs_cf_base_population') }} USING (person_id)
+    INNER JOIN {{ ref('int_ltc_lcs_cf_base_population') }} AS base 
+        ON bp.person_id = base.person_id
     QUALIFY
         row_number()
             OVER (
@@ -118,11 +121,13 @@ patients_without_risk_factors AS (
 
 eligible_patients AS (
     -- Patients without risk factors and stage 1 hypertension
+    -- Implements age-based thresholds per legacy logic
     SELECT
         bp.person_id,
-        pnrf.age,
+        bp.age,
         bp.latest_bp_date,
-        bp.systolic_value AS latest_bp_value,
+        bp.systolic_value,
+        bp.diastolic_value,
         bp.latest_bp_type,
         bp.is_clinic_bp,
         bp.is_home_bp,
@@ -133,14 +138,36 @@ eligible_patients AS (
         patients_without_risk_factors AS pnrf
         ON bp.person_id = pnrf.person_id
     WHERE (
+        -- For patients under 80: standard thresholds
         (
-            bp.is_clinic_bp
-            AND (bp.systolic_value >= 140 OR bp.diastolic_value >= 90)
+            bp.age < 80
+            AND (
+                (
+                    bp.is_clinic_bp
+                    AND (bp.systolic_value >= 140 OR bp.diastolic_value >= 90)
+                )
+                OR
+                (
+                    bp.is_home_bp
+                    AND (bp.systolic_value >= 135 OR bp.diastolic_value >= 85)
+                )
+            )
         )
         OR
+        -- For patients 80 and over: higher thresholds
         (
-            bp.is_home_bp
-            AND (bp.systolic_value >= 135 OR bp.diastolic_value >= 85)
+            bp.age >= 80
+            AND (
+                (
+                    bp.is_clinic_bp
+                    AND (bp.systolic_value >= 150 OR bp.diastolic_value >= 90)
+                )
+                OR
+                (
+                    bp.is_home_bp
+                    AND (bp.systolic_value >= 145 OR bp.diastolic_value >= 85)
+                )
+            )
         )
     )
 )
@@ -152,8 +179,16 @@ SELECT
     ep.has_cardiovascular_risk_factors,
     ep.has_stage_1_hypertension_no_risk,
     ep.latest_bp_date,
-    ep.latest_bp_value,
+    ep.systolic_value AS latest_systolic_value,
+    ep.diastolic_value AS latest_diastolic_value,
     ep.latest_bp_type,
     ep.is_clinic_bp,
-    ep.is_home_bp
+    ep.is_home_bp,
+    -- Add threshold info for transparency
+    CASE
+        WHEN ep.age >= 80 AND ep.is_clinic_bp THEN '≥150/90'
+        WHEN ep.age >= 80 AND ep.is_home_bp THEN '≥145/85'
+        WHEN ep.age < 80 AND ep.is_clinic_bp THEN '≥140/90'
+        WHEN ep.age < 80 AND ep.is_home_bp THEN '≥135/85'
+    END AS applicable_threshold
 FROM eligible_patients AS ep

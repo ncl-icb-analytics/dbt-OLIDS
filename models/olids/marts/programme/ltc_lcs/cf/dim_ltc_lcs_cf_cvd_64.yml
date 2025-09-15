@@ -1,18 +1,18 @@
 version: 2
 models:
   - name: dim_ltc_lcs_cf_cvd_64
-    description: 'Case finding for patients from CVD base population requiring high-dose statin therapy.
+    description: 'Case finding for patients from CVD base population NOT on statins who should start high-dose therapy.
 
 
       Business Logic:
 
-      • Identifies all patients from cardiovascular base population needing high-dose statins
+      • Identifies CVD base population patients NOT on statins (last 12 months)
 
-      • Tracks current high-dose statin prescription patterns and medication history
+      • Excludes patients with statin decisions (last 60 months)
 
-      • Supports cardiovascular medication optimisation for secondary prevention
+      • Supports initiation of high-dose statin therapy for secondary prevention
 
-      • One row per person in CVD base population requiring intensive lipid management'
+      • One row per person needing to start intensive lipid management'
     
     config:
       meta:
@@ -22,10 +22,10 @@ models:
           category: "CVD"
           clinical_domain: "Cardiovascular Disease Case Finding"
           name_short: "High-dose statin"
-          description_short: "CVD base population requiring high-dose statin therapy"
+          description_short: "CVD patients not on statins needing to start high-dose therapy"
           description_long: >
-            CVD base population requiring high-dose statins for secondary
-            prevention. Intensive lipid management.
+            CVD base population NOT on statins (12 months) and no statin decision (60 months).
+            Need to start high-dose statins for secondary prevention.
           is_qof: false
           source_column: "person_id"
           sort_order: "LTC_LCS_CVD_64"
@@ -35,8 +35,12 @@ models:
           code_clusters:
             - cluster_id: "CVD_REGISTER_CODES"
               category: "INCLUSION"
-            - cluster_id: "HIGH_DOSE_STATIN_MEDICATIONS"
-              category: "MONITORING"
+            - cluster_id: "STAT_COD"
+              category: "EXCLUSION"
+              time_window: "12_MONTHS"
+            - cluster_id: "STATINDEC_COD"
+              category: "EXCLUSION"
+              time_window: "60_MONTHS"
           thresholds:
             - population_group: "CVD_BASE_POPULATION"
               threshold_type: "STATIN_INTENSITY"

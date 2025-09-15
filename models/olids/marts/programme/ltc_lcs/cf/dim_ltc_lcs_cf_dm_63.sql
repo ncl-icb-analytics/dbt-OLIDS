@@ -4,7 +4,7 @@
 -- Intermediate model for LTC LCS CF DM_63 case finding
 -- Patients who meet ALL of the following criteria:
 -- 1. Latest HbA1c reading is ≥ 46 but < 48 mmol/mol
--- 2. No HbA1c reading in the last 12 months
+-- 2. Latest HbA1c reading is more than 12 months old
 
 WITH base_population AS (
     -- Get base population aged 17+ (already excludes LTC registers and NHS health checks)
@@ -49,11 +49,15 @@ latest_hba1c AS (
         = 1
 ),
 
-recent_hba1c AS (
-    -- Get patients with HbA1c in last 12 months (for exclusion)
-    SELECT DISTINCT person_id
-    FROM hba1c_readings
-    WHERE clinical_effective_date >= DATEADD(YEAR, -1, CURRENT_DATE())
+old_hba1c_check AS (
+    -- Check if latest HbA1c is more than 12 months old
+    SELECT 
+        person_id,
+        CASE 
+            WHEN latest_hba1c_date <= DATEADD(YEAR, -1, CURRENT_DATE()) THEN TRUE 
+            ELSE FALSE 
+        END AS is_hba1c_old_enough
+    FROM latest_hba1c
 )
 
 -- Final selection with elevated HbA1c assessment
@@ -67,12 +71,12 @@ SELECT
     COALESCE(
         hba1c.latest_hba1c_value >= 46
         AND hba1c.latest_hba1c_value < 48
-        AND rh.person_id IS NULL, FALSE
+        AND ohc.is_hba1c_old_enough = TRUE, FALSE
     ) AS has_elevated_hba1c
 FROM base_population AS bp
 LEFT JOIN latest_hba1c AS hba1c ON bp.person_id = hba1c.person_id
-LEFT JOIN recent_hba1c AS rh ON bp.person_id = rh.person_id
+LEFT JOIN old_hba1c_check AS ohc ON bp.person_id = ohc.person_id
 WHERE
     hba1c.latest_hba1c_value >= 46
     AND hba1c.latest_hba1c_value < 48
-    AND rh.person_id IS NULL
+    AND ohc.is_hba1c_old_enough = TRUE

@@ -2,7 +2,7 @@
     materialized='table') }}
 
 -- CVD_66 case finding: Statin review for patients aged 75-83
--- Identifies patients aged 75-83 who need QRISK2 assessment due to lack of recent readings
+-- Identifies patients aged 75-83 without QRISK2 readings in last 60 months
 
 WITH base_population AS (
     -- Get base population aged 75-83
@@ -20,12 +20,7 @@ statin_medications AS (
         MAX(order_date) AS latest_statin_date
     FROM {{ ref('int_ltc_lcs_cvd_medications') }}
     WHERE
-        cluster_id IN (
-            'STATIN_CVD_MEDICATIONS',
-            'STATIN_CVD_63_MEDICATIONS',
-            'STATIN_CVD_64_MEDICATIONS',
-            'STATIN_CVD_65_MEDICATIONS'
-        )
+        cluster_id = 'STAT_COD'
         AND order_date >= DATEADD('month', -12, CURRENT_DATE())
     GROUP BY person_id
 ),
@@ -77,8 +72,20 @@ health_checks AS (
     GROUP BY person_id
 ),
 
+qrisk2_recent AS (
+    -- Get patients with QRISK2 readings in last 60 months (to exclude)
+    SELECT DISTINCT
+        person_id,
+        MAX(clinical_effective_date) AS latest_qrisk2_date
+    FROM {{ ref('int_ltc_lcs_cvd_observations') }}
+    WHERE 
+        cluster_id = 'QRISK2_10YEAR'
+        AND clinical_effective_date >= DATEADD('month', -60, CURRENT_DATE())
+    GROUP BY person_id
+),
+
 eligible_patients AS (
-    -- Patients aged 75-83 not on statins, no allergies, no recent decisions, no health checks
+    -- Patients aged 75-83 not on statins, no allergies, no recent decisions, no health checks, no recent QRISK2
     SELECT
         bp.person_id,
         bp.age
@@ -86,11 +93,13 @@ eligible_patients AS (
     LEFT JOIN statin_medications AS sm ON bp.person_id = sm.person_id
     LEFT JOIN statin_exclusions AS se ON bp.person_id = se.person_id
     LEFT JOIN health_checks AS hc ON bp.person_id = hc.person_id
+    LEFT JOIN qrisk2_recent AS qr ON bp.person_id = qr.person_id
     WHERE
         NOT COALESCE(sm.person_id IS NOT NULL, FALSE)  -- Not on statins
         AND NOT COALESCE(se.latest_statin_allergy_date IS NOT NULL, FALSE)  -- No statin allergies
         AND NOT COALESCE(se.latest_statin_decision_date IS NOT NULL, FALSE)  -- No statin decisions
         AND NOT COALESCE(hc.person_id IS NOT NULL, FALSE)  -- No health checks in last 24 months
+        AND NOT COALESCE(qr.person_id IS NOT NULL, FALSE)  -- No QRISK2 in last 60 months
 ),
 
 latest_qrisk2 AS (
