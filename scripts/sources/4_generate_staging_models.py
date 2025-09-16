@@ -205,34 +205,62 @@ def main():
             if not columns:
                 continue  # Skip tables with no columns listed
 
-            # Quote source columns and use safe column names
-            column_mappings = []
-            for col in columns:
-                safe_col = sanitise_column_name(col)
-                column_mappings.append(f'"{col}" as {safe_col}')
-            
-            column_list = ',\n    '.join(column_mappings)
-            
             # Add description if available
             description_comment = ""
             if source.get('description'):
                 description_comment = f"-- Description: {source.get('description')}\n"
-            
+
             # Determine if we should use base layer or source
             if source_name == 'olids_core':
-                # Special handling for PATIENT table - use base_olids_patient
-                if table_name.upper() == 'PATIENT':
+                # Special handling for generated tables with custom column lists
+                if table_name.upper() == 'PATIENT_PERSON':
+                    base_model_name = 'base_olids_patient_person'
+                    # Use the actual columns from the generated base model
+                    base_columns = ['lakehousedateprocessed', 'lakehousedatetimeupdated', 'lds_record_id',
+                                  'lds_id', 'id', 'lds_datetime_data_acquired', 'lds_start_date_time',
+                                  'lds_dataset_id', 'patient_id', 'person_id']
+                elif table_name.upper() == 'PERSON':
+                    base_model_name = 'base_olids_person'
+                    # Use the actual columns from the generated base model
+                    base_columns = ['id', 'nhs_number_hash', 'title', 'gender_concept_id',
+                                  'birth_year', 'birth_month', 'death_year', 'death_month']
+                elif table_name.upper() == 'PATIENT':
                     base_model_name = 'base_olids_patient'
+                    # Use the source columns for regular tables
+                    base_columns = [sanitise_column_name(col) for col in columns]
                 else:
                     base_model_name = f'base_olids_{table_name_safe}'
-                
-                # Use base layer for OLIDS core tables
+                    # Use the source columns for regular tables
+                    base_columns = [sanitise_column_name(col) for col in columns]
+
+                # Use base layer for OLIDS core tables - columns are already unquoted
                 from_clause = f"{{{{ ref('{base_model_name}') }}}}"
                 source_comment = f"-- Base layer: {base_model_name} (filtered for NCL practices, excludes sensitive patients)"
+
+                # For base layer references, use the determined column list
+                column_mappings = base_columns
+
+            elif source_name == 'olids_terminology':
+                # Use base layer for terminology tables
+                base_model_name = f'base_olids_terminology_{table_name_safe}'
+                from_clause = f"{{{{ ref('{base_model_name}') }}}}"
+                source_comment = f"-- Base layer: {base_model_name} (terminology data with unquoted identifiers)"
+
+                # For base layer references, use unquoted column names directly
+                column_mappings = [sanitise_column_name(col) for col in columns]
+
             else:
-                # Use source for all other tables
+                # Use source for all other tables - need to map quoted → unquoted
                 from_clause = f"{{{{ source('{source_name}', '{table_name}') }}}}"
                 source_comment = f"-- Source: {source['database']}.{source['schema']}"
+
+                # For direct source references, map quoted source columns to unquoted target columns
+                column_mappings = []
+                for col in columns:
+                    safe_col = sanitise_column_name(col)
+                    column_mappings.append(f'"{col}" as {safe_col}')
+
+            column_list = ',\n    '.join(column_mappings)
             
             model_sql = f"""-- Staging model for {source_name}.{table_name}
 {source_comment}

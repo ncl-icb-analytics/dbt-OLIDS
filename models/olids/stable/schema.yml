@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: stable_olids_observation
+    description: |
+      Incremental observation table for production stability.
+
+      Provides a stable interface between volatile Alpha data and analytical models.
+      Uses incremental materialisation with clustering for optimal query performance.
+
+    columns:
+      - name: id
+        description: Unique observation identifier
+
+      - name: patient_id
+        description: Patient identifier
+
+      - name: observation_source_concept_id
+        description: Source concept for observation classification
+
+      - name: clinical_effective_date
+        description: Date when observation was clinically effective
+
+      - name: lds_lakehouse_datetime_updated
+        description: Timestamp for incremental processing

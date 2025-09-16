@@ -1,24 +1,31 @@
--- Staging model for olids_core.DIAGNOSTIC_ORDER
--- Base layer: base_olids_diagnostic_order (filtered for NCL practices, excludes sensitive patients)
--- Description: Core OLIDS patient and clinical data
+{{
+    config(
+        materialized='incremental',
+        unique_key='id',
+        on_schema_change='fail',
+        cluster_by=['observation_source_concept_id', 'clinical_effective_date'],
+        tags=['stable']
+    )
+}}
 
 select
     lds_record_id,
     id,
     patient_id,
+    person_id,
     encounter_id,
     practitioner_id,
     parent_observation_id,
     clinical_effective_date,
     date_precision_concept_id,
     result_value,
-    result_value_units,
+    result_value_unit_concept_id,
     result_date,
     result_text,
     is_problem,
     is_review,
     problem_end_date,
-    diagnostic_order_source_concept_id,
+    observation_source_concept_id,
     age_at_event,
     age_at_event_baby,
     age_at_event_neonate,
@@ -26,7 +33,8 @@ select
     is_primary,
     date_recorded,
     is_deleted,
-    person_id,
+    is_problem_deleted,
+    is_confidential,
     lds_id,
     lds_business_key,
     lds_dataset_id,
@@ -35,8 +43,11 @@ select
     record_owner_organisation_code,
     lds_datetime_data_acquired,
     lds_initial_data_received_date,
-    lds_is_deleted,
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('base_olids_diagnostic_order') }}
+from {{ ref('base_olids_observation') }}
+
+{% if is_incremental() %}
+    where lds_lakehouse_datetime_updated > (select max(lds_lakehouse_datetime_updated) from {{ this }})
+{% endif %}
