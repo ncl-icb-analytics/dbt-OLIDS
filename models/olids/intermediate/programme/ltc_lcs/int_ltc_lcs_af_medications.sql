@@ -4,25 +4,25 @@
 
 WITH all_af_medications AS (
     {{ get_medication_orders(
-        cluster_id="'ORANTICOAG_2.8.2','DRUGS_USED_IN_AF','DIGOXIN','CARDIAC_GLYCOSIDES','PROTAMINE_DRUGS'",
+        cluster_id="'ORAL_ANTICOAGULANT_2_8_2','AF_MEDICATIONS','DIGOXIN_MEDICATIONS','CARDIAC_GLYCOSIDES','PROTAMINE_MEDICATIONS'",
         source="LTC_LCS"
     ) }}
 )
 SELECT 
     *,
     CASE 
-        WHEN cluster_id IN ('ORANTICOAG_2.8.2', 'PROTAMINE_DRUGS') 
+        WHEN cluster_id IN ('ORAL_ANTICOAGULANT_2_8_2', 'PROTAMINE_MEDICATIONS') 
             AND order_date >= dateadd(MONTH, -6, current_date())
         THEN TRUE
-        WHEN cluster_id IN ('DRUGS_USED_IN_AF', 'DIGOXIN', 'CARDIAC_GLYCOSIDES')
+        WHEN cluster_id IN ('AF_MEDICATIONS', 'DIGOXIN_MEDICATIONS', 'CARDIAC_GLYCOSIDES')
             AND order_date >= dateadd(MONTH, -3, current_date())
         THEN TRUE
         ELSE FALSE
     END AS is_active_medication
 FROM all_af_medications
 WHERE 
-    (cluster_id IN ('ORANTICOAG_2.8.2', 'PROTAMINE_DRUGS') 
+    (cluster_id IN ('ORAL_ANTICOAGULANT_2_8_2', 'PROTAMINE_MEDICATIONS') 
         AND order_date >= dateadd(MONTH, -6, current_date()))
     OR 
-    (cluster_id IN ('DRUGS_USED_IN_AF', 'DIGOXIN', 'CARDIAC_GLYCOSIDES')
+    (cluster_id IN ('AF_MEDICATIONS', 'DIGOXIN_MEDICATIONS', 'CARDIAC_GLYCOSIDES')
         AND order_date >= dateadd(MONTH, -3, current_date()))

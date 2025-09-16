@@ -8,15 +8,15 @@ WITH af_meds AS (
     SELECT
         person_id,
         MAX(
-            CASE WHEN cluster_id = 'ORANTICOAG_2.8.2' THEN 1 ELSE 0 END
+            CASE WHEN cluster_id = 'ORAL_ANTICOAGULANT_2_8_2' THEN 1 ELSE 0 END
         ) AS has_active_anticoagulant,
         MAX(CASE WHEN cluster_id = 'DIGOXIN' THEN 1 ELSE 0 END)
             AS has_active_digoxin,
         MAX(CASE WHEN cluster_id = 'CARDIAC_GLYCOSIDES' THEN 1 ELSE 0 END)
             AS has_active_cardiac_glycoside,
-        MAX(CASE WHEN cluster_id = 'DRUGS_USED_IN_AF' THEN 1 ELSE 0 END)
+        MAX(CASE WHEN cluster_id = 'AF_MEDICATIONS' THEN 1 ELSE 0 END)
             AS has_active_af_drugs,
-        MAX(CASE WHEN cluster_id = 'PROTAMINE_DRUGS' THEN 1 ELSE 0 END)
+        MAX(CASE WHEN cluster_id = 'PROTAMINE_MEDICATIONS' THEN 1 ELSE 0 END)
             AS has_active_protamine,
         MAX(order_date) AS latest_af_medication_date,
         ARRAY_AGG(DISTINCT mapped_concept_code) AS all_af_medication_codes,
@@ -31,8 +31,8 @@ af_exclusions AS (
         person_id,
         BOOLOR_AGG(
             cluster_id IN (
-                'DVT',  -- Updated cluster ID
-                'AF_FLUTTER',  -- Updated cluster ID
+                'DEEP_VEIN_THROMBOSIS',  -- Updated cluster ID
+                'ATRIAL_FLUTTER',  -- Updated cluster ID
                 'ATRIAL_FIBRILLATION_61_EXCLUSIONS'
             )
         ) AS has_exclusion_condition,
@@ -40,8 +40,8 @@ af_exclusions AS (
     FROM {{ ref('int_ltc_lcs_af_observations') }}
     WHERE
         cluster_id IN (
-            'DVT',  -- Updated cluster ID
-            'AF_FLUTTER',  -- Updated cluster ID
+            'DEEP_VEIN_THROMBOSIS',  -- Updated cluster ID
+            'ATRIAL_FLUTTER',  -- Updated cluster ID
             'ATRIAL_FIBRILLATION_61_EXCLUSIONS'
         )
     GROUP BY person_id

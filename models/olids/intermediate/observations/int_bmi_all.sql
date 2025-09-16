@@ -18,7 +18,7 @@ WITH recorded_bmi AS (
         obs.observation_id,
         obs.person_id,
         obs.clinical_effective_date,
-        CAST(obs.result_value AS NUMBER(10,2)) AS bmi_value,
+        TRY_CAST(obs.result_value AS FLOAT) AS bmi_value,
         obs.result_unit_display,
         obs.mapped_concept_code AS concept_code,
         obs.mapped_concept_display AS concept_display,
@@ -29,6 +29,7 @@ WITH recorded_bmi AS (
     FROM ({{ get_observations("'BMIVAL_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
+      AND TRY_CAST(obs.result_value AS FLOAT) IS NOT NULL
 ),
 
 height_measurements AS (
@@ -37,12 +38,13 @@ height_measurements AS (
         obs.person_id,
         obs.clinical_effective_date,
         obs.observation_id,
-        CAST(obs.result_value AS NUMBER(15,2)) AS height_cm,
+        TRY_CAST(obs.result_value AS FLOAT) AS height_cm,
         obs.result_unit_display AS height_unit
     FROM ({{ get_observations("'HEIGHT'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
-      AND CAST(obs.result_value AS NUMBER(15,2)) BETWEEN 50 AND 250  -- Valid height range in cm
+      AND TRY_CAST(obs.result_value AS FLOAT) IS NOT NULL
+      AND TRY_CAST(obs.result_value AS FLOAT) BETWEEN 50 AND 250  -- Valid height range in cm
 ),
 
 weight_measurements AS (
@@ -51,12 +53,13 @@ weight_measurements AS (
         obs.person_id,
         obs.clinical_effective_date,
         obs.observation_id,
-        CAST(obs.result_value AS NUMBER(15,2)) AS weight_kg,
+        TRY_CAST(obs.result_value AS FLOAT) AS weight_kg,
         obs.result_unit_display AS weight_unit
     FROM ({{ get_observations("'WEIGHT'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
       AND obs.result_value IS NOT NULL
-      AND CAST(obs.result_value AS NUMBER(15,2)) BETWEEN 10 AND 500  -- Valid weight range in kg
+      AND TRY_CAST(obs.result_value AS FLOAT) IS NOT NULL
+      AND TRY_CAST(obs.result_value AS FLOAT) BETWEEN 10 AND 500  -- Valid weight range in kg
 ),
 
 weight_with_prior_height AS (

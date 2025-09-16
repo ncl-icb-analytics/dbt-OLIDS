@@ -35,7 +35,7 @@ moderate_dose_statins AS (
         MAX(order_date) AS latest_moderate_dose_statin_date
     FROM {{ ref('int_ltc_lcs_cvd_medications') }}
     WHERE
-        cluster_id = 'STAT_COD'
+        cluster_id = 'LCS_STAT_COD_CVD'
         AND order_date >= DATEADD('month', -12, CURRENT_DATE())
     GROUP BY person_id
 ),

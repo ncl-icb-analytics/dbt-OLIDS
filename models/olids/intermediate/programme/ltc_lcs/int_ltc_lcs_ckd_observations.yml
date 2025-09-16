@@ -3,8 +3,8 @@ models:
   - name: int_ltc_lcs_ckd_observations
     description: 'Chronic kidney disease-relevant observations for Long Term Conditions case finding measures CKD_61 through CKD_64.
 
-      One row per clinical observation including eGFR testing, urine ACR testing, acute kidney injury, BPH/gout, haematuria, proteinuria, and medication-related observations using cluster IDs: EGFR_COD_LCS, EGFR_COD, UACR_TESTING, CKD_AKI, CKD_BPH_GOUT, Hematuria, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, Urine_Blood_Neg, Proteinuria.'
+      One row per clinical observation including eGFR testing, urine ACR testing, acute kidney injury, BPH/gout, haematuria, proteinuria, and medication-related observations using cluster IDs: EGFR_TESTING, EGFR_COD, UACR_TESTING, CKD_ACUTE_KIDNEY_INJURY, CKD_BPH_GOUT, HAEMATURIA, LITHIUM_MEDICATIONS, SULFASALAZINE_MEDICATIONS, TACROLIMUS_MEDICATIONS, URINE_BLOOD_NEGATIVE, PROTEINURIA_FINDINGS.'
     tests:
       - cluster_ids_exist:
           arguments:
-            cluster_ids: EGFR_COD_LCS,EGFR_COD,UACR_TESTING,CKD_AKI,CKD_BPH_GOUT,Hematuria,LITHIUM_MEDICATIONS,SULFASALAZINE_MEDICATIONS,TACROLIMUS_MEDICATIONS,Urine_Blood_Neg,Proteinuria
+            cluster_ids: EGFR_TESTING,EGFR_COD,UACR_TESTING,CKD_ACUTE_KIDNEY_INJURY,CKD_BPH_GOUT,HAEMATURIA,LITHIUM_MEDICATIONS,SULFASALAZINE_MEDICATIONS,TACROLIMUS_MEDICATIONS,URINE_BLOOD_NEGATIVE,PROTEINURIA_FINDINGS

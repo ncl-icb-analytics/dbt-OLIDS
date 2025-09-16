@@ -11,7 +11,7 @@ WITH statin_medications AS (
         mapped_concept_code AS concept_code,
         mapped_concept_display AS concept_display
     FROM {{ ref('int_ltc_lcs_cvd_medications') }}
-    WHERE cluster_id = 'STAT_COD'
+    WHERE cluster_id = 'LCS_STAT_COD_CVD'
         AND order_date >= dateadd(MONTH, -6, current_date())
 ),
 

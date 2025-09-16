@@ -7,4 +7,4 @@ models:
     tests:
       - cluster_ids_exist:
           arguments:
-            cluster_ids: DVT,AF_FLUTTER,ATRIAL_FIBRILLATION_61_EXCLUSIONS,LCS_PULSE_RATE,LCS_PULSE_RHYTHM
+            cluster_ids: DEEP_VEIN_THROMBOSIS,ATRIAL_FLUTTER,ATRIAL_FIBRILLATION_61_EXCLUSIONS,LCS_PULSE_RATE,LCS_PULSE_RHYTHM

@@ -57,7 +57,7 @@ clinical_events AS (
         mapped_concept_display AS concept_display,
         -- Flag each type of event
         coalesce(
-            cluster_id = 'CKD_AKI'
+            cluster_id = 'CKD_ACUTE_KIDNEY_INJURY'
             AND clinical_effective_date >= dateadd(MONTH, -36, current_date()),
             FALSE
         ) AS is_aki,
@@ -69,13 +69,13 @@ clinical_events AS (
         )
         AND clinical_effective_date >= dateadd(MONTH, -6, current_date()),
         FALSE) AS is_lithium,
-        coalesce(cluster_id = 'Hematuria', FALSE) AS is_microhaematuria,
+        coalesce(cluster_id = 'HAEMATURIA', FALSE) AS is_microhaematuria,
         coalesce(
             cluster_id = 'UACR_TESTING' AND result_value > 30,
             FALSE
         ) AS is_uacr_high,
         coalesce(cluster_id IN (
-            'Urine_Blood_Neg', 'Proteinuria'
+            'URINE_BLOOD_NEGATIVE', 'PROTEINURIA_FINDINGS'
         ),
         FALSE) AS is_urine_test
     FROM {{ ref('int_ltc_lcs_ckd_observations') }}
@@ -87,8 +87,8 @@ clinical_events AS (
         'TACROLIMUS_MEDICATIONS',
         'Hematuria',
         'UACR_TESTING',
-        'Urine_Blood_Neg',
-        'Proteinuria'
+        'URINE_BLOOD_NEGATIVE',
+        'PROTEINURIA_FINDINGS'
     )
 ),
 

@@ -3,8 +3,8 @@ models:
   - name: int_ltc_lcs_af_medications
     description: 'Atrial fibrillation-relevant medications for Long Term Conditions case finding measures AF_61 and AF_62.
 
-      One row per medication order with differential time windows: 6 months for anticoagulants/protamine, 3 months for other medications. Uses cluster IDs: ORANTICOAG_2.8.2, DRUGS_USED_IN_AF, DIGOXIN, CARDIAC_GLYCOSIDES, PROTAMINE_DRUGS.'
+      One row per medication order with differential time windows: 6 months for anticoagulants/protamine, 3 months for other medications. Uses cluster IDs: ORAL_ANTICOAGULANT_2_8_2, AF_MEDICATIONS, DIGOXIN_MEDICATIONS, CARDIAC_GLYCOSIDES, PROTAMINE_MEDICATIONS.'
     tests:
       - cluster_ids_exist:
           arguments:
-            cluster_ids: ORANTICOAG_2.8.2,DRUGS_USED_IN_AF,DIGOXIN,CARDIAC_GLYCOSIDES,PROTAMINE_DRUGS
+            cluster_ids: ORAL_ANTICOAGULANT_2_8_2,AF_MEDICATIONS,DIGOXIN_MEDICATIONS,CARDIAC_GLYCOSIDES,PROTAMINE_MEDICATIONS
