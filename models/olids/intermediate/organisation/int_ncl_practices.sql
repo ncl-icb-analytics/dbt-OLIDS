@@ -7,15 +7,13 @@
 
 /*
 NCL Practices Lookup
-Identifies all GP practices belonging to North Central London ICB (QMJ).
-Used for filtering OLIDS data to NCL practices only.
+Wrapper around base_ncl_practices for backward compatibility.
+The actual filtering logic is now in the base layer.
 */
 
-SELECT DISTINCT
-    practicecode AS practice_code,
-    practicename AS practice_name,
-    stpcode AS stp_code,
-    stpname AS stp_name
-FROM {{ ref('stg_dictionary_organisationmatrixpracticeview') }}
-WHERE stpcode = 'QMJ'  -- NHS NORTH CENTRAL LONDON INTEGRATED CARE BOARD
-    AND practicecode IS NOT NULL
+SELECT
+    practice_code,
+    practice_name,
+    stp_code,
+    stp_name
+FROM {{ ref('base_ncl_practices') }}

@@ -26,11 +26,12 @@ from {{ ref('base_olids_person') }}
 -- Note: Person is derived from patient, so incremental logic based on patient changes
 {% if is_incremental() %}
 where id in (
-    select distinct p.id
-    from {{ ref('stable_patient') }} p
-    where p.lds_start_date_time > (
+    select distinct id
+    from {{ ref('stable_patient') }}
+    where lds_start_date_time > (
         select coalesce(max(lds_start_date_time), '1900-01-01'::timestamp)
-        from {{ this }}
+        from {{ ref('stable_patient') }}
+        where id in (select id from {{ this }})
     )
 )
 {% endif %}

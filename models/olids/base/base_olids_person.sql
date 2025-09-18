@@ -6,12 +6,13 @@
 
 /*
 Base PERSON View
-Generated person dimension from filtered patients.
-Pattern: Dimension generated from patient base  
+Generated person dimension from filtered patients with deterministic person_id.
+Pattern: Dimension generated from patient base
 */
 
 SELECT DISTINCT
-    id,
+    -- Generate deterministic person_id matching patient_person bridge
+    'ncl-person-' || MD5(sk_patient_id) AS id,
     nhs_number_hash,
     title,
     gender_concept_id,
@@ -20,3 +21,5 @@ SELECT DISTINCT
     death_year,
     death_month
 FROM {{ ref('base_olids_patient') }}
+WHERE sk_patient_id IS NOT NULL
+    AND LENGTH(TRIM(sk_patient_id)) > 0

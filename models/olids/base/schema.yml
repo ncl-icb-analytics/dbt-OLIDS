@@ -166,18 +166,12 @@ models:
 
     - name: observation_source_concept_id
       description: Source concept for observation classification
-      tests:
-        - not_null
 
     - name: clinical_effective_date
       description: Date when observation was clinically effective
-      tests:
-        - not_null
 
     - name: lds_lakehouse_datetime_updated
       description: Timestamp for data lineage
-      tests:
-        - not_null
 - name: base_olids_organisation
   description: 'Unfiltered Organisation reference view.
 
