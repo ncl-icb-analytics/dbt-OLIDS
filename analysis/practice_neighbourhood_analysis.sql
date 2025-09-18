@@ -6,13 +6,13 @@
 -- =============================================================================
 -- Current patient counts by practice neighbourhood
 SELECT 
-    practice_neighbourhood,
+    neighbourhood_registered,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT practice_code) as practices_count,
     ROUND(AVG(age), 1) as mean_age
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND practice_neighbourhood IS NOT NULL
+    AND neighbourhood_registered IS NOT NULL
 GROUP BY ALL
 ORDER BY population DESC;
 
@@ -21,14 +21,14 @@ ORDER BY population DESC;
 -- =============================================================================
 -- Diabetes prevalence comparison across neighbourhoods
 SELECT 
-    practice_neighbourhood,
+    neighbourhood_registered,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) as diabetes_cases,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_htn THEN person_id END) / COUNT(DISTINCT person_id), 1) as htn_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND practice_neighbourhood IS NOT NULL
+    AND neighbourhood_registered IS NOT NULL
 GROUP BY ALL
 HAVING COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) > 5  -- Small number suppression
 ORDER BY diabetes_prevalence_pct DESC;
@@ -38,51 +38,51 @@ ORDER BY diabetes_prevalence_pct DESC;
 -- =============================================================================
 -- Practice-level metrics within neighbourhoods
 SELECT 
-    practice_neighbourhood,
+    neighbourhood_registered,
     practice_name,
-    practice_borough,
+    borough_registered,
     COUNT(DISTINCT person_id) as list_size,
     ROUND(AVG(age), 1) as mean_age,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND practice_neighbourhood IS NOT NULL
+    AND neighbourhood_registered IS NOT NULL
 GROUP BY ALL
 HAVING COUNT(DISTINCT person_id) > 5  -- Small number suppression
-ORDER BY practice_neighbourhood, list_size DESC;
+ORDER BY neighbourhood_registered, list_size DESC;
 
 -- =============================================================================
 -- PATTERN 4: Borough vs Neighbourhood Comparison
 -- =============================================================================
 -- Compare neighbourhood patterns within boroughs
 SELECT 
-    practice_borough,
-    practice_neighbourhood,
+    borough_registered,
+    neighbourhood_registered,
     COUNT(DISTINCT person_id) as population,
     ROUND(100 * COUNT(DISTINCT CASE WHEN age >= 65 THEN person_id END) / COUNT(DISTINCT person_id), 1) as elderly_pct,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct,
-    RANK() OVER (PARTITION BY practice_borough ORDER BY COUNT(DISTINCT person_id) DESC) as population_rank_in_borough
+    RANK() OVER (PARTITION BY borough_registered ORDER BY COUNT(DISTINCT person_id) DESC) as population_rank_in_borough
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND practice_neighbourhood IS NOT NULL
-    AND practice_borough IS NOT NULL
+    AND neighbourhood_registered IS NOT NULL
+    AND borough_registered IS NOT NULL
 GROUP BY ALL
-ORDER BY practice_borough, population DESC;
+ORDER BY borough_registered, population DESC;
 
 -- =============================================================================
 -- PATTERN 5: Financial Year Comparison by Neighbourhood
 -- =============================================================================
 -- Compare neighbourhood performance across financial years
 SELECT 
-    practice_neighbourhood,
+    neighbourhood_registered,
     financial_year,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT practice_code) as practices_count,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1) as diabetes_prevalence_pct,
     LAG(ROUND(100 * COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) / COUNT(DISTINCT person_id), 1)) 
-        OVER (PARTITION BY practice_neighbourhood ORDER BY financial_year) as previous_fy_prevalence_pct
+        OVER (PARTITION BY neighbourhood_registered ORDER BY financial_year) as previous_fy_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
-WHERE practice_neighbourhood IS NOT NULL
+WHERE neighbourhood_registered IS NOT NULL
 GROUP BY ALL
 HAVING COUNT(DISTINCT CASE WHEN has_dm THEN person_id END) > 5  -- Small number suppression
-ORDER BY practice_neighbourhood, financial_year;
+ORDER BY neighbourhood_registered, financial_year;

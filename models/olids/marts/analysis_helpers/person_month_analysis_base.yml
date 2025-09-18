@@ -136,7 +136,7 @@ models:
       - name: practice_code
         description: Practice ODS code
         
-      - name: practice_borough
+      - name: borough_registered
         description: Borough where practice is located
         
       - name: practice_postcode
@@ -154,7 +154,7 @@ models:
       - name: practice_longitude
         description: Practice longitude coordinate
         
-      - name: practice_neighbourhood
+      - name: neighbourhood_registered
         description: Practice neighbourhood classification
         
       - name: pcn_code
@@ -193,7 +193,7 @@ models:
       - name: imd_quintile_19
         description: Index of Multiple Deprivation quintile (2019)
         
-      - name: patient_neighbourhood
+      - name: neighbourhood_resident
         description: Patient neighbourhood classification
         
       - name: effective_start_date

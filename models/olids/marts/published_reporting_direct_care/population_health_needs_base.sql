@@ -57,8 +57,8 @@ SELECT
     d.pcn_code,
     d.pcn_name,
     d.pcn_name_with_borough,
-    d.practice_neighbourhood,
-    d.practice_borough,
+    d.neighbourhood_registered,
+    d.borough_registered,
     d.practice_postcode,
     
     -- TEMPORARY: Using practice LSOA for patient LSOA until patient postcode lookup available
@@ -92,7 +92,7 @@ SELECT
         ELSE NULL
     END AS practice_imd_quintile_19,
     
-    d.patient_neighbourhood,
+    d.neighbourhood_resident,
     d.postcode_hash,
     d.uprn_hash,
     d.registration_start_date,

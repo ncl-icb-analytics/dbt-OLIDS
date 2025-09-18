@@ -17,8 +17,8 @@ SELECT
     prac.practice_postcode,
     demo.pcn_code,
     demo.pcn_name,
-    demo.practice_borough,
-    demo.practice_neighbourhood,
+    demo.borough_registered,
+    demo.neighbourhood_registered,
     
     -- Demographics
     demo.age,

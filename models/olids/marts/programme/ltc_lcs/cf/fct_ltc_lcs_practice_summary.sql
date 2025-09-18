@@ -14,8 +14,8 @@ WITH practice_demographics AS (
         prac.practice_postcode,
         demo.pcn_code,
         demo.pcn_name,
-        demo.practice_borough,
-        demo.practice_neighbourhood,
+        demo.borough_registered,
+        demo.neighbourhood_registered,
         
         -- Count total registered population by demographics
         COUNT(*) AS total_population,
@@ -57,8 +57,8 @@ WITH practice_demographics AS (
         prac.practice_postcode,
         demo.pcn_code,
         demo.pcn_name,
-        demo.practice_borough,
-        demo.practice_neighbourhood
+        demo.borough_registered,
+        demo.neighbourhood_registered
 ),
 
 case_finding_aggregates AS (
@@ -121,8 +121,8 @@ SELECT
     demo.practice_postcode,
     demo.pcn_code,
     demo.pcn_name,
-    demo.practice_borough,
-    demo.practice_neighbourhood,
+    demo.borough_registered,
+    demo.neighbourhood_registered,
     
     -- Population denominators
     demo.total_population,

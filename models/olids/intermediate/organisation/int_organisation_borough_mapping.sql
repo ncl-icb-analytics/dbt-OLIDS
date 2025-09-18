@@ -76,7 +76,7 @@ practice_pcn AS (
 ),
 
 -- Get historic CCG relationships from OrganisationDescendent paths (for borough mapping)
-practice_borough_mapping AS (
+borough_registered_mapping AS (
     SELECT DISTINCT
         od."OrganisationCode_Child" AS practice_code,
         bc.ccg_code AS historic_ccg,
@@ -93,7 +93,7 @@ practice_borough_mapping AS (
     WHERE od."OrganisationPrimaryRole_Child" = 'RO177' -- GP Practice
 ),
 
-practice_borough_final AS (
+borough_registered_final AS (
     -- Get final practice-to-borough mapping (one borough per practice) using historic CCG paths
     SELECT 
         pbm.practice_code,
@@ -103,7 +103,7 @@ practice_borough_final AS (
             ELSE pbm.borough
         END AS borough,
         pbm.historic_ccg
-    FROM practice_borough_mapping pbm
+    FROM borough_registered_mapping pbm
     WHERE pbm.rn = 1
         -- For Medicus Select Care, only take the Enfield mapping to avoid duplicates
         AND (pbm.practice_code != 'Y03103' OR pbm.borough = 'Enfield')
@@ -121,7 +121,7 @@ pcn_borough_mapping AS (
             ORDER BY COUNT(DISTINCT pbf.practice_code) DESC
         ) AS borough_rank
     FROM practice_pcn pp
-    INNER JOIN practice_borough_final pbf
+    INNER JOIN borough_registered_final pbf
         ON pp.practice_code = pbf.practice_code
     WHERE pp.pcn_code IS NOT NULL
     GROUP BY pp.pcn_code, pbf.borough
@@ -141,7 +141,7 @@ pcn_borough_final AS (
 SELECT
     -- Practice mapping
     pbf.practice_code,
-    pbf.borough AS practice_borough,
+    pbf.borough AS borough_registered,
     pbf.historic_ccg AS practice_historic_ccg,
     
     -- PCN mapping
@@ -149,7 +149,7 @@ SELECT
     pcnbf.borough AS pcn_borough,
     pcnbf.borough_practice_count AS pcn_borough_practice_count
 
-FROM practice_borough_final pbf
+FROM borough_registered_final pbf
 LEFT JOIN practice_pcn pp
     ON pbf.practice_code = pp.practice_code
 LEFT JOIN pcn_borough_final pcnbf

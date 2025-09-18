@@ -19,7 +19,7 @@ models:
     columns:
       - name: practice_code
         description: 'Unique identifier for the GP practice'
-      - name: practice_borough
+      - name: borough_registered
         description: 'Borough assignment for the practice based on historic CCG relationships'
       - name: practice_historic_ccg
         description: 'Historic CCG code used for borough mapping (07R, 08H, 07M, 07X, 08D)'

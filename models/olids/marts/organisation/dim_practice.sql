@@ -32,7 +32,7 @@ WITH practice_org_joined AS (
     END AS pcn_name_with_borough,
     
     -- Borough information
-    borough_map.practice_borough,
+    borough_map.borough_registered,
     borough_map.pcn_borough,
     borough_map.practice_historic_ccg,
     

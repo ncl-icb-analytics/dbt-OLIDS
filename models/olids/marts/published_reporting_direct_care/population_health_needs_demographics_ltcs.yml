@@ -36,9 +36,9 @@ models:
         description: Patient's main spoken language.
       - name: pcn_name
         description: Name of the Primary Care Network.
-      - name: practice_neighbourhood
+      - name: neighbourhood_registered
         description: Neighbourhood of the patient's GP practice.
-      - name: practice_borough
+      - name: borough_registered
         description: Borough of the patient's GP practice.
       - name: practice_imd_quintile_19
         description: Index of Multiple Deprivation quintile (2019) of the patient's GP practice.

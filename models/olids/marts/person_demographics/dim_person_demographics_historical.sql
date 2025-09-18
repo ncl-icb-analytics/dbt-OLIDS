@@ -350,13 +350,13 @@ SELECT
     dp.stp_name AS icb_name,
     
     -- Geographic Information
-    dp.practice_borough,
+    dp.borough_registered,
     dp.practice_postcode_dict AS practice_postcode,
     dp.practice_lsoa,
     dp.practice_msoa,
     dp.practice_latitude,
     dp.practice_longitude,
-    nbhd.practice_neighbourhood,
+    nbhd.neighbourhood_registered,
     
     -- Address for this month
     ma.postcode_hash,
@@ -370,7 +370,7 @@ SELECT
     NULL AS ward_name,
     NULL::NUMBER AS imd_decile_19,
     NULL::VARCHAR AS imd_quintile_19,
-    NULL::VARCHAR AS patient_neighbourhood,
+    NULL::VARCHAR AS neighbourhood_resident,
     
     -- SCD2 compatibility fields for person-month grain
     -- For person-month, we treat each month as a separate "period" that spans the full month
@@ -419,7 +419,7 @@ LEFT JOIN (
         pcn_code,
         pcn_name,
         pcn_name_with_borough,
-        practice_borough,
+        borough_registered,
         practice_postcode_dict,
         practice_lsoa,
         practice_msoa,

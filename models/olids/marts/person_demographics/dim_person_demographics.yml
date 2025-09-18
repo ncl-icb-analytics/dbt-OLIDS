@@ -169,7 +169,7 @@ models:
       - name: pcn_name_with_borough
         description: 'PCN name with borough prefix'
 
-      - name: practice_borough
+      - name: borough_registered
         description: 'Practice borough'
 
       - name: practice_postcode
@@ -187,7 +187,7 @@ models:
       - name: practice_longitude
         description: 'Practice longitude coordinate'
 
-      - name: practice_neighbourhood
+      - name: neighbourhood_registered
         description: 'Practice neighbourhood classification'
 
       - name: post_code_hash
@@ -217,5 +217,5 @@ models:
       - name: imd_quintile_19
         description: 'IMD quintile 2019'
 
-      - name: patient_neighbourhood
+      - name: neighbourhood_resident
         description: 'Patient neighbourhood classification'

@@ -43,8 +43,8 @@ select
   -- Practice organisational context
   dem.pcn_code,
   dem.pcn_name,
-  dem.practice_borough,
-  dem.practice_neighbourhood,
+  dem.borough_registered,
+  dem.neighbourhood_registered,
 
   -- Temporal context
   current_date() as snapshot_date,

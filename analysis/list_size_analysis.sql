@@ -9,7 +9,7 @@ SELECT
     practice_name,
     practice_code,
     pcn_name,
-    practice_borough,
+    borough_registered,
     COUNT(DISTINCT person_id) as list_size
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
