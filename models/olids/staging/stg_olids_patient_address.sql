@@ -3,21 +3,23 @@
 -- Description: Core OLIDS patient and clinical data
 
 select
-    "LakehouseDateProcessed" as lakehousedateprocessed,
-    "LakehouseDateTimeUpdated" as lakehousedatetimeupdated,
-    "lds_record_id" as lds_record_id,
-    "lds_id" as lds_id,
-    "id" as id,
-    "lds_business_key" as lds_business_key,
-    "lds_dataset_id" as lds_dataset_id,
-    "lds_datetime_data_acquired" as lds_datetime_data_acquired,
-    "lds_start_date_time" as lds_start_date_time,
-    "record_owner_organisation_code" as record_owner_organisation_code,
-    "patient_id" as patient_id,
-    "address_type_concept_id" as address_type_concept_id,
-    "postcode_hash" as postcode_hash,
-    "start_date" as start_date,
-    "end_date" as end_date,
-    "lds_end_date_time" as lds_end_date_time,
-    "person_id" as person_id
-from {{ ref('base_olids_patient_address') }}
+    lds_record_id,
+    id,
+    patient_id,
+    address_type_concept_id,
+    postcode_hash,
+    start_date,
+    end_date,
+    person_id,
+    lds_id,
+    lds_business_key,
+    lds_dataset_id,
+    lds_cdm_event_id,
+    lds_versioner_event_id,
+    record_owner_organisation_code,
+    lds_datetime_data_acquired,
+    lds_initial_date_received_date,
+    lds_start_date_time,
+    lds_lakehouse_date_processed,
+    lds_lakehouse_datetime_updated
+from {{ ref('stable_patient_address') }}

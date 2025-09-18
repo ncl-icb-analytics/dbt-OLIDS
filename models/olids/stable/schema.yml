@@ -1,0 +1,81 @@
+version: 2
+
+models:
+  - name: stable_observation
+    description: |
+      Incremental observation table for production stability.
+
+      Provides a stable interface between volatile Alpha data and analytical models.
+      Uses incremental materialisation with clustering for optimal query performance.
+
+  - name: stable_patient
+    description: |
+      Incremental patient demographics table.
+
+      Core patient entity with NCL filtering applied and sensitive patients excluded.
+
+  - name: stable_patient_person
+    description: |
+      Incremental patient-person mapping table.
+
+      Bridge table with fabricated person_id for data quality purposes.
+
+  - name: stable_terminology_concept
+    description: |
+      Incremental terminology concepts reference table.
+
+      Core concept definitions used throughout the system for mapping and classification.
+
+  - name: stable_terminology_concept_map
+    description: |
+      Incremental concept mapping reference table.
+
+      Maps source concepts to target concepts for terminology standardisation.
+
+  - name: stable_organisation
+    description: |
+      Incremental organisation reference table.
+
+      Healthcare organisation details including practices and trusts.
+
+  - name: stable_medication_order
+    description: |
+      Incremental medication orders table.
+
+      Prescription and medication order records with quality filtering applied.
+
+  - name: stable_medication_statement
+    description: |
+      Incremental medication statements table.
+
+      Medication statement records with quality filtering applied.
+
+  - name: stable_patient_registered_practitioner_in_role
+    description: |
+      Incremental patient GP registration table.
+
+      Patient registration history with healthcare practitioners.
+
+  - name: stable_person
+    description: |
+      Incremental person dimension table.
+
+      Derived from patient data with distinct person records.
+
+  - name: stable_appointment
+    description: |
+      Incremental appointment records table.
+
+      Patient appointment history with scheduling details.
+
+  - name: stable_patient_address
+    description: |
+      Incremental patient address history table.
+
+      SCD2 address history with postcode hash for privacy.
+
+  - name: stable_episode_of_care
+    description: |
+      Incremental episode of care records table.
+
+      Care episode management and coordination records.

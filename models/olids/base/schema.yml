@@ -152,6 +152,26 @@ models:
 
 
     Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+  columns:
+    - name: id
+      description: Unique observation identifier
+      tests:
+        - not_null
+        - unique
+
+    - name: patient_id
+      description: Patient identifier
+      tests:
+        - not_null
+
+    - name: observation_source_concept_id
+      description: Source concept for observation classification
+
+    - name: clinical_effective_date
+      description: Date when observation was clinically effective
+
+    - name: lds_lakehouse_datetime_updated
+      description: Timestamp for data lineage
 - name: base_olids_organisation
   description: 'Unfiltered Organisation reference view.
 
@@ -313,3 +333,17 @@ models:
 
 
     Filtering method: Inner join to int_ncl_practices on record_owner_organisation_code'
+- name: base_olids_terminology_concept
+  description: 'Filtered Terminology Concept base view.
+
+
+    Applied filters: Restricts data to NCL practices and excludes sensitive patients.
+
+    Filtering method varies based on table structure and available foreign keys.'
+- name: base_olids_terminology_concept_map
+  description: 'Filtered Terminology Concept Map base view.
+
+
+    Applied filters: Restricts data to NCL practices and excludes sensitive patients.
+
+    Filtering method varies based on table structure and available foreign keys.'

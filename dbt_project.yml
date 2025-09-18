@@ -44,9 +44,15 @@ models:
     olids:
       base:
         +materialized: view
-        +schema: "dbt_base"
+        +schema: "olids_base"
         +post-hook: ["{{ add_model_comment() }}"]
         +tags: ["base"]
+      stable:
+        +materialized: incremental
+        +schema: "olids_stable"
+        +on_schema_change: fail
+        +post-hook: ["{{ add_model_comment() }}"]
+        +tags: ["stable", "incremental"]
       staging:
         +materialized: view
         +post-hook: ["{{ add_model_comment() }}"]
