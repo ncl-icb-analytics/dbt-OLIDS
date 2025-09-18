@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: dim_practice_neighbourhood
+  - name: dim_neighbourhood_registered
     description: 'Practice geographic context with local authority and neighbourhood classifications.
 
       Key Features:
@@ -30,5 +30,5 @@ models:
       - name: local_authority
         description: 'Local authority where practice is located for administrative boundary analysis'
 
-      - name: practice_neighbourhood
+      - name: neighbourhood_registered
         description: 'Practice neighbourhood classification for community context analysis'

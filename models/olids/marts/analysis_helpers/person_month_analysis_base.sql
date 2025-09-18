@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key=['person_id', 'analysis_month'],
         on_schema_change='fail',
-        cluster_by=['analysis_month', 'practice_borough', 'person_id'],
+        cluster_by=['analysis_month', 'borough_registered', 'person_id'],
         tags=['daily', 'monthly-full']
     )
 }}
@@ -88,13 +88,13 @@ SELECT
     
     -- Practice and geography
     d.practice_code,
-    d.practice_borough,
+    d.borough_registered,
     d.practice_postcode,
     d.practice_lsoa,
     d.practice_msoa,
     d.practice_latitude,
     d.practice_longitude,
-    d.practice_neighbourhood,
+    d.neighbourhood_registered,
     d.pcn_code,
     d.pcn_name,
     d.pcn_name_with_borough,
@@ -109,7 +109,7 @@ SELECT
     d.ward_name,
     d.imd_decile_19,
     d.imd_quintile_19,
-    d.patient_neighbourhood,
+    d.neighbourhood_resident,
     
     -- SCD2 metadata
     d.effective_start_date,

@@ -77,17 +77,17 @@ ORDER BY financial_year, financial_quarter;
 -- =============================================================================
 -- CKD prevalence rates by practice neighbourhood and ethnicity category
 SELECT 
-    practice_neighbourhood,
+    neighbourhood_registered,
     ethnicity_category,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT CASE WHEN has_ckd THEN person_id END) as ckd_cases,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_ckd THEN person_id END) / COUNT(DISTINCT person_id), 1) as ckd_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
 WHERE analysis_month = (SELECT MAX(analysis_month) FROM {{ ref('person_month_analysis_base') }})
-    AND practice_neighbourhood IS NOT NULL
+    AND neighbourhood_registered IS NOT NULL
     AND ethnicity_category IS NOT NULL
 GROUP BY ALL
-ORDER BY practice_neighbourhood, MIN(ethnicity_category_sort);
+ORDER BY neighbourhood_registered, MIN(ethnicity_category_sort);
 
 -- =============================================================================
 -- PATTERN 6: CKD Prevalence by Neighbourhood Over Time (FY End Position)
@@ -96,16 +96,16 @@ ORDER BY practice_neighbourhood, MIN(ethnicity_category_sort);
 -- Uses March data (31st March) for financial year-end position
 SELECT 
     financial_year,
-    practice_neighbourhood,
+    neighbourhood_registered,
     COUNT(DISTINCT person_id) as population,
     COUNT(DISTINCT CASE WHEN has_ckd THEN person_id END) as ckd_cases,
     ROUND(100 * COUNT(DISTINCT CASE WHEN has_ckd THEN person_id END) / COUNT(DISTINCT person_id), 1) as ckd_prevalence_pct
 FROM {{ ref('person_month_analysis_base') }}
-WHERE practice_neighbourhood IS NOT NULL
+WHERE neighbourhood_registered IS NOT NULL
     AND month_number = 3  -- March (31st March - end of financial year)
 GROUP BY ALL
 HAVING COUNT(DISTINCT CASE WHEN has_ckd THEN person_id END) > 5  -- Small number suppression
-ORDER BY practice_neighbourhood, financial_year;
+ORDER BY neighbourhood_registered, financial_year;
 
 -- =============================================================================
 -- PATTERN 7: Condition Overlap Analysis

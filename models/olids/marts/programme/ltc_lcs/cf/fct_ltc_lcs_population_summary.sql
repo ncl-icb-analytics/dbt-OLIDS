@@ -12,8 +12,8 @@ WITH demographic_population AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0) AS imd_quintile,  -- 0 = Unknown
-        demo.practice_borough,
-        demo.practice_neighbourhood,
+        demo.borough_registered,
+        demo.neighbourhood_registered,
         
         -- Population counts
         COUNT(*) AS total_population,
@@ -32,8 +32,8 @@ WITH demographic_population AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0),
-        demo.practice_borough,
-        demo.practice_neighbourhood
+        demo.borough_registered,
+        demo.neighbourhood_registered
 ),
 
 case_finding_demographics AS (
@@ -42,8 +42,8 @@ case_finding_demographics AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0) AS imd_quintile,
-        demo.practice_borough,
-        demo.practice_neighbourhood,
+        demo.borough_registered,
+        demo.neighbourhood_registered,
         
         -- Total case finding counts
         COUNT(*) AS case_finding_eligible_population,
@@ -101,8 +101,8 @@ case_finding_demographics AS (
         demo.age_band_10y,
         demo.ethnicity_category,
         COALESCE(demo.imd_quintile_19, 0),
-        demo.practice_borough,
-        demo.practice_neighbourhood
+        demo.borough_registered,
+        demo.neighbourhood_registered
 )
 
 -- Final cross-tabulated population health summary
@@ -119,8 +119,8 @@ SELECT
         WHEN demo.imd_quintile = 4 THEN 'Quintile 4'
         WHEN demo.imd_quintile = 5 THEN 'Quintile 5 (Least Deprived)'
     END AS imd_quintile_label,
-    demo.practice_borough,
-    demo.practice_neighbourhood,
+    demo.borough_registered,
+    demo.neighbourhood_registered,
     
     -- Population denominators
     demo.total_population,
@@ -196,12 +196,12 @@ LEFT JOIN case_finding_demographics AS cf
     ON demo.age_band_10y = cf.age_band_10y
     AND demo.ethnicity_category = cf.ethnicity_category
     AND demo.imd_quintile = cf.imd_quintile
-    AND demo.practice_borough = cf.practice_borough
-    AND demo.practice_neighbourhood = cf.practice_neighbourhood
+    AND demo.borough_registered = cf.borough_registered
+    AND demo.neighbourhood_registered = cf.neighbourhood_registered
 
 ORDER BY 
     demo.age_band_10y,
     demo.ethnicity_category,
     demo.imd_quintile,
-    demo.practice_borough,
-    demo.practice_neighbourhood
+    demo.borough_registered,
+    demo.neighbourhood_registered

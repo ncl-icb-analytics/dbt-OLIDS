@@ -15,6 +15,6 @@ SELECT
     practicecode AS practice_code,
     practicename AS practice_name,
     localauthority AS local_authority,
-    practiceneighbourhood AS practice_neighbourhood
+    practiceneighbourhood AS neighbourhood_registered
 FROM {{ ref('stg_reference_practice_neighbourhood_lookup') }}
 WHERE practicecode IS NOT NULL

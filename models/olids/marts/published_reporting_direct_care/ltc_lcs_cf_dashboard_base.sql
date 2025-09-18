@@ -81,8 +81,8 @@ base_data AS (
         d.practice_name,
         d.pcn_code,
         d.pcn_name,
-        d.practice_borough,
-        d.practice_neighbourhood
+        d.borough_registered,
+        d.neighbourhood_registered
     FROM {{ ref('dim_ltc_lcs_cf_summary') }} cf
     LEFT JOIN {{ ref('dim_person_demographics') }} d ON cf.person_id = d.person_id
 ),
@@ -140,8 +140,8 @@ final_dashboard AS (
         practice_name, 
         pcn_code, 
         pcn_name, 
-        practice_borough, 
-        practice_neighbourhood,
+        borough_registered, 
+        neighbourhood_registered,
         
         CURRENT_TIMESTAMP() AS created_at
     FROM (

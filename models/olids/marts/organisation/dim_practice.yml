@@ -45,7 +45,7 @@ models:
       - name: pcn_name_with_borough
         description: 'PCN name prefixed with borough for geographic identification'
 
-      - name: practice_borough
+      - name: borough_registered
         description: 'Borough where practice is located'
 
       - name: pcn_borough

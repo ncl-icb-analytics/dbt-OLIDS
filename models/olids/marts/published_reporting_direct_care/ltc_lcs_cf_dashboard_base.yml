@@ -117,10 +117,10 @@ models:
       - name: pcn_name
         description: Primary Care Network name
         
-      - name: practice_borough
+      - name: borough_registered
         description: Borough where practice is located
         
-      - name: practice_neighbourhood
+      - name: neighbourhood_registered
         description: Neighbourhood where practice is located
         
       - name: in_any_case_finding

@@ -1,0 +1,170 @@
+version: 2
+
+models:
+  - name: view_population_health_needs_base
+    description: |
+      Population health needs aggregated view for both LTC and non-LTC patients.
+      Groups patients by demographics and practice characteristics.
+
+    columns:
+      - name: keyid
+        description: 'Composite key from gender, age band, ethnicity, language, and practice code'
+
+      - name: gender
+        description: 'Patient gender'
+
+      - name: age_band_10y
+        description: 'Age band in 10-year groups'
+
+      - name: age_band_5y
+        description: 'Age band in 5-year groups'
+
+      - name: age_band_5y_sort_key
+        description: 'Sort key for 5-year age bands'
+
+      - name: ethnicity_category
+        description: 'High-level ethnicity category'
+
+      - name: ethnicity_category_sort_key
+        description: 'Sort key for ethnicity categories'
+
+      - name: ethnicity_subcategory
+        description: 'Detailed ethnicity subcategory'
+
+      - name: main_language
+        description: 'Primary language spoken'
+
+      - name: patient_lsoa
+        description: 'Patient LSOA code'
+
+      - name: patient_imd_quintile_19
+        description: 'Patient IMD quintile (2019)'
+
+      - name: patient_imd_quintile_19_sort_key
+        description: 'Sort key for IMD quintile'
+
+      - name: patient_neighbourhood
+        description: 'Patient neighbourhood (resident)'
+
+      - name: practice_neighbourhood
+        description: 'Practice neighbourhood (registered)'
+
+      - name: practice_borough
+        description: 'Practice borough (registered)'
+
+      - name: pcn_name
+        description: 'Primary Care Network name'
+
+      - name: practice_code
+        description: 'GP practice code'
+
+      - name: practice_name
+        description: 'GP practice name'
+
+      - name: practice_lsoa
+        description: 'Practice LSOA code'
+
+      - name: ward_code
+        description: 'Ward code'
+
+      - name: ward_name
+        description: 'Ward name'
+
+      - name: practice_imd_quintile_19
+        description: 'Practice IMD quintile (2019)'
+
+      - name: condition_name
+        description: 'LTC patients or Non-LTC patients'
+
+      - name: is_active
+        description: 'Active registration flag (Yes/No)'
+
+      - name: practice_normalised_weighted_list_size
+        description: 'Weighted list size for practice'
+
+      - name: patient_count
+        description: 'Count of distinct patients'
+
+  - name: view_population_health_needs_base_ltc
+    description: |
+      Population health needs view for LTC patients only.
+      Unpivots conditions to show one row per patient-condition combination.
+
+    columns:
+      - name: keyid
+        description: 'Composite key from gender, age band, ethnicity, language, and practice code'
+
+      - name: gender
+        description: 'Patient gender'
+
+      - name: age_band_10y
+        description: 'Age band in 10-year groups'
+
+      - name: age_band_5y
+        description: 'Age band in 5-year groups'
+
+      - name: age_band_5y_sort_key
+        description: 'Sort key for 5-year age bands'
+
+      - name: ethnicity_category
+        description: 'High-level ethnicity category'
+
+      - name: ethnicity_category_sort_key
+        description: 'Sort key for ethnicity categories'
+
+      - name: ethnicity_subcategory
+        description: 'Detailed ethnicity subcategory'
+
+      - name: main_language
+        description: 'Primary language spoken'
+
+      - name: patient_lsoa
+        description: 'Patient LSOA code'
+
+      - name: patient_imd_quintile_19
+        description: 'Patient IMD quintile (2019)'
+
+      - name: patient_imd_quintile_19_sort_key
+        description: 'Sort key for IMD quintile'
+
+      - name: patient_neighbourhood
+        description: 'Patient neighbourhood (resident)'
+
+      - name: practice_neighbourhood
+        description: 'Practice neighbourhood (registered)'
+
+      - name: practice_borough
+        description: 'Practice borough (registered)'
+
+      - name: pcn_name
+        description: 'Primary Care Network name'
+
+      - name: practice_code
+        description: 'GP practice code'
+
+      - name: practice_name
+        description: 'GP practice name'
+
+      - name: practice_lsoa
+        description: 'Practice LSOA code'
+
+      - name: ward_code
+        description: 'Ward code'
+
+      - name: ward_name
+        description: 'Ward name'
+
+      - name: practice_imd_quintile_19
+        description: 'Practice IMD quintile (2019)'
+
+      - name: condition_name
+        description: 'Formatted LTC condition name'
+
+      - name: is_active
+        description: 'Active registration flag (Yes/No)'
+
+      - name: practice_normalised_weighted_list_size
+        description: 'Weighted list size for practice'
+
+      - name: patient_count
+        description: 'Count of patients with this condition'

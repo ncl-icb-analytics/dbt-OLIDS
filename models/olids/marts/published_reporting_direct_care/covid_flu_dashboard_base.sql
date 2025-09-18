@@ -65,8 +65,8 @@ WITH uptake_with_demographics AS (
         d.practice_name,
         d.pcn_code,
         d.pcn_name,
-        d.practice_borough,
-        d.practice_neighbourhood,
+        d.borough_registered,
+        d.neighbourhood_registered,
         
         -- School information from dim_person_age
         pa.age_school_stage AS school_year,
