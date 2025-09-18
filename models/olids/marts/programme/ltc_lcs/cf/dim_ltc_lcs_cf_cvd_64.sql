@@ -2,58 +2,48 @@
     materialized='table') }}
 
 -- CVD_64 case finding: High-dose statin case finding
--- Identifies patients from the general CVD base population who need high-dose statins
+-- Identifies patients from CVD base population who are NOT on statins (need to start)
+-- Excludes those with recent statin medications (12 months) or statin decisions (60 months)
 
-WITH high_dose_statin_medications AS (
-    -- Get all high-dose statin medications for patients in base
-    SELECT
-        med.person_id,
-        med.order_date AS clinical_effective_date,
-        med.mapped_concept_code,
-        med.mapped_concept_display,
-        ROW_NUMBER()
-            OVER (PARTITION BY med.person_id ORDER BY med.order_date DESC)
-            AS medication_rank
-    FROM {{ ref('int_ltc_lcs_cvd_medications') }} AS med
-    INNER JOIN {{ ref('int_ltc_lcs_cf_cvd_base_population') }} AS base ON med.person_id = base.person_id
-    WHERE med.cluster_id = 'STATIN_CVD_64_MEDICATIONS'
+WITH statin_medications AS (
+    -- Get patients with statin medications in last 12 months
+    SELECT DISTINCT
+        person_id,
+        MAX(order_date) AS latest_statin_date
+    FROM {{ ref('int_ltc_lcs_cvd_medications') }}
+    WHERE 
+        cluster_id = 'LCS_STAT_COD_CVD'
+        AND order_date >= dateadd(MONTH, -12, current_date())
+    GROUP BY person_id
 ),
 
-latest_high_dose_statins AS (
-    -- Get latest high-dose statin for each person
-    SELECT
+statin_decisions AS (
+    -- Get patients with statin decisions in last 60 months
+    SELECT DISTINCT
         person_id,
-        clinical_effective_date AS latest_statin_date,
-        mapped_concept_code AS latest_statin_code,
-        mapped_concept_display AS latest_statin_display
-    FROM high_dose_statin_medications
-    WHERE medication_rank = 1
-),
-
-all_high_dose_statin_codes AS (
-    -- Aggregate all high-dose statin codes and displays for each person
-    SELECT
-        person_id,
-        ARRAY_AGG(DISTINCT mapped_concept_code) WITHIN GROUP (
-            ORDER BY mapped_concept_code
-        ) AS all_statin_codes,
-        ARRAY_AGG(DISTINCT mapped_concept_display) WITHIN GROUP (
-            ORDER BY mapped_concept_display
-        ) AS all_statin_displays
-    FROM high_dose_statin_medications
+        MAX(clinical_effective_date) AS latest_decision_date
+    FROM {{ ref('int_ltc_lcs_cvd_observations') }}
+    WHERE 
+        cluster_id = 'STATINDEC_COD'
+        AND clinical_effective_date >= dateadd(MONTH, -60, current_date())
     GROUP BY person_id
 )
 
--- Final selection: patients from CVD base who need high-dose statins
+-- Final selection: CVD base population EXCLUDING those on statins or with statin decisions
 SELECT
     bp.person_id,
     bp.age,
-    TRUE AS needs_high_dose_statin,  -- All patients in base need high-dose statins
-    lhs.latest_statin_date,
-    lhs.latest_statin_code,
-    lhs.latest_statin_display,
-    ahsc.all_statin_codes,
-    ahsc.all_statin_displays
+    TRUE AS needs_high_dose_statin,
+    sm.latest_statin_date,
+    sd.latest_decision_date,
+    CASE 
+        WHEN sm.person_id IS NOT NULL THEN 'On statins (last 12 months)'
+        WHEN sd.person_id IS NOT NULL THEN 'Statin decision (last 60 months)'
+        ELSE NULL
+    END AS exclusion_reason
 FROM {{ ref('int_ltc_lcs_cf_cvd_base_population') }} AS bp
-LEFT JOIN latest_high_dose_statins AS lhs ON bp.person_id = lhs.person_id
-LEFT JOIN all_high_dose_statin_codes AS ahsc ON bp.person_id = ahsc.person_id
+LEFT JOIN statin_medications AS sm ON bp.person_id = sm.person_id
+LEFT JOIN statin_decisions AS sd ON bp.person_id = sd.person_id
+WHERE 
+    sm.person_id IS NULL  -- Not on statins in last 12 months
+    AND sd.person_id IS NULL  -- No statin decision in last 60 months

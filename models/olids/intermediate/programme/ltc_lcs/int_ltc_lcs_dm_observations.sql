@@ -5,6 +5,6 @@
 -- Contains HbA1c measurements, diabetes risk scores, gestational diabetes history, and BMI measurements
 
 {{ get_observations(
-    cluster_ids="'HBA1C_LEVEL', 'QDIABETES_RISK', 'QRISK2_10YEAR', 'HISTORY_GESTATIONAL_DIABETES', 'GESTATIONAL_DIABETES_PREGNANCY_RISK', 'BMI_MEASUREMENT'",
+    cluster_ids="'HBA1C_LEVEL', 'HBA1C', 'QDIABETES_RISK', 'QRISK2_10YEAR', 'GESTDIAB_COD', 'DM_GESTDIAB_AND_PREG_RISK', 'BMI_CODES', 'BAME_ETHNICITY', 'WHITE_BRITISH', 'DM_EXCL_ETHNICITY', 'NDH_COD', 'PRD_COD'",
     source='LTC_LCS'
 ) }}

@@ -1,7 +1,7 @@
 {{ config(
     materialized='table') }}
 -- Intermediate model for LTC LCS Case Finding CVD_63
--- Identifies patients on statins with non-HDL cholesterol > 2.5 (statin review needed)
+-- Identifies patients on statins (within last 6 months) with non-HDL cholesterol > 2.5 (statin review needed)
 
 WITH statin_medications AS (
     -- Get all CVD_63 specific statin medications
@@ -11,7 +11,8 @@ WITH statin_medications AS (
         mapped_concept_code AS concept_code,
         mapped_concept_display AS concept_display
     FROM {{ ref('int_ltc_lcs_cvd_medications') }}
-    WHERE cluster_id = 'STATIN_CVD_63_MEDICATIONS'
+    WHERE cluster_id = 'LCS_STAT_COD_CVD'
+        AND order_date >= dateadd(MONTH, -6, current_date())
 ),
 
 latest_statin AS (
@@ -29,7 +30,7 @@ latest_statin AS (
 ),
 
 statin_codes AS (
-    -- Aggregate all statin codes and displays for each person
+    -- Aggregate all statin codes and displays for each person (within 6 months)
     SELECT
         person_id,
         ARRAY_AGG(DISTINCT concept_code) WITHIN GROUP (ORDER BY concept_code)

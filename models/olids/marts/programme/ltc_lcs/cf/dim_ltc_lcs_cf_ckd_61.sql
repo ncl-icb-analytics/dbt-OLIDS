@@ -11,7 +11,7 @@ Business Logic:
 2. eGFR Criteria:
    - Must have at least 2 eGFR readings with values > 0
    - Both most recent and previous reading must be < 60
-   - Uses 'EGFR_COD_LCS' cluster ID for eGFR testing
+   - Uses 'EGFR_COD_LCS' and 'EGFR_COD' cluster IDs for eGFR testing
 
 3. Output:
    - Only includes patients who meet all criteria (both readings < 60)
@@ -51,7 +51,7 @@ egfr_readings AS (
         mapped_concept_display AS concept_display
     FROM {{ ref('int_ltc_lcs_ckd_observations') }}
     WHERE
-        cluster_id = 'EGFR_TESTING'
+        cluster_id IN ('EGFR_COD_LCS', 'EGFR_COD')
         AND result_value IS NOT NULL
         AND cast(result_value AS number) > 0
 ),

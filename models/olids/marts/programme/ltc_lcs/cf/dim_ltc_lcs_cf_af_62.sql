@@ -22,7 +22,7 @@ pulse_checks AS (
         mapped_concept_display
     FROM {{ ref('int_ltc_lcs_af_observations') }}
     WHERE
-        cluster_id IN ('PULSE_RATE', 'PULSE_RHYTHM')
+        cluster_id IN ('LCS_PULSE_RATE', 'LCS_PULSE_RHYTHM')
         AND clinical_effective_date >= dateadd(MONTH, -36, current_date())
 ),
 

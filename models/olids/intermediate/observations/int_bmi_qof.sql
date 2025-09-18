@@ -22,14 +22,21 @@ WITH base_observations AS (
         obs.result_value,
 
         -- Extract BMI value from result_value, handling both numeric and coded values
+        -- Use TRY_TO_NUMBER to handle invalid numeric values gracefully
         CASE
-            WHEN obs.cluster_id = 'BMIVAL_COD' THEN CAST(obs.result_value AS NUMBER(10,2))
+            WHEN obs.cluster_id = 'BMIVAL_COD' THEN TRY_CAST(obs.result_value AS FLOAT)
             WHEN obs.cluster_id = 'BMI30_COD' THEN 30 -- BMI30_COD implies BMI >= 30
             ELSE NULL
         END AS bmi_value
 
     FROM ({{ get_observations("'BMI30_COD', 'BMIVAL_COD'") }}) obs
     WHERE obs.clinical_effective_date IS NOT NULL
+),
+
+filtered_observations AS (
+    SELECT *
+    FROM base_observations
+    WHERE bmi_value IS NOT NULL
 ),
 
 validated_observations AS (
@@ -59,8 +66,7 @@ validated_observations AS (
             ELSE FALSE
         END AS is_bmi_25_plus
 
-    FROM base_observations
-    WHERE bmi_value IS NOT NULL
+    FROM filtered_observations
 ),
 
 person_level_aggregation AS (

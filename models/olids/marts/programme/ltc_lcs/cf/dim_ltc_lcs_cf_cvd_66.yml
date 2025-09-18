@@ -6,9 +6,9 @@ models:
 
       Business Logic:
 
-      • Identifies patients aged 75-83 years requiring QRISK2 assessment for cardiovascular risk
+      • Identifies patients aged 75-83 years without QRISK2 readings in last 60 months
 
-      • Targets elderly patients lacking recent cardiovascular risk evaluation
+      • Excludes patients on statins, with statin decisions, or recent health checks
 
       • Supports age-appropriate cardiovascular risk management and statin review decisions
 
@@ -22,10 +22,10 @@ models:
           category: "CVD"
           clinical_domain: "Cardiovascular Disease Case Finding"
           name_short: "Elderly CVD screen"
-          description_short: "Patients aged 75-83 requiring QRISK2 cardiovascular risk assessment"
+          description_short: "Patients aged 75-83 without recent QRISK2 (60 months)"
           description_long: >
-            Age 75-83y, requiring QRISK2 assessment for age-appropriate
-            CVD risk management and statin decisions.
+            Age 75-83y, no QRISK2 in 60 months, not on statins, no statin decisions (60m),
+            no health checks (24m). Need cardiovascular risk assessment.
           is_qof: false
           source_column: "person_id"
           sort_order: "LTC_LCS_CVD_66"
@@ -33,8 +33,15 @@ models:
             - "LTC_LCS_DASHBOARD"
             - "CASE_FINDING_PROGRAMME"
           code_clusters:
-            - cluster_id: "QRISK2_RESULTS"
-              category: "MONITORING"
+            - cluster_id: "QRISK2_10YEAR"
+              category: "EXCLUSION"
+              time_window: "60_MONTHS"
+            - cluster_id: "STAT_COD"
+              category: "EXCLUSION"
+              time_window: "12_MONTHS"
+            - cluster_id: "STATINDEC_COD"
+              category: "EXCLUSION"
+              time_window: "60_MONTHS"
             - cluster_id: "CVD_REGISTER_CODES"
               category: "EXCLUSION"
           thresholds:

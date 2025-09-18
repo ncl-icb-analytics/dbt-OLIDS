@@ -6,7 +6,7 @@ models:
 
       Business Logic:
 
-      • Identifies patients aged 40-83 on statins with latest non-HDL cholesterol > 2.5 mmol/L
+      • Identifies patients aged 40-83 on statins (within last 6 months) with latest non-HDL cholesterol > 2.5 mmol/L
 
       • Targets patients requiring statin therapy optimisation or dose escalation
 
@@ -22,9 +22,9 @@ models:
           category: "CVD"
           clinical_domain: "Cardiovascular Disease Case Finding"
           name_short: "High lipids on statin"
-          description_short: "Patients on statins with non-HDL cholesterol >2.5 mmol/L"
+          description_short: "Patients on statins (last 6 months) with non-HDL cholesterol >2.5 mmol/L"
           description_long: >
-            Age 40-83, on statins, non-HDL >2.5 mmol/L. Suboptimal lipid
+            Age 40-83, on statins (last 6 months), non-HDL >2.5 mmol/L. Suboptimal lipid
             control - review dose, adherence, or add therapy.
           is_qof: false
           source_column: "person_id"
@@ -33,7 +33,7 @@ models:
             - "LTC_LCS_DASHBOARD"
             - "CASE_FINDING_PROGRAMME"
           code_clusters:
-            - cluster_id: "STATIN_MEDICATIONS"
+            - cluster_id: "STAT_COD"
               category: "INCLUSION"
             - cluster_id: "NON_HDL_CHOLESTEROL_RESULTS"
               category: "INCLUSION"
