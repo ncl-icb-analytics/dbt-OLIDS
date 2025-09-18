@@ -498,7 +498,7 @@ models:
   description: Staging model for reference pcd refset latest
   tests:
   - all_source_columns_in_staging
-- name: stg_reference_neighbourhood_registered_lookup
+- name: stg_reference_practice_neighbourhood_lookup
   description: Staging model for reference practice neighbourhood lookup
   tests:
   - all_source_columns_in_staging

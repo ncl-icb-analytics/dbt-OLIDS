@@ -4,6 +4,10 @@ config-version: 2
 
 profile: 'dbt_olids'
 
+# Display connection info when dbt runs start
+on-run-start:
+  - "{{ log('🔗 DBT CONNECTION: Role=' ~ target.role ~ ', Warehouse=' ~ target.warehouse ~ ', Database=' ~ target.database ~ ', Schema=' ~ target.schema ~ ', Target=' ~ target.name, info=True) }}"
+
 target-path: "target"
 clean-targets:
   - "target"
