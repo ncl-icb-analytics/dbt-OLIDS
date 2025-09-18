@@ -1,12 +1,21 @@
--- Staging model for olids_core.APPOINTMENT
--- Base layer: base_olids_appointment (filtered for NCL practices, excludes sensitive patients)
--- Description: Core OLIDS patient and clinical data
+{{
+    config(
+        materialized='incremental',
+        unique_key='id',
+        on_schema_change='fail',
+        cluster_by=['patient_id', 'start_date'],
+        alias='appointment',
+        incremental_strategy='merge',
+        tags=['stable', 'incremental']
+    )
+}}
 
 select
     lds_record_id,
     id,
     organisation_id,
     patient_id,
+    person_id,
     practitioner_in_role_id,
     schedule_id,
     start_date,
@@ -31,7 +40,6 @@ select
     service_setting,
     national_slot_category_description,
     csds_care_contact_identifier,
-    person_id,
     lds_id,
     lds_business_key,
     lds_dataset_id,
@@ -44,4 +52,8 @@ select
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('stable_appointment') }}
+from {{ ref('base_olids_appointment') }}
+
+{% if is_incremental() %}
+    where lds_start_date_time > (select max(lds_start_date_time) from {{ this }})
+{% endif %}

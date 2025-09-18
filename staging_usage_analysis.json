@@ -1,0 +1,274 @@
+[
+  {
+    "model": "stg_olids_patient",
+    "table": "patient",
+    "usage_count": 15,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\diagnoses\\int_nafld_diagnoses_all.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_all.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_cardiometabolic_risk.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_qof.sql",
+      "olids\\intermediate\\person_attributes\\int_patient_person_unique.sql"
+    ],
+    "total_references": 15
+  },
+  {
+    "model": "stg_olids_observation",
+    "table": "observation",
+    "usage_count": 11,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\diagnoses\\int_nafld_diagnoses_all.sql",
+      "olids\\intermediate\\performance\\int_observations_mapped.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_all.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_cardiometabolic_risk.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_qof.sql"
+    ],
+    "total_references": 11
+  },
+  {
+    "model": "stg_olids_organisation",
+    "table": "organisation",
+    "usage_count": 5,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\person_attributes\\int_patient_registrations.sql",
+      "olids\\intermediate\\person_attributes\\int_patient_registrations_episode_of_care.sql",
+      "olids\\marts\\organisation\\dim_person_historical_practice.sql",
+      "olids\\marts\\organisation\\dim_practice.sql",
+      "olids\\marts\\organisation\\fct_organisation_active_patients.sql"
+    ],
+    "total_references": 5
+  },
+  {
+    "model": "stg_olids_terminology_concept",
+    "table": "terminology_concept",
+    "usage_count": 4,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\lookups\\int_mapped_concepts.sql",
+      "olids\\intermediate\\performance\\int_medication_orders_mapped.sql",
+      "olids\\intermediate\\performance\\int_observations_mapped.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_all.sql"
+    ],
+    "total_references": 4
+  },
+  {
+    "model": "stg_olids_terminology_concept_map",
+    "table": "terminology_concept_map",
+    "usage_count": 4,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\lookups\\int_mapped_concepts.sql",
+      "olids\\intermediate\\performance\\int_medication_orders_mapped.sql",
+      "olids\\intermediate\\performance\\int_observations_mapped.sql",
+      "olids\\intermediate\\person_attributes\\int_ethnicity_all.sql"
+    ],
+    "total_references": 4
+  },
+  {
+    "model": "stg_olids_medication_order",
+    "table": "medication_order",
+    "usage_count": 2,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\medications\\int_valproate_medications_all.sql",
+      "olids\\intermediate\\performance\\int_medication_orders_mapped.sql"
+    ],
+    "total_references": 2
+  },
+  {
+    "model": "stg_olids_medication_statement",
+    "table": "medication_statement",
+    "usage_count": 2,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\medications\\int_valproate_medications_all.sql",
+      "olids\\intermediate\\performance\\int_medication_orders_mapped.sql"
+    ],
+    "total_references": 2
+  },
+  {
+    "model": "stg_olids_patient_person",
+    "table": "patient_person",
+    "usage_count": 2,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\person_attributes\\int_patient_person_unique.sql",
+      "olids\\intermediate\\person_attributes\\int_patient_registrations.sql"
+    ],
+    "total_references": 2
+  },
+  {
+    "model": "stg_olids_patient_registered_practitioner_in_role",
+    "table": "patient_registered_practitioner_in_role",
+    "usage_count": 2,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\person_attributes\\int_patient_registrations.sql",
+      "olids\\intermediate\\person_attributes\\int_patient_registrations_episode_of_care.sql"
+    ],
+    "total_references": 2
+  },
+  {
+    "model": "stg_olids_appointment",
+    "table": "appointment",
+    "usage_count": 1,
+    "status": "USED",
+    "references": [
+      "olids\\marts\\measures\\fct_person_gp_appointments_12m.sql"
+    ],
+    "total_references": 1
+  },
+  {
+    "model": "stg_olids_episode_of_care",
+    "table": "episode_of_care",
+    "usage_count": 1,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\person_attributes\\int_patient_registrations_episode_of_care.sql"
+    ],
+    "total_references": 1
+  },
+  {
+    "model": "stg_olids_patient_address",
+    "table": "patient_address",
+    "usage_count": 1,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\person_attributes\\int_person_postcode_hash.sql"
+    ],
+    "total_references": 1
+  },
+  {
+    "model": "stg_olids_person",
+    "table": "person",
+    "usage_count": 1,
+    "status": "USED",
+    "references": [
+      "olids\\intermediate\\person_attributes\\int_patient_person_unique.sql"
+    ],
+    "total_references": 1
+  },
+  {
+    "model": "stg_olids_allergy_intolerance",
+    "table": "allergy_intolerance",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_appointment_practitioner",
+    "table": "appointment_practitioner",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_diagnostic_order",
+    "table": "diagnostic_order",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_encounter",
+    "table": "encounter",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_flag",
+    "table": "flag",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_location",
+    "table": "location",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_location_contact",
+    "table": "location_contact",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_patient_contact",
+    "table": "patient_contact",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_patient_uprn",
+    "table": "patient_uprn",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_practitioner",
+    "table": "practitioner",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_practitioner_in_role",
+    "table": "practitioner_in_role",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_procedure_request",
+    "table": "procedure_request",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_referral_request",
+    "table": "referral_request",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_schedule",
+    "table": "schedule",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  },
+  {
+    "model": "stg_olids_schedule_practitioner",
+    "table": "schedule_practitioner",
+    "usage_count": 0,
+    "status": "UNUSED",
+    "references": [],
+    "total_references": 0
+  }
+]

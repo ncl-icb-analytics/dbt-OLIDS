@@ -1,6 +1,14 @@
--- Staging model for olids_core.MEDICATION_STATEMENT
--- Base layer: base_olids_medication_statement (filtered for NCL practices, excludes sensitive patients)
--- Description: Core OLIDS patient and clinical data
+{{
+    config(
+        materialized='incremental',
+        unique_key='id',
+        on_schema_change='fail',
+        cluster_by=['medication_order_source_concept_id', 'clinical_effective_date'],
+        alias='medication_order',
+        incremental_strategy='merge',
+        tags=['stable', 'incremental']
+    )
+}}
 
 select
     lds_record_id,
@@ -8,32 +16,31 @@ select
     organisation_id,
     person_id,
     patient_id,
+    medication_statement_id,
     encounter_id,
     practitioner_id,
     observation_id,
     allergy_intolerance_id,
     diagnostic_order_id,
     referral_request_id,
-    authorisation_type_concept_id,
-    date_precision_concept_id,
-    medication_statement_source_concept_id,
     clinical_effective_date,
-    cancellation_date,
+    date_precision_concept_id,
     dose,
-    quantity_value_description,
     quantity_value,
     quantity_unit,
+    duration_days,
+    estimated_cost,
     medication_name,
+    medication_order_source_concept_id,
     bnf_reference,
     age_at_event,
     age_at_event_baby,
     age_at_event_neonate,
     issue_method,
     date_recorded,
-    is_active,
     is_confidential,
     is_deleted,
-    expiry_date,
+    issue_method_description,
     lds_id,
     lds_business_key,
     lds_dataset_id,
@@ -46,4 +53,8 @@ select
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('stable_medication_statement') }}
+from {{ ref('base_olids_medication_order') }}
+
+{% if is_incremental() %}
+    where lds_start_date_time > (select max(lds_start_date_time) from {{ this }})
+{% endif %}

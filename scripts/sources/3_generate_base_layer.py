@@ -1,6 +1,7 @@
 import yaml
 import os
 import sys
+from model_requirements import get_model_requirements, generate_where_clause
 
 # Path configuration
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -146,17 +147,24 @@ Note: person_id replaced with fabricated version from patient_person mapping'''
         comment += '''
 */'''
 
+        # Add WHERE clause for required fields
+        where_clause = generate_where_clause(table_name)
+
         return f'''{config_block}
 
 {comment}
 
 SELECT
 {column_list}
-{join_clause}'''
+{join_clause}
+{where_clause}'''
     
     elif pattern == 'infrastructure':
         # Generate column list
         column_list = generate_column_list(columns)
+
+        # Add WHERE clause for required fields
+        where_clause = generate_where_clause(table_name)
 
         return f'''{config_block}
 
@@ -170,7 +178,8 @@ SELECT
 {column_list}
 FROM {{{{ source('olids_core', '{table_name}') }}}} src
 INNER JOIN {{{{ ref('int_ncl_practices') }}}} ncl_practices
-    ON src."record_owner_organisation_code" = ncl_practices.practice_code'''
+    ON src."record_owner_organisation_code" = ncl_practices.practice_code
+{where_clause}'''
     
     elif pattern == 'generated':
         if table_name == 'PATIENT_PERSON':
@@ -226,6 +235,9 @@ FROM {{{{ ref('base_olids_patient') }}}}'''
         # Generate column list
         column_list = generate_column_list(columns)
 
+        # Add WHERE clause for required fields if any
+        where_clause = generate_where_clause(table_name)
+
         return f'''{config_block}
 
 /*
@@ -236,11 +248,15 @@ Pattern: Global reference table
 
 SELECT
 {column_list}
-FROM {{{{ source('olids_core', '{table_name}') }}}} src'''
+FROM {{{{ source('olids_core', '{table_name}') }}}} src
+{where_clause}'''
 
     elif pattern == 'terminology':
         # Generate column list with unquoted identifiers
         column_list = generate_column_list(columns)
+
+        # Add WHERE clause for required fields if any
+        where_clause = generate_where_clause(table_name)
 
         return f'''{config_block}
 
@@ -252,7 +268,8 @@ Pattern: Terminology table from OLIDS_TERMINOLOGY schema
 
 SELECT
 {column_list}
-FROM {{{{ source('olids_terminology', '{table_name}') }}}} src'''
+FROM {{{{ source('olids_terminology', '{table_name}') }}}} src
+{where_clause}'''
 
     return None
 

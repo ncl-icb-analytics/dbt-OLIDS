@@ -11,4 +11,4 @@ select
     birth_month,
     death_year,
     death_month
-from {{ ref('base_olids_person') }}
+from {{ ref('stable_person') }}

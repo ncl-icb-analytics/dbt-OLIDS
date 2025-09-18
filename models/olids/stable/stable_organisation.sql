@@ -1,6 +1,14 @@
--- Staging model for olids_core.ORGANISATION
--- Base layer: base_olids_organisation (filtered for NCL practices, excludes sensitive patients)
--- Description: Core OLIDS patient and clinical data
+{{
+    config(
+        materialized='incremental',
+        unique_key='id',
+        on_schema_change='fail',
+        cluster_by=['organisation_code'],
+        alias='organisation',
+        incremental_strategy='merge',
+        tags=['stable', 'incremental']
+    )
+}}
 
 select
     lds_record_id,
@@ -27,4 +35,8 @@ select
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('stable_organisation') }}
+from {{ ref('base_olids_organisation') }}
+
+{% if is_incremental() %}
+    where lds_start_date_time > (select max(lds_start_date_time) from {{ this }})
+{% endif %}

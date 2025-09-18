@@ -4,7 +4,9 @@
         unique_key='id',
         on_schema_change='fail',
         cluster_by=['observation_source_concept_id', 'clinical_effective_date'],
-        tags=['stable']
+        alias='observation',
+        incremental_strategy='merge',
+        tags=['stable', 'incremental']
     )
 }}
 
@@ -49,5 +51,5 @@ select
 from {{ ref('base_olids_observation') }}
 
 {% if is_incremental() %}
-    where lds_lakehouse_datetime_updated > (select max(lds_lakehouse_datetime_updated) from {{ this }})
+    where lds_start_date_time > (select max(lds_start_date_time) from {{ this }})
 {% endif %}

@@ -40,4 +40,4 @@ select
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('base_olids_observation') }}
+from {{ ref('stable_observation') }}
