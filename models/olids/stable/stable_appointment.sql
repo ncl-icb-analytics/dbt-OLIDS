@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key='id',
         on_schema_change='fail',
-        cluster_by=['patient_id', 'start_date'],
+        cluster_by=['start_date', 'patient_id'],
         alias='appointment',
         incremental_strategy='merge',
         tags=['stable', 'incremental']

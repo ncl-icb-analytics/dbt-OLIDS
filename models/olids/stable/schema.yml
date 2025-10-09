@@ -1,81 +1,205 @@
 version: 2
-
 models:
-  - name: stable_observation
-    description: |
-      Incremental observation table for production stability.
+- name: stable_allergy_intolerance
+  description: 'Incremental allergy intolerance table.
 
-      Provides a stable interface between volatile Alpha data and analytical models.
-      Uses incremental materialisation with clustering for optimal query performance.
 
-  - name: stable_patient
-    description: |
-      Incremental patient demographics table.
+    Clinical event records with NCL patient filtering and quality controls applied.
 
-      Core patient entity with NCL filtering applied and sensitive patients excluded.
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_appointment
+  description: 'Incremental appointment table.
 
-  - name: stable_patient_person
-    description: |
-      Incremental patient-person mapping table.
 
-      Bridge table with fabricated person_id for data quality purposes.
+    Clinical event records with NCL patient filtering and quality controls applied.
 
-  - name: stable_terminology_concept
-    description: |
-      Incremental terminology concepts reference table.
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_appointment_practitioner
+  description: 'Incremental appointment practitioner reference table.
 
-      Core concept definitions used throughout the system for mapping and classification.
 
-  - name: stable_terminology_concept_map
-    description: |
-      Incremental concept mapping reference table.
+    Appointment Practitioner relationships and attributes.
 
-      Maps source concepts to target concepts for terminology standardisation.
+    Maintains referential integrity with parent entities.'
+- name: stable_diagnostic_order
+  description: 'Incremental diagnostic order table.
 
-  - name: stable_organisation
-    description: |
-      Incremental organisation reference table.
 
-      Healthcare organisation details including practices and trusts.
+    Clinical event records with NCL patient filtering and quality controls applied.
 
-  - name: stable_medication_order
-    description: |
-      Incremental medication orders table.
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_encounter
+  description: 'Incremental encounter table.
 
-      Prescription and medication order records with quality filtering applied.
 
-  - name: stable_medication_statement
-    description: |
-      Incremental medication statements table.
+    Clinical event records with NCL patient filtering and quality controls applied.
 
-      Medication statement records with quality filtering applied.
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_episode_of_care
+  description: 'Incremental episode of care table.
 
-  - name: stable_patient_registered_practitioner_in_role
-    description: |
-      Incremental patient GP registration table.
 
-      Patient registration history with healthcare practitioners.
+    Provides stable interface between source data and analytical models.
 
-  - name: stable_person
-    description: |
-      Incremental person dimension table.
+    Uses incremental materialisation for efficient updates.'
+- name: stable_flag
+  description: 'Incremental flag table.
 
-      Derived from patient data with distinct person records.
 
-  - name: stable_appointment
-    description: |
-      Incremental appointment records table.
+    Clinical event records with NCL patient filtering and quality controls applied.
 
-      Patient appointment history with scheduling details.
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_location
+  description: 'Incremental location entity table.
 
-  - name: stable_patient_address
-    description: |
-      Incremental patient address history table.
 
-      SCD2 address history with postcode hash for privacy.
+    Core location demographics and attributes.
 
-  - name: stable_episode_of_care
-    description: |
-      Incremental episode of care records table.
+    Provides stable interface for downstream analytical models.'
+- name: stable_location_contact
+  description: 'Incremental location contact reference table.
 
-      Care episode management and coordination records.
+
+    Location Contact relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_medication_order
+  description: 'Incremental medication order table.
+
+
+    Clinical event records with NCL patient filtering and quality controls applied.
+
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_medication_statement
+  description: 'Incremental medication statement table.
+
+
+    Clinical event records with NCL patient filtering and quality controls applied.
+
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_observation
+  description: 'Incremental observation table.
+
+
+    Clinical event records with NCL patient filtering and quality controls applied.
+
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_organisation
+  description: 'Incremental organisation entity table.
+
+
+    Core organisation demographics and attributes.
+
+    Provides stable interface for downstream analytical models.'
+- name: stable_patient
+  description: 'Incremental patient entity table.
+
+
+    Core patient demographics and attributes.
+
+    NCL filtering applied with sensitive patients excluded.'
+- name: stable_patient_address
+  description: 'Incremental patient address reference table.
+
+
+    Patient Address relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_patient_contact
+  description: 'Incremental patient contact reference table.
+
+
+    Patient Contact relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_patient_person
+  description: 'Incremental patient person table.
+
+
+    Provides stable interface between source data and analytical models.
+
+    Uses incremental materialisation for efficient updates.'
+- name: stable_patient_registered_practitioner_in_role
+  description: 'Incremental patient registered practitioner in role table.
+
+
+    Provides stable interface between source data and analytical models.
+
+    Uses incremental materialisation for efficient updates.'
+- name: stable_patient_uprn
+  description: 'Incremental patient uprn reference table.
+
+
+    Patient Uprn relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_person
+  description: 'Incremental person entity table.
+
+
+    Core person demographics and attributes.
+
+    Provides stable interface for downstream analytical models.'
+- name: stable_postcode_hash
+  description: 'Incremental postcode hash table.
+
+
+    Provides stable interface between source data and analytical models.
+
+    Uses incremental materialisation for efficient updates.'
+- name: stable_practitioner
+  description: 'Incremental practitioner entity table.
+
+
+    Core practitioner demographics and attributes.
+
+    Provides stable interface for downstream analytical models.'
+- name: stable_practitioner_in_role
+  description: 'Incremental practitioner in role reference table.
+
+
+    Practitioner In Role relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_procedure_request
+  description: 'Incremental procedure request table.
+
+
+    Clinical event records with NCL patient filtering and quality controls applied.
+
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_referral_request
+  description: 'Incremental referral request table.
+
+
+    Clinical event records with NCL patient filtering and quality controls applied.
+
+    Uses merge strategy with clustering on source concept and clinical effective date for optimal query performance.'
+- name: stable_schedule
+  description: 'Incremental schedule reference table.
+
+
+    Schedule relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_schedule_practitioner
+  description: 'Incremental schedule practitioner reference table.
+
+
+    Schedule Practitioner relationships and attributes.
+
+    Maintains referential integrity with parent entities.'
+- name: stable_terminology_concept
+  description: 'Incremental terminology concept table.
+
+
+    Provides stable interface between source data and analytical models.
+
+    Uses incremental materialisation for efficient updates.'
+- name: stable_terminology_concept_map
+  description: 'Incremental terminology concept map table.
+
+
+    Provides stable interface between source data and analytical models.
+
+    Uses incremental materialisation for efficient updates.'

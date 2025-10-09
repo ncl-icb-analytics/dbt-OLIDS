@@ -45,4 +45,4 @@ select
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('stable_medication_order') }}
+from {{ ref('base_olids_medication_order') }}

@@ -53,7 +53,12 @@ select
     lds_is_deleted,
     lds_start_date_time,
     lds_lakehouse_date_processed,
-    lds_lakehouse_datetime_updated
+    lds_lakehouse_datetime_updated,
+    mapped_concept_id,
+    mapped_concept_code,
+    mapped_concept_display,
+    authorisation_type_code,
+    authorisation_type_display
 from {{ ref('base_olids_medication_statement') }}
 
 {% if is_incremental() %}

@@ -48,12 +48,16 @@ models:
     olids:
       base:
         +materialized: view
+        +database: "DATA_LAB_OLIDS_NCL"
         +schema: "olids_base"
         +post-hook: ["{{ add_model_comment() }}"]
         +tags: ["base"]
+        +tests:
+          - dbt_utils.not_empty
       stable:
         +materialized: incremental
-        +schema: "olids_stable"
+        +database: "DATA_LAB_OLIDS_NCL"
+        +schema: "olids"
         +on_schema_change: fail
         +post-hook: ["{{ add_model_comment() }}"]
         +tags: ["stable", "incremental"]
