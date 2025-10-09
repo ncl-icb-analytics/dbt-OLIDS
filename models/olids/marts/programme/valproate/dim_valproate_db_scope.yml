@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: dim_valproate_db_scope
-    description: 'Valproate monitoring dashboard scope for child-bearing age cohort with recent prescriptions.
-
-      One row per non-male person aged 0-55 years with valproate prescriptions in last 6 months.'

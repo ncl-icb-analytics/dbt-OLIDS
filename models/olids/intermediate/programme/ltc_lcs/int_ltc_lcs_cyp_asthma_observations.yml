@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_ltc_lcs_cyp_asthma_observations
-    description: 'Children and young people asthma-relevant observations for Long Term Conditions case finding measures.
-
-      One row per clinical observation including suspected asthma, viral wheeze, asthma diagnosis, and asthma resolved observations using cluster IDs: SUSPECTED_ASTHMA, VIRAL_WHEEZE, ASTHMA_DIAGNOSIS, ASTHMA_RESOLVED.'

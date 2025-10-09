@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_retinal_screening_latest
-    description: 'Most recent completed diabetes retinal screening per person for diabetes care monitoring and QOF reporting.
-
-      One row per person with their latest retinal screening including currency flags (12m, 24m) and completion status for diabetes care pathway compliance.'

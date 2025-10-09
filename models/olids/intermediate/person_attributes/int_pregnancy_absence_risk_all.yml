@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_pregnancy_absence_risk_all
-    description: 'Observations indicating permanent absence of pregnancy risk for valproate medication safety monitoring.
-
-      One row per pregnancy absence risk observation using PREGRISK category codes with permanent pregnancy risk absence indicators for teratogenic medication prescribing decisions.'

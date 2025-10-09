@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_person_diabetes_foot_check
-    description: 'Diabetes foot examination status for QOF reporting with Townson scale risk assessment.
-
-      One row per person on diabetes register with foot examination completion status and risk level assessment.'

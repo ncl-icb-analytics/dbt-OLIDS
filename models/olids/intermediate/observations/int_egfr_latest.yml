@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_egfr_latest
-    description: 'Most recent valid eGFR measurement per person with CKD staging for kidney function assessment.
-
-      One row per person with their latest eGFR including CKD stage classification (stages 1-5) and CKD indicator flags.'

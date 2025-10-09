@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: dim_valproate_ppp_status
-    description: 'Pregnancy Prevention Programme (PPP) events aggregation for valproate monitoring.
-
-      One row per person with PPP events determining latest enrollment status and providing current PPP status with dates.'

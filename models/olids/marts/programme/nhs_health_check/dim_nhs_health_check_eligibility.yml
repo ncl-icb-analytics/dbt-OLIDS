@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: dim_nhs_health_check_eligibility
-    description: 'NHS Health Check programme eligibility for patients aged 40-74 without excluding chronic conditions.
-
-      One row per person with eligibility flags, due status (>5 years or never checked) and latest health check date.'

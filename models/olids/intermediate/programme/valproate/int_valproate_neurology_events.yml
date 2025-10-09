@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_valproate_neurology_events
-    description: 'Neurology-related events from observations using valproate programme codes.
-
-      One row per neurology observation with person, date, concept details filtered to NEUROLOGY code category only.'

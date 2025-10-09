@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_ppp_status_all
-    description: 'Pregnancy Prevention Programme status events for valproate patient safety monitoring.
-
-      One row per PPP status observation including enrolled, discontinued, not needed, and declined status events for women of childbearing potential on valproate therapy.'

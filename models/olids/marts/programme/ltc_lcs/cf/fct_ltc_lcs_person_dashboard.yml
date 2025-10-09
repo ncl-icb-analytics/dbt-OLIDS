@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_ltc_lcs_person_dashboard
-    description: 'Person-level LTC case finding data with demographics for PowerBI analytics.
-
-      One row per person meeting any LTC case finding criteria with demographic enrichment and practice context.'
