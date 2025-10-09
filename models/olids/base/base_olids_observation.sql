@@ -23,6 +23,8 @@ SELECT
     src."date_precision_concept_id" AS date_precision_concept_id,
     src."result_value" AS result_value,
     src."result_value_unit_concept_id" AS result_value_unit_concept_id,
+    unit_concept.code AS result_unit_code,
+    unit_concept.display AS result_unit_display,
     src."result_date" AS result_date,
     src."result_text" AS result_text,
     src."is_problem" AS is_problem,
@@ -63,6 +65,8 @@ LEFT JOIN {{ ref('base_olids_concept_map') }} concept_map
     ON src."observation_source_concept_id" = concept_map.source_code_id
 LEFT JOIN {{ ref('base_olids_concept') }} mapped_concept
     ON concept_map.target_code_id = mapped_concept.id
+LEFT JOIN {{ ref('base_olids_concept') }} unit_concept
+    ON src."result_value_unit_concept_id" = unit_concept.id
 WHERE src."observation_source_concept_id" IS NOT NULL
     AND src."lds_start_date_time" IS NOT NULL
-QUALIFY ROW_NUMBER() OVER (PARTITION BY src."id" ORDER BY mapped_concept.display NULLS LAST) = 1
+QUALIFY ROW_NUMBER() OVER (PARTITION BY src."id" ORDER BY mapped_concept.display NULLS LAST, unit_concept.display NULLS LAST) = 1
