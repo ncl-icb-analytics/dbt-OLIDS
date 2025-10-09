@@ -13,4 +13,4 @@ select
     lds_dataset_id,
     patient_id,
     person_id
-from {{ ref('stable_patient_person') }}
+from {{ ref('base_olids_patient_person') }}

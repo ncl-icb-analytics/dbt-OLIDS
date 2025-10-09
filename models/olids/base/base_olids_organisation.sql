@@ -36,3 +36,5 @@ SELECT
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
 FROM {{ source('olids_core', 'ORGANISATION') }} src
+WHERE src."organisation_code" IS NOT NULL
+    AND src."lds_start_date_time" IS NOT NULL

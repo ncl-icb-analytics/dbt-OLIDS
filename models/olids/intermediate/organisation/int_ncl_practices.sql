@@ -16,4 +16,4 @@ SELECT
     practice_name,
     stp_code,
     stp_name
-FROM {{ ref('base_ncl_practices') }}
+FROM {{ ref('base_olids_ncl_practices') }}

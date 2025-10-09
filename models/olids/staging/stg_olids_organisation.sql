@@ -27,4 +27,4 @@ select
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated
-from {{ ref('stable_organisation') }}
+from {{ ref('base_olids_organisation') }}

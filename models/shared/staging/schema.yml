@@ -4,44 +4,6 @@ models:
   description: Staging model for dictionary activitylocationtype
   tests:
   - all_source_columns_in_staging
-- name: stg_reference_gp_weighted_list_size_latest
-  description: |
-    GP practice weighted list size data.
-    Contains practice list sizes and normalised weighted list sizes by financial quarter.
-
-  columns:
-    - name: site
-      description: 'Site identifier'
-
-    - name: financial_quarter_date
-      description: 'Financial quarter date'
-
-    - name: pct
-      description: 'Primary Care Trust'
-
-    - name: practice_code
-      description: 'GP practice code'
-
-    - name: practice_name
-      description: 'GP practice name'
-
-    - name: gms_pms_flag
-      description: 'GMS/PMS contract flag'
-
-    - name: commissioner_code
-      description: 'Commissioner code'
-
-    - name: commissioner_name
-      description: 'Commissioner name'
-
-    - name: practice_list_size
-      description: 'Practice list size'
-
-    - name: practice_normalised_weighted_list_size
-      description: 'Practice normalised weighted list size'
-
-    - name: report_execution_datetime
-      description: 'Report execution timestamp'
 - name: stg_dictionary_admincategories
   description: Staging model for dictionary admincategories
   tests:
@@ -476,6 +438,10 @@ models:
   - all_source_columns_in_staging
 - name: stg_reference_ethnicity_codes
   description: Staging model for reference ethnicity codes
+  tests:
+  - all_source_columns_in_staging
+- name: stg_reference_gp_weighted_list_size_latest
+  description: Staging model for reference gp weighted list size latest
   tests:
   - all_source_columns_in_staging
 - name: stg_reference_imd2019

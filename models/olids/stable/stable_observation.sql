@@ -47,7 +47,12 @@ select
     lds_initial_data_received_date,
     lds_start_date_time,
     lds_lakehouse_date_processed,
-    lds_lakehouse_datetime_updated
+    lds_lakehouse_datetime_updated,
+    mapped_concept_id,
+    mapped_concept_code,
+    mapped_concept_display,
+    result_unit_code,
+    result_unit_display
 from {{ ref('base_olids_observation') }}
 
 {% if is_incremental() %}

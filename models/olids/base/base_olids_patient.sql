@@ -43,8 +43,9 @@ SELECT
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
 FROM {{ source('olids_core', 'PATIENT') }} src
-INNER JOIN {{ ref('base_ncl_practices') }} ncl_practices
+INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
     ON src."record_owner_organisation_code" = ncl_practices.practice_code
-WHERE src."is_spine_sensitive" = FALSE
+WHERE src."sk_patient_id" IS NOT NULL
+    AND src."is_spine_sensitive" = FALSE
     AND src."is_confidential" = FALSE
     AND src."is_dummy_patient" = FALSE

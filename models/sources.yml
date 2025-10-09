@@ -405,31 +405,6 @@ sources:
       data_type: TEXT
     - name: SERVICE_AND_RULESET
       data_type: TEXT
-  - name: GP_WEIGHTED_LIST_SIZE_LATEST
-    identifier: '"GP_WEIGHTED_LIST_SIZE_LATEST"'
-    columns:
-    - name: SITE
-      data_type: VARCHAR
-    - name: FINANCIAL_QUARTER_DATE
-      data_type: DATE
-    - name: PCT
-      data_type: VARCHAR
-    - name: PRACTICE_CODE
-      data_type: VARCHAR
-    - name: PRACTICE_NAME
-      data_type: VARCHAR
-    - name: GMS_PMS_FLAG
-      data_type: VARCHAR
-    - name: COMMISSIONER_CODE
-      data_type: VARCHAR
-    - name: COMMISSIONER_NAME
-      data_type: VARCHAR
-    - name: PRACTICE_LIST_SIZE
-      data_type: NUMBER
-    - name: PRACTICE_NORMALISED_WEIGHTED_LIST_SIZE
-      data_type: NUMBER
-    - name: REPORT_EXECUTION_DATETIME
-      data_type: VARCHAR
   - name: PRACTICE_NEIGHBOURHOOD_LOOKUP
     identifier: '"PRACTICE_NEIGHBOURHOOD_LOOKUP"'
     columns:

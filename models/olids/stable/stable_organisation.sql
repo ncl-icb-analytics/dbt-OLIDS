@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key='id',
         on_schema_change='fail',
-        cluster_by=['organisation_code'],
+        cluster_by=['id'],
         alias='organisation',
         incremental_strategy='merge',
         tags=['stable', 'incremental']

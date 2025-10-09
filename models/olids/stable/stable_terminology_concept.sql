@@ -21,7 +21,7 @@ select
     is_mapped,
     use_count,
     lds_start_date_time
-from {{ ref('base_olids_terminology_concept') }}
+from {{ ref('base_olids_concept') }}
 
 {% if is_incremental() %}
     where lds_start_date_time > (select max(lds_start_date_time) from {{ this }})
