@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_ltc_lcs_population_summary
-    description: 'Demographic cross-tabulation of LTC case finding indicators for population health analytics.
-
-      Cross-tabulated data by age bands, ethnicity, and deprivation quintiles with population denominators for rate calculations.'

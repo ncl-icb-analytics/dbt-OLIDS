@@ -33,6 +33,11 @@ SELECT
     src."estimated_cost" AS estimated_cost,
     src."medication_name" AS medication_name,
     src."medication_order_source_concept_id" AS medication_order_source_concept_id,
+    ms."medication_statement_source_concept_id" AS medication_statement_source_concept_id,
+    ms."medication_name" AS statement_medication_name,
+    mapped_concept.id AS mapped_concept_id,
+    mapped_concept.code AS mapped_concept_code,
+    mapped_concept.display AS mapped_concept_display,
     src."bnf_reference" AS bnf_reference,
     src."age_at_event" AS age_at_event,
     src."age_at_event_baby" AS age_at_event_baby,
@@ -54,12 +59,19 @@ SELECT
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'MEDICATION_ORDER') }} src
+FROM {{ source('olids_common', 'MEDICATION_ORDER') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src."patient_id" = patients.id
 INNER JOIN {{ ref('base_olids_patient_person') }} pp
     ON src."patient_id" = pp.patient_id
 INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
     ON src."record_owner_organisation_code" = ncl_practices.practice_code
+LEFT JOIN {{ source('olids_common', 'MEDICATION_STATEMENT') }} ms
+    ON src."medication_statement_id" = ms."id"
+LEFT JOIN {{ ref('base_olids_concept_map') }} concept_map
+    ON src."medication_order_source_concept_id" = concept_map.source_code_id
+LEFT JOIN {{ ref('base_olids_concept') }} mapped_concept
+    ON concept_map.target_code_id = mapped_concept.id
 WHERE src."medication_order_source_concept_id" IS NOT NULL
     AND src."lds_start_date_time" IS NOT NULL
+QUALIFY ROW_NUMBER() OVER (PARTITION BY src."id" ORDER BY mapped_concept.display NULLS LAST) = 1

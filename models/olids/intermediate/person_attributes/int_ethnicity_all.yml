@@ -1,4 +1,0 @@
-version: 2
-models:
-  - name: int_ethnicity_all
-    description: Intermediate table containing all dated Observation records that map to a valid code in the ETHNICITY_CODES reference table. Used as a source for DIM_PERSON_ETHNICITY to find the latest valid record per person.

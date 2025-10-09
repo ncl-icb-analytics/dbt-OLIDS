@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_person_pregnancy_status
-    description: 'Current pregnancy status determination for non-male individuals based on recent clinical codes.
-
-      One row per person with latest pregnancy code > latest delivery code, limited to child-bearing age (0-55 years) for medication safety.'

@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_nhs_health_check_latest
-    description: 'Most recent NHS Health Check completion per person for programme management.
-
-      One row per person representing their latest NHS Health Check completion with currency flags for 12m, 24m, and 5y intervals for programme eligibility assessment.'

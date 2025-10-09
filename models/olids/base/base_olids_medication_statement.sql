@@ -24,8 +24,13 @@ SELECT
     src."diagnostic_order_id" AS diagnostic_order_id,
     src."referral_request_id" AS referral_request_id,
     src."authorisation_type_concept_id" AS authorisation_type_concept_id,
+    auth_concept.code AS authorisation_type_code,
+    auth_concept.display AS authorisation_type_display,
     src."date_precision_concept_id" AS date_precision_concept_id,
     src."medication_statement_source_concept_id" AS medication_statement_source_concept_id,
+    mapped_concept.id AS mapped_concept_id,
+    mapped_concept.code AS mapped_concept_code,
+    mapped_concept.display AS mapped_concept_display,
     src."clinical_effective_date" AS clinical_effective_date,
     src."cancellation_date" AS cancellation_date,
     src."dose" AS dose,
@@ -55,12 +60,19 @@ SELECT
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'MEDICATION_STATEMENT') }} src
+FROM {{ source('olids_common', 'MEDICATION_STATEMENT') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src."patient_id" = patients.id
 INNER JOIN {{ ref('base_olids_patient_person') }} pp
     ON src."patient_id" = pp.patient_id
 INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
     ON src."record_owner_organisation_code" = ncl_practices.practice_code
+LEFT JOIN {{ ref('base_olids_concept_map') }} concept_map
+    ON src."medication_statement_source_concept_id" = concept_map.source_code_id
+LEFT JOIN {{ ref('base_olids_concept') }} mapped_concept
+    ON concept_map.target_code_id = mapped_concept.id
+LEFT JOIN {{ ref('base_olids_concept') }} auth_concept
+    ON src."authorisation_type_concept_id" = auth_concept.id
 WHERE src."medication_statement_source_concept_id" IS NOT NULL
     AND src."lds_start_date_time" IS NOT NULL
+QUALIFY ROW_NUMBER() OVER (PARTITION BY src."id" ORDER BY mapped_concept.display NULLS LAST, auth_concept.display NULLS LAST) = 1

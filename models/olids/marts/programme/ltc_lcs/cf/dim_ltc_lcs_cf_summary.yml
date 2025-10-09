@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: dim_ltc_lcs_cf_summary
-    description: 'LTC case finding summary aggregating indicators across multiple condition areas.
-
-      One row per person meeting criteria for atrial fibrillation, CKD, cardiovascular, diabetes, or hypertension case finding.'

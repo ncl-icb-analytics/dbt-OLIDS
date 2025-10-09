@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_valproate_araf_referral_events
-    description: 'ARAF referral events from observations using valproate programme codes.
-
-      One row per ARAF referral observation with person, date, concept details filtered to REFERRAL code category only.'

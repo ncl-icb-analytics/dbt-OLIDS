@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_urine_acr_latest
-    description: 'Most recent valid albumin-to-creatinine ratio measurement per person for kidney function assessment and CKD staging.
-
-      One row per person with their latest ACR including clinical ACR categorisation and microalbuminuria/macroalbuminuria flags.'

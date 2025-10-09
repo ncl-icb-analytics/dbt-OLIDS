@@ -1,8 +1,0 @@
-version: 2
-models:
-  - name: dim_person_care_home
-    description: Dimension table providing the latest recorded care home/nursing home status for persons who have a recorded residence status. Only includes persons with CAREHOME_COD, NURSEHOME_COD, or TEMPCARHOME_COD records.
-    tests:
-      - cluster_ids_exist:
-          arguments:
-            cluster_ids: CAREHOME_COD, NURSEHOME_COD, TEMPCARHOME_COD

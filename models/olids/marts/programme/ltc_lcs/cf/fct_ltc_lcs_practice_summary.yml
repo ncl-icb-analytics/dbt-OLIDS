@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_ltc_lcs_practice_summary
-    description: 'Practice-level LTC case finding indicators aggregation optimised for PowerBI dashboards.
-
-      One row per practice with case finding activity including demographic breakdowns and pre-calculated rates.'

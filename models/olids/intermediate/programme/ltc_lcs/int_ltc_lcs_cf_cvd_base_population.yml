@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_ltc_lcs_cf_cvd_base_population
-    description: 'CVD base population for Long Term Conditions case finding indicators with statin exclusions.
-
-      One row per eligible person aged 40-83 years excluding patients on statins in last 12 months, with statin allergies/contraindications, or recent statin decisions for CVD primary prevention case finding.'

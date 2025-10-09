@@ -23,12 +23,17 @@ SELECT
     src."date_precision_concept_id" AS date_precision_concept_id,
     src."result_value" AS result_value,
     src."result_value_unit_concept_id" AS result_value_unit_concept_id,
+    unit_concept.code AS result_unit_code,
+    unit_concept.display AS result_unit_display,
     src."result_date" AS result_date,
     src."result_text" AS result_text,
     src."is_problem" AS is_problem,
     src."is_review" AS is_review,
     src."problem_end_date" AS problem_end_date,
     src."observation_source_concept_id" AS observation_source_concept_id,
+    mapped_concept.id AS mapped_concept_id,
+    mapped_concept.code AS mapped_concept_code,
+    mapped_concept.display AS mapped_concept_display,
     src."age_at_event" AS age_at_event,
     src."age_at_event_baby" AS age_at_event_baby,
     src."age_at_event_neonate" AS age_at_event_neonate,
@@ -49,12 +54,19 @@ SELECT
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'OBSERVATION') }} src
+FROM {{ source('olids_common', 'OBSERVATION') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src."patient_id" = patients.id
 INNER JOIN {{ ref('base_olids_patient_person') }} pp
     ON src."patient_id" = pp.patient_id
 INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
     ON src."record_owner_organisation_code" = ncl_practices.practice_code
+LEFT JOIN {{ ref('base_olids_concept_map') }} concept_map
+    ON src."observation_source_concept_id" = concept_map.source_code_id
+LEFT JOIN {{ ref('base_olids_concept') }} mapped_concept
+    ON concept_map.target_code_id = mapped_concept.id
+LEFT JOIN {{ ref('base_olids_concept') }} unit_concept
+    ON src."result_value_unit_concept_id" = unit_concept.id
 WHERE src."observation_source_concept_id" IS NOT NULL
     AND src."lds_start_date_time" IS NOT NULL
+QUALIFY ROW_NUMBER() OVER (PARTITION BY src."id" ORDER BY mapped_concept.display NULLS LAST, unit_concept.display NULLS LAST) = 1

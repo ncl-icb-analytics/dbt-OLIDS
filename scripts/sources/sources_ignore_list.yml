@@ -1,9 +1,0 @@
-# Preserved Models Configuration
-# Models listed here will be preserved during the sources regeneration process
-# These are staging models that have been manually modified and should not be overwritten
-
-preserved_models: []
-  # Add preserved models as needed
-  # - model: stg_model_name
-  #   reason: "Why this model is preserved"
-  #   source_table: ORIGINAL_TABLE_NAME

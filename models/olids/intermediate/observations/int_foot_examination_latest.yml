@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_foot_examination_latest
-    description: 'Most recent diabetic foot examination status per person for diabetes care monitoring and QOF reporting.
-
-      One row per person with their latest foot examination including completion status and current foot risk level assessment.'

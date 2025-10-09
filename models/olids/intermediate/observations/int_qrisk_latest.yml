@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_qrisk_latest
-    description: 'Most recent valid QRISK cardiovascular risk score per person for primary prevention and statin therapy decision-making.
-
-      One row per person with their latest QRISK score including type preservation (QRISK2/3) and clinical cardiovascular risk categorisation.'

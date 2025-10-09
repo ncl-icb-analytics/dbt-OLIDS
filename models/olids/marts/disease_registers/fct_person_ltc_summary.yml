@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_person_ltc_summary
-    description: 'Long-term conditions summary combining all QOF and clinical disease registers.
-
-      One row per person per condition with standardised condition codes, clinical domains, diagnosis dates and QOF status.'

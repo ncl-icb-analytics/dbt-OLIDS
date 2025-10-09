@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_valproate_psychiatry_events
-    description: 'Psychiatry-related events from observations using valproate programme codes.
-
-      One row per psychiatry observation with person, date, concept details filtered to PSYCH code category only.'

@@ -1,4 +1,0 @@
-version: 2
-models:
-  - name: int_ethnicity_qof
-    description: Intermediate table containing ethnicity information from observations only, with BAME status flags for obesity register.

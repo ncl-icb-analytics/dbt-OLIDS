@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: int_ltc_lcs_cf_exclusions
-    description: 'Patients with existing Long Term Conditions who should be excluded from case finding programmes.
-
-      One row per person with any excluding LTC condition across 13 major conditions: CKD, AF, COPD, HTN, CHD, Stroke/TIA, PAD, HF, T2DM, hyperlipidaemia, NAFLD, asthma with boolean flags and composite exclusion indicator.'

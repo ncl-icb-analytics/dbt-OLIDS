@@ -29,4 +29,4 @@ SELECT
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'LOCATION_CONTACT') }} src
+FROM {{ source('olids_common', 'LOCATION_CONTACT') }} src

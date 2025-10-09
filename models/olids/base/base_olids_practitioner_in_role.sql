@@ -31,6 +31,6 @@ SELECT
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'PRACTITIONER_IN_ROLE') }} src
+FROM {{ source('olids_common', 'PRACTITIONER_IN_ROLE') }} src
 INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
     ON src."record_owner_organisation_code" = ncl_practices.practice_code

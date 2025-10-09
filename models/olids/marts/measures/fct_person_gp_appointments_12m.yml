@@ -1,6 +1,0 @@
-version: 2
-models:
-  - name: fct_person_gp_appointments_12m
-    description: 'GP appointment activity tracking over 12-month period for capacity planning.
-
-      One row per person per organisation with appointment count, earliest and latest appointment dates (minimum 1 appointment).'

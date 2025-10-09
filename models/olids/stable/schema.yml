@@ -140,13 +140,6 @@ models:
     Core person demographics and attributes.
 
     Provides stable interface for downstream analytical models.'
-- name: stable_postcode_hash
-  description: 'Incremental postcode hash table.
-
-
-    Provides stable interface between source data and analytical models.
-
-    Uses incremental materialisation for efficient updates.'
 - name: stable_practitioner
   description: 'Incremental practitioner entity table.
 

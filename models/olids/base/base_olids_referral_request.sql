@@ -42,12 +42,12 @@ SELECT
     src."lds_versioner_event_id" AS lds_versioner_event_id,
     src."record_owner_organisation_code" AS record_owner_organisation_code,
     src."lds_datetime_data_acquired" AS lds_datetime_data_acquired,
-    src."lds_data_initial_received_date" AS lds_data_initial_received_date,
+    src."lds_initial_data_received_date" AS lds_initial_data_received_date,
     src."lds_is_deleted" AS lds_is_deleted,
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'REFERRAL_REQUEST') }} src
+FROM {{ source('olids_common', 'REFERRAL_REQUEST') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src."patient_id" = patients.id
 INNER JOIN {{ ref('base_olids_patient_person') }} pp

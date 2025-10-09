@@ -1,4 +1,0 @@
-version: 2
-models:
-  - name: int_blood_pressure_latest
-    description: Latest blood pressure event per person with paired systolic/diastolic values and clinical context flags (Home/ABPM). One row per person containing their most recent BP event.
