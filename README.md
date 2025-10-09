@@ -1,17 +1,22 @@
 # NCL Analytics DBT Project - OLIDS
 
+## ⚠️ Project Migration Notice
+
+**This project now provides only the base and stable data layers for OLIDS.**
+
+All marts, staging, intermediate models, and analytical logic have been migrated to [dbt-ncl-analytics](https://github.com/ncl-icb-analytics/dbt-ncl-analytics).
+
+**What remains in this project:**
+- Base layer: Filtered views of OLIDS source tables (NCL practices only, sensitive patients excluded)
+- Stable layer: Incrementally updated tables providing a stable interface for downstream analytics
+
+**For analytical models, disease registers, and quality measures**, please see [dbt-ncl-analytics](https://github.com/ncl-icb-analytics/dbt-ncl-analytics).
+
 ## What This Is
 
-**dbt** (data build tool) is a modern data transformation tool that lets you write SQL models and automatically handles dependencies, testing, and documentation. Think of it as a tool to help bring software engineering best practices to SQL analysts.
+**dbt** (data build tool) is a modern data transformation tool that lets you write SQL models and automatically handles dependencies, testing, and documentation.
 
-This project uses dbt to transform healthcare data in Snowflake, creating analytics-ready datasets for analysis, designed to run on the One London Integrated Data set.
-
-**Data models included:**
-- Disease registers (diabetes, hypertension, heart failure, etc.)
-- Quality measures and clinical indicators  
-- Patient demographics and status tracking
-- Medication and prescription analytics
-- Data quality monitoring and validation
+This project provides the foundational data layer for the One London Integrated Data Set (OLIDS), transforming raw healthcare data into a clean, consistent base for analytics.
 
 ## One London Integrated Data Set (OLIDS)
 
@@ -27,10 +32,18 @@ This project is built to use data from the [One London Integrated Data Set (OLID
 ## Architecture
 
 ```
-Raw Snowflake → Staging (views) → Intermediate (tables) → Marts (tables)
-                              ↓
-                      Data Quality & Tests
+OLIDS Source Data → Base Layer (views) → Stable Layer (incremental tables)
+                                               ↓
+                              dbt-ncl-analytics (marts, measures, registers)
 ```
+
+**This project:**
+- Base layer: Applies NCL practice filtering and excludes sensitive patients
+- Stable layer: Incrementally updated tables with concept mapping
+
+**Downstream project ([dbt-ncl-analytics](https://github.com/ncl-icb-analytics/dbt-ncl-analytics)):**
+- Uses stable layer as source
+- Contains all analytical models, disease registers, quality measures
 
 ## Quick Start
 
@@ -55,7 +68,9 @@ dbt run         # Builds all models in your dev environment (safe)
 dbt test        # Runs data quality tests
 ```
 
-**That's it!** You now have disease registers and quality measures ready for analysis.
+**That's it!** You now have the base and stable OLIDS data layers built.
+
+**For disease registers and quality measures**, see [dbt-ncl-analytics](https://github.com/ncl-icb-analytics/dbt-ncl-analytics).
 
 ## Environment Setup
 
@@ -98,47 +113,36 @@ This project automatically fixes common issues when you save files (trailing spa
 
 ```
 models/
-├── olids/                   # OLIDS-specific models (tagged: staging/intermediate/marts)
-│   ├── staging/             # 1:1 source mappings (views)
-│   ├── intermediate/        # Business logic & consolidation (tables)
-│   │   ├── diagnoses/       # Clinical observations (observation-level)
-│   │   │   └── qof/         # QOF-specific diagnosis models
-│   │   ├── medications/     # Medication orders & prescriptions
-│   │   ├── observations/    # Clinical measurements & lab results
-│   │   ├── person_attributes/ # Demographics & characteristics
-│   │   └── programme/       # Programme intermediate models
-│   └── marts/               # Analytics-ready models (tables)
-│       ├── clinical_safety/ # Safety monitoring & alerts
-│       ├── data_quality/    # Data quality reports
-│       ├── disease_registers/ # Person-level clinical registers
-│       │   └── qof/         # QOF disease registers
-│       ├── geography/       # Households & geographic analytics
-│       ├── measures/        # Healthcare quality indicators
-│       ├── organisation/    # Practice & organisational data
-│       ├── person_demographics/ # Demographics with households
-│       ├── person_status/   # Patient activity & status
-│       └── programme/       # Programmes (valproate, ltc_lcs, etc.)
-├── shared/                  # Shared reference/dictionary models (tagged: staging/intermediate/marts)
-│   ├── staging/             # Reference data mappings (views)
-│   ├── intermediate/        # (empty, .gitkeep)
-│   └── marts/               # (empty, .gitkeep)
-└── sources.yml             # Consolidated source definitions
+├── olids/
+│   ├── base/                # Filtered base views (NCL practices only, no sensitive patients)
+│   │                        # - Applies practice and patient filtering
+│   │                        # - Adds concept mapping for clinical codes
+│   │                        # - Generates fabricated person_id
+│   ├── stable/              # Incremental tables (merge strategy)
+│   │                        # - SCD Type 2 tracking with lds_start_date_time
+│   │                        # - Clustered for query performance
+│   └── intermediate/
+│       └── organisation/
+│           └── int_ncl_practices.sql  # NCL practice lookup (STPCode = 'QMJ')
+└── sources.yml              # Source definitions (olids_masked, olids_common, olids_terminology)
 
 macros/                      # Reusable SQL macros
-├── get_observations.sql     # Extract clinical observations
-├── get_medication_orders.sql # Extract medication data
-└── testing/                 # Custom macros for generic tests
+├── add_model_comment.sql    # Adds metadata comments to models
+├── generate_table_comment.sql # Generates comment text
+└── get_custom_schema.sql    # Schema naming logic
 
-legacy/                      # Original SQL scripts for reference
-scripts/                     # Python utilities and automation
-└── sources/                 # Source generation workflow scripts
+scripts/                     # Python utilities
+├── fix_source_schemas.py    # Reorganise sources by schema
+├── reorganize_sources_by_schema.py
+├── update_base_model_sources.py
+└── query_snowflake_schema.py # Query Snowflake information schema
 ```
 
 ## Essential dbt Commands
 
 **For daily use:**
 ```bash
-dbt run         # Build all models (creates tables/views in Snowflake)
+dbt run         # Build all models (base views + stable tables)
 dbt test        # Run data quality tests
 dbt docs serve  # Open documentation in browser
 ```
@@ -146,9 +150,8 @@ dbt docs serve  # Open documentation in browser
 **For development:**
 ```bash
 dbt run -s model_name              # Build just one model
-dbt run -s tag:staging             # Build all staging models (tagged)
-dbt run -s olids                   # Build all OLIDS domain models
-dbt run -s shared                  # Build all shared reference models
+dbt run -s tag:base                # Build all base layer models
+dbt run -s tag:stable              # Build all stable layer models
 dbt run -s +model_name             # Build model + everything it depends on
 dbt run -s model_name+             # Build model + everything that depends on it
 ```
@@ -160,66 +163,19 @@ dbt run --help                # Help for specific command
 dbt debug                     # Test your connection to Snowflake
 ```
 
-## Source Generation Automation
+## Key Features
 
-We use an automated workflow for generating sources and staging models from Snowflake metadata. This workflow is not scheduled and must be executed manually.
+### **Base Layer**
+- **NCL Practice Filtering**: Only includes patients registered to North Central London ICB practices (STPCode = 'QMJ')
+- **Sensitive Patient Exclusion**: Filters out spine-sensitive, confidential, and dummy patients
+- **Concept Mapping**: Joins to OLIDS_TERMINOLOGY to provide mapped clinical codes
+- **Fabricated person_id**: Generates deterministic person IDs using MD5 hashing
 
-**IMPORTANT:** Note that running the sources workflow will destructively re-create sources.yml and all staging models. This includes any tests or descriptions assigned to those models.
-
-```bash
-cd scripts/sources
-python run_full_sources_workflow.py    # Complete workflow
-```
-
-### **Key Configuration Files**
-
-**`source_mappings.yml`**: Controls which tables go into `olids/` vs `shared/` domains:
-
-**`default_model_tests.yml`**: Update this file to persist tests on staging models.
-
-## Development Patterns
-
-### **Macro Usage**
-
-```sql
--- Direct SELECT clause usage (most common)
-SELECT * FROM ({{ get_observations("'DM_COD'") }}) obs
-SELECT * FROM ({{ get_medication_orders(bnf_code='02050501') }}) meds
-
--- With WHERE clause
-SELECT observation_id, person_id, clinical_effective_date
-FROM ({{ get_observations("'HTN_COD', 'HTNRES_COD'", "PCD") }}) obs -- from PCD Refset only
-WHERE obs.clinical_effective_date IS NOT NULL
-
--- BNF code filtering for medications
-{{ get_medication_orders(bnf_code='02050501') }}  -- ACE inhibitors (BNF Chapter 2.5.5.1)
-{{ get_medication_orders(bnf_code='0304') }}      -- Asthma medications (BNF Chapter 3.4)
-```
-
-### **YAML Structure**
-
-```yaml
-models:
-  - name: int_diabetes_diagnoses_all
-    description: "Clinical diabetes observations (observation-level)"
-    columns:
-      - name: observation_id
-        tests:
-          - not_null
-          - unique
-      - name: person_id
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_person')
-              field: person_id
-    tests:
-      - cluster_ids_exist:
-          cluster_ids: "DM_COD,DMTYPE1_COD,DMTYPE2_COD,DMRES_COD"
-      - dbt_utils.at_least_one:
-          name: "has_at_least_one_observation"
-          column_name: observation_id
-```
+### **Stable Layer**
+- **Incremental Updates**: Uses merge strategy for efficient updates
+- **SCD Type 2**: Tracks changes over time using lds_start_date_time
+- **Clustered Tables**: Optimised for query performance (typically by source_concept_id and clinical_effective_date)
+- **Secure Views**: Configured with secure=true for patient data protection
 
 ## Making Changes
 
