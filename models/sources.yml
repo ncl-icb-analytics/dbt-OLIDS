@@ -1,9 +1,206 @@
 version: 2
 sources:
-- name: olids_core
+- name: olids_masked
   database: '"Data_Store_OLIDS_Alpha"'
   schema: '"OLIDS_MASKED"'
-  description: Core OLIDS patient and clinical data
+  description: OLIDS patient entity data (masked)
+  tables:
+  - name: PATIENT
+    identifier: '"PATIENT"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: nhs_number_hash
+      data_type: BINARY
+    - name: sk_patient_id
+      data_type: NUMBER
+    - name: title
+      data_type: TEXT
+    - name: gender_concept_id
+      data_type: TEXT
+    - name: registered_practice_id
+      data_type: TEXT
+    - name: birth_year
+      data_type: NUMBER
+    - name: birth_month
+      data_type: NUMBER
+    - name: death_year
+      data_type: NUMBER
+    - name: death_month
+      data_type: NUMBER
+    - name: is_confidential
+      data_type: BOOLEAN
+    - name: is_dummy_patient
+      data_type: BOOLEAN
+    - name: is_spine_sensitive
+      data_type: BOOLEAN
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_date_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: PATIENT_ADDRESS
+    identifier: '"PATIENT_ADDRESS"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: address_type_concept_id
+      data_type: TEXT
+    - name: postcode_hash
+      data_type: BINARY
+    - name: start_date
+      data_type: TIMESTAMP_NTZ
+    - name: end_date
+      data_type: TIMESTAMP_NTZ
+    - name: person_id
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_date_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: PATIENT_CONTACT
+    identifier: '"PATIENT_CONTACT"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: person_id
+      data_type: TEXT
+    - name: patient_id
+      data_type: TEXT
+    - name: description
+      data_type: TEXT
+    - name: contact_type_concept_id
+      data_type: TEXT
+    - name: start_date
+      data_type: TEXT
+    - name: end_date
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: PATIENT_UPRN
+    identifier: '"PATIENT_UPRN"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: registrar_event_id
+      data_type: TEXT
+    - name: masked_uprn
+      data_type: TEXT
+    - name: masked_usrn
+      data_type: TEXT
+    - name: masked_postcode
+      data_type: TEXT
+    - name: address_format_quality
+      data_type: TEXT
+    - name: post_code_quality
+      data_type: TEXT
+    - name: matched_with_assign
+      data_type: TEXT
+    - name: qualifier
+      data_type: TEXT
+    - name: uprn_property_classification
+      data_type: TEXT
+    - name: algorithm
+      data_type: TEXT
+    - name: match_pattern
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_registrar_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+- name: olids_common
+  database: '"Data_Store_OLIDS_Alpha"'
+  schema: '"OLIDS_COMMON"'
+  description: OLIDS clinical events and reference data
   tables:
   - name: ALLERGY_INTOLERANCE
     identifier: '"ALLERGY_INTOLERANCE"'
@@ -142,45 +339,6 @@ sources:
     - name: lds_cdm_event_id
       data_type: TEXT
     - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: APPOINTMENT_PRACTITIONER
-    identifier: '"APPOINTMENT_PRACTITIONER"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: appointment_id
-      data_type: TEXT
-    - name: practitioner_id
-      data_type: TEXT
-    - name: lds_end_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: lds_record_id_user
       data_type: TEXT
     - name: record_owner_organisation_code
       data_type: TEXT
@@ -417,110 +575,6 @@ sources:
     - name: lds_versioner_event_id
       data_type: TEXT
     - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: LOCATION
-    identifier: '"LOCATION"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: name
-      data_type: TEXT
-    - name: type_code
-      data_type: TEXT
-    - name: type_desc
-      data_type: TEXT
-    - name: is_primary_location
-      data_type: BOOLEAN
-    - name: house_name
-      data_type: TEXT
-    - name: house_number
-      data_type: TEXT
-    - name: house_name_flat_number
-      data_type: TEXT
-    - name: street
-      data_type: TEXT
-    - name: address_line_1
-      data_type: TEXT
-    - name: address_line_2
-      data_type: TEXT
-    - name: address_line_3
-      data_type: TEXT
-    - name: address_line_4
-      data_type: TEXT
-    - name: postcode
-      data_type: TEXT
-    - name: managing_organisation_id
-      data_type: TEXT
-    - name: open_date
-      data_type: DATE
-    - name: close_date
-      data_type: DATE
-    - name: is_obsolete
-      data_type: BOOLEAN
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: LOCATION_CONTACT
-    identifier: '"LOCATION_CONTACT"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: location_id
-      data_type: TEXT
-    - name: is_primary_contact
-      data_type: BOOLEAN
-    - name: contact_type
-      data_type: TEXT
-    - name: contact_type_concept_id
-      data_type: TEXT
-    - name: value
-      data_type: TEXT
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
       data_type: TEXT
     - name: lds_datetime_data_acquired
       data_type: TIMESTAMP_NTZ
@@ -787,196 +841,6 @@ sources:
       data_type: TEXT
     - name: lds_lakehouse_datetime_updated
       data_type: TIMESTAMP_NTZ
-  - name: ORGANISATION
-    identifier: '"ORGANISATION"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: organisation_code
-      data_type: TEXT
-    - name: assigning_authority_code
-      data_type: TEXT
-    - name: name
-      data_type: TEXT
-    - name: type_code
-      data_type: TEXT
-    - name: type_desc
-      data_type: TEXT
-    - name: postcode
-      data_type: TEXT
-    - name: parent_organisation_id
-      data_type: TEXT
-    - name: open_date
-      data_type: DATE
-    - name: close_date
-      data_type: DATE
-    - name: is_obsolete
-      data_type: BOOLEAN
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: PATIENT
-    identifier: '"PATIENT"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: nhs_number_hash
-      data_type: BINARY
-    - name: sk_patient_id
-      data_type: NUMBER
-    - name: title
-      data_type: TEXT
-    - name: gender_concept_id
-      data_type: TEXT
-    - name: registered_practice_id
-      data_type: TEXT
-    - name: birth_year
-      data_type: NUMBER
-    - name: birth_month
-      data_type: NUMBER
-    - name: death_year
-      data_type: NUMBER
-    - name: death_month
-      data_type: NUMBER
-    - name: is_confidential
-      data_type: BOOLEAN
-    - name: is_dummy_patient
-      data_type: BOOLEAN
-    - name: is_spine_sensitive
-      data_type: BOOLEAN
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_date_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: PATIENT_ADDRESS
-    identifier: '"PATIENT_ADDRESS"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: patient_id
-      data_type: TEXT
-    - name: address_type_concept_id
-      data_type: TEXT
-    - name: postcode_hash
-      data_type: BINARY
-    - name: start_date
-      data_type: TIMESTAMP_NTZ
-    - name: end_date
-      data_type: TIMESTAMP_NTZ
-    - name: person_id
-      data_type: TEXT
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_date_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: PATIENT_CONTACT
-    identifier: '"PATIENT_CONTACT"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: person_id
-      data_type: TEXT
-    - name: patient_id
-      data_type: TEXT
-    - name: description
-      data_type: TEXT
-    - name: contact_type_concept_id
-      data_type: TEXT
-    - name: start_date
-      data_type: TEXT
-    - name: end_date
-      data_type: TEXT
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
   - name: PATIENT_REGISTERED_PRACTITIONER_IN_ROLE
     identifier: '"PATIENT_REGISTERED_PRACTITIONER_IN_ROLE"'
     columns:
@@ -997,147 +861,6 @@ sources:
     - name: start_date
       data_type: TIMESTAMP_NTZ
     - name: end_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: PATIENT_UPRN
-    identifier: '"PATIENT_UPRN"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: registrar_event_id
-      data_type: TEXT
-    - name: masked_uprn
-      data_type: TEXT
-    - name: masked_usrn
-      data_type: TEXT
-    - name: masked_postcode
-      data_type: TEXT
-    - name: address_format_quality
-      data_type: TEXT
-    - name: post_code_quality
-      data_type: TEXT
-    - name: matched_with_assign
-      data_type: TEXT
-    - name: qualifier
-      data_type: TEXT
-    - name: uprn_property_classification
-      data_type: TEXT
-    - name: algorithm
-      data_type: TEXT
-    - name: match_pattern
-      data_type: TEXT
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_registrar_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: PRACTITIONER
-    identifier: '"PRACTITIONER"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: gmc_code
-      data_type: TEXT
-    - name: title
-      data_type: TEXT
-    - name: first_name
-      data_type: TEXT
-    - name: last_name
-      data_type: TEXT
-    - name: name
-      data_type: TEXT
-    - name: is_obsolete
-      data_type: BOOLEAN
-    - name: lds_end_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_id
-      data_type: TEXT
-    - name: lds_business_key
-      data_type: TEXT
-    - name: lds_dataset_id
-      data_type: TEXT
-    - name: lds_cdm_event_id
-      data_type: TEXT
-    - name: lds_versioner_event_id
-      data_type: TEXT
-    - name: record_owner_organisation_code
-      data_type: TEXT
-    - name: lds_datetime_data_acquired
-      data_type: TIMESTAMP_NTZ
-    - name: lds_initial_data_received_date
-      data_type: TIMESTAMP_NTZ
-    - name: lds_is_deleted
-      data_type: BOOLEAN
-    - name: lds_start_date_time
-      data_type: TIMESTAMP_NTZ
-    - name: lds_lakehouse_date_processed
-      data_type: TEXT
-    - name: lds_lakehouse_datetime_updated
-      data_type: TIMESTAMP_NTZ
-  - name: PRACTITIONER_IN_ROLE
-    identifier: '"PRACTITIONER_IN_ROLE"'
-    columns:
-    - name: lds_record_id
-      data_type: TEXT
-    - name: id
-      data_type: TEXT
-    - name: practitioner_id
-      data_type: TEXT
-    - name: organisation_id
-      data_type: TEXT
-    - name: role_code
-      data_type: TEXT
-    - name: role
-      data_type: TEXT
-    - name: date_employment_start
-      data_type: TIMESTAMP_NTZ
-    - name: date_employment_end
       data_type: TIMESTAMP_NTZ
     - name: lds_id
       data_type: TEXT
@@ -1290,6 +1013,288 @@ sources:
     - name: lds_datetime_data_acquired
       data_type: TIMESTAMP_NTZ
     - name: lds_data_initial_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: APPOINTMENT_PRACTITIONER
+    identifier: '"APPOINTMENT_PRACTITIONER"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: appointment_id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: lds_record_id_user
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: LOCATION
+    identifier: '"LOCATION"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: name
+      data_type: TEXT
+    - name: type_code
+      data_type: TEXT
+    - name: type_desc
+      data_type: TEXT
+    - name: is_primary_location
+      data_type: BOOLEAN
+    - name: house_name
+      data_type: TEXT
+    - name: house_number
+      data_type: TEXT
+    - name: house_name_flat_number
+      data_type: TEXT
+    - name: street
+      data_type: TEXT
+    - name: address_line_1
+      data_type: TEXT
+    - name: address_line_2
+      data_type: TEXT
+    - name: address_line_3
+      data_type: TEXT
+    - name: address_line_4
+      data_type: TEXT
+    - name: postcode
+      data_type: TEXT
+    - name: managing_organisation_id
+      data_type: TEXT
+    - name: open_date
+      data_type: DATE
+    - name: close_date
+      data_type: DATE
+    - name: is_obsolete
+      data_type: BOOLEAN
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: LOCATION_CONTACT
+    identifier: '"LOCATION_CONTACT"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: location_id
+      data_type: TEXT
+    - name: is_primary_contact
+      data_type: BOOLEAN
+    - name: contact_type
+      data_type: TEXT
+    - name: contact_type_concept_id
+      data_type: TEXT
+    - name: value
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: ORGANISATION
+    identifier: '"ORGANISATION"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: organisation_code
+      data_type: TEXT
+    - name: assigning_authority_code
+      data_type: TEXT
+    - name: name
+      data_type: TEXT
+    - name: type_code
+      data_type: TEXT
+    - name: type_desc
+      data_type: TEXT
+    - name: postcode
+      data_type: TEXT
+    - name: parent_organisation_id
+      data_type: TEXT
+    - name: open_date
+      data_type: DATE
+    - name: close_date
+      data_type: DATE
+    - name: is_obsolete
+      data_type: BOOLEAN
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: PRACTITIONER
+    identifier: '"PRACTITIONER"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: gmc_code
+      data_type: TEXT
+    - name: title
+      data_type: TEXT
+    - name: first_name
+      data_type: TEXT
+    - name: last_name
+      data_type: TEXT
+    - name: name
+      data_type: TEXT
+    - name: is_obsolete
+      data_type: BOOLEAN
+    - name: lds_end_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: TEXT
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
+  - name: PRACTITIONER_IN_ROLE
+    identifier: '"PRACTITIONER_IN_ROLE"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: practitioner_id
+      data_type: TEXT
+    - name: organisation_id
+      data_type: TEXT
+    - name: role_code
+      data_type: TEXT
+    - name: role
+      data_type: TEXT
+    - name: date_employment_start
+      data_type: TIMESTAMP_NTZ
+    - name: date_employment_end
+      data_type: TIMESTAMP_NTZ
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_versioner_event_id
+      data_type: TEXT
+    - name: record_owner_organisation_code
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
       data_type: TIMESTAMP_NTZ
     - name: lds_is_deleted
       data_type: BOOLEAN

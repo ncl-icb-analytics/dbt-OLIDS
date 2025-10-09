@@ -12,10 +12,10 @@ Foundation filtering for all base models requiring NCL practice restriction.
 */
 
 SELECT DISTINCT
-    PracticeCode AS practice_code,
-    PracticeName AS practice_name,
-    STPCode AS stp_code,
-    STPName AS stp_name
+    "PracticeCode" AS practice_code,
+    "PracticeName" AS practice_name,
+    "STPCode" AS stp_code,
+    "STPName" AS stp_name
 FROM {{ source('dictionary', 'OrganisationMatrixPracticeView') }}
-WHERE STPCode = 'QMJ'  -- NHS NORTH CENTRAL LONDON INTEGRATED CARE BOARD
-    AND PracticeCode IS NOT NULL
+WHERE "STPCode" = 'QMJ'  -- NHS NORTH CENTRAL LONDON INTEGRATED CARE BOARD
+    AND "PracticeCode" IS NOT NULL

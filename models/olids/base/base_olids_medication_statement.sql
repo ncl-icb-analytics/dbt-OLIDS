@@ -55,7 +55,7 @@ SELECT
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,
     src."lds_lakehouse_datetime_updated" AS lds_lakehouse_datetime_updated
-FROM {{ source('olids_core', 'MEDICATION_STATEMENT') }} src
+FROM {{ source('olids_common', 'MEDICATION_STATEMENT') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src."patient_id" = patients.id
 INNER JOIN {{ ref('base_olids_patient_person') }} pp
