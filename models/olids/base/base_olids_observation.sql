@@ -29,6 +29,9 @@ SELECT
     src."is_review" AS is_review,
     src."problem_end_date" AS problem_end_date,
     src."observation_source_concept_id" AS observation_source_concept_id,
+    mapped_concept.id AS mapped_concept_id,
+    mapped_concept.code AS mapped_concept_code,
+    mapped_concept.display AS mapped_concept_display,
     src."age_at_event" AS age_at_event,
     src."age_at_event_baby" AS age_at_event_baby,
     src."age_at_event_neonate" AS age_at_event_neonate,
@@ -56,5 +59,10 @@ INNER JOIN {{ ref('base_olids_patient_person') }} pp
     ON src."patient_id" = pp.patient_id
 INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
     ON src."record_owner_organisation_code" = ncl_practices.practice_code
+LEFT JOIN {{ ref('base_olids_concept_map') }} concept_map
+    ON src."observation_source_concept_id" = concept_map.source_code_id
+LEFT JOIN {{ ref('base_olids_concept') }} mapped_concept
+    ON concept_map.target_code_id = mapped_concept.id
 WHERE src."observation_source_concept_id" IS NOT NULL
     AND src."lds_start_date_time" IS NOT NULL
+QUALIFY ROW_NUMBER() OVER (PARTITION BY src."id" ORDER BY mapped_concept.display NULLS LAST) = 1

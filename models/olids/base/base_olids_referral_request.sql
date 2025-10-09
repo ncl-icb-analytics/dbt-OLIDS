@@ -42,7 +42,7 @@ SELECT
     src."lds_versioner_event_id" AS lds_versioner_event_id,
     src."record_owner_organisation_code" AS record_owner_organisation_code,
     src."lds_datetime_data_acquired" AS lds_datetime_data_acquired,
-    src."lds_data_initial_received_date" AS lds_data_initial_received_date,
+    src."lds_initial_data_received_date" AS lds_initial_data_received_date,
     src."lds_is_deleted" AS lds_is_deleted,
     src."lds_start_date_time" AS lds_start_date_time,
     src."lds_lakehouse_date_processed" AS lds_lakehouse_date_processed,

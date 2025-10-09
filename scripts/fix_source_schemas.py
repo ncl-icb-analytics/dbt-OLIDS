@@ -7,7 +7,7 @@ All other tables should be in OLIDS_COMMON.
 import yaml
 from pathlib import Path
 
-MASKED_TABLES = {'PATIENT', 'PATIENT_ADDRESS', 'PATIENT_CONTACT', 'PATIENT_UPRN'}
+MASKED_TABLES = {'PATIENT', 'PATIENT_ADDRESS', 'PATIENT_CONTACT', 'PATIENT_UPRN', 'PERSON'}
 
 def fix_sources():
     sources_path = Path('C:/projects/dbt-olids/models/sources.yml')

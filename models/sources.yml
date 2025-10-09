@@ -1012,7 +1012,7 @@ sources:
       data_type: TEXT
     - name: lds_datetime_data_acquired
       data_type: TIMESTAMP_NTZ
-    - name: lds_data_initial_received_date
+    - name: lds_initial_data_received_date
       data_type: TIMESTAMP_NTZ
     - name: lds_is_deleted
       data_type: BOOLEAN
