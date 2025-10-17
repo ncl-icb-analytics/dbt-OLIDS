@@ -87,6 +87,16 @@ models/olids/
 └── intermediate/   # NCL practices lookup
 ```
 
+## Where Objects Are Built
+
+All models are built in the database specified by `SNOWFLAKE_TARGET_DATABASE` in your `.env` file (typically `DATA_LAB_OLIDS_NCL`):
+
+- **Base layer**: `DATA_LAB_OLIDS_NCL.olids_base.*` (views)
+- **Stable layer**: `DATA_LAB_OLIDS_NCL.olids.*` (tables)
+- **Intermediate**: `DATA_LAB_OLIDS_NCL.DBT_STABLE.*` (tables)
+
+The stable layer reads from `Data_Store_OLIDS_Alpha` source tables.
+
 ## Contributing
 
 See [Contributing Guide](CONTRIBUTING.md) for workflow details.
