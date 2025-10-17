@@ -34,13 +34,13 @@ models:
     olids:
       base:
         +materialized: view
-        +database: "DATA_LAB_OLIDS_NCL"
+        +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
         +schema: "olids_base"
         +post-hook: ["{{ add_model_comment() }}"]
         +tags: ["base"]
       stable:
         +materialized: incremental
-        +database: "DATA_LAB_OLIDS_NCL"
+        +database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
         +schema: "olids"
         +on_schema_change: fail
         +post-hook: ["{{ add_model_comment() }}"]
