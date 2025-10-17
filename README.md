@@ -73,8 +73,8 @@ dbt debug  # Test connection
 ```
 
 **Prerequisites:**
-- Snowflake access with the ISL-USERGROUP-SECONDEES-NCL role (or equivalent)
-- Access to DATA_LAB_OLIDS_NCL and DATA_STORE_OLIDS_ALPHA databases
+- Snowflake access with the ISL-USERGROUP-SECONDEES-NCL role
+- Access to DATA_LAB_OLIDS_NCL and Data_Store_OLIDS_Alpha databases
 
 Never commit `.env` or `profiles.yml`.
 
