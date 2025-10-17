@@ -72,6 +72,10 @@ cp env.example .env
 dbt debug  # Test connection
 ```
 
+**Prerequisites:**
+- Snowflake access with the ISL-USERGROUP-SECONDEES-NCL role (or equivalent)
+- Access to DATA_LAB_OLIDS_NCL and DATA_STORE_OLIDS_ALPHA databases
+
 Never commit `.env` or `profiles.yml`.
 
 ## Project Structure
