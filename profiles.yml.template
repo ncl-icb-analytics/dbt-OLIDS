@@ -1,45 +1,29 @@
-# dbt profiles template for Snowflake HEI Migration project
+# dbt profiles template for dbt-olids
 #
-# SETUP INSTRUCTIONS:
-# 1. Copy this file to 'profiles.yml' in the same directory
-# 2. Set the required environment variables (see env.example)
-# 3. Never commit the actual profiles.yml file to git
+# SETUP:
+# 1. Copy this file to 'profiles.yml'
+# 2. Configure environment variables in .env (see env.example)
+# 3. Never commit profiles.yml to git
 #
-# The profiles.yml file is git-ignored for security reasons as it may contain
-# sensitive connection information.
+# profiles.yml is git-ignored for security
 
-dbt-olids:
-  target: dev  # Default target - use --target prod for production environment
+dbt_olids:
+  target: stable
   outputs:
-    dev:
+    stable:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
       user: "{{ env_var('SNOWFLAKE_USER') }}"
       authenticator: externalbrowser
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
-      database: DATA_LAB_OLIDS_UAT
-      schema: DBT_DEV  # dev schema
+      database: "{{ env_var('SNOWFLAKE_TARGET_DATABASE') }}"
+      schema: DBT_STABLE
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
       threads: 4
       client_session_keep_alive: true
-      query_tag: "dbt_hei_migration_dev"
+      query_tag: "dbt_olids_stable"
 
-
-    prod:
-      type: snowflake
-      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
-      user: "{{ env_var('SNOWFLAKE_USER') }}"
-      authenticator: externalbrowser
-      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
-      database: "{{ env_var('SNOWFLAKE_PROD_DATABASE', 'DATA_LAB_OLIDS_UAT') }}"
-      schema: DBT_PROD # prod schema
-      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-      threads: 8
-      client_session_keep_alive: false
-      query_tag: "dbt_hei_migration_prod"
-
-# Alternative configuration examples:
-#
-# For password authentication (less secure):
+# Alternative authentication:
+# For password auth, add:
 #   password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
-#   authenticator: password  # Remove the externalbrowser line
+#   authenticator: password
