@@ -50,7 +50,7 @@ sources:
       data_type: TEXT
     - name: lds_datetime_data_acquired
       data_type: TIMESTAMP_NTZ
-    - name: lds_initial_date_received_date
+    - name: lds_initial_data_received_date
       data_type: TIMESTAMP_NTZ
     - name: lds_is_deleted
       data_type: BOOLEAN
@@ -93,7 +93,7 @@ sources:
       data_type: TEXT
     - name: lds_datetime_data_acquired
       data_type: TIMESTAMP_NTZ
-    - name: lds_initial_date_received_date
+    - name: lds_initial_data_received_date
       data_type: TIMESTAMP_NTZ
     - name: lds_start_date_time
       data_type: TIMESTAMP_NTZ
@@ -375,7 +375,7 @@ sources:
       data_type: TEXT
     - name: result_value
       data_type: FLOAT
-    - name: result_value_units
+    - name: result_value_units_concept_id
       data_type: TEXT
     - name: result_date
       data_type: DATE
@@ -401,8 +401,6 @@ sources:
       data_type: BOOLEAN
     - name: date_recorded
       data_type: TIMESTAMP_NTZ
-    - name: is_deleted
-      data_type: BOOLEAN
     - name: person_id
       data_type: TEXT
     - name: lds_id
@@ -472,8 +470,6 @@ sources:
       data_type: TIMESTAMP_NTZ
     - name: date_recorded
       data_type: TIMESTAMP_NTZ
-    - name: is_deleted
-      data_type: BOOLEAN
     - name: lds_id
       data_type: TEXT
     - name: lds_business_key
@@ -647,8 +643,6 @@ sources:
       data_type: TIMESTAMP_NTZ
     - name: is_confidential
       data_type: BOOLEAN
-    - name: is_deleted
-      data_type: BOOLEAN
     - name: issue_method_description
       data_type: TEXT
     - name: lds_id
@@ -736,8 +730,6 @@ sources:
       data_type: BOOLEAN
     - name: is_confidential
       data_type: BOOLEAN
-    - name: is_deleted
-      data_type: BOOLEAN
     - name: expiry_date
       data_type: TIMESTAMP_NTZ
     - name: lds_id
@@ -787,7 +779,7 @@ sources:
       data_type: TEXT
     - name: result_value
       data_type: FLOAT
-    - name: result_value_unit_concept_id
+    - name: result_value_units_concept_id
       data_type: TEXT
     - name: result_date
       data_type: DATE
@@ -813,8 +805,6 @@ sources:
       data_type: BOOLEAN
     - name: date_recorded
       data_type: TIMESTAMP_NTZ
-    - name: is_deleted
-      data_type: BOOLEAN
     - name: is_problem_deleted
       data_type: BOOLEAN
     - name: is_confidential
@@ -909,7 +899,7 @@ sources:
       data_type: TIMESTAMP_NTZ
     - name: description
       data_type: TEXT
-    - name: procedure_source_concept_id
+    - name: procedure_request_source_concept_id
       data_type: TEXT
     - name: status_concept_id
       data_type: TEXT
@@ -920,8 +910,6 @@ sources:
     - name: age_at_event_neonate
       data_type: NUMBER
     - name: is_confidential
-      data_type: BOOLEAN
-    - name: is_deleted
       data_type: BOOLEAN
     - name: lds_end_date_time
       data_type: TIMESTAMP_NTZ
@@ -1326,8 +1314,6 @@ sources:
     - name: name
       data_type: TEXT
     - name: is_private
-      data_type: BOOLEAN
-    - name: is_deleted
       data_type: BOOLEAN
     - name: lds_id
       data_type: TEXT

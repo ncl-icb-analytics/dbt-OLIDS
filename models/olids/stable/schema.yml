@@ -182,15 +182,15 @@ models:
     Schedule Practitioner relationships and attributes.
 
     Maintains referential integrity with parent entities.'
-- name: stable_terminology_concept
-  description: 'Incremental terminology concept table.
+- name: stable_concept
+  description: 'Incremental concept table.
 
 
     Provides stable interface between source data and analytical models.
 
     Uses incremental materialisation for efficient updates.'
-- name: stable_terminology_concept_map
-  description: 'Incremental terminology concept map table.
+- name: stable_concept_map
+  description: 'Incremental concept map table.
 
 
     Provides stable interface between source data and analytical models.

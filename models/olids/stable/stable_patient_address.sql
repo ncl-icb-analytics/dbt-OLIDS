@@ -26,7 +26,7 @@ select
     lds_versioner_event_id,
     record_owner_organisation_code,
     lds_datetime_data_acquired,
-    lds_initial_date_received_date,
+    lds_initial_data_received_date,
     lds_start_date_time,
     lds_lakehouse_date_processed,
     lds_lakehouse_datetime_updated

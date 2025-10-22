@@ -39,7 +39,6 @@ select
     issue_method,
     date_recorded,
     is_confidential,
-    is_deleted,
     issue_method_description,
     lds_id,
     lds_business_key,

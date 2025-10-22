@@ -3,8 +3,8 @@
         materialized='incremental',
         unique_key='id',
         on_schema_change='fail',
-        cluster_by=['source_code_id', 'target_code_id'],
-        alias='terminology_concept_map',
+        cluster_by=['id'],
+        alias='concept',
         incremental_strategy='merge',
         tags=['stable', 'incremental']
     )
@@ -15,13 +15,13 @@ select
     lds_id,
     lds_business_key,
     lds_dataset_id,
-    concept_map_id,
-    source_code_id,
-    target_code_id,
-    is_primary,
-    equivalence,
+    system,
+    code,
+    display,
+    is_mapped,
+    use_count,
     lds_start_date_time
-from {{ ref('base_olids_concept_map') }}
+from {{ ref('base_olids_concept') }}
 
 {% if is_incremental() %}
     where lds_start_date_time > (select max(lds_start_date_time) from {{ this }})

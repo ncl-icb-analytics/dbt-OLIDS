@@ -40,7 +40,6 @@ select
     date_recorded,
     is_active,
     is_confidential,
-    is_deleted,
     expiry_date,
     lds_id,
     lds_business_key,
