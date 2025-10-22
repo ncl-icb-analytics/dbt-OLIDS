@@ -31,7 +31,6 @@ select
     admission_method,
     end_date,
     date_recorded,
-    is_deleted,
     lds_id,
     lds_business_key,
     lds_dataset_id,
