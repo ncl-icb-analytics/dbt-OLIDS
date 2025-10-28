@@ -15,7 +15,7 @@ load_dotenv()
 OLIDS_DATABASE = '"Data_Store_OLIDS_Alpha"'
 PDS_DATABASE = '"Data_Store_Registries"'
 DICTIONARY_DATABASE = '"Dictionary"'
-TARGET_DATE = '2025-09-01'
+TARGET_DATE = '2025-10-20'
 WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE')
 ACCOUNT = os.getenv('SNOWFLAKE_ACCOUNT')
 USER = os.getenv('SNOWFLAKE_USER')
@@ -95,7 +95,6 @@ def get_olids_registrations(session):
         SELECT DISTINCT c.id AS concept_id
         FROM {OLIDS_DATABASE}.OLIDS_TERMINOLOGY.CONCEPT c
         WHERE c.code = '24531000000104'  -- Registration type
-            AND c.display = 'Registration type'
     ),
 
     patient_episodes AS (
