@@ -22,10 +22,12 @@ ROLE = os.getenv('SNOWFLAKE_ROLE')
 # Format: (schema, table, field_name)
 COMPLETENESS_CHECKS = [
     # Patient table
+    ('OLIDS_MASKED', 'PATIENT', 'id'),
     ('OLIDS_MASKED', 'PATIENT', 'sk_patient_id'),
     ('OLIDS_MASKED', 'PATIENT', 'birth_year'),
     ('OLIDS_MASKED', 'PATIENT', 'birth_month'),
     ('OLIDS_MASKED', 'PATIENT', 'gender_concept_id'),
+    ('OLIDS_MASKED', 'PATIENT', 'lds_start_date_time'),
 
     # Episode of care
     ('OLIDS_COMMON', 'EPISODE_OF_CARE', 'id'),
@@ -37,6 +39,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'EPISODE_OF_CARE', 'episode_status_source_concept_id'),
 
     # Observation
+    ('OLIDS_COMMON', 'OBSERVATION', 'id'),
     ('OLIDS_COMMON', 'OBSERVATION', 'patient_id'),
     ('OLIDS_COMMON', 'OBSERVATION', 'person_id'),
     ('OLIDS_COMMON', 'OBSERVATION', 'lds_start_date_time'),
@@ -47,6 +50,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'OBSERVATION', 'episodicity_concept_id'),
 
     # Medication Statement
+    ('OLIDS_COMMON', 'MEDICATION_STATEMENT', 'id'),
     ('OLIDS_COMMON', 'MEDICATION_STATEMENT', 'patient_id'),
     ('OLIDS_COMMON', 'MEDICATION_STATEMENT', 'person_id'),
     ('OLIDS_COMMON', 'MEDICATION_STATEMENT', 'lds_start_date_time'),
@@ -56,6 +60,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'MEDICATION_STATEMENT', 'date_precision_concept_id'),
 
     # Medication Order
+    ('OLIDS_COMMON', 'MEDICATION_ORDER', 'id'),
     ('OLIDS_COMMON', 'MEDICATION_ORDER', 'patient_id'),
     ('OLIDS_COMMON', 'MEDICATION_ORDER', 'person_id'),
     ('OLIDS_COMMON', 'MEDICATION_ORDER', 'lds_start_date_time'),
@@ -64,6 +69,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'MEDICATION_ORDER', 'date_precision_concept_id'),
 
     # Diagnostic Order
+    ('OLIDS_COMMON', 'DIAGNOSTIC_ORDER', 'id'),
     ('OLIDS_COMMON', 'DIAGNOSTIC_ORDER', 'patient_id'),
     ('OLIDS_COMMON', 'DIAGNOSTIC_ORDER', 'person_id'),
     ('OLIDS_COMMON', 'DIAGNOSTIC_ORDER', 'lds_start_date_time'),
@@ -74,6 +80,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'DIAGNOSTIC_ORDER', 'episodicity_concept_id'),
 
     # Encounter
+    ('OLIDS_COMMON', 'ENCOUNTER', 'id'),
     ('OLIDS_COMMON', 'ENCOUNTER', 'patient_id'),
     ('OLIDS_COMMON', 'ENCOUNTER', 'person_id'),
     ('OLIDS_COMMON', 'ENCOUNTER', 'lds_start_date_time'),
@@ -82,6 +89,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'ENCOUNTER', 'date_precision_concept_id'),
 
     # Allergy Intolerance
+    ('OLIDS_COMMON', 'ALLERGY_INTOLERANCE', 'id'),
     ('OLIDS_COMMON', 'ALLERGY_INTOLERANCE', 'patient_id'),
     ('OLIDS_COMMON', 'ALLERGY_INTOLERANCE', 'person_id'),
     ('OLIDS_COMMON', 'ALLERGY_INTOLERANCE', 'lds_start_date_time'),
@@ -90,6 +98,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'ALLERGY_INTOLERANCE', 'date_precision_concept_id'),
 
     # Procedure Request
+    ('OLIDS_COMMON', 'PROCEDURE_REQUEST', 'id'),
     ('OLIDS_COMMON', 'PROCEDURE_REQUEST', 'lds_start_date_time'),
     ('OLIDS_COMMON', 'PROCEDURE_REQUEST', 'clinical_effective_date'),
     ('OLIDS_COMMON', 'PROCEDURE_REQUEST', 'procedure_request_source_concept_id'),
@@ -97,6 +106,7 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'PROCEDURE_REQUEST', 'status_concept_id'),
 
     # Referral Request
+    ('OLIDS_COMMON', 'REFERRAL_REQUEST', 'id'),
     ('OLIDS_COMMON', 'REFERRAL_REQUEST', 'lds_start_date_time'),
     ('OLIDS_COMMON', 'REFERRAL_REQUEST', 'clinical_effective_date'),
     ('OLIDS_COMMON', 'REFERRAL_REQUEST', 'referral_request_source_concept_id'),
@@ -106,21 +116,74 @@ COMPLETENESS_CHECKS = [
     ('OLIDS_COMMON', 'REFERRAL_REQUEST', 'referral_request_specialty_concept_id'),
 
     # Location Contact
+    ('OLIDS_COMMON', 'LOCATION_CONTACT', 'id'),
     ('OLIDS_COMMON', 'LOCATION_CONTACT', 'contact_type_concept_id'),
+    ('OLIDS_COMMON', 'LOCATION_CONTACT', 'lds_start_date_time'),
 
     # Appointment
+    ('OLIDS_COMMON', 'APPOINTMENT', 'id'),
     ('OLIDS_COMMON', 'APPOINTMENT', 'appointment_status_concept_id'),
     ('OLIDS_COMMON', 'APPOINTMENT', 'booking_method_concept_id'),
     ('OLIDS_COMMON', 'APPOINTMENT', 'contact_mode_concept_id'),
+    ('OLIDS_COMMON', 'APPOINTMENT', 'lds_start_date_time'),
+
+    # Appointment Practitioner
+    ('OLIDS_COMMON', 'APPOINTMENT_PRACTITIONER', 'id'),
+    ('OLIDS_COMMON', 'APPOINTMENT_PRACTITIONER', 'lds_start_date_time'),
+
+    # Patient Registered Practitioner In Role
+    ('OLIDS_COMMON', 'PATIENT_REGISTERED_PRACTITIONER_IN_ROLE', 'id'),
+    ('OLIDS_COMMON', 'PATIENT_REGISTERED_PRACTITIONER_IN_ROLE', 'lds_start_date_time'),
+
+    # Location
+    ('OLIDS_COMMON', 'LOCATION', 'id'),
+    ('OLIDS_COMMON', 'LOCATION', 'lds_start_date_time'),
 
     # Flag
+    ('OLIDS_COMMON', 'FLAG', 'id'),
     ('OLIDS_COMMON', 'FLAG', 'lds_start_date_time'),
 
     # Patient Address
+    ('OLIDS_MASKED', 'PATIENT_ADDRESS', 'id'),
     ('OLIDS_MASKED', 'PATIENT_ADDRESS', 'address_type_concept_id'),
+    ('OLIDS_MASKED', 'PATIENT_ADDRESS', 'lds_start_date_time'),
 
     # Patient Contact
+    ('OLIDS_MASKED', 'PATIENT_CONTACT', 'id'),
     ('OLIDS_MASKED', 'PATIENT_CONTACT', 'contact_type_concept_id'),
+    ('OLIDS_MASKED', 'PATIENT_CONTACT', 'lds_start_date_time'),
+
+    # Patient UPRN
+    ('OLIDS_MASKED', 'PATIENT_UPRN', 'id'),
+    ('OLIDS_MASKED', 'PATIENT_UPRN', 'lds_start_date_time'),
+
+    # Organisation
+    ('OLIDS_COMMON', 'ORGANISATION', 'id'),
+    ('OLIDS_COMMON', 'ORGANISATION', 'lds_start_date_time'),
+
+    # Practitioner
+    ('OLIDS_COMMON', 'PRACTITIONER', 'id'),
+    ('OLIDS_COMMON', 'PRACTITIONER', 'lds_start_date_time'),
+
+    # Practitioner In Role
+    ('OLIDS_COMMON', 'PRACTITIONER_IN_ROLE', 'id'),
+    ('OLIDS_COMMON', 'PRACTITIONER_IN_ROLE', 'lds_start_date_time'),
+
+    # Schedule
+    ('OLIDS_COMMON', 'SCHEDULE', 'id'),
+    ('OLIDS_COMMON', 'SCHEDULE', 'lds_start_date_time'),
+
+    # Schedule Practitioner
+    ('OLIDS_COMMON', 'SCHEDULE_PRACTITIONER', 'id'),
+    ('OLIDS_COMMON', 'SCHEDULE_PRACTITIONER', 'lds_start_date_time'),
+
+    # Concept
+    ('OLIDS_TERMINOLOGY', 'CONCEPT', 'id'),
+    ('OLIDS_TERMINOLOGY', 'CONCEPT', 'lds_start_date_time'),
+
+    # Concept Map
+    ('OLIDS_TERMINOLOGY', 'CONCEPT_MAP', 'id'),
+    ('OLIDS_TERMINOLOGY', 'CONCEPT_MAP', 'lds_start_date_time'),
 ]
 
 
