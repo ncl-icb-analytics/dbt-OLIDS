@@ -19,9 +19,10 @@ FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
 WHERE database_name IN (
         'DATA_LAB_OLIDS_NCL',
         'Data_Store_OLIDS_Alpha',
+        'Data_Store_OLIDS_Alpha_Clone_19092025',
         'Data_Store_OLIDS_Alpha_Clone_06102025',
         'Data_Store_OLIDS_Alpha_Clone_15102025',
-        'Data_Store_OLIDS_Alpha_Clone_19092025',
+        'Data_Store_OLIDS_Alpha_Clone_31102025',
         'Data_Store_OLIDS_Clinical_Validation',
         'Data_Store_OLIDS_Dummy',
         'Data_Store_OLIDS_UAT'

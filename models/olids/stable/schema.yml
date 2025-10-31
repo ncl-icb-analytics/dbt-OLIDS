@@ -196,3 +196,10 @@ models:
     Provides stable interface between source data and analytical models.
 
     Uses incremental materialisation for efficient updates.'
+- name: stable_postcode_hash
+  description: 'Incremental postcode hash table linking postcodes to geographical areas.
+
+
+    Provides stable interface between source data and analytical models.
+
+    Uses incremental materialisation for efficient updates.'
