@@ -327,3 +327,10 @@ models:
     No filters applied - reference data used as-is.
 
     Direct passthrough from source table with explicit column selection for interface consistency.'
+- name: base_olids_postcode_hash
+  description: 'Unfiltered postcode hash reference view linking postcodes to geographical areas.
+
+
+    No filters applied - reference data used as-is.
+
+    Direct passthrough from source table with explicit column selection for interface consistency.'

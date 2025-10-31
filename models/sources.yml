@@ -1374,6 +1374,44 @@ sources:
       data_type: TEXT
     - name: lds_lakehouse_datetime_updated
       data_type: TIMESTAMP_NTZ
+- name: olids_reference
+  database: '"Data_Store_OLIDS_Alpha"'
+  schema: '"OLIDS_REFERENCE"'
+  description: OLIDS reference data including postcode lookups
+  tables:
+  - name: POSTCODE_HASH
+    identifier: '"POSTCODE_HASH"'
+    columns:
+    - name: ID
+      data_type: BINARY
+    - name: POSTCODE_HASH
+      data_type: BINARY
+    - name: PRIMARY_CARE_ORGANISATION
+      data_type: TEXT
+    - name: LOCAL_AUTHORITY_ORGANISATION
+      data_type: TEXT
+    - name: YR2011_LSOA
+      data_type: TEXT
+    - name: YR2011_MSOA
+      data_type: TEXT
+    - name: YR2021_LSOA
+      data_type: TEXT
+    - name: YR2021_MSOA
+      data_type: TEXT
+    - name: EFFECTIVE_FROM
+      data_type: TIMESTAMP_NTZ
+    - name: EFFECTIVE_TO
+      data_type: TIMESTAMP_NTZ
+    - name: IS_LATEST
+      data_type: NUMBER
+    - name: LDS_IS_DELETED
+      data_type: BOOLEAN
+    - name: LDS_START_DATE_TIME
+      data_type: TIMESTAMP_NTZ
+    - name: LAKEHOUSEDATEPROCESSED
+      data_type: DATE
+    - name: HIGH_WATERMARK_DATE_TIME
+      data_type: TIMESTAMP_NTZ
 - name: olids_terminology
   database: '"Data_Store_OLIDS_Alpha"'
   schema: '"OLIDS_TERMINOLOGY"'

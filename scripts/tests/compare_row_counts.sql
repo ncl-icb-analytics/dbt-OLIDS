@@ -24,6 +24,16 @@ WITH all_rowcounts AS (
     UNION ALL
 
     SELECT
+        'Data_Store_OLIDS_Alpha_Clone_19092025' AS database_name,
+        table_name,
+        row_count
+    FROM "Data_Store_OLIDS_Alpha_Clone_19092025".INFORMATION_SCHEMA.TABLES
+    WHERE table_type = 'BASE TABLE'
+        AND table_name NOT LIKE '%_BACKUP'
+
+    UNION ALL
+
+    SELECT
         'Data_Store_OLIDS_Alpha_Clone_06102025' AS database_name,
         table_name,
         row_count
@@ -44,10 +54,10 @@ WITH all_rowcounts AS (
     UNION ALL
 
     SELECT
-        'Data_Store_OLIDS_Alpha_Clone_19092025' AS database_name,
+        'Data_Store_OLIDS_Alpha_Clone_31102025' AS database_name,
         table_name,
         row_count
-    FROM "Data_Store_OLIDS_Alpha_Clone_19092025".INFORMATION_SCHEMA.TABLES
+    FROM "Data_Store_OLIDS_Alpha_Clone_31102025".INFORMATION_SCHEMA.TABLES
     WHERE table_type = 'BASE TABLE'
         AND table_name NOT LIKE '%_BACKUP'
 
@@ -96,9 +106,10 @@ SELECT
     table_name,
     MAX(CASE WHEN database_name = 'Stable' THEN formatted_count END) AS "Stable",
     MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha' THEN formatted_count END) AS "Alpha",
-    MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha_Clone_15102025' THEN formatted_count END) AS "Clone_15102025",
-    MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha_Clone_06102025' THEN formatted_count END) AS "Clone_06102025",
     MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha_Clone_19092025' THEN formatted_count END) AS "Clone_19092025",
+    MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha_Clone_06102025' THEN formatted_count END) AS "Clone_06102025",
+    MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha_Clone_15102025' THEN formatted_count END) AS "Clone_15102025",
+    MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Alpha_Clone_31102025' THEN formatted_count END) AS "Clone_31102025",
     MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Clinical_Validation' THEN formatted_count END) AS "Clinical_Validation",
     MAX(CASE WHEN database_name = 'Data_Store_OLIDS_UAT' THEN formatted_count END) AS "UAT",
     MAX(CASE WHEN database_name = 'Data_Store_OLIDS_Dummy' THEN formatted_count END) AS "Dummy"
