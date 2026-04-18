@@ -13,7 +13,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -90,7 +90,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -172,7 +172,7 @@ models:
     - Data integrity: Inner join ensures only records with valid organisation references
 
 
-    Filtering method: Inner join to int_ncl_practices on record_owner_organisation_code'
+    Filtering method: Inner join to int_wnl_practices on record_owner_organisation_code'
   columns:
     - name: appointment_id
       tests:
@@ -201,7 +201,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -304,7 +304,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -360,7 +360,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -447,7 +447,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
 - name: base_olids_location
   description: 'Unfiltered Location reference view.
 
@@ -483,7 +483,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -605,7 +605,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -728,7 +728,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -871,7 +871,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -918,7 +918,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -992,7 +992,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
 - name: base_olids_patient_uprn
   description: 'Unfiltered Patient Uprn reference view.
 
@@ -1025,7 +1025,7 @@ models:
     - Data integrity: Inner join ensures only records with valid organisation references
 
 
-    Filtering method: Inner join to int_ncl_practices on record_owner_organisation_code'
+    Filtering method: Inner join to int_wnl_practices on record_owner_organisation_code'
 - name: base_olids_practitioner_in_role
   description: 'Filtered Practitioner In Role base view.
 
@@ -1037,7 +1037,7 @@ models:
     - Data integrity: Inner join ensures only records with valid organisation references
 
 
-    Filtering method: Inner join to int_ncl_practices on record_owner_organisation_code'
+    Filtering method: Inner join to int_wnl_practices on record_owner_organisation_code'
   columns:
     - name: practitioner_id
       tests:
@@ -1066,7 +1066,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -1148,7 +1148,7 @@ models:
     - Data integrity: Inner joins ensure only records with valid patient and organisation references
 
 
-    Filtering method: Inner join to base_olids_patient and int_ncl_practices'
+    Filtering method: Inner join to base_olids_patient and int_wnl_practices'
   columns:
     - name: id
       tests:
@@ -1265,7 +1265,7 @@ models:
     - Data integrity: Inner join ensures only records with valid organisation references
 
 
-    Filtering method: Inner join to int_ncl_practices on record_owner_organisation_code'
+    Filtering method: Inner join to int_wnl_practices on record_owner_organisation_code'
 - name: base_olids_schedule_practitioner
   description: 'Filtered Schedule Practitioner base view.
 
@@ -1277,7 +1277,7 @@ models:
     - Data integrity: Inner join ensures only records with valid organisation references
 
 
-    Filtering method: Inner join to int_ncl_practices on record_owner_organisation_code'
+    Filtering method: Inner join to int_wnl_practices on record_owner_organisation_code'
   columns:
     - name: schedule_id
       tests:

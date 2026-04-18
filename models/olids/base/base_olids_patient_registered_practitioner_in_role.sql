@@ -36,7 +36,7 @@ SELECT
 FROM {{ source('olids_common', 'PATIENT_REGISTERED_PRACTITIONER_IN_ROLE') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src.patient_id = patients.id
-INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
-    ON src.record_owner_organisation_code = ncl_practices.practice_code
+INNER JOIN {{ ref('int_wnl_practices') }} wnl_practices
+    ON src.record_owner_organisation_code = wnl_practices.practice_code
 WHERE src.patient_id IS NOT NULL
     AND src.lds_start_date_time IS NOT NULL
