@@ -1,7 +1,7 @@
 version: 2
 sources:
 - name: olids_masked
-  database: '"Data_Store_OLIDS_Clinical_Validation"'
+  database: '"Data_Store_OLIDS"'
   schema: '"OLIDS_MASKED"'
   description: OLIDS patient entity data (masked)
   tables:
@@ -199,8 +199,71 @@ sources:
       data_type: DATE
     - name: lds_lakehouse_datetime_updated
       data_type: TIMESTAMP_NTZ
+  - name: PERSON
+    identifier: '"PERSON"'
+    columns:
+    - name: lds_record_id
+      data_type: TEXT
+    - name: id
+      data_type: TEXT
+    - name: composite_id
+      data_type: TEXT
+    - name: matched_nhs_no_hash
+      data_type: BINARY
+    - name: gender
+      data_type: TEXT
+    - name: birth_year
+      data_type: NUMBER
+    - name: birth_month
+      data_type: NUMBER
+    - name: death_year
+      data_type: NUMBER
+    - name: death_month
+      data_type: NUMBER
+    - name: death_notification_status
+      data_type: TEXT
+    - name: postcode_hash
+      data_type: BINARY
+    - name: preferred_contact_method
+      data_type: TEXT
+    - name: nominated_pharmacy
+      data_type: TEXT
+    - name: dispensing_doctor
+      data_type: TEXT
+    - name: medical_appliance_supplier
+      data_type: TEXT
+    - name: gp_practice_code
+      data_type: TEXT
+    - name: gp_registration_date
+      data_type: DATE
+    - name: as_at_date
+      data_type: DATE
+    - name: sensitivity_flag
+      data_type: TEXT
+    - name: error_success_code
+      data_type: TEXT
+    - name: lds_id
+      data_type: TEXT
+    - name: lds_business_key
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: lds_cdm_event_id
+      data_type: TEXT
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_initial_data_received_date
+      data_type: TIMESTAMP_NTZ
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_lakehouse_date_processed
+      data_type: DATE
+    - name: lds_lakehouse_datetime_updated
+      data_type: TIMESTAMP_NTZ
 - name: olids_common
-  database: '"Data_Store_OLIDS_Clinical_Validation"'
+  database: '"Data_Store_OLIDS"'
   schema: '"OLIDS_COMMON"'
   description: OLIDS clinical events and reference data
   tables:
@@ -1422,7 +1485,7 @@ sources:
     - name: lds_lakehouse_datetime_updated
       data_type: TIMESTAMP_NTZ
 - name: olids_reference
-  database: '"Data_Store_OLIDS_Clinical_Validation"'
+  database: '"Data_Store_OLIDS"'
   schema: '"REFERENCE"'
   description: OLIDS reference data including postcode lookups
   tables:
@@ -1460,7 +1523,7 @@ sources:
     - name: HIGH_WATERMARK_DATE_TIME
       data_type: TIMESTAMP_NTZ
 - name: olids_terminology
-  database: '"Data_Store_OLIDS_Clinical_Validation"'
+  database: '"Data_Store_OLIDS"'
   schema: '"OLIDS_TERMINOLOGY"'
   description: OLIDS-specific terminology and code mappings
   tables:
@@ -1604,7 +1667,7 @@ sources:
     - name: STPName
       data_type: TEXT
 - name: emis_reference
-  database: '"Data_Store_OLIDS_Clinical_Validation"'
+  database: '"Data_Store_OLIDS"'
   schema: '"REFERENCE"'
   description: EMIS-provided reference tables for clinical and drug code lookups
   tables:
@@ -1657,4 +1720,47 @@ sources:
     - name: BNF_CHAPTER_REF
       data_type: TEXT
     - name: LDS_START_DATE_TIME
+      data_type: TIMESTAMP_NTZ
+- name: ndoo_masked
+  database: '"Data_Store_OLIDS"'
+  schema: '"NDOO_MASKED"'
+  description: National Data Opt-Out (NDOO) hashed patient preferences
+  tables:
+  - name: PATIENT_HASH
+    identifier: '"PATIENT_HASH"'
+    description: NDOO patient opt-out status keyed by hashed NHS number. Surfaced downstream as ndoo_hashed.
+    columns:
+    - name: id
+      data_type: TEXT
+    - name: lds_record_id
+      data_type: TEXT
+    - name: sk_patient_id
+      data_type: TEXT
+    - name: nhs_number_hash
+      data_type: TEXT
+    - name: preference_type
+      data_type: TEXT
+    - name: preference_status
+      data_type: TEXT
+    - name: lds_is_deleted
+      data_type: BOOLEAN
+    - name: lds_datetime_data_acquired
+      data_type: TIMESTAMP_NTZ
+    - name: lds_start_date_time
+      data_type: TIMESTAMP_NTZ
+    - name: lds_batch_id
+      data_type: TEXT
+    - name: lds_file_id
+      data_type: TEXT
+    - name: lds_dataset_id
+      data_type: TEXT
+    - name: effective_from
+      data_type: TIMESTAMP_NTZ
+    - name: effective_to
+      data_type: TIMESTAMP_NTZ
+    - name: is_latest
+      data_type: NUMBER
+    - name: lakehouse_date_processed
+      data_type: DATE
+    - name: high_watermark_date_time
       data_type: TIMESTAMP_NTZ

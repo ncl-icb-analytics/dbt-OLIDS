@@ -73,8 +73,8 @@ SELECT
 FROM {{ source('olids_common', 'MEDICATION_STATEMENT') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src.patient_id = patients.id
-INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
-    ON src.record_owner_organisation_code = ncl_practices.practice_code
+INNER JOIN {{ ref('int_wnl_practices') }} wnl_practices
+    ON src.record_owner_organisation_code = wnl_practices.practice_code
 LEFT JOIN {{ ref('int_enriched_concept_map') }} concept_map
     ON src.medication_statement_source_concept_id = concept_map.source_code_id
 LEFT JOIN {{ ref('int_enriched_concept_map') }} auth_concept_map

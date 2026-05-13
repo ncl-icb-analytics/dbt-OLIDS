@@ -47,8 +47,8 @@ SELECT
 FROM {{ source('olids_common', 'EPISODE_OF_CARE') }} src
 INNER JOIN {{ ref('base_olids_patient') }} patients
     ON src.patient_id = patients.id
-INNER JOIN {{ ref('int_ncl_practices') }} ncl_practices
-    ON src.organisation_code_publisher = ncl_practices.practice_code
+INNER JOIN {{ ref('int_wnl_practices') }} wnl_practices
+    ON src.organisation_code_publisher = wnl_practices.practice_code
 LEFT JOIN {{ ref('int_enriched_concept_map') }} episode_type_map
     ON src.episode_type_source_concept_id = episode_type_map.source_code_id
 LEFT JOIN {{ ref('int_enriched_concept_map') }} episode_status_map

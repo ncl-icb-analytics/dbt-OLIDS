@@ -13,6 +13,11 @@ load_dotenv()
 
 SOURCES_FILE = "models/sources.yml"
 
+# Optional: remap a database name from sources.yml to a different physical DB
+# at query time (e.g. testing against a renamed/replacement database).
+# Set SOURCE_DB_OVERRIDE=NewDbName to redirect all sources.yml lookups.
+DB_OVERRIDE = os.getenv("SOURCE_DB_OVERRIDE")
+
 # Snowflake data type normalisation — maps INFORMATION_SCHEMA types to
 # the shorthand forms used in dbt sources.yml
 TYPE_MAP = {
@@ -95,21 +100,32 @@ def main():
     print(f"Found {len(sources)} source tables\n")
 
     print("Connecting to Snowflake...")
-    session = Session.builder.configs({
+    authenticator = os.getenv("SNOWFLAKE_AUTHENTICATOR", "externalbrowser")
+    sf_config = {
         "account": os.getenv("SNOWFLAKE_ACCOUNT"),
         "user": os.getenv("SNOWFLAKE_USER"),
-        "authenticator": "externalbrowser",
+        "authenticator": authenticator,
         "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
         "role": os.getenv("SNOWFLAKE_ROLE"),
-    }).create()
+    }
+    if authenticator != "externalbrowser" and os.getenv("SNOWFLAKE_PASSWORD"):
+        sf_config["password"] = os.getenv("SNOWFLAKE_PASSWORD")
+    session = Session.builder.configs(sf_config).create()
     print(f"Connected as {session.get_current_user()}\n")
 
     issues_found = 0
     tables_checked = 0
     tables_ok = 0
 
+    # Override only the OLIDS source DB (leave Dictionary etc. alone)
+    OLIDS_DB_PREFIXES = ("Data_Store_OLIDS", "NCL_Data_Store_OLIDS")
+
     for (db, schema, table), dbt_cols in sorted(sources.items()):
-        sf_cols = fetch_snowflake_columns(session, db, schema, table)
+        if DB_OVERRIDE and db.startswith(OLIDS_DB_PREFIXES):
+            query_db = DB_OVERRIDE
+        else:
+            query_db = db
+        sf_cols = fetch_snowflake_columns(session, query_db, schema, table)
 
         if not sf_cols:
             print(f"WARNING: {db}.{schema}.{table} — not found in Snowflake")
