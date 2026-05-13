@@ -1001,17 +1001,19 @@ models:
 
     Direct passthrough from source table with explicit column selection for interface consistency.'
 - name: base_olids_person
-  description: 'Generated Person base view.
+  description: 'Filtered Person base view sourced from native OLIDS_MASKED.PERSON.
 
 
     Applied filters:
 
-    - Patient filtering: Inherits filtering from underlying patient relationships
-
-    - Practice filtering: Inherits NCL practice restriction through patient associations
+    - Patient filtering: Restricted to persons linked to NCL patients via PATIENT_PERSON
 
 
-    Filtering method: Filtered through relationships to base_olids_patient'
+    Filtering method: WHERE EXISTS against base_olids_patient_person on person_uuid.
+
+
+    Identifiers: id is the numeric person_id (hashed from native UUID); person_uuid
+    holds the original native UUID.'
 - name: base_olids_practitioner
   description: 'Filtered Practitioner base view.
 
@@ -1312,3 +1314,11 @@ models:
     No filters applied - reference data used as-is.
 
     Direct passthrough from source table with explicit column selection for interface consistency.'
+- name: base_olids_ndoo_hashed
+  description: 'Unfiltered NDOO (National Data Opt-Out) preferences keyed by hashed
+    NHS number.
+
+
+    No filters applied - reference data used as-is.
+
+    Direct passthrough from NDOO_MASKED.PATIENT_HASH; surfaced downstream as ndoo_hashed.'

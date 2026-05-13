@@ -134,12 +134,9 @@ models:
 
     Maintains referential integrity with parent entities.'
 - name: stable_person
-  description: 'Incremental person entity table.
-
-
-    Core person demographics and attributes.
-
-    Provides stable interface for downstream analytical models.'
+  description: 'Incremental person entity table sourced from native OLIDS_MASKED.PERSON,
+    filtered to NCL via PATIENT_PERSON. id is the numeric person_id; person_uuid
+    holds the native UUID.'
 - name: stable_practitioner
   description: 'Incremental practitioner entity table.
 
@@ -203,3 +200,6 @@ models:
     Provides stable interface between source data and analytical models.
 
     Uses incremental materialisation for efficient updates.'
+- name: stable_ndoo_hashed
+  description: 'Incremental NDOO (National Data Opt-Out) preferences keyed by hashed
+    NHS number, clustered on nhs_number_hash for join performance.'
