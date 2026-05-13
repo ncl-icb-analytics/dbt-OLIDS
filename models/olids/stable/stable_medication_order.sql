@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key='id',
         on_schema_change='fail',
-        cluster_by=['mapped_concept_code', 'clinical_effective_date'],
+        cluster_by=['bnf_chapter', 'mapped_concept_code', 'clinical_effective_date'],
         alias='medication_order',
         incremental_strategy='merge',
         transient=false,
@@ -65,7 +65,11 @@ select
     source_code,
     source_display,
     source_system,
-    target_system
+    target_system,
+    bnf_chapter,
+    bnf_section,
+    bnf_code,
+    bnf_name
 from {{ ref('base_olids_medication_order') }}
 
 {% if is_incremental() %}

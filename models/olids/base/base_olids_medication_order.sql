@@ -47,6 +47,10 @@ SELECT
     concept_map.source_display AS source_display,
     concept_map.source_system AS source_system,
     concept_map.target_system AS target_system,
+    bnf.bnf_chapter AS bnf_chapter,
+    bnf.bnf_section AS bnf_section,
+    bnf.bnf_code AS bnf_code,
+    bnf.bnf_name AS bnf_name,
     src.bnf_reference,
     src.age_at_event,
     src.age_at_event_baby,
@@ -78,6 +82,8 @@ LEFT JOIN {{ ref('int_enriched_concept_map') }} concept_map
     ON src.medication_order_source_concept_id = concept_map.source_code_id
 LEFT JOIN {{ ref('int_enriched_concept_map') }} date_precision_map
     ON src.date_precision_concept_id = date_precision_map.source_code_id
+LEFT JOIN DATA_LAB_OLIDS_NCL.REFERENCE.BNF_LATEST bnf
+    ON concept_map.target_code = bnf.snomed_code
 WHERE src.medication_order_source_concept_id IS NOT NULL
     AND src.lds_start_date_time IS NOT NULL
 QUALIFY ROW_NUMBER() OVER (PARTITION BY src.id ORDER BY concept_map.target_display NULLS LAST) = 1
